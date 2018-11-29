@@ -811,6 +811,9 @@ class ListApi {
           else
             return null;
 
+        case System.Diagnostics.DebuggerHiddenAttribute dha:
+          return null;
+
         case System.SerializableAttribute sa:
           return null;
 
