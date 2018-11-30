@@ -102,5 +102,15 @@ namespace Smdn.Reflection {
       if (!isLanguagePrimitive(t))
         yield return t.Namespace;
     }
+
+    public static string GetGenericTypeName(this Type t)
+    {
+      if (!t.IsGenericType)
+        throw new ArgumentException($"{t} is not a generic type", nameof(t));
+
+      var name = t.GetGenericTypeDefinition().Name;
+
+      return name.Substring(0, name.LastIndexOf('`'));
+    }
   }
 }

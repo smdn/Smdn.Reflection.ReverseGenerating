@@ -113,5 +113,22 @@ namespace Smdn.Reflection {
       CollectionAssert.AreEquivalent(expected,
                                      type.GetNamespaces(t => t == typeof(int)));
     }
+
+    [TestCase(typeof(List<>), "List")]
+    [TestCase(typeof(List<int>), "List")]
+    [TestCase(typeof(List<KeyValuePair<int, int>>), "List")]
+    public void TestGetGenericTypeName(Type type, string expected)
+    {
+      Assert.AreEqual(expected,
+                      type.GetGenericTypeName());
+    }
+
+    [TestCase(typeof(void))]
+    [TestCase(typeof(int))]
+    [TestCase(typeof(System.Collections.IList))]
+    public void TestGetGenericTypeName_NonGenericTypes(Type type)
+    {
+      Assert.Throws<ArgumentException>(() => type.GetGenericTypeName());
+    }
   }
 }
