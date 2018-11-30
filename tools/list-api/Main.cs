@@ -44,6 +44,11 @@ class ListApi {
           options.GenerateEmptyImplementation = true;
           break;
 
+        case "--generate-fullname":
+          options.TypeDeclarationWithNamespace = true;
+          options.MemberDeclarationWithNamespace = true;
+          break;
+
         case "--test":
           testMode = true;
           break;
@@ -68,6 +73,7 @@ class ListApi {
     if (showUsage) {
       Console.Error.WriteLine("--test: run tests");
       Console.Error.WriteLine("--stdout: output to stdout");
+      Console.Error.WriteLine("--generate-fullname: generate type and member declaration with full type name");
       Console.Error.WriteLine("--generate-impl: generate with empty implementation");
       Console.Error.WriteLine();
       return;
