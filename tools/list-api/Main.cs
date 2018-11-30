@@ -827,6 +827,12 @@ class ListApi {
     string ConvertAttributeParameters(Attribute attr)
     {
       switch (attr) {
+        case System.AttributeUsageAttribute aua:
+          var allowMultiple = aua.AllowMultiple ? ", AllowMultiple = " + ConvertValue(aua.AllowMultiple) : null;
+          var inherited =  aua.Inherited ? ", Inherited = " + ConvertValue(aua.Inherited) : null;
+
+          return ConvertValue(aua.ValidOn) + allowMultiple + inherited;
+
         case System.FlagsAttribute fa:
           return null;
 
