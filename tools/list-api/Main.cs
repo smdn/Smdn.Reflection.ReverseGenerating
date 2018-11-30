@@ -14,6 +14,7 @@ class Options {
   public string Indent = new string(' ', 2);
 
   public bool IgnorePrivateOrAssembly = true;
+  public bool GenerateEmptyImplementation = false;
 
   public bool TypeDeclarationWithNamespace = false;
 
@@ -32,11 +33,16 @@ class ListApi {
   static void Main(string[] args)
   {
     var libs = new List<string>();
+    var options = new Options();
     var testMode = false;
     var stdout = false;
 
     foreach (var arg in args) {
       switch (arg) {
+        case "--generate-impl":
+          options.GenerateEmptyImplementation = true;
+          break;
+
         case "--test":
           testMode = true;
           break;
@@ -56,8 +62,6 @@ class ListApi {
       Test.RunTests();
       return;
     }
-
-    var options = new Options();
 
     foreach (var lib in libs) {
       Assembly assm = null;
@@ -628,14 +632,24 @@ class ListApi {
           if (explicitInterface == null && 0 < getAccessibility.Length)
             sb.Append(getAccessibility).Append(" ");
 
-          sb.Append("get; ");
+          sb.Append("get");
+
+          if (options.GenerateEmptyImplementation && !p.GetMethod.IsAbstract)
+            sb.Append(" => throw new NotImplementedException(); ");
+          else
+            sb.Append("; ");
         }
 
         if (emitSetAccessor) {
           if (explicitInterface == null && 0 < setAccessibility.Length)
             sb.Append(setAccessibility).Append(" ");
 
-          sb.Append("set; ");
+          sb.Append("set");
+
+          if (options.GenerateEmptyImplementation && !p.SetMethod.IsAbstract)
+            sb.Append(" => throw new NotImplementedException(); ");
+          else
+            sb.Append("; ");
         }
 
         sb.Append("}");
@@ -662,7 +676,7 @@ class ListApi {
         var methodGenericParameters = m.IsGenericMethod ? string.Concat("<", string.Join(", ", m.GetGenericArguments().Select(t => t.FormatTypeName(typeWithNamespace: options.MemberDeclarationWithNamespace))), ">") : null;
         var methodParameterList = CSharpFormatter.FormatParameterList(m, typeWithNamespace: options.MemberDeclarationWithNamespace);
         var methodConstraints = method == null ? null : string.Join(" ", method.GetGenericArguments().Select(arg => GenerateGenericArgumentConstraintDeclaration(arg, referencingNamespaces, typeWithNamespace: options.MemberDeclarationWithNamespace)).Where(d => d != null));
-        var methodBody = m.IsAbstract ? ";" : " {}";
+        var methodBody = m.IsAbstract ? ";" : options.GenerateEmptyImplementation ? " => throw new NotImplementedException();" : " {}";
 
         referencingNamespaces?.AddRange(m.GetSignatureTypes().Where(mpt => !mpt.ContainsGenericParameters).SelectMany(CSharpFormatter.ToNamespaceList));
 
