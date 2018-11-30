@@ -66,6 +66,7 @@ public class Test {
   {
     var types = Assembly.GetExecutingAssembly().GetTypes();
     var options = new Options() {
+      Indent = string.Empty,
       IgnorePrivateOrAssembly = false,
       MemberDeclarationEmitNewLine = false,
       TypeDeclarationWithNamespace = true,
@@ -134,7 +135,7 @@ public class Test {
     EvaluateTest(result,
                  type.ToString(),
                  test.Expected,
-                 () => ListApi.GenerateTypeDeclaration(type, null, opts));
+                 () => string.Join("\n", ListApi.GenerateTypeDeclaration(type, null, opts)));
   }
 
   static void EvaluateMemberTest(TestResult result, Options options, TestCases.TestAttribute test, MemberInfo member)

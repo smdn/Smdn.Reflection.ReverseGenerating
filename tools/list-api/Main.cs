@@ -189,41 +189,29 @@ class ListApi {
          .AppendLine(attr);
     }
 
-    if (t.IsDelegate()) {
-      ret.Append(indent)
-         .Append(GenerateTypeDeclaration(t, referencingNamespaces, options))
-         .AppendLine();
+    var typeDeclarationLines = GenerateTypeDeclaration(t, referencingNamespaces, options).ToList();
+
+    for (var index = 0; index < typeDeclarationLines.Count; index++) {
+      if (0 < index)
+        ret.AppendLine();
+
+      ret.Append(indent).Append(typeDeclarationLines[index]);
     }
-    else {
-      ret.Append(indent)
-         .Append(GenerateTypeDeclaration(t, referencingNamespaces, options));
 
-      var baseTypeList = GetExplicitBaseTypeAndInterfacesAsString(t, referencingNamespaces, options).ToList();
+    var hasContent = !t.IsDelegate();
 
-      if (0 < baseTypeList.Count) {
-        if (1 < baseTypeList.Count) {
-          ret.AppendLine(" :");
-
-          var nestedIndent = indent + options.Indent;
-
-          ret.Append(nestedIndent)
-             .AppendLine(string.Join($",{Environment.NewLine}{nestedIndent}", baseTypeList));
-
-          ret.Append(indent);
-        }
-        else {
-          ret.Append(" : ").Append(baseTypeList[0]).Append(" ");
-        }
-
-        ret.AppendLine("{");
-      }
-      else {
+    if (hasContent) {
+      if (1 < typeDeclarationLines.Count) // multiline declaration
+        ret.AppendLine().Append(indent).AppendLine("{");
+      else
         ret.AppendLine(" {");
-      }
 
       ret.Append(GenerateTypeContentDeclarations(nestLevel + 1, t, referencingNamespaces, options));
 
       ret.Append(indent).AppendLine("}");
+    }
+    else {
+      ret.AppendLine();
     }
 
     return ret.ToString();
@@ -244,7 +232,7 @@ class ListApi {
             .Select(type => type.Name);
   }
 
-  internal static string GenerateTypeDeclaration(Type t, ISet<string> referencingNamespaces, Options options)
+  internal static IEnumerable<string> GenerateTypeDeclaration(Type t, ISet<string> referencingNamespaces, Options options)
   {
     if (options == null)
       throw new ArgumentNullException(nameof(options));
@@ -252,47 +240,71 @@ class ListApi {
     var accessibilities = CSharpFormatter.FormatAccessibility(t.GetAccessibility());
     var typeName = t.FormatTypeName(typeWithNamespace: false, withDeclaringTypeName: false);
 
-    var genericArgumentConstraintDeclaration = string.Join(" ", t.GetGenericArguments()
-                                                                 .Select(arg => GenerateGenericArgumentConstraintDeclaration(arg, referencingNamespaces, typeWithNamespace: options.TypeDeclarationWithNamespace))
-                                                                 .Where(d => d != null));
-
-    if (!string.IsNullOrEmpty(genericArgumentConstraintDeclaration))
-      genericArgumentConstraintDeclaration = " " + genericArgumentConstraintDeclaration;
+    var genericArgumentConstraints = t.GetGenericArguments()
+                                      .Select(arg => GenerateGenericArgumentConstraintDeclaration(arg, referencingNamespaces, typeWithNamespace: options.TypeDeclarationWithNamespace))
+                                      .Where(d => d != null)
+                                      .ToList();
 
     if (t.IsEnum) {
-      return $"{accessibilities} enum {typeName} : {t.GetEnumUnderlyingType().FormatTypeName()}";
+      yield return $"{accessibilities} enum {typeName} : {t.GetEnumUnderlyingType().FormatTypeName()}";
+      yield break;
     }
     else if (t.IsDelegate()) {
       var signatureInfo = t.GetDelegateSignatureMethod();
 
       referencingNamespaces?.AddRange(signatureInfo.GetSignatureTypes().Where(mpt => !mpt.ContainsGenericParameters).SelectMany(CSharpFormatter.ToNamespaceList));
 
-      return $"{accessibilities} delegate {signatureInfo.ReturnType.FormatTypeName(attributeProvider: signatureInfo.ReturnTypeCustomAttributes, typeWithNamespace: options.TypeDeclarationWithNamespace)} {typeName}({CSharpFormatter.FormatParameterList(signatureInfo)}){genericArgumentConstraintDeclaration};";
+      var genericArgumentConstraintDeclaration = genericArgumentConstraints.Count == 0 ? string.Empty : " " + string.Join(" ", genericArgumentConstraints);
+
+      yield return $"{accessibilities} delegate {signatureInfo.ReturnType.FormatTypeName(attributeProvider: signatureInfo.ReturnTypeCustomAttributes, typeWithNamespace: options.TypeDeclarationWithNamespace)} {typeName}({CSharpFormatter.FormatParameterList(signatureInfo)}){genericArgumentConstraintDeclaration};";
+      yield break;
     }
-    else if (t.IsInterface) {
-      return $"{accessibilities} interface {typeName}{genericArgumentConstraintDeclaration}";
+
+    string typeDeclaration = null;
+
+    if (t.IsInterface) {
+      typeDeclaration = $"{accessibilities} interface {typeName}";
     }
     else if (t.IsValueType) {
       var isReadOnly = t.IsReadOnlyValueType() ? " readonly" : string.Empty;
       var isByRefLike = t.IsByRefLikeValueType() ? " ref" : string.Empty;
 
-      return $"{accessibilities}{isReadOnly}{isByRefLike} struct {typeName}{genericArgumentConstraintDeclaration}";
+      typeDeclaration = $"{accessibilities}{isReadOnly}{isByRefLike} struct {typeName}";
     }
     else {
-      var sb = new StringBuilder();
-
-      sb.Append(accessibilities);
+      string modifier = null;
 
       if (t.IsAbstract && t.IsSealed)
-        sb.Append(" static");
+        modifier = " static";
       else if (t.IsAbstract)
-        sb.Append(" abstract");
+        modifier = " abstract";
       else if (t.IsSealed)
-        sb.Append(" sealed");
+        modifier = " sealed";
 
-      sb.Append($" class {typeName}{genericArgumentConstraintDeclaration}");
+      typeDeclaration = $"{accessibilities}{modifier} class {typeName}";
+    }
 
-      return sb.ToString();
+    var baseTypeList = GetExplicitBaseTypeAndInterfacesAsString(t, referencingNamespaces, options).ToList();
+
+    if (baseTypeList.Count <= 1) {
+      var baseTypeDeclaration = baseTypeList.Count == 0 ? string.Empty : " : " + baseTypeList[0];
+      var genericArgumentConstraintDeclaration = genericArgumentConstraints.Count == 0 ? string.Empty : " " + string.Join(" ", genericArgumentConstraints);
+
+      yield return typeDeclaration + baseTypeDeclaration + genericArgumentConstraintDeclaration;
+    }
+    else {
+      yield return typeDeclaration + " :";
+
+      for (var index = 0; index < baseTypeList.Count; index++) {
+        if (index == baseTypeList.Count - 1)
+          yield return options.Indent + baseTypeList[index];
+        else
+          yield return options.Indent + baseTypeList[index] + ",";
+      }
+
+      foreach (var constraint in genericArgumentConstraints) {
+        yield return options.Indent + constraint;
+      }
     }
   }
 
