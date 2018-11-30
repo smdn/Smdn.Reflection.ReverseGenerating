@@ -996,8 +996,19 @@ namespace TestCases {
       }
 
       namespace Constructors {
-        public class TypeInitializers {
-          [Test("static TypeInitializers() {}")] static TypeInitializers() { }
+        public class C {
+          [Test("public C() {}")] public C() {}
+          [Test("static C() {}")] static C() {}
+        }
+
+        public class C<T> {
+          [Test("public C() {}")] public C() {}
+          [Test("static C() {}")] static C() {}
+        }
+
+        public class C<T1, T2> {
+          [Test("public C() {}")] public C() {}
+          [Test("static C() {}")] static C() {}
         }
 
         public class Accessibilities {
@@ -1012,8 +1023,18 @@ namespace TestCases {
         }
       }
 
-      public class Destructors {
-        [Test("~Destructors() {}")] ~Destructors() { throw new NotImplementedException(); }
+      namespace Destructors {
+        public class C {
+          [Test("~C() {}")] ~C() => throw new NotImplementedException();
+        }
+
+        public class C<T> {
+          [Test("~C() {}")] ~C() => throw new NotImplementedException();
+        }
+
+        public class C<T1, T2> {
+          [Test("~C() {}")] ~C() => throw new NotImplementedException();
+        }
       }
 
       namespace Operators {

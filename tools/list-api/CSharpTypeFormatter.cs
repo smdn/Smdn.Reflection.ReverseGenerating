@@ -186,7 +186,7 @@ public static class CSharpFormatter /* ITypeFormatter */ {
     if (t.IsGenericTypeDefinition || t.IsConstructedGenericType || (t.IsGenericType && t.ContainsGenericParameters)) {
       var sb = new StringBuilder();
 
-      if (t.IsConstructedGenericType && "System".Equals(t.Namespace, StringComparison.Ordinal) && t.Name.StartsWith("ValueTuple`", StringComparison.Ordinal)) {
+      if (t.IsConstructedGenericType && "System".Equals(t.Namespace, StringComparison.Ordinal) && t.GetGenericTypeName().Equals("ValueTuple", StringComparison.Ordinal)) {
         var tupleItemNames = attributeProvider?.GetCustomAttributes(typeof(TupleElementNamesAttribute), inherit: false)?.Cast<TupleElementNamesAttribute>()?.FirstOrDefault()?.TransformNames.ToList();
 
         if (tupleItemNames != null) {
@@ -203,7 +203,7 @@ public static class CSharpFormatter /* ITypeFormatter */ {
         if (typeWithNamespace)
           sb.Append(t.Namespace).Append(".");
 
-        sb.Append(t.Name.Substring(0, t.Name.IndexOf('`')))
+        sb.Append(t.GetGenericTypeName())
           .Append("<")
           .Append(string.Join(", ", t.GetGenericArguments().Select(arg => FormatTypeName(arg, attributeProvider, true, typeWithNamespace, withDeclaringTypeName))))
           .Append(">");

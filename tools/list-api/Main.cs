@@ -668,12 +668,12 @@ class ListApi {
 
         if (method == null) {
           // constructors
-          methodName = m.DeclaringType.Name;
+          methodName = m.DeclaringType.IsGenericType ? m.DeclaringType.GetGenericTypeName() : m.DeclaringType.Name;
           methodReturnType = null;
         }
         else if (method.IsFamily && string.Equals(method.Name, "Finalize", StringComparison.Ordinal)) {
           // destructors
-          methodName = "~" + m.DeclaringType.Name;
+          methodName = "~" + (m.DeclaringType.IsGenericType ? m.DeclaringType.GetGenericTypeName() : m.DeclaringType.Name);
           methodModifiers = null;
           methodReturnType = null;
           methodParameterList = null;
