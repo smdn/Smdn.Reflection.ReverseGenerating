@@ -376,30 +376,35 @@ class ListApi {
     }
 
     var indent = string.Concat(Enumerable.Repeat(options.Indent, nestLevel));
+    var memberAndDeclarations = new List<(MemberInfo member, string declaration)>();
 
     foreach (var member in members.Except(exceptingMembers).OrderBy(OrderOfMember).ThenBy(m => m.Name, StringComparer.Ordinal)) {
       try {
-        var memberDeclaration = GenerateMemberDeclaration(member, referencingNamespaces, options);
+        var declaration = GenerateMemberDeclaration(member, referencingNamespaces, options);
 
-        if (memberDeclaration == null)
+        if (declaration == null)
           continue; // is private or assembly
 
-        if (prevMemberType != null && prevMemberType != member.MemberType)
-          ret.AppendLine();
-
-        // TODO: AttributeTargets.ReturnValue, AttributeTargets.Parameter
-        foreach (var attr in GenerateAttributeList(member, null, options)) {
-          ret.Append(indent).AppendLine(attr);
-        }
-
-        ret.Append(indent).Append(memberDeclaration);
-
-        prevMemberType = member.MemberType;
+        memberAndDeclarations.Add((member, declaration));
       }
       catch (Exception ex) {
         Console.Error.WriteLine($"reflection error at member {t.FullName}.{member.Name}");
         Console.Error.WriteLine(ex);
       }
+    }
+
+    foreach (var (member, declaration) in memberAndDeclarations.OrderBy(p => OrderOfMember(p.member)).ThenBy(p => p.member.Name, StringComparer.Ordinal).ThenBy(p => p.declaration, StringComparer.Ordinal)) {
+      if (prevMemberType != null && prevMemberType != member.MemberType)
+        ret.AppendLine();
+
+      // TODO: AttributeTargets.ReturnValue, AttributeTargets.Parameter
+      foreach (var attr in GenerateAttributeList(member, null, options)) {
+        ret.Append(indent).AppendLine(attr);
+      }
+
+      ret.Append(indent).Append(declaration);
+
+      prevMemberType = member.MemberType;
     }
 
     return ret.ToString();
