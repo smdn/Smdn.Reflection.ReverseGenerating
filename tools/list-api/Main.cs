@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
@@ -32,11 +33,16 @@ class ListApi {
   {
     var libs = new List<string>();
     var testMode = false;
+    var stdout = false;
 
     foreach (var arg in args) {
       switch (arg) {
         case "--test":
           testMode = true;
+          break;
+
+        case "--stdout":
+          stdout = true;
           break;
 
         default: {
@@ -54,38 +60,54 @@ class ListApi {
     var options = new Options();
 
     foreach (var lib in libs) {
+      Assembly assm = null;
+
       try {
         Console.Error.WriteLine($"loading {lib}");
 
-        //var assm = Assembly.ReflectionOnlyLoadFrom(lib);
-        var assm = Assembly.LoadFrom(lib);
+        //assm = Assembly.ReflectionOnlyLoadFrom(lib);
+        assm = Assembly.LoadFrom(lib);
 
         Console.Error.WriteLine($"loaded '{assm.FullName}'");
-
-        DisplayAssemblyInfo(assm);
-
-        DisplayExportedTypes(assm, options);
-
-        Console.Error.WriteLine("done");
       }
       catch (Exception ex) {
         Console.Error.WriteLine($"error: cannot load: {lib}");
         Console.Error.WriteLine(ex);
       }
+
+      if (assm == null)
+        continue;
+
+      var frameworkName = assm.GetCustomAttribute<TargetFrameworkAttribute>()?.FrameworkName;
+      var assemblyIdentifier = (frameworkName == null)
+        ? assm.GetCustomAttribute<AssemblyProductAttribute>()?.Product
+        : $"{assm.GetName().Name}-v{assm.GetName().Version}-{frameworkName}";
+
+      var defaultOutputFileName = $"api-list-of-{assemblyIdentifier}.cs";
+
+      using (Stream outputStream = stdout ? Console.OpenStandardOutput() : File.Open(defaultOutputFileName, FileMode.Create)) {
+        using (var writer = new StreamWriter(outputStream, stdout ? Console.OutputEncoding : new UTF8Encoding(false))) {
+          DisplayAssemblyInfo(writer, assm);
+
+          DisplayExportedTypes(writer, assm, options);
+        }
+      }
+
+      Console.Error.WriteLine("done");
     }
   }
 
-  static void DisplayAssemblyInfo(Assembly assm)
+  static void DisplayAssemblyInfo(TextWriter writer, Assembly assm)
   {
-    Console.WriteLine($"// {assm.GetCustomAttribute<AssemblyProductAttribute>()?.Product}");
-    Console.WriteLine($"//   Name: {assm.GetName().Name}");
-    Console.WriteLine($"//   TargetFramework: {assm.GetCustomAttribute<TargetFrameworkAttribute>()?.FrameworkName}");
-    Console.WriteLine($"//   AssemblyVersion: {assm.GetName().Version}");
-    Console.WriteLine($"//   InformationalVersion: {assm.GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion}");
-    Console.WriteLine();
+    writer.WriteLine($"// {assm.GetCustomAttribute<AssemblyProductAttribute>()?.Product}");
+    writer.WriteLine($"//   Name: {assm.GetName().Name}");
+    writer.WriteLine($"//   TargetFramework: {assm.GetCustomAttribute<TargetFrameworkAttribute>()?.FrameworkName}");
+    writer.WriteLine($"//   AssemblyVersion: {assm.GetName().Version}");
+    writer.WriteLine($"//   InformationalVersion: {assm.GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion}");
+    writer.WriteLine();
   }
 
-  static void DisplayExportedTypes(Assembly assm, Options options)
+  static void DisplayExportedTypes(TextWriter writer, Assembly assm, Options options)
   {
     if (options == null)
       throw new ArgumentNullException(nameof(options));
@@ -110,11 +132,11 @@ class ListApi {
     }
 
     foreach (var ns in referencingNamespaces.OrderBy(OrderOfRootNamespace).ThenBy(ns => ns, StringComparer.Ordinal)) {
-      Console.WriteLine($"using {ns};");
+      writer.WriteLine($"using {ns};");
     }
 
-    Console.WriteLine();
-    Console.WriteLine(typeDeclarations);
+    writer.WriteLine();
+    writer.WriteLine(typeDeclarations);
 
     int OrderOfRootNamespace(string ns)
     {
