@@ -83,7 +83,7 @@ class ListApi {
         ? assm.GetCustomAttribute<AssemblyProductAttribute>()?.Product
         : $"{assm.GetName().Name}-v{assm.GetName().Version}-{frameworkName}";
 
-      var defaultOutputFileName = $"api-list-of-{assemblyIdentifier}.cs";
+      var defaultOutputFileName = $"{assemblyIdentifier}.apilist.cs";
 
       using (Stream outputStream = stdout ? Console.OpenStandardOutput() : File.Open(defaultOutputFileName, FileMode.Create)) {
         using (var writer = new StreamWriter(outputStream, stdout ? Console.OutputEncoding : new UTF8Encoding(false))) {
