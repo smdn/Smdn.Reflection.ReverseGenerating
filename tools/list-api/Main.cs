@@ -35,6 +35,7 @@ class ListApi {
     var libs = new List<string>();
     var options = new Options();
     var testMode = false;
+    var showUsage = false;
     var stdout = false;
 
     foreach (var arg in args) {
@@ -51,11 +52,25 @@ class ListApi {
           stdout = true;
           break;
 
+        case "/?":
+        case "-h":
+        case "--help":
+          showUsage = true;
+          break;
+
         default: {
           libs.Add(arg);
           break;
         }
       }
+    }
+
+    if (showUsage) {
+      Console.Error.WriteLine("--test: run tests");
+      Console.Error.WriteLine("--stdout: output to stdout");
+      Console.Error.WriteLine("--generate-impl: generate with empty implementation");
+      Console.Error.WriteLine();
+      return;
     }
 
     if (testMode) {
