@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFrameworks>net471;net45;netstandard2.0;netstandard1.6</TargetFrameworks>
     <AssemblyName>Smdn.Reflection</AssemblyName>
@@ -24,9 +24,9 @@
     <!-- NuGet -->
     <Authors>smdn</Authors>
     <Owners>$(Authors)</Owners>
-    <PackageProjectUrl>https://smdn.jp/works/libs/</PackageProjectUrl>
-    <PackageLicenseUrl>https://smdn.jp/misc/license/MIT/</PackageLicenseUrl>
-    <PackageIconUrl>https://smdn.jp/resources/images/smdn-64x64.png</PackageIconUrl>
+    <PackageProjectUrl>https://smdn.jp/</PackageProjectUrl>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageIconUrl>https://works/libs/Smdn.dll/Smdn-3.0_64x64.png</PackageIconUrl>
   </PropertyGroup>
 
   <PropertyGroup Condition="$(TargetFramework.StartsWith('net4'))">
