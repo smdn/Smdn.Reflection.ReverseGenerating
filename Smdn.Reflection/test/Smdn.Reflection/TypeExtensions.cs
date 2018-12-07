@@ -17,6 +17,15 @@ namespace Smdn.Reflection {
       Assert.AreEqual(expected, type.IsDelegate());
     }
 
+    [TestCase(typeof(D), true)]
+    [TestCase(typeof(Guid), false)]
+    [TestCase(typeof(System.Delegate), false)]
+    [TestCase(typeof(System.MulticastDelegate), false)]
+    public void TestIsConcreteDelegate(Type type, bool expected)
+    {
+      Assert.AreEqual(expected, type.IsConcreteDelegate());
+    }
+
     enum E1 { }
     [Flags] enum E2 { }
 

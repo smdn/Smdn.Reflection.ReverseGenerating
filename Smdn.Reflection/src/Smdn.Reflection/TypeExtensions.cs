@@ -29,6 +29,7 @@ using System.Reflection;
 namespace Smdn.Reflection {
   public static class TypeExtensions {
     public static bool IsDelegate(this Type t) => t.IsSubclassOf(typeof(System.Delegate)) || t == typeof(System.Delegate);
+    public static bool IsConcreteDelegate(this Type t) => t != typeof(System.Delegate) && t != typeof(System.MulticastDelegate) && t.IsSubclassOf(typeof(System.Delegate));
 
     public static bool IsEnumFlags(this Type t) => t.IsEnum && t.GetCustomAttribute<FlagsAttribute>() != null;
 
