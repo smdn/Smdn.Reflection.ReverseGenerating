@@ -6,6 +6,10 @@
     <RootNamespace>Smdn.Reflection</RootNamespace>
     <LangVersion>latest</LangVersion>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(MSBuildRuntimeType)' == 'Mono'">
+    <!-- for MonoDevelop test runner -->
+    <OutputType>Library</OutputType>
+  </PropertyGroup>
   <PropertyGroup Condition="$(TargetFramework.StartsWith('net4'))">
     <DefineConstants>$(DefineConstants);NET</DefineConstants>
   </PropertyGroup>
@@ -21,7 +25,7 @@
     <ProjectReference Include="..\src\Smdn.Reflection.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\..\NUnit\NUnitLiteTestRunner.cs" />
+    <Compile Include="..\..\NUnit\NUnitLiteTestRunner.cs" Link="NUnitLiteTestRunner.cs" Condition="$(OutputType) == 'Exe'" />
     <Compile Include="..\..\NUnit\NUnitTestUtils.cs" Link="NUnitTestUtils.cs" />
     <Compile Include="..\..\NUnit\NUnitTestUtils.Encodings.cs" Link="NUnitTestUtils.Encodings.cs" />
   </ItemGroup>
