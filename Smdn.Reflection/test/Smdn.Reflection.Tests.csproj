@@ -10,9 +10,6 @@
     <!-- for MonoDevelop test runner -->
     <OutputType>Library</OutputType>
   </PropertyGroup>
-  <PropertyGroup Condition="$(TargetFramework.StartsWith('net4'))">
-    <DefineConstants>$(DefineConstants);NET</DefineConstants>
-  </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="NUnit" Version="3.11.0" />
     <PackageReference Include="NUnitLite" Version="3.11.0" />

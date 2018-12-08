@@ -28,8 +28,4 @@
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageIconUrl>https://works/libs/Smdn.dll/Smdn-3.0_64x64.png</PackageIconUrl>
   </PropertyGroup>
-
-  <PropertyGroup Condition="$(TargetFramework.StartsWith('net4'))">
-    <DefineConstants>$(DefineConstants);NET</DefineConstants>
-  </PropertyGroup>
 </Project>
