@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFrameworks>net471;net46;netcoreapp2.0;netcoreapp1.1</TargetFrameworks>
+    <TargetFrameworks>net471;netcoreapp2.0</TargetFrameworks>
     <AssemblyName>Smdn.Reflection.Tests</AssemblyName>
     <RootNamespace>Smdn.Reflection</RootNamespace>
     <LangVersion>latest</LangVersion>
