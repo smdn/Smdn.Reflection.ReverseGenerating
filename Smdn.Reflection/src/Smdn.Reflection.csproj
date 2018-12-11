@@ -12,7 +12,7 @@
 
   <PropertyGroup Label="metadata">
     <Title>Smdn.Reflection.dll</Title>
-    <Description>Smdn reflection utility library</Description>
+    <Description>Reflection utility and extension library</Description>
     <Company>smdn:総武ソフトウェア推進所</Company>
     <Copyright>Copyright © 2018 smdn</Copyright>
 
