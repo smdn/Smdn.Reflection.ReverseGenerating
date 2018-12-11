@@ -1,5 +1,3 @@
-// Author:
-//       smdn <smdn@smdn.jp>
 // 
 // Copyright (c) 2018 smdn <smdn@smdn.jp>
 // 
