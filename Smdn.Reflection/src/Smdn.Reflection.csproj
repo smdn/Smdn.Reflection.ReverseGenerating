@@ -26,6 +26,6 @@
     <Owners>$(Authors)</Owners>
     <PackageProjectUrl>https://smdn.jp/</PackageProjectUrl>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <PackageIconUrl>https://works/libs/Smdn.dll/Smdn-3.0_64x64.png</PackageIconUrl>
+    <PackageIconUrl>https://smdn.jp/works/libs/Smdn.dll/Smdn-3.0_64x64.png</PackageIconUrl>
   </PropertyGroup>
 </Project>
