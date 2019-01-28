@@ -248,6 +248,7 @@ class ListApi {
       throw new ArgumentNullException(nameof(options));
 
     return t.GetExplicitBaseTypeAndInterfaces()
+            .Where(type => !(options.IgnorePrivateOrAssembly && (type.IsNotPublic || type.IsNestedAssembly || type.IsNestedFamily || type.IsNestedFamANDAssem || type.IsNestedPrivate)))
             .Select(type => {
               referencingNamespaces?.AddRange(CSharpFormatter.ToNamespaceList(type));
               return new {IsInterface = type.IsInterface, Name = type.FormatTypeName(typeWithNamespace: options.TypeDeclarationWithNamespace)};
@@ -612,7 +613,7 @@ class ListApi {
       }
 
       case PropertyInfo p: {
-        var explicitInterface = p.GetAccessors(true).Select(a => a.FindExplicitInterfaceMethod()?.DeclaringType).FirstOrDefault();
+        var explicitInterface = p.GetAccessors(true).Select(a => a.FindExplicitInterfaceMethod(findOnlyPublicInterfaces: options.IgnorePrivateOrAssembly)?.DeclaringType).FirstOrDefault();
 
         if (explicitInterface == null && options.IgnorePrivateOrAssembly && p.GetAccessors(true).All(a => a.IsPrivate || a.IsAssembly || a.IsFamilyAndAssembly))
           return null;
@@ -684,7 +685,7 @@ class ListApi {
       }
 
       case MethodBase m: {
-        var explicitInterfaceMethod = m.FindExplicitInterfaceMethod();
+        var explicitInterfaceMethod = m.FindExplicitInterfaceMethod(findOnlyPublicInterfaces: options.IgnorePrivateOrAssembly);
 
         if (explicitInterfaceMethod == null && (options.IgnorePrivateOrAssembly && (m.IsPrivate || m.IsAssembly || m.IsFamilyAndAssembly)))
           return null;
@@ -787,7 +788,7 @@ class ListApi {
       }
 
       case EventInfo ev: {
-        var explicitInterface = ev.GetMethods(true).Select(evm => evm.FindExplicitInterfaceMethod()?.DeclaringType).FirstOrDefault();
+        var explicitInterface = ev.GetMethods(true).Select(evm => evm.FindExplicitInterfaceMethod(findOnlyPublicInterfaces: options.IgnorePrivateOrAssembly)?.DeclaringType).FirstOrDefault();
 
         if (explicitInterface == null && options.IgnorePrivateOrAssembly && ev.GetMethods(true).All(m => m.IsPrivate || m.IsAssembly || m.IsFamilyAndAssembly))
           return null;
