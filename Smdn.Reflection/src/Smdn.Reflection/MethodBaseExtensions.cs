@@ -36,13 +36,16 @@ namespace Smdn.Reflection {
 
     public static bool IsExplicitlyImplemented(this MethodBase m)
     {
-      return FindExplicitInterfaceMethod(m) != null;
+      return FindExplicitInterfaceMethod(m, findOnlyPublicInterfaces: false) != null;
     }
 
-    public static MethodInfo FindExplicitInterfaceMethod(this MethodBase m)
+    public static MethodInfo FindExplicitInterfaceMethod(this MethodBase m, bool findOnlyPublicInterfaces = false)
     {
       if (m is MethodInfo im && im.IsFinal && im.IsPrivate) {
         foreach (var iface in im.DeclaringType.GetInterfaces()) {
+          if (findOnlyPublicInterfaces && !(iface.IsPublic || iface.IsNestedPublic || iface.IsNestedFamily || iface.IsNestedFamORAssem))
+            continue;
+
           var interfaceMap = im.DeclaringType.GetInterfaceMap(iface);
 
           for (var index = 0; index < interfaceMap.TargetMethods.Length; index++) {

@@ -50,5 +50,67 @@ namespace Smdn.Reflection {
 
       Assert.AreEqual(expected, method.IsExplicitlyImplemented());
     }
+
+    [TestCase(typeof(NS.C1), "NS.I1.M", "M")]
+    [TestCase(typeof(NS.C1), "NS.I2.M", null)]
+    [TestCase(typeof(NS.C1), "NS.C1.I3.M", "M")]
+    [TestCase(typeof(NS.C1), "NS.C1.I4.M", null)]
+    [TestCase(typeof(NS.C1), "NS.C1.I5.M", "M")]
+    [TestCase(typeof(NS.C1), "NS.C1.I6.M", "M")]
+    [TestCase(typeof(NS.C1), "NS.C1.I7.M", null)]
+    [TestCase(typeof(NS.C1), "NS.C1.I8.M", null)]
+    public void TestFindExplicitInterfaceMethod_PublicInterfaceOnly(Type type, string methodName, string expectedMethodName)
+    {
+      var method = type.GetMethod(methodName, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+      var explicitInterfaceMethod = method.FindExplicitInterfaceMethod(findOnlyPublicInterfaces: true);
+
+      Assert.AreEqual(expectedMethodName, explicitInterfaceMethod?.Name, methodName);
+    }
   }
 }
+
+namespace NS {
+  public interface I1 {
+    void M();
+  }
+
+  internal interface I2 {
+    void M();
+  }
+
+  public class C1 : I1, I2, C1.I3, C1.I4, C1.I5, C1.I6, C1.I7, C1.I8 {
+    void I1.M() => throw new NotImplementedException();
+    void I2.M() => throw new NotImplementedException();
+    void I3.M() => throw new NotImplementedException();
+    void I4.M() => throw new NotImplementedException();
+    void I5.M() => throw new NotImplementedException();
+    void I6.M() => throw new NotImplementedException();
+    void I7.M() => throw new NotImplementedException();
+    void I8.M() => throw new NotImplementedException();
+
+    public interface I3 {
+      void M();
+    }
+
+    internal interface I4 {
+      void M();
+    }
+
+    protected interface I5 {
+      void M();
+    }
+
+    internal protected interface I6 {
+      void M();
+    }
+
+    private protected interface I7 {
+      void M();
+    }
+
+    private interface I8 {
+      void M();
+    }
+  }
+}
+
