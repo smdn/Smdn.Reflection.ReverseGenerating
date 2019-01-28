@@ -187,7 +187,14 @@ public static class CSharpFormatter /* ITypeFormatter */ {
       var sb = new StringBuilder();
 
       if (t.IsConstructedGenericType && "System".Equals(t.Namespace, StringComparison.Ordinal) && t.GetGenericTypeName().Equals("ValueTuple", StringComparison.Ordinal)) {
-        var tupleItemNames = attributeProvider?.GetCustomAttributes(typeof(TupleElementNamesAttribute), inherit: false)?.Cast<TupleElementNamesAttribute>()?.FirstOrDefault()?.TransformNames.ToList();
+        IList<string> tupleItemNames = null;
+
+        try {
+          tupleItemNames = attributeProvider?.GetCustomAttributes(typeof(TupleElementNamesAttribute), inherit: false)?.Cast<TupleElementNamesAttribute>()?.FirstOrDefault()?.TransformNames.ToList();
+        }
+        catch (TypeLoadException) {
+          Console.Error.WriteLine("could not load TupleElementNamesAttribute");
+        }
 
         if (tupleItemNames != null) {
           for (var index = 0; index < tupleItemNames.Count; index++) {
