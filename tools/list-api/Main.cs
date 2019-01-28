@@ -566,7 +566,7 @@ class ListApi {
 
     switch (member) {
       case FieldInfo f: {
-        if (options.IgnorePrivateOrAssembly && (f.IsPrivate || f.IsAssembly))
+        if (options.IgnorePrivateOrAssembly && (f.IsPrivate || f.IsAssembly || f.IsFamilyAndAssembly))
           return null;
 
         if (member.DeclaringType.IsEnum) {
@@ -614,11 +614,11 @@ class ListApi {
       case PropertyInfo p: {
         var explicitInterface = p.GetAccessors(true).Select(a => a.FindExplicitInterfaceMethod()?.DeclaringType).FirstOrDefault();
 
-        if (explicitInterface == null && options.IgnorePrivateOrAssembly && p.GetAccessors(true).All(a => a.IsPrivate || a.IsAssembly))
+        if (explicitInterface == null && options.IgnorePrivateOrAssembly && p.GetAccessors(true).All(a => a.IsPrivate || a.IsAssembly || a.IsFamilyAndAssembly))
           return null;
 
-        var emitGetAccessor = p.GetMethod != null && !(explicitInterface == null && options.IgnorePrivateOrAssembly && (p.GetMethod.IsPrivate || p.GetMethod.IsAssembly));
-        var emitSetAccessor = p.SetMethod != null && !(explicitInterface == null && options.IgnorePrivateOrAssembly && (p.SetMethod.IsPrivate || p.SetMethod.IsAssembly));
+        var emitGetAccessor = p.GetMethod != null && !(explicitInterface == null && options.IgnorePrivateOrAssembly && (p.GetMethod.IsPrivate || p.GetMethod.IsAssembly || p.GetMethod.IsFamilyAndAssembly));
+        var emitSetAccessor = p.SetMethod != null && !(explicitInterface == null && options.IgnorePrivateOrAssembly && (p.SetMethod.IsPrivate || p.SetMethod.IsAssembly || p.SetMethod.IsFamilyAndAssembly));
 
         var indexParameters = p.GetIndexParameters();
 
@@ -686,7 +686,7 @@ class ListApi {
       case MethodBase m: {
         var explicitInterfaceMethod = m.FindExplicitInterfaceMethod();
 
-        if (explicitInterfaceMethod == null && (options.IgnorePrivateOrAssembly && (m.IsPrivate || m.IsAssembly)))
+        if (explicitInterfaceMethod == null && (options.IgnorePrivateOrAssembly && (m.IsPrivate || m.IsAssembly || m.IsFamilyAndAssembly)))
           return null;
 
         var method = m as MethodInfo;
@@ -789,7 +789,7 @@ class ListApi {
       case EventInfo ev: {
         var explicitInterface = ev.GetMethods(true).Select(evm => evm.FindExplicitInterfaceMethod()?.DeclaringType).FirstOrDefault();
 
-        if (explicitInterface == null && options.IgnorePrivateOrAssembly && ev.GetMethods(true).All(m => m.IsPrivate || m.IsAssembly))
+        if (explicitInterface == null && options.IgnorePrivateOrAssembly && ev.GetMethods(true).All(m => m.IsPrivate || m.IsAssembly || m.IsFamilyAndAssembly))
           return null;
 
         referencingNamespaces?.AddRange(CSharpFormatter.ToNamespaceList(ev.EventHandlerType));
