@@ -258,14 +258,15 @@ public static class CSharpFormatter /* ITypeFormatter */ {
                                               bool findConstantField = false)
   {
     if (val == null) {
-      if (typeOfValue.IsValueType)
+      if (Nullable.GetUnderlyingType(typeOfValue) != null)
+        return "null";
+      else if (typeOfValue.IsValueType)
         return $"default({FormatTypeName(typeOfValue, typeWithNamespace: typeWithNamespace)})";
       else
         return "null";
     }
 
-    if (val == null)
-      return "null";
+    typeOfValue = Nullable.GetUnderlyingType(typeOfValue) ?? typeOfValue;
 
     if (typeOfValue == typeof(string)) {
       return "\"" + EscapeString((string)val, escapeDoubleQuote: true) + "\"";

@@ -802,6 +802,18 @@ namespace TestCases {
           [Test("public const string F6 = \"\\\"\";")] public const string F6 = "\"";
         }
 
+        public class Nullables {
+          [Test("public static readonly int? F1 = 0;")] public static readonly int? F1 = 0;
+          [Test("public static readonly int? F2 = null;")] public static readonly int? F2 = null;
+          [Test("public static readonly int? F3 = null;")] public static readonly int? F3 = default(int?);
+          [Test("public static readonly int? F4 = int.MaxValue;")] public static readonly int? F4 = int.MaxValue;
+          [Test("public static readonly int? F5 = int.MinValue;")] public static readonly int? F5 = int.MinValue;
+
+          [Test("public static readonly System.DateTimeOffset? F6 = null;")] public static readonly DateTimeOffset? F6 = null;
+          [Test("public static readonly System.DateTimeOffset? F7 = System.DateTimeOffset.MinValue;")] public static readonly DateTimeOffset? F7 = DateTimeOffset.MinValue;
+          [Test("public static readonly System.DateTimeOffset? F8 = System.DateTimeOffset.MaxValue;")] public static readonly DateTimeOffset? F8 = DateTimeOffset.MaxValue;
+        }
+
         public class NonPrimitiveValueTypes {
           [Test("public static readonly System.Guid F1 = System.Guid.Empty;")] public static readonly Guid F1 = Guid.Empty;
           [Test("public static readonly System.Guid F2 = System.Guid.Empty;")] public static readonly Guid F2 = default(Guid);
@@ -1445,6 +1457,16 @@ namespace TestCases {
           [Test("public void M23(System.AttributeTargets x = default(System.AttributeTargets)) {}")] public void M23(AttributeTargets x = default(AttributeTargets)) {}
           [Test("public void M24(System.AttributeTargets x = (System.AttributeTargets)42) {}")] public void M24(AttributeTargets x = (System.AttributeTargets)42) {}
           [Test("public void M25(System.AttributeTargets x = (System.AttributeTargets)3) {}")] public void M25(AttributeTargets x = AttributeTargets.Assembly | AttributeTargets.Module) {}
+        }
+
+        public class Nullables {
+          [Test("public void M1(int? x = 0) {}")] public void M1(int? x = 0) {}
+          [Test("public void M2(int? x = null) {}")] public void M2(int? x = null) {}
+          [Test("public void M3(int? x = null) {}")] public void M3(int? x = default(int?)) {}
+          [Test("public void M4(int? x = int.MaxValue) {}")] public void M4(int? x = int.MaxValue) {}
+          [Test("public void M5(int? x = int.MinValue) {}")] public void M5(int? x = int.MinValue) {}
+
+          [Test("public void M6(System.Guid? x = null) {}")] public void M6(Guid? x = null) {}
         }
 
         public class ValueTypes {

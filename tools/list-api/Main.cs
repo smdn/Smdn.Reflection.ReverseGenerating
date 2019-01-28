@@ -595,9 +595,9 @@ class ListApi {
           if (f.IsStatic && (f.IsLiteral || f.IsInitOnly) && !f.FieldType.ContainsGenericParameters) {
             var val = f.GetValue(null);
             var valueDeclaration = CSharpFormatter.FormatValueDeclaration(val,
-                                                                              f.FieldType,
-                                                                              typeWithNamespace: options.MemberDeclarationWithNamespace,
-                                                                              findConstantField: (f.FieldType != f.DeclaringType));
+                                                                          f.FieldType,
+                                                                          typeWithNamespace: options.MemberDeclarationWithNamespace,
+                                                                          findConstantField: (f.FieldType != f.DeclaringType));
 
             if (valueDeclaration == null)
               sb.Append($"; // = \"{CSharpFormatter.EscapeString((val ?? "null").ToString(), escapeDoubleQuote: true)}\"");
