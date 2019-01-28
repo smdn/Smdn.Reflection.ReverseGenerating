@@ -77,12 +77,12 @@ public static class CSharpFormatter /* ITypeFormatter */ {
     return t.GetNamespaces(type => IsLanguagePrimitiveType(type, out _));
   }
 
-  public static string FormatParameterList(MethodBase m, bool typeWithNamespace = true)
+  public static string FormatParameterList(MethodBase m, bool typeWithNamespace = true, bool useDefaultLiteral = false)
   {
-    return FormatParameterList(m.GetParameters(), typeWithNamespace);
+    return FormatParameterList(m.GetParameters(), typeWithNamespace, useDefaultLiteral);
   }
 
-  public static string FormatParameterList(ParameterInfo[] parameterList, bool typeWithNamespace = true)
+  public static string FormatParameterList(ParameterInfo[] parameterList, bool typeWithNamespace = true, bool useDefaultLiteral = false)
   {
     return string.Join(", ", parameterList.Select(ToString));
 
@@ -126,7 +126,8 @@ public static class CSharpFormatter /* ITypeFormatter */ {
         var defaultValueDeclaration = FormatValueDeclaration(p.DefaultValue,
                                                              p.ParameterType,
                                                              typeWithNamespace: typeWithNamespace,
-                                                             findConstantField: true);
+                                                             findConstantField: true,
+                                                             useDefaultLiteral: useDefaultLiteral);
 
         ret.Append(" = ");
         ret.Append(defaultValueDeclaration);
@@ -255,15 +256,22 @@ public static class CSharpFormatter /* ITypeFormatter */ {
   public static string FormatValueDeclaration(object val,
                                               Type typeOfValue,
                                               bool typeWithNamespace = true,
-                                              bool findConstantField = false)
+                                              bool findConstantField = false,
+                                              bool useDefaultLiteral = false)
   {
     if (val == null) {
-      if (Nullable.GetUnderlyingType(typeOfValue) != null)
+      if (Nullable.GetUnderlyingType(typeOfValue) != null) {
         return "null";
-      else if (typeOfValue.IsValueType)
-        return $"default({FormatTypeName(typeOfValue, typeWithNamespace: typeWithNamespace)})";
-      else
+      }
+      else if (typeOfValue.IsValueType) {
+        if (useDefaultLiteral)
+          return "default";
+        else
+          return $"default({FormatTypeName(typeOfValue, typeWithNamespace: typeWithNamespace)})";
+      }
+      else {
         return "null";
+      }
     }
 
     typeOfValue = Nullable.GetUnderlyingType(typeOfValue) ?? typeOfValue;
@@ -288,8 +296,12 @@ public static class CSharpFormatter /* ITypeFormatter */ {
             return FormatTypeName(typeOfValue, typeWithNamespace: typeWithNamespace) + "." + f.Name;
         }
 
-        if (!typeOfValue.IsPrimitive && val.Equals(Activator.CreateInstance(typeOfValue)))
-          return $"default({FormatTypeName(typeOfValue, typeWithNamespace: typeWithNamespace)})";
+        if (!typeOfValue.IsPrimitive && val.Equals(Activator.CreateInstance(typeOfValue))) {
+          if (useDefaultLiteral)
+            return "default";
+          else
+            return $"default({FormatTypeName(typeOfValue, typeWithNamespace: typeWithNamespace)})";
+        }
       }
 
       if (typeOfValue.IsEnum)

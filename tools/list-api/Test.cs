@@ -71,6 +71,7 @@ public class Test {
       MemberDeclarationEmitNewLine = false,
       TypeDeclarationWithNamespace = true,
       MemberDeclarationWithNamespace = true,
+      MemberDeclarationUseDefaultLiteral = false,
     };
 
     foreach (var type in types.Where(t => t.FullName.StartsWith("TestCases", StringComparison.Ordinal))) {
@@ -143,6 +144,7 @@ public class Test {
     var opts = options.Clone();
 
     opts.MemberDeclarationWithNamespace = test.WithNamespace;
+    opts.MemberDeclarationUseDefaultLiteral = test.UseDefaultLiteral;
 
     EvaluateTest(result,
                  member.ToString(),
@@ -185,6 +187,7 @@ public class Test {
 
     opts.TypeDeclarationWithNamespace = testOfTypeOrMember.WithNamespace;
     opts.MemberDeclarationWithNamespace = testOfTypeOrMember.WithNamespace;
+    opts.MemberDeclarationUseDefaultLiteral = testOfTypeOrMember.UseDefaultLiteral;
 
     string GenerateNamespaceList()
     {

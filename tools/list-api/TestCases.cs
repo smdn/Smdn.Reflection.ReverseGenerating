@@ -54,6 +54,7 @@ namespace TestCases {
     public string Expected { get; private set; }
 
     public bool WithNamespace { get; set; } = true;
+    public bool UseDefaultLiteral { get; set; } = false;
 
     public TestAttribute()
       : this(null)
@@ -774,6 +775,7 @@ namespace TestCases {
         public class EnumFlags {
           [Test("public const System.AttributeTargets F1 = System.AttributeTargets.All;")] public const AttributeTargets F1 = AttributeTargets.All;
           [Test("public const System.AttributeTargets F2 = default(System.AttributeTargets);")] public const AttributeTargets F2 = default(AttributeTargets);
+          [Test("public const System.AttributeTargets F22 = default;", UseDefaultLiteral = true)] public const AttributeTargets F22 = default(AttributeTargets);
           [Test("public const System.AttributeTargets F3 = System.AttributeTargets.Assembly;")] public const AttributeTargets F3 = AttributeTargets.Assembly;
           [Test("public const System.AttributeTargets F4 = (System.AttributeTargets)3;")] public const AttributeTargets F4 = AttributeTargets.Assembly | AttributeTargets.Module;
           [Test("public const System.AttributeTargets F5 = (System.AttributeTargets)42;")] public const AttributeTargets F5 =(AttributeTargets)42;
@@ -826,6 +828,7 @@ namespace TestCases {
           // XXX: System.Threading.CancellationToken.None is a property
           [Test("public static readonly System.Threading.CancellationToken F7 = default(System.Threading.CancellationToken);")] public static readonly CancellationToken F7 = CancellationToken.None;
           [Test("public static readonly System.Threading.CancellationToken F8 = default(System.Threading.CancellationToken);")] public static readonly CancellationToken F8 = default(CancellationToken);
+          [Test("public static readonly System.Threading.CancellationToken F9 = default;", UseDefaultLiteral = true)] public static readonly CancellationToken F9 = default(CancellationToken);
         }
 
         namespace NonPrimitiveValueTypes_FieldOfDeclaringType {
@@ -1455,6 +1458,7 @@ namespace TestCases {
           [Test("public void M21(System.AttributeTargets x = System.AttributeTargets.All) {}")] public void M21(AttributeTargets x = AttributeTargets.All) {}
           [Test("public void M22(System.AttributeTargets x = System.AttributeTargets.Assembly) {}")] public void M22(AttributeTargets x = AttributeTargets.Assembly) {}
           [Test("public void M23(System.AttributeTargets x = default(System.AttributeTargets)) {}")] public void M23(AttributeTargets x = default(AttributeTargets)) {}
+          [Test("public void M231(System.AttributeTargets x = default) {}", UseDefaultLiteral = true)] public void M231(AttributeTargets x = default(AttributeTargets)) {}
           [Test("public void M24(System.AttributeTargets x = (System.AttributeTargets)42) {}")] public void M24(AttributeTargets x = (System.AttributeTargets)42) {}
           [Test("public void M25(System.AttributeTargets x = (System.AttributeTargets)3) {}")] public void M25(AttributeTargets x = AttributeTargets.Assembly | AttributeTargets.Module) {}
         }
@@ -1478,6 +1482,9 @@ namespace TestCases {
 
           [Test("public void M3(System.Threading.CancellationToken x = default(System.Threading.CancellationToken)) {}")]
           public void M3(CancellationToken x = default(CancellationToken)) {}
+
+          [Test("public void M4(System.Threading.CancellationToken x = default) {}", UseDefaultLiteral = true)]
+          public void M4(CancellationToken x = default(CancellationToken)) {}
         }
       }
     }

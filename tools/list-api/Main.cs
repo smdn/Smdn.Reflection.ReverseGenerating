@@ -20,6 +20,7 @@ class Options {
 
   public bool MemberDeclarationEmitNewLine = true;
   public bool MemberDeclarationWithNamespace = false;
+  public bool MemberDeclarationUseDefaultLiteral = true;
 
   public Options Clone()
   {
@@ -282,7 +283,7 @@ class ListApi {
 
       var genericArgumentConstraintDeclaration = genericArgumentConstraints.Count == 0 ? string.Empty : " " + string.Join(" ", genericArgumentConstraints);
 
-      yield return $"{accessibilities} delegate {signatureInfo.ReturnType.FormatTypeName(attributeProvider: signatureInfo.ReturnTypeCustomAttributes, typeWithNamespace: options.TypeDeclarationWithNamespace)} {typeName}({CSharpFormatter.FormatParameterList(signatureInfo)}){genericArgumentConstraintDeclaration};";
+      yield return $"{accessibilities} delegate {signatureInfo.ReturnType.FormatTypeName(attributeProvider: signatureInfo.ReturnTypeCustomAttributes, typeWithNamespace: options.TypeDeclarationWithNamespace)} {typeName}({CSharpFormatter.FormatParameterList(signatureInfo, useDefaultLiteral: options.MemberDeclarationUseDefaultLiteral)}){genericArgumentConstraintDeclaration};";
       yield break;
     }
 
@@ -597,7 +598,8 @@ class ListApi {
             var valueDeclaration = CSharpFormatter.FormatValueDeclaration(val,
                                                                           f.FieldType,
                                                                           typeWithNamespace: options.MemberDeclarationWithNamespace,
-                                                                          findConstantField: (f.FieldType != f.DeclaringType));
+                                                                          findConstantField: (f.FieldType != f.DeclaringType),
+                                                                          useDefaultLiteral: options.MemberDeclarationUseDefaultLiteral);
 
             if (valueDeclaration == null)
               sb.Append($"; // = \"{CSharpFormatter.EscapeString((val ?? "null").ToString(), escapeDoubleQuote: true)}\"");
@@ -644,7 +646,7 @@ class ListApi {
           sb.Append(explicitInterface.FormatTypeName(attributeProvider: p, typeWithNamespace: options.MemberDeclarationWithNamespace)).Append(".").Append(propertyName);
 
         if (0 < indexParameters.Length)
-          sb.Append($"[{CSharpFormatter.FormatParameterList(indexParameters, typeWithNamespace: options.MemberDeclarationWithNamespace)}] ");
+          sb.Append($"[{CSharpFormatter.FormatParameterList(indexParameters, typeWithNamespace: options.MemberDeclarationWithNamespace, useDefaultLiteral: options.MemberDeclarationUseDefaultLiteral)}] ");
         else
           sb.Append(" ");
 
@@ -696,7 +698,7 @@ class ListApi {
         var methodReturnType = isByRefReturnType ? "ref " + method.ReturnType.GetElementType().FormatTypeName(attributeProvider: method.ReturnTypeCustomAttributes, typeWithNamespace: options.MemberDeclarationWithNamespace) : method?.ReturnType?.FormatTypeName(attributeProvider: method?.ReturnTypeCustomAttributes, typeWithNamespace: options.MemberDeclarationWithNamespace);
         var methodName = m.Name;
         var methodGenericParameters = m.IsGenericMethod ? string.Concat("<", string.Join(", ", m.GetGenericArguments().Select(t => t.FormatTypeName(typeWithNamespace: options.MemberDeclarationWithNamespace))), ">") : null;
-        var methodParameterList = CSharpFormatter.FormatParameterList(m, typeWithNamespace: options.MemberDeclarationWithNamespace);
+        var methodParameterList = CSharpFormatter.FormatParameterList(m, typeWithNamespace: options.MemberDeclarationWithNamespace, useDefaultLiteral: options.MemberDeclarationUseDefaultLiteral);
         var methodConstraints = method == null ? null : string.Join(" ", method.GetGenericArguments().Select(arg => GenerateGenericArgumentConstraintDeclaration(arg, referencingNamespaces, typeWithNamespace: options.MemberDeclarationWithNamespace)).Where(d => d != null));
         var methodBody = m.IsAbstract ? ";" : options.GenerateEmptyImplementation ? " => throw new NotImplementedException();" : " {}";
 
@@ -923,7 +925,8 @@ class ListApi {
       return CSharpFormatter.FormatValueDeclaration(@value,
                                                     @value?.GetType(),
                                                     typeWithNamespace: options.MemberDeclarationWithNamespace,
-                                                    findConstantField: true);
+                                                    findConstantField: true,
+                                                    useDefaultLiteral: options.MemberDeclarationUseDefaultLiteral);
     }
   }
 
