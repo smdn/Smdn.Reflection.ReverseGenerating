@@ -1265,6 +1265,12 @@ namespace TestCases {
         object ICloneable.Clone() => throw new NotImplementedException();
       }
 
+      class ExplicitMethodGenericInterface : IEnumerable<int> {
+        [Test("System.Collections.Generic.IEnumerator<int> System.Collections.Generic.IEnumerable<int>.GetEnumerator() {}")]
+        IEnumerator<int> System.Collections.Generic.IEnumerable<int>.GetEnumerator() => throw new NotImplementedException();
+        System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator() => throw new NotImplementedException();
+      }
+
       interface IProperty {
         int P1 { get; set; }
         int P2 { get; }
@@ -1319,6 +1325,14 @@ namespace TestCases {
 
         [Test("bool System.IAsyncResult.IsCompleted { get; }")]
         bool IAsyncResult.IsCompleted { get => throw new NotImplementedException(); }
+      }
+
+      class ExplicitPropertyGenericInterface : IReadOnlyCollection<string> {
+        [Test("int System.Collections.Generic.IReadOnlyCollection<string>.Count { get; }")]
+        int IReadOnlyCollection<string>.Count { get => throw new NotImplementedException(); }
+
+        public IEnumerator<string> GetEnumerator() => throw new NotImplementedException();
+        System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator() => throw new NotImplementedException();
       }
 
       class ExplicitProperty2WithoutNamespace : IAsyncResult {

@@ -632,7 +632,7 @@ class ListApi {
 
         sb.Append($"{p.PropertyType.FormatTypeName(attributeProvider: p, typeWithNamespace: options.MemberDeclarationWithNamespace)} ");
 
-        var propertyName = explicitInterface == null ? p.Name : p.Name.Substring(explicitInterface.FullName.Length + 1);
+        var propertyName = explicitInterface == null ? p.Name : p.Name.Substring(p.Name.LastIndexOf('.') + 1);
 
         if (0 < indexParameters.Length &&
             string.Equals(p.Name, p.DeclaringType.GetCustomAttribute<DefaultMemberAttribute>()?.MemberName, StringComparison.Ordinal))
