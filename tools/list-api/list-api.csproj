@@ -10,4 +10,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\Smdn.Reflection\src\Smdn.Reflection.csproj" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Smdn.Reflection.ReverseGenerating\src\Smdn.Reflection.ReverseGenerating.csproj" />
+  </ItemGroup>
 </Project>
