@@ -11,6 +11,14 @@ using System.Text;
 using Smdn.Reflection;
 using Smdn.Reflection.ReverseGenerating;
 
+static class ISetExtensions {
+  public static void AddRange<T>(this ISet<T> s, IEnumerable<T> sequence)
+  {
+    foreach (var e in sequence)
+      s.Add(e);
+  }
+}
+
 class Options : GeneratorOptions {
   public string Indent = new string(' ', 2);
 
