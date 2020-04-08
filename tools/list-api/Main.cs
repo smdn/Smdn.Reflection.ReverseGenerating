@@ -216,7 +216,7 @@ class ListApi {
          .AppendLine(attr);
     }
 
-    var typeDeclarationLines = Generator.GenerateTypeDeclaration(t, referencingNamespaces, options).ToList();
+    var typeDeclarationLines = Generator.GenerateTypeDeclarationWithExplicitBaseTypeAndInterfaces(t, referencingNamespaces, options).ToList();
 
     for (var index = 0; index < typeDeclarationLines.Count; index++) {
       if (0 < index)

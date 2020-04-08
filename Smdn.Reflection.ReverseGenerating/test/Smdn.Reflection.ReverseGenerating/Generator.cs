@@ -240,7 +240,7 @@ namespace Smdn.Reflection.ReverseGenerating {
 
       Assert.AreEqual(
         attr.Expected,
-        Generator.GenerateTypeDeclaration(type, null, options).First(),
+        Generator.GenerateTypeDeclaration(type, null, options),
         message: $"{attr.SourceLocation} ({type.FullName})"
       );
     }

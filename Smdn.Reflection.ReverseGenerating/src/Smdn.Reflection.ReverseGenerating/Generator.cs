@@ -9,24 +9,55 @@ using System.Runtime.Versioning;
 
 namespace Smdn.Reflection.ReverseGenerating {
   public static class Generator {
-    public static IEnumerable<string> GenerateTypeDeclaration(Type t, ISet<string> referencingNamespaces, GeneratorOptions options)
-    {
-      if (options == null)
-        throw new ArgumentNullException(nameof(options));
+    public static string GenerateTypeDeclaration(
+      Type t,
+      ISet<string> referencingNamespaces,
+      GeneratorOptions options
+    ) =>
+      GenerateTypeDeclaration(
+        t,
+        false,
+        referencingNamespaces,
+        options ?? throw new ArgumentNullException(nameof(options))
+      ).First();
 
+    public static IEnumerable<string> GenerateTypeDeclarationWithExplicitBaseTypeAndInterfaces(
+      Type t,
+      ISet<string> referencingNamespaces,
+      GeneratorOptions options
+    ) =>
+      GenerateTypeDeclaration(
+        t,
+        true,
+        referencingNamespaces,
+        options ?? throw new ArgumentNullException(nameof(options))
+      );
+
+    private static IEnumerable<string> GenerateTypeDeclaration(
+      Type t,
+      bool generateExplicitBaseTypeAndInterfaces,
+      ISet<string> referencingNamespaces,
+      GeneratorOptions options
+    )
+    {
       var accessibilities = CSharpFormatter.FormatAccessibility(t.GetAccessibility());
       var typeName = t.FormatTypeName(typeWithNamespace: false, withDeclaringTypeName: false);
 
-      var genericArgumentConstraints = t.GetGenericArguments()
-                                      .Select(arg => GenerateGenericArgumentConstraintDeclaration(arg, referencingNamespaces, typeWithNamespace: options.TypeDeclarationWithNamespace))
-                                      .Where(d => d != null)
-                                      .ToList();
+      var genericArgumentConstraints = t
+        .GetGenericArguments()
+        .Select(arg => GenerateGenericArgumentConstraintDeclaration(arg, referencingNamespaces, typeWithNamespace: options.TypeDeclarationWithNamespace))
+        .Where(d => d != null)
+        .ToList();
+
+      string GetSingleLineGenericArgumentConstraintsDeclaration()
+        => genericArgumentConstraints.Count == 0 ? string.Empty : " " + string.Join(" ", genericArgumentConstraints);
 
       if (t.IsEnum) {
         yield return $"{accessibilities} enum {typeName} : {t.GetEnumUnderlyingType().FormatTypeName()}";
         yield break;
       }
-      else if (t.IsDelegate()) {
+
+      if (t.IsDelegate()) {
         var signatureInfo = t.GetDelegateSignatureMethod();
 
         referencingNamespaces?.AddRange(signatureInfo.GetSignatureTypes().Where(mpt => !mpt.ContainsGenericParameters).SelectMany(CSharpFormatter.ToNamespaceList));
@@ -61,11 +92,16 @@ namespace Smdn.Reflection.ReverseGenerating {
         typeDeclaration = $"{accessibilities}{modifier} class {typeName}";
       }
 
+      if (!generateExplicitBaseTypeAndInterfaces) {
+        yield return typeDeclaration + GetSingleLineGenericArgumentConstraintsDeclaration();
+        yield break;
+      }
+
       var baseTypeList = GetExplicitBaseTypeAndInterfacesAsString(t, referencingNamespaces, options).ToList();
 
       if (baseTypeList.Count <= 1) {
         var baseTypeDeclaration = baseTypeList.Count == 0 ? string.Empty : " : " + baseTypeList[0];
-        var genericArgumentConstraintDeclaration = genericArgumentConstraints.Count == 0 ? string.Empty : " " + string.Join(" ", genericArgumentConstraints);
+        var genericArgumentConstraintDeclaration = GetSingleLineGenericArgumentConstraintsDeclaration();
 
         yield return typeDeclaration + baseTypeDeclaration + genericArgumentConstraintDeclaration;
       }

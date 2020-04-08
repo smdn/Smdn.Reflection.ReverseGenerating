@@ -122,7 +122,7 @@ public class Test {
     EvaluateTest(result,
                  type.ToString(),
                  test.Expected,
-                 () => string.Join("\n", Generator.GenerateTypeDeclaration(type, null, opts)));
+                 () => string.Join("\n", Generator.GenerateTypeDeclarationWithExplicitBaseTypeAndInterfaces(type, null, opts)));
   }
 
   static void EvaluateMemberTest(TestResult result, Options options, TestCases.TestAttribute test, MemberInfo member)
