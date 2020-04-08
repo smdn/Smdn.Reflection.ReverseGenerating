@@ -74,7 +74,7 @@ namespace Smdn.Reflection.ReverseGenerating {
 
   partial class GeneratorTests {
     [Test]
-    public void TestGenerateGenericArgumentConstraintDeclaration_Type()
+    public void TestGenerateGenericArgumentConstraintDeclaration_OfType()
     {
       foreach (var type in FindTypes(t => t.FullName.Contains(".TestCases.TypeGenericArgumentConstraints."))) {
         var attr = type.GetCustomAttribute<TypeGenericArgumentConstraintTestCaseAttribute>();
