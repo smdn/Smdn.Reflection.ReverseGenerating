@@ -20,8 +20,6 @@ static class ISetExtensions {
 }
 
 class Options : GeneratorOptions {
-  public string Indent = new string(' ', 2);
-
   public bool GenerateEmptyImplementation = false;
   public bool MemberDeclarationEmitNewLine = true;
 
