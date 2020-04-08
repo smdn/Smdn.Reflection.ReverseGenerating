@@ -20,10 +20,6 @@ public class Test {
 
     RunTestGenerateDeclarations(result);
 
-    Console.WriteLine("******** type name conversions ********");
-
-    RunTestTypeNameConversion(result);
-
     Console.WriteLine("******** test result ********");
 
     var initialConsoleColor = Console.ForegroundColor;
@@ -49,17 +45,6 @@ public class Test {
     }
 
     Console.WriteLine("done");
-  }
-
-  static void RunTestTypeNameConversion(TestResult result)
-  {
-    foreach (var testCase in global::TestCases.TypeNameConversion.GenerateTestCases()) {
-      var type = testCase.Item1;
-      var expectedResult = testCase.Item2;
-      var typeWithNamespace = testCase.Item3;
-
-      EvaluateTest(result, type.ToString(), expectedResult, () => type.FormatTypeName(typeWithNamespace: typeWithNamespace));
-    }
   }
 
   static void RunTestGenerateDeclarations(TestResult result)

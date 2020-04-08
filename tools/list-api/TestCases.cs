@@ -5,51 +5,6 @@ using System.Threading;
 
 #pragma warning disable 0169, 0649, 0067
 namespace TestCases {
-  class TypeNameConversion {
-    private static Tuple<Type, string, bool> TestCase(Type type, string expectedResult, bool fullName = true)
-    {
-      return Tuple.Create(type, expectedResult, fullName);
-    }
-
-    public static IEnumerable<Tuple<Type, string, bool>> GenerateTestCases()
-    {
-      yield return TestCase(typeof(int), "int");
-      yield return TestCase(typeof(int[]), "int[]");
-      yield return TestCase(typeof(int[,]), "int[,]");
-      yield return TestCase(typeof(int[][]), "int[][]");
-      yield return TestCase(typeof(int?), "int?");
-      yield return TestCase(typeof(int).MakePointerType(), "int*");
-      yield return TestCase(typeof(int).MakeByRefType(), "int&");
-
-      yield return TestCase(typeof(System.Guid), "Guid", fullName: false);
-      yield return TestCase(typeof(System.Guid?), "Guid?", fullName: false);
-      yield return TestCase(typeof(System.Guid), "System.Guid", fullName: true);
-      yield return TestCase(typeof(System.Guid?), "System.Guid?", fullName: true);
-
-      yield return TestCase(typeof(Tuple<>), "Tuple<T1>", fullName: false);
-      yield return TestCase(typeof(Tuple<int>), "Tuple<int>", fullName: false);
-      yield return TestCase(typeof(Tuple<int[]>), "Tuple<int[]>", fullName: false);
-      yield return TestCase(typeof(Tuple<int?>), "Tuple<int?>", fullName: false);
-
-      yield return TestCase(typeof(Tuple<,>), "Tuple<T1, T2>", fullName: false);
-      yield return TestCase(typeof(Tuple<int, int>), "Tuple<int, int>", fullName: false);
-
-      yield return TestCase(typeof((int, int)), "(int, int)");
-      yield return TestCase(typeof((int x, int y)), "(int, int)");
-      yield return TestCase(typeof((int, (int, int))), "(int, (int, int))");
-
-      yield return TestCase(typeof(KeyValuePair<,>), "KeyValuePair<TKey, TValue>", fullName: false);
-      yield return TestCase(typeof(KeyValuePair<string, int>), "KeyValuePair<string, int>", fullName: false);
-
-      yield return TestCase(typeof(Tuple<Tuple<int>>), "Tuple<Tuple<int>>", fullName: false);
-      yield return TestCase(typeof(Tuple<Tuple<int>, Tuple<int>>), "Tuple<Tuple<int>, Tuple<int>>", fullName: false);
-
-      yield return TestCase(typeof(Converter<,>), "Converter<in TInput, out TOutput>", fullName: false);
-      yield return TestCase(typeof(Converter<int, string>), "Converter<int, string>", fullName: false);
-      yield return TestCase(typeof(Tuple<Converter<int, string>>), "Tuple<Converter<int, string>>", fullName: false);
-    }
-  }
-
   class TestAttribute : Attribute {
     public string Expected { get; private set; }
 

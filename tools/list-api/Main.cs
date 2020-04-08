@@ -9,6 +9,7 @@ using System.Runtime.Versioning;
 using System.Text;
 
 using Smdn.Reflection;
+using Smdn.Reflection.ReverseGenerating;
 
 class Options {
   public string Indent = new string(' ', 2);

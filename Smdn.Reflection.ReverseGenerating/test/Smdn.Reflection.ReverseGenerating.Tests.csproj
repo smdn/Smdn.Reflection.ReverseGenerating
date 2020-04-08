@@ -26,4 +26,7 @@
     <Compile Include="..\..\NUnit\NUnitTestUtils.cs" Link="NUnitTestUtils.cs" />
     <Compile Include="..\..\NUnit\NUnitTestUtils.Encodings.cs" Link="NUnitTestUtils.Encodings.cs" />
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Smdn.Reflection.ReverseGenerating\" />
+  </ItemGroup>
 </Project>
