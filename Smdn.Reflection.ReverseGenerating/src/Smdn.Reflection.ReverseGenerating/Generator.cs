@@ -97,7 +97,7 @@ namespace Smdn.Reflection.ReverseGenerating {
         yield break;
       }
 
-      var baseTypeList = GetExplicitBaseTypeAndInterfacesAsString(t, referencingNamespaces, options).ToList();
+      var baseTypeList = GenerateExplicitBaseTypeAndInterfaces(t, referencingNamespaces, options).ToList();
 
       if (baseTypeList.Count <= 1) {
         var baseTypeDeclaration = baseTypeList.Count == 0 ? string.Empty : " : " + baseTypeList[0];
@@ -165,7 +165,7 @@ namespace Smdn.Reflection.ReverseGenerating {
         return null;
     }
 
-    public static IEnumerable<string> GetExplicitBaseTypeAndInterfacesAsString(Type t, ISet<string> referencingNamespaces, GeneratorOptions options)
+    public static IEnumerable<string> GenerateExplicitBaseTypeAndInterfaces(Type t, ISet<string> referencingNamespaces, GeneratorOptions options)
     {
       if (options == null)
         throw new ArgumentNullException(nameof(options));

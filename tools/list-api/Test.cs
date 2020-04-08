@@ -147,7 +147,7 @@ public class Test {
     EvaluateTest(result,
                  "base types of " + type.ToString(),
                  testOfBaseType.Expected,
-                 () => string.Join(", ", Generator.GetExplicitBaseTypeAndInterfacesAsString(type, null, opts)));
+                 () => string.Join(", ", Generator.GenerateExplicitBaseTypeAndInterfaces(type, null, opts)));
   }
 
   static void EvaluateAttributeTest(TestResult result, Options options, TestCases.TestAttribute testOfType, ICustomAttributeProvider attributeProvider)
