@@ -11,17 +11,11 @@ using System.Text;
 using Smdn.Reflection;
 using Smdn.Reflection.ReverseGenerating;
 
-class Options {
+class Options : GeneratorOptions {
   public string Indent = new string(' ', 2);
 
-  public bool IgnorePrivateOrAssembly = true;
   public bool GenerateEmptyImplementation = false;
-
-  public bool TypeDeclarationWithNamespace = false;
-
   public bool MemberDeclarationEmitNewLine = true;
-  public bool MemberDeclarationWithNamespace = false;
-  public bool MemberDeclarationUseDefaultLiteral = true;
 
   public Options Clone()
   {
@@ -211,12 +205,12 @@ class ListApi {
     var indent = string.Concat(Enumerable.Repeat(options.Indent, nestLevel));
 
     // TODO: AttributeTargets.GenericParameter
-    foreach (var attr in GenerateAttributeList(t, null, options)) {
+    foreach (var attr in Generator.GenerateAttributeList(t, null, options)) {
       ret.Append(indent)
          .AppendLine(attr);
     }
 
-    var typeDeclarationLines = GenerateTypeDeclaration(t, referencingNamespaces, options).ToList();
+    var typeDeclarationLines = Generator.GenerateTypeDeclaration(t, referencingNamespaces, options).ToList();
 
     for (var index = 0; index < typeDeclarationLines.Count; index++) {
       if (0 < index)
@@ -244,139 +238,7 @@ class ListApi {
     return ret.ToString();
   }
 
-  internal static IEnumerable<string> GetExplicitBaseTypeAndInterfacesAsString(Type t, ISet<string> referencingNamespaces, Options options)
-  {
-    if (options == null)
-      throw new ArgumentNullException(nameof(options));
-
-    return t.GetExplicitBaseTypeAndInterfaces()
-            .Where(type => !(options.IgnorePrivateOrAssembly && (type.IsNotPublic || type.IsNestedAssembly || type.IsNestedFamily || type.IsNestedFamANDAssem || type.IsNestedPrivate)))
-            .Select(type => {
-              referencingNamespaces?.AddRange(CSharpFormatter.ToNamespaceList(type));
-              return new {IsInterface = type.IsInterface, Name = type.FormatTypeName(typeWithNamespace: options.TypeDeclarationWithNamespace)};
-            })
-            .OrderBy(type => type.IsInterface)
-            .ThenBy(type => type.Name, StringComparer.Ordinal)
-            .Select(type => type.Name);
-  }
-
-  internal static IEnumerable<string> GenerateTypeDeclaration(Type t, ISet<string> referencingNamespaces, Options options)
-  {
-    if (options == null)
-      throw new ArgumentNullException(nameof(options));
-
-    var accessibilities = CSharpFormatter.FormatAccessibility(t.GetAccessibility());
-    var typeName = t.FormatTypeName(typeWithNamespace: false, withDeclaringTypeName: false);
-
-    var genericArgumentConstraints = t.GetGenericArguments()
-                                      .Select(arg => GenerateGenericArgumentConstraintDeclaration(arg, referencingNamespaces, typeWithNamespace: options.TypeDeclarationWithNamespace))
-                                      .Where(d => d != null)
-                                      .ToList();
-
-    if (t.IsEnum) {
-      yield return $"{accessibilities} enum {typeName} : {t.GetEnumUnderlyingType().FormatTypeName()}";
-      yield break;
-    }
-    else if (t.IsDelegate()) {
-      var signatureInfo = t.GetDelegateSignatureMethod();
-
-      referencingNamespaces?.AddRange(signatureInfo.GetSignatureTypes().Where(mpt => !mpt.ContainsGenericParameters).SelectMany(CSharpFormatter.ToNamespaceList));
-
-      var genericArgumentConstraintDeclaration = genericArgumentConstraints.Count == 0 ? string.Empty : " " + string.Join(" ", genericArgumentConstraints);
-
-      yield return $"{accessibilities} delegate {signatureInfo.ReturnType.FormatTypeName(attributeProvider: signatureInfo.ReturnTypeCustomAttributes, typeWithNamespace: options.TypeDeclarationWithNamespace)} {typeName}({CSharpFormatter.FormatParameterList(signatureInfo, typeWithNamespace: options.TypeDeclarationWithNamespace, useDefaultLiteral: options.MemberDeclarationUseDefaultLiteral)}){genericArgumentConstraintDeclaration};";
-      yield break;
-    }
-
-    string typeDeclaration = null;
-
-    if (t.IsInterface) {
-      typeDeclaration = $"{accessibilities} interface {typeName}";
-    }
-    else if (t.IsValueType) {
-      var isReadOnly = t.IsReadOnlyValueType() ? " readonly" : string.Empty;
-      var isByRefLike = t.IsByRefLikeValueType() ? " ref" : string.Empty;
-
-      typeDeclaration = $"{accessibilities}{isReadOnly}{isByRefLike} struct {typeName}";
-    }
-    else {
-      string modifier = null;
-
-      if (t.IsAbstract && t.IsSealed)
-        modifier = " static";
-      else if (t.IsAbstract)
-        modifier = " abstract";
-      else if (t.IsSealed)
-        modifier = " sealed";
-
-      typeDeclaration = $"{accessibilities}{modifier} class {typeName}";
-    }
-
-    var baseTypeList = GetExplicitBaseTypeAndInterfacesAsString(t, referencingNamespaces, options).ToList();
-
-    if (baseTypeList.Count <= 1) {
-      var baseTypeDeclaration = baseTypeList.Count == 0 ? string.Empty : " : " + baseTypeList[0];
-      var genericArgumentConstraintDeclaration = genericArgumentConstraints.Count == 0 ? string.Empty : " " + string.Join(" ", genericArgumentConstraints);
-
-      yield return typeDeclaration + baseTypeDeclaration + genericArgumentConstraintDeclaration;
-    }
-    else {
-      yield return typeDeclaration + " :";
-
-      for (var index = 0; index < baseTypeList.Count; index++) {
-        if (index == baseTypeList.Count - 1)
-          yield return options.Indent + baseTypeList[index];
-        else
-          yield return options.Indent + baseTypeList[index] + ",";
-      }
-
-      foreach (var constraint in genericArgumentConstraints) {
-        yield return options.Indent + constraint;
-      }
-    }
-  }
-
-  static string GenerateGenericArgumentConstraintDeclaration(Type genericArgument, ISet<string> referencingNamespaces, bool typeWithNamespace = true)
-  {
-    IEnumerable<string> GetGenericArgumentConstraintsOf(Type argument)
-    {
-      var constraintAttrs = argument.GenericParameterAttributes & GenericParameterAttributes.SpecialConstraintMask;
-      var constraintTypes = argument.GetGenericParameterConstraints();
-
-      referencingNamespaces?.AddRange(constraintTypes.Where(ct => ct != typeof(ValueType)).SelectMany(CSharpFormatter.ToNamespaceList));
-
-      if (constraintAttrs.HasFlag(GenericParameterAttributes.NotNullableValueTypeConstraint) &&
-          constraintAttrs.HasFlag(GenericParameterAttributes.DefaultConstructorConstraint) &&
-          constraintTypes.Any(ct => ct == typeof(ValueType))) {
-
-        constraintAttrs &= ~GenericParameterAttributes.NotNullableValueTypeConstraint;
-        constraintAttrs &= ~GenericParameterAttributes.DefaultConstructorConstraint;
-        constraintTypes = constraintTypes.Where(ct => ct != typeof(ValueType)).ToArray();
-
-        yield return "struct";
-      }
-
-      if (constraintAttrs.HasFlag(GenericParameterAttributes.ReferenceTypeConstraint))
-        yield return "class";
-      if (constraintAttrs.HasFlag(GenericParameterAttributes.NotNullableValueTypeConstraint))
-        yield return "struct"; // XXX
-
-      foreach (var ctn in constraintTypes.Select(i => i.FormatTypeName(typeWithNamespace: typeWithNamespace)).OrderBy(name => name, StringComparer.Ordinal))
-        yield return ctn;
-
-      if (constraintAttrs.HasFlag(GenericParameterAttributes.DefaultConstructorConstraint))
-        yield return "new()";
-    }
-
-    var constraints = string.Join(", ", GetGenericArgumentConstraintsOf(genericArgument));
-
-    if (0 < constraints.Length)
-      return $"where {genericArgument.FormatTypeName(typeWithNamespace: false)} : {constraints}";
-    else
-      return null;
-  }
-
-  static string GenerateTypeContentDeclarations(int nestLevel, Type t, ISet<string> referencingNamespaces, Options options)
+  internal static string GenerateTypeContentDeclarations(int nestLevel, Type t, ISet<string> referencingNamespaces, Options options)
   {
     if (options == null)
       throw new ArgumentNullException(nameof(options));
@@ -438,7 +300,7 @@ class ListApi {
         ret.AppendLine();
 
       // TODO: AttributeTargets.ReturnValue, AttributeTargets.Parameter
-      foreach (var attr in GenerateAttributeList(member, null, options)) {
+      foreach (var attr in Generator.GenerateAttributeList(member, null, options)) {
         ret.Append(indent).AppendLine(attr);
       }
 
@@ -700,7 +562,7 @@ class ListApi {
         var methodName = m.Name;
         var methodGenericParameters = m.IsGenericMethod ? string.Concat("<", string.Join(", ", m.GetGenericArguments().Select(t => t.FormatTypeName(typeWithNamespace: options.MemberDeclarationWithNamespace))), ">") : null;
         var methodParameterList = CSharpFormatter.FormatParameterList(m, typeWithNamespace: options.MemberDeclarationWithNamespace, useDefaultLiteral: options.MemberDeclarationUseDefaultLiteral);
-        var methodConstraints = method == null ? null : string.Join(" ", method.GetGenericArguments().Select(arg => GenerateGenericArgumentConstraintDeclaration(arg, referencingNamespaces, typeWithNamespace: options.MemberDeclarationWithNamespace)).Where(d => d != null));
+        var methodConstraints = method == null ? null : string.Join(" ", method.GetGenericArguments().Select(arg => Generator.GenerateGenericArgumentConstraintDeclaration(arg, referencingNamespaces, typeWithNamespace: options.MemberDeclarationWithNamespace)).Where(d => d != null));
         var methodBody = m.IsAbstract ? ";" : options.GenerateEmptyImplementation ? " => throw new NotImplementedException();" : " {}";
 
         referencingNamespaces?.AddRange(m.GetSignatureTypes().Where(mpt => !mpt.ContainsGenericParameters).SelectMany(CSharpFormatter.ToNamespaceList));
@@ -828,112 +690,6 @@ class ListApi {
       sb.AppendLine();
 
     return sb.ToString();
-  }
-
-  internal static IEnumerable<string> GenerateAttributeList(ICustomAttributeProvider attributeProvider, ISet<string> referencingNamespaces, Options options)
-  {
-    return GetAttributes().OrderBy(attr => attr.GetType().FullName)
-                          .Select(attr => new {Name = ConvertAttributeName(attr), Params = ConvertAttributeParameters(attr)})
-                          .Select(a => "[" + a.Name + (string.IsNullOrEmpty(a.Params) ? string.Empty : "(" + a.Params + ")") + "]");
-
-    IEnumerable<Attribute> GetAttributes()
-    {
-      foreach (var attr in attributeProvider.GetCustomAttributes(typeof(Attribute), false)) {
-        if (attr is System.CLSCompliantAttribute)
-          continue; // ignore
-        if (attr is System.Reflection.DefaultMemberAttribute)
-          continue; // ignore
-
-        var nsAttr = attr.GetType().Namespace;
-
-        if (string.Equals("System.Runtime.CompilerServices", nsAttr, StringComparison.Ordinal))
-          continue; // ignore
-
-        if (string.Equals("System", nsAttr.Split('.')[0], StringComparison.Ordinal))
-          yield return attr as Attribute;
-      }
-
-      if (attributeProvider is Type t && t.IsValueType && !t.IsEnum) {
-        if (t.StructLayoutAttribute.Value != DefaultLayoutStruct.Attribute.Value ||
-            t.StructLayoutAttribute.Pack != DefaultLayoutStruct.Attribute.Pack ||
-            t.StructLayoutAttribute.CharSet != DefaultLayoutStruct.Attribute.CharSet)
-          yield return t.StructLayoutAttribute;
-      }
-    }
-
-    string ConvertAttributeName(Attribute attr)
-    {
-      var typeOfAttr = attr.GetType();
-
-      referencingNamespaces?.Add(typeOfAttr.Namespace);
-
-      var nameOfAttr = typeOfAttr.FormatTypeName(typeWithNamespace: options.TypeDeclarationWithNamespace);
-
-      if (nameOfAttr.EndsWith("Attribute", StringComparison.Ordinal))
-        nameOfAttr = nameOfAttr.Substring(0, nameOfAttr.Length - 9);
-
-      return nameOfAttr;
-    }
-
-    string ConvertAttributeParameters(Attribute attr)
-    {
-      switch (attr) {
-        case System.AttributeUsageAttribute aua:
-          var allowMultiple = aua.AllowMultiple ? ", AllowMultiple = " + ConvertValue(aua.AllowMultiple) : null;
-          var inherited =  aua.Inherited ? ", Inherited = " + ConvertValue(aua.Inherited) : null;
-
-          return ConvertValue(aua.ValidOn) + allowMultiple + inherited;
-
-        case System.FlagsAttribute fa:
-          return null;
-
-        case System.ObsoleteAttribute oa:
-          var isError = oa.IsError ? ", " + ConvertValue(oa.IsError) : null;
-
-          if (oa.Message != null || isError != null)
-            return ConvertValue(oa.Message) + isError;
-          else
-            return null;
-
-        case System.Diagnostics.DebuggerHiddenAttribute dha:
-          return null;
-
-        case System.SerializableAttribute sa:
-          return null;
-
-        case System.Diagnostics.ConditionalAttribute ca:
-          if (string.IsNullOrEmpty(ca.ConditionString))
-            return null;
-          else
-            return ConvertValue(ca.ConditionString);
-
-        case System.Runtime.InteropServices.FieldOffsetAttribute foa:
-          return ConvertValue(foa.Value);
-
-        case System.Runtime.InteropServices.StructLayoutAttribute sla:
-          var pack = sla.Pack == DefaultLayoutStruct.Attribute.Pack ? null : ", Pack = " + ConvertValue(sla.Pack);
-          var size = sla.Size == 0 ? null : ", Size = " + ConvertValue(sla.Size);
-          var charset = sla.CharSet == DefaultLayoutStruct.Attribute.CharSet ? null : ", CharSet = " + ConvertValue(sla.CharSet);
-
-          return ConvertValue(sla.Value) + pack + size + charset;
-      }
-
-      throw new NotSupportedException($"unsupported attribute type: {attr.GetType().FullName}");
-    }
-
-    string ConvertValue(object @value)
-    {
-      return CSharpFormatter.FormatValueDeclaration(@value,
-                                                    @value?.GetType(),
-                                                    typeWithNamespace: options.MemberDeclarationWithNamespace,
-                                                    findConstantField: true,
-                                                    useDefaultLiteral: options.MemberDeclarationUseDefaultLiteral);
-    }
-  }
-
-  internal struct DefaultLayoutStruct {
-    // XXX
-    public static readonly StructLayoutAttribute Attribute = typeof(DefaultLayoutStruct).StructLayoutAttribute;
   }
 }
 

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Reflection;
 
 using Smdn.Reflection;
+using Smdn.Reflection.ReverseGenerating;
 
 public class Test {
   class TestResult {
@@ -121,7 +122,7 @@ public class Test {
     EvaluateTest(result,
                  type.ToString(),
                  test.Expected,
-                 () => string.Join("\n", ListApi.GenerateTypeDeclaration(type, null, opts)));
+                 () => string.Join("\n", Generator.GenerateTypeDeclaration(type, null, opts)));
   }
 
   static void EvaluateMemberTest(TestResult result, Options options, TestCases.TestAttribute test, MemberInfo member)
@@ -146,7 +147,7 @@ public class Test {
     EvaluateTest(result,
                  "base types of " + type.ToString(),
                  testOfBaseType.Expected,
-                 () => string.Join(", ", ListApi.GetExplicitBaseTypeAndInterfacesAsString(type, null, opts)));
+                 () => string.Join(", ", Generator.GetExplicitBaseTypeAndInterfacesAsString(type, null, opts)));
   }
 
   static void EvaluateAttributeTest(TestResult result, Options options, TestCases.TestAttribute testOfType, ICustomAttributeProvider attributeProvider)
@@ -163,7 +164,7 @@ public class Test {
     EvaluateTest(result,
                  "attributes of " + attributeProvider.ToString(),
                  testOfAttribute.Expected,
-                 () => string.Join(", ", ListApi.GenerateAttributeList(attributeProvider, null, opts)));
+                 () => string.Join(", ", Generator.GenerateAttributeList(attributeProvider, null, opts)));
   }
 
   static void EvaluateNamespacesTest(TestResult result, Options options, TestCases.TestAttribute testOfTypeOrMember, TestCases.NamespacesTestAttribute testOfNamespaces, MemberInfo memberOrType)
