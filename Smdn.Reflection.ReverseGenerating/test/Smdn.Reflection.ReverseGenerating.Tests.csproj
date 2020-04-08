@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFrameworks>netcoreapp2.1</TargetFrameworks>
+    <TargetFrameworks>net471;netcoreapp2.1</TargetFrameworks>
     <AssemblyName>Smdn.Reflection.ReverseGenerating.Tests</AssemblyName>
     <RootNamespace>Smdn.Reflection.ReverseGenerating</RootNamespace>
     <LangVersion>latest</LangVersion>
