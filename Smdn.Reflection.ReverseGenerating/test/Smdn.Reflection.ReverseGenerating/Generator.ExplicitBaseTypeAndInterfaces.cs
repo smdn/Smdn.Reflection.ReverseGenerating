@@ -6,19 +6,18 @@ using System.Runtime.CompilerServices;
 using NUnit.Framework;
 
 namespace Smdn.Reflection.ReverseGenerating {
-  class ExplicitBaseTypeAndInterfacesTestCaseAttribute : Attribute {
-    public string Expected { get; private set; }
-    public bool WithNamespace { get; set; } = true;
-    public string SourceLocation { get; }
-
+  class ExplicitBaseTypeAndInterfacesTestCaseAttribute : GeneratorTestCaseAttribute {
     public ExplicitBaseTypeAndInterfacesTestCaseAttribute(
       string expected,
       [CallerFilePath] string sourceFilePath = null,
       [CallerLineNumber] int lineNumber = 0
     )
+      : base(
+        expected,
+        sourceFilePath,
+        lineNumber
+      )
     {
-      this.Expected = expected;
-      this.SourceLocation = $"{Path.GetFileName(sourceFilePath)}:{lineNumber}";
     }
   }
 
