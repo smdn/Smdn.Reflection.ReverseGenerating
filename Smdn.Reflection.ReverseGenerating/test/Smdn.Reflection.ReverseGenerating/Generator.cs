@@ -218,13 +218,10 @@ namespace Smdn.Reflection.ReverseGenerating {
   }
 
   partial class GeneratorTests {
-    private static IEnumerable<Type> FindTypeDeclarationTestCaseTypes()
-      => FindTypes(t => t.FullName.Contains(".TestCases.TypeDeclaration."));
-
     [Test]
     public void TestGenerateTypeDeclaration()
     {
-      foreach (var type in FindTypeDeclarationTestCaseTypes()) {
+      foreach (var type in FindTypes(t => t.FullName.Contains(".TestCases.TypeDeclaration."))) {
         TestGenerateTypeDeclaration(type);
       }
     }
