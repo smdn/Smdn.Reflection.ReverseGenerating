@@ -45,7 +45,7 @@ namespace Smdn.Reflection.ReverseGenerating {
 
       var genericArgumentConstraints = t
         .GetGenericArguments()
-        .Select(arg => GenerateGenericArgumentConstraintDeclaration(arg, referencingNamespaces, typeWithNamespace: options.TypeDeclarationWithNamespace))
+        .Select(arg => GenerateGenericArgumentConstraintDeclaration(arg, referencingNamespaces, options))
         .Where(d => d != null)
         .ToList();
 
@@ -124,15 +124,15 @@ namespace Smdn.Reflection.ReverseGenerating {
     public static string GenerateGenericArgumentConstraintDeclaration(
       Type genericArgument,
       ISet<string> referencingNamespaces,
-      bool typeWithNamespace = true
+      GeneratorOptions options
     )
     {
-      IEnumerable<string> GetGenericArgumentConstraintsOf(Type argument)
+      static IEnumerable<string> GetGenericArgumentConstraintsOf(Type argument, ISet<string> _referencingNamespaces, bool typeWithNamespace)
       {
         var constraintAttrs = argument.GenericParameterAttributes & GenericParameterAttributes.SpecialConstraintMask;
         var constraintTypes = argument.GetGenericParameterConstraints();
 
-        referencingNamespaces?.AddRange(constraintTypes.Where(ct => ct != typeof(ValueType)).SelectMany(CSharpFormatter.ToNamespaceList));
+        _referencingNamespaces?.AddRange(constraintTypes.Where(ct => ct != typeof(ValueType)).SelectMany(CSharpFormatter.ToNamespaceList));
 
         if (constraintAttrs.HasFlag(GenericParameterAttributes.NotNullableValueTypeConstraint) &&
             constraintAttrs.HasFlag(GenericParameterAttributes.DefaultConstructorConstraint) &&
@@ -157,7 +157,14 @@ namespace Smdn.Reflection.ReverseGenerating {
           yield return "new()";
       }
 
-      var constraints = string.Join(", ", GetGenericArgumentConstraintsOf(genericArgument));
+      var constraints = string.Join(
+        ", ",
+        GetGenericArgumentConstraintsOf(
+          genericArgument,
+          referencingNamespaces,
+          genericArgument.DeclaringMethod == null ? options.TypeDeclarationWithNamespace : options.MemberDeclarationWithNamespace
+        )
+      );
 
       if (0 < constraints.Length)
         return $"where {genericArgument.FormatTypeName(typeWithNamespace: false)} : {constraints}";
