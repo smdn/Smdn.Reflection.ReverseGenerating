@@ -9,5 +9,7 @@ namespace Smdn.Reflection.ReverseGenerating {
 
     public bool MemberDeclarationWithNamespace { get; set; } = false;
     public bool MemberDeclarationUseDefaultLiteral { get; set; } = true;
+
+    public bool GenerateEmptyImplementation { get; set; } = false;
   }
 }

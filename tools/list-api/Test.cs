@@ -54,7 +54,6 @@ public class Test {
     var options = new Options() {
       Indent = string.Empty,
       IgnorePrivateOrAssembly = false,
-      MemberDeclarationEmitNewLine = false,
       TypeDeclarationWithNamespace = true,
       MemberDeclarationWithNamespace = true,
       MemberDeclarationUseDefaultLiteral = false,
@@ -135,7 +134,7 @@ public class Test {
     EvaluateTest(result,
                  member.ToString(),
                  test.Expected,
-                 () => ListApi.GenerateMemberDeclaration(member, null, opts));
+                 () => Generator.GenerateMemberDeclaration(member, null, opts));
   }
 
   static void EvaluateBaseTypeTest(TestResult result, Options options, TestCases.TestAttribute testOfType, TestCases.BaseTypeTestAttribute testOfBaseType, Type type)
@@ -182,7 +181,7 @@ public class Test {
       if (memberOrType is Type t)
         ListApi.GenerateTypeAndMemberDeclarations(0, t, namespaces, opts);
       else
-        ListApi.GenerateMemberDeclaration(memberOrType, namespaces, opts);
+        Generator.GenerateMemberDeclaration(memberOrType, namespaces, opts);
 
       return string.Join(", ", namespaces);
     }
