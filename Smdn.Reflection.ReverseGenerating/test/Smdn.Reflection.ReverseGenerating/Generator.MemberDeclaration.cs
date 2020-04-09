@@ -74,6 +74,7 @@ namespace Smdn.Reflection.ReverseGenerating {
           }
         }
 
+#pragma warning disable CS0649, CS0169
         public class Accessibilities {
           [MemberDeclarationTestCase("public int F1;")] public int F1;
           [MemberDeclarationTestCase("internal int F2;")] internal int F2;
@@ -84,6 +85,7 @@ namespace Smdn.Reflection.ReverseGenerating {
           [MemberDeclarationTestCase("private protected int F7;")] protected private int F7;
           [MemberDeclarationTestCase("private int F8;")] private int F8;
         }
+#pragma warning restore CS0067, CS0169
 
         public class Modifiers {
           [MemberDeclarationTestCase("public int F4;")] public int F4;
@@ -353,17 +355,17 @@ namespace Smdn.Reflection.ReverseGenerating {
 
         namespace Constructors {
           public class C {
-            [MemberDeclarationTestCase("public C() {}")] public C() { }
+            [MemberDeclarationTestCase("public C() {}")] public C() => throw new NotImplementedException();
             [MemberDeclarationTestCase("static C() {}")] static C() { }
           }
 
           public class C<T> {
-            [MemberDeclarationTestCase("public C() {}")] public C() { }
+            [MemberDeclarationTestCase("public C() {}")] public C() => throw new NotImplementedException();
             [MemberDeclarationTestCase("static C() {}")] static C() { }
           }
 
           public class C<T1, T2> {
-            [MemberDeclarationTestCase("public C() {}")] public C() { }
+            [MemberDeclarationTestCase("public C() {}")] public C() => throw new NotImplementedException();
             [MemberDeclarationTestCase("static C() {}")] static C() { }
           }
 
@@ -478,7 +480,7 @@ namespace Smdn.Reflection.ReverseGenerating {
 
               public bool Equals(C other) => throw new NotImplementedException();
               public int CompareTo(C other) => throw new NotImplementedException();
-              public override bool Equals(object other) => throw new NotImplementedException();
+              public override bool Equals(object obj) => throw new NotImplementedException();
               public override int GetHashCode() => throw new NotImplementedException();
             }
           }
@@ -579,6 +581,7 @@ namespace Smdn.Reflection.ReverseGenerating {
       }
 
       namespace Events {
+#pragma warning disable CS0067
         public class Modifiers {
           [MemberDeclarationTestCase("public event System.EventHandler E1;")] public event EventHandler E1;
           [MemberDeclarationTestCase("public static event System.EventHandler E2;")] public static event EventHandler E2;
@@ -595,6 +598,7 @@ namespace Smdn.Reflection.ReverseGenerating {
           [MemberDeclarationTestCase("private protected System.EventHandler E7;")] protected private EventHandler E7;
           [MemberDeclarationTestCase("private event System.EventHandler E8;")] private event EventHandler E8;
         }
+#pragma warning restore CS0067
       }
 
       public interface InterfaceMembers {
@@ -709,10 +713,12 @@ namespace Smdn.Reflection.ReverseGenerating {
           event EventHandler E;
         }
 
+#pragma warning disable CS0067
         class ImplicitEvent : IEvent {
           [MemberDeclarationTestCase("public event EventHandler E;", WithNamespace = false)]
           public event EventHandler E;
         }
+#pragma warning restore CS0067
 
         class ExplicitEvent : IEvent {
           [MemberDeclarationTestCase("event EventHandler IEvent.E;", WithNamespace = false)]
