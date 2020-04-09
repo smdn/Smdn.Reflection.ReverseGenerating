@@ -134,10 +134,11 @@ namespace Smdn.Reflection.ReverseGenerating {
 
         _referencingNamespaces?.AddRange(constraintTypes.Where(ct => ct != typeof(ValueType)).SelectMany(CSharpFormatter.ToNamespaceList));
 
-        if (constraintAttrs.HasFlag(GenericParameterAttributes.NotNullableValueTypeConstraint) &&
-            constraintAttrs.HasFlag(GenericParameterAttributes.DefaultConstructorConstraint) &&
-            constraintTypes.Any(ct => ct == typeof(ValueType))) {
-
+        if (
+          constraintAttrs.HasFlag(GenericParameterAttributes.NotNullableValueTypeConstraint) &&
+          constraintAttrs.HasFlag(GenericParameterAttributes.DefaultConstructorConstraint) &&
+          constraintTypes.Any(ct => ct == typeof(ValueType))
+        ) {
           constraintAttrs &= ~GenericParameterAttributes.NotNullableValueTypeConstraint;
           constraintAttrs &= ~GenericParameterAttributes.DefaultConstructorConstraint;
           constraintTypes = constraintTypes.Where(ct => ct != typeof(ValueType)).ToArray();
@@ -177,15 +178,16 @@ namespace Smdn.Reflection.ReverseGenerating {
       if (options == null)
         throw new ArgumentNullException(nameof(options));
 
-      return t.GetExplicitBaseTypeAndInterfaces()
-              .Where(type => !(options.IgnorePrivateOrAssembly && (type.IsNotPublic || type.IsNestedAssembly || type.IsNestedFamily || type.IsNestedFamANDAssem || type.IsNestedPrivate)))
-              .Select(type => {
-                referencingNamespaces?.AddRange(CSharpFormatter.ToNamespaceList(type));
-                return new { IsInterface = type.IsInterface, Name = type.FormatTypeName(typeWithNamespace: options.TypeDeclarationWithNamespace) };
-              })
-              .OrderBy(type => type.IsInterface)
-              .ThenBy(type => type.Name, StringComparer.Ordinal)
-              .Select(type => type.Name);
+      return t
+        .GetExplicitBaseTypeAndInterfaces()
+        .Where(type => !(options.IgnorePrivateOrAssembly && (type.IsNotPublic || type.IsNestedAssembly || type.IsNestedFamily || type.IsNestedFamANDAssem || type.IsNestedPrivate)))
+        .Select(type => {
+          referencingNamespaces?.AddRange(CSharpFormatter.ToNamespaceList(type));
+          return new { IsInterface = type.IsInterface, Name = type.FormatTypeName(typeWithNamespace: options.TypeDeclarationWithNamespace) };
+        })
+        .OrderBy(type => type.IsInterface)
+        .ThenBy(type => type.Name, StringComparer.Ordinal)
+        .Select(type => type.Name);
     }
 
     internal struct DefaultLayoutStruct {
@@ -195,9 +197,10 @@ namespace Smdn.Reflection.ReverseGenerating {
 
     public static IEnumerable<string> GenerateAttributeList(ICustomAttributeProvider attributeProvider, ISet<string> referencingNamespaces, GeneratorOptions options)
     {
-      return GetAttributes().OrderBy(attr => attr.GetType().FullName)
-                            .Select(attr => new { Name = ConvertAttributeName(attr), Params = ConvertAttributeParameters(attr) })
-                            .Select(a => "[" + a.Name + (string.IsNullOrEmpty(a.Params) ? string.Empty : "(" + a.Params + ")") + "]");
+      return GetAttributes()
+        .OrderBy(attr => attr.GetType().FullName)
+        .Select(attr => new { Name = ConvertAttributeName(attr), Params = ConvertAttributeParameters(attr) })
+        .Select(a => "[" + a.Name + (string.IsNullOrEmpty(a.Params) ? string.Empty : "(" + a.Params + ")") + "]");
 
       IEnumerable<Attribute> GetAttributes()
       {
@@ -217,10 +220,13 @@ namespace Smdn.Reflection.ReverseGenerating {
         }
 
         if (attributeProvider is Type t && t.IsValueType && !t.IsEnum) {
-          if (t.StructLayoutAttribute.Value != DefaultLayoutStruct.Attribute.Value ||
-              t.StructLayoutAttribute.Pack != DefaultLayoutStruct.Attribute.Pack ||
-              t.StructLayoutAttribute.CharSet != DefaultLayoutStruct.Attribute.CharSet)
+          if (
+            t.StructLayoutAttribute.Value != DefaultLayoutStruct.Attribute.Value ||
+            t.StructLayoutAttribute.Pack != DefaultLayoutStruct.Attribute.Pack ||
+            t.StructLayoutAttribute.CharSet != DefaultLayoutStruct.Attribute.CharSet
+          ) {
             yield return t.StructLayoutAttribute;
+          }
         }
       }
 
@@ -286,11 +292,13 @@ namespace Smdn.Reflection.ReverseGenerating {
 
       string ConvertValue(object @value)
       {
-        return CSharpFormatter.FormatValueDeclaration(@value,
-                                                      @value?.GetType(),
-                                                      typeWithNamespace: options.MemberDeclarationWithNamespace,
-                                                      findConstantField: true,
-                                                      useDefaultLiteral: options.MemberDeclarationUseDefaultLiteral);
+        return CSharpFormatter.FormatValueDeclaration(
+          @value,
+          @value?.GetType(),
+          typeWithNamespace: options.MemberDeclarationWithNamespace,
+          findConstantField: true,
+          useDefaultLiteral: options.MemberDeclarationUseDefaultLiteral
+        );
       }
     }
   }
