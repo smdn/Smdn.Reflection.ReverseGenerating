@@ -358,20 +358,33 @@ namespace Smdn.Reflection.ReverseGenerating {
       else {
         referencingNamespaces?.AddRange(CSharpFormatter.ToNamespaceList(field.FieldType));
 
-        sb.Append($"{GetMemberModifierOf(field)} {field.FieldType.FormatTypeName(attributeProvider: field, typeWithNamespace: options.MemberDeclarationWithNamespace)} {field.Name}");
+        sb
+          .Append(GetMemberModifierOf(field))
+          .Append(" ")
+          .Append(field.FieldType.FormatTypeName(attributeProvider: field, typeWithNamespace: options.MemberDeclarationWithNamespace))
+          .Append(" ")
+          .Append(field.Name);
 
         if (field.IsStatic && (field.IsLiteral || field.IsInitOnly) && !field.FieldType.ContainsGenericParameters) {
           var val = field.GetValue(null);
-          var valueDeclaration = CSharpFormatter.FormatValueDeclaration(val,
-                                                                          field.FieldType,
-                                                                          typeWithNamespace: options.MemberDeclarationWithNamespace,
-                                                                          findConstantField: (field.FieldType != field.DeclaringType),
-                                                                          useDefaultLiteral: options.MemberDeclarationUseDefaultLiteral);
+          var valueDeclaration = CSharpFormatter.FormatValueDeclaration(
+            val,
+            field.FieldType,
+            typeWithNamespace: options.MemberDeclarationWithNamespace,
+            findConstantField: (field.FieldType != field.DeclaringType),
+            useDefaultLiteral: options.MemberDeclarationUseDefaultLiteral
+          );
 
           if (valueDeclaration == null)
-            sb.Append($"; // = \"{CSharpFormatter.EscapeString((val ?? "null").ToString(), escapeDoubleQuote: true)}\"");
+            sb
+              .Append("; // = \"")
+              .Append(CSharpFormatter.EscapeString((val ?? "null").ToString(), escapeDoubleQuote: true))
+              .Append("\"");
           else
-            sb.Append($" = {valueDeclaration};");
+            sb
+              .Append(" = ")
+              .Append(valueDeclaration)
+              .Append(";");
         }
         else {
           sb.Append(";");
@@ -387,12 +400,17 @@ namespace Smdn.Reflection.ReverseGenerating {
       GeneratorOptions options
     )
     {
-      var explicitInterface = property.GetAccessors(true).Select(a => a.FindExplicitInterfaceMethod(findOnlyPublicInterfaces: options.IgnorePrivateOrAssembly)?.DeclaringType).FirstOrDefault();
+      var explicitInterface = property
+        .GetAccessors(true)
+        .Select(a => a.FindExplicitInterfaceMethod(findOnlyPublicInterfaces: options.IgnorePrivateOrAssembly)?.DeclaringType)
+        .FirstOrDefault();
 
-      if (explicitInterface == null && options.IgnorePrivateOrAssembly && property.GetAccessors(true).All(a => a.IsPrivate || a.IsAssembly || a.IsFamilyAndAssembly))
+      if (
+        explicitInterface == null &&
+        options.IgnorePrivateOrAssembly &&
+        property.GetAccessors(true).All(a => a.IsPrivate || a.IsAssembly || a.IsFamilyAndAssembly)
+      )
         return null;
-
-      var sb = new StringBuilder();
 
       var emitGetAccessor = property.GetMethod != null && !(explicitInterface == null && options.IgnorePrivateOrAssembly && (property.GetMethod.IsPrivate || property.GetMethod.IsAssembly || property.GetMethod.IsFamilyAndAssembly));
       var emitSetAccessor = property.SetMethod != null && !(explicitInterface == null && options.IgnorePrivateOrAssembly && (property.SetMethod.IsPrivate || property.SetMethod.IsAssembly || property.SetMethod.IsFamilyAndAssembly));
@@ -402,12 +420,13 @@ namespace Smdn.Reflection.ReverseGenerating {
       referencingNamespaces?.AddRange(CSharpFormatter.ToNamespaceList(property.PropertyType));
       referencingNamespaces?.AddRange(indexParameters.SelectMany(ip => CSharpFormatter.ToNamespaceList(ip.ParameterType)));
 
+      var sb = new StringBuilder();
       var modifier = GetMemberModifierOf(property, out string setAccessibility, out string getAccessibility);
 
       if (explicitInterface == null && 0 < modifier.Length)
-        sb.Append($"{modifier} ");
+        sb.Append(modifier).Append(" ");
 
-      sb.Append($"{property.PropertyType.FormatTypeName(attributeProvider: property, typeWithNamespace: options.MemberDeclarationWithNamespace)} ");
+      sb.Append(property.PropertyType.FormatTypeName(attributeProvider: property, typeWithNamespace: options.MemberDeclarationWithNamespace)).Append(" ");
 
       var propertyName = explicitInterface == null ? property.Name : property.Name.Substring(property.Name.LastIndexOf('.') + 1);
 
@@ -417,10 +436,27 @@ namespace Smdn.Reflection.ReverseGenerating {
       else if (explicitInterface == null)
         sb.Append(propertyName);
       else
-        sb.Append(explicitInterface.FormatTypeName(attributeProvider: property, typeWithNamespace: options.MemberDeclarationWithNamespace)).Append(".").Append(propertyName);
+        sb
+          .Append(
+            explicitInterface.FormatTypeName(
+              attributeProvider: property,
+              typeWithNamespace: options.MemberDeclarationWithNamespace
+            )
+          )
+          .Append(".")
+          .Append(propertyName);
 
       if (0 < indexParameters.Length)
-        sb.Append($"[{CSharpFormatter.FormatParameterList(indexParameters, typeWithNamespace: options.MemberDeclarationWithNamespace, useDefaultLiteral: options.MemberDeclarationUseDefaultLiteral)}] ");
+        sb
+          .Append("[")
+          .Append(
+            CSharpFormatter.FormatParameterList(
+              indexParameters,
+              typeWithNamespace: options.MemberDeclarationWithNamespace,
+              useDefaultLiteral: options.MemberDeclarationUseDefaultLiteral
+            )
+          )
+          .Append("] ");
       else
         sb.Append(" ");
 
