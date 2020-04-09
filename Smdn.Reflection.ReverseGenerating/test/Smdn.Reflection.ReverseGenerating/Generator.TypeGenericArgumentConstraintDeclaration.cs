@@ -80,12 +80,12 @@ namespace Smdn.Reflection.ReverseGenerating {
         var attr = type.GetCustomAttribute<TypeGenericArgumentConstraintTestCaseAttribute>();
 
         if (attr == null)
-          return;
+          continue;
 
-        var options = new GeneratorOptions();
-
-        if (attr.WithNamespace)
-          options.TypeDeclarationWithNamespace = attr.WithNamespace;
+        var options = new GeneratorOptions() {
+          IgnorePrivateOrAssembly = false,
+          TypeDeclarationWithNamespace = attr.WithNamespace
+        };
 
         Assert.AreEqual(
           attr.Expected,

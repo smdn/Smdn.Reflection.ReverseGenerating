@@ -216,27 +216,22 @@ namespace Smdn.Reflection.ReverseGenerating {
     public void TestGenerateTypeDeclaration()
     {
       foreach (var type in FindTypes(t => t.FullName.Contains(".TestCases.TypeDeclaration."))) {
-        TestGenerateTypeDeclaration(type);
+        var attr = type.GetCustomAttribute<TypeDeclarationTestCaseAttribute>();
+
+        if (attr == null)
+          continue;
+
+        var options = new GeneratorOptions() {
+          IgnorePrivateOrAssembly = false,
+          TypeDeclarationWithNamespace = attr.WithNamespace
+        };
+
+        Assert.AreEqual(
+          attr.Expected,
+          Generator.GenerateTypeDeclaration(type, null, options),
+          message: $"{attr.SourceLocation} ({type.FullName})"
+        );
       }
-    }
-
-    private void TestGenerateTypeDeclaration(Type type)
-    {
-      var attr = type.GetCustomAttribute<TypeDeclarationTestCaseAttribute>();
-
-      if (attr == null)
-        return;
-
-      var options = new GeneratorOptions();
-
-      if (attr.WithNamespace)
-        options.TypeDeclarationWithNamespace = attr.WithNamespace;
-
-      Assert.AreEqual(
-        attr.Expected,
-        Generator.GenerateTypeDeclaration(type, null, options),
-        message: $"{attr.SourceLocation} ({type.FullName})"
-      );
     }
   }
 }
