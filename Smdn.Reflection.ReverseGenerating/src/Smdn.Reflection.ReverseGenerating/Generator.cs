@@ -308,6 +308,8 @@ namespace Smdn.Reflection.ReverseGenerating {
       GeneratorOptions options
     )
     {
+      if (member == null)
+        throw new ArgumentNullException(nameof(member));
       if (options == null)
         throw new ArgumentNullException(nameof(options));
 
