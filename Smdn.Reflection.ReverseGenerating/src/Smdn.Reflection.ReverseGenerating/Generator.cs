@@ -311,257 +311,11 @@ namespace Smdn.Reflection.ReverseGenerating {
       if (options == null)
         throw new ArgumentNullException(nameof(options));
 
-      var sb = new StringBuilder();
-
       switch (member) {
-        case FieldInfo f: {
-            if (options.IgnorePrivateOrAssembly && (f.IsPrivate || f.IsAssembly || f.IsFamilyAndAssembly))
-              return null;
-
-            if (member.DeclaringType.IsEnum) {
-              if (f.IsStatic) {
-                var val = Convert.ChangeType(f.GetValue(null), member.DeclaringType.GetEnumUnderlyingType());
-
-                sb.Append(f.Name).Append(" = ");
-
-                if (f.DeclaringType.IsEnumFlags())
-                  sb.Append("0x").AppendFormat("{0:x" + (Marshal.SizeOf(val) * 2).ToString() + "}", val);
-                else
-                  sb.Append(val);
-
-                sb.Append(",");
-              }
-              else {
-                return null; // ignores backing field __value
-              }
-            }
-            else {
-              referencingNamespaces?.AddRange(CSharpFormatter.ToNamespaceList(f.FieldType));
-
-              sb.Append($"{GetMemberModifierOf(f)} {f.FieldType.FormatTypeName(attributeProvider: f, typeWithNamespace: options.MemberDeclarationWithNamespace)} {f.Name}");
-
-              if (f.IsStatic && (f.IsLiteral || f.IsInitOnly) && !f.FieldType.ContainsGenericParameters) {
-                var val = f.GetValue(null);
-                var valueDeclaration = CSharpFormatter.FormatValueDeclaration(val,
-                                                                          f.FieldType,
-                                                                          typeWithNamespace: options.MemberDeclarationWithNamespace,
-                                                                          findConstantField: (f.FieldType != f.DeclaringType),
-                                                                          useDefaultLiteral: options.MemberDeclarationUseDefaultLiteral);
-
-                if (valueDeclaration == null)
-                  sb.Append($"; // = \"{CSharpFormatter.EscapeString((val ?? "null").ToString(), escapeDoubleQuote: true)}\"");
-                else
-                  sb.Append($" = {valueDeclaration};");
-              }
-              else {
-                sb.Append(";");
-              }
-            }
-
-            break;
-          }
-
-        case PropertyInfo p: {
-            var explicitInterface = p.GetAccessors(true).Select(a => a.FindExplicitInterfaceMethod(findOnlyPublicInterfaces: options.IgnorePrivateOrAssembly)?.DeclaringType).FirstOrDefault();
-
-            if (explicitInterface == null && options.IgnorePrivateOrAssembly && p.GetAccessors(true).All(a => a.IsPrivate || a.IsAssembly || a.IsFamilyAndAssembly))
-              return null;
-
-            var emitGetAccessor = p.GetMethod != null && !(explicitInterface == null && options.IgnorePrivateOrAssembly && (p.GetMethod.IsPrivate || p.GetMethod.IsAssembly || p.GetMethod.IsFamilyAndAssembly));
-            var emitSetAccessor = p.SetMethod != null && !(explicitInterface == null && options.IgnorePrivateOrAssembly && (p.SetMethod.IsPrivate || p.SetMethod.IsAssembly || p.SetMethod.IsFamilyAndAssembly));
-
-            var indexParameters = p.GetIndexParameters();
-
-            referencingNamespaces?.AddRange(CSharpFormatter.ToNamespaceList(p.PropertyType));
-            referencingNamespaces?.AddRange(indexParameters.SelectMany(ip => CSharpFormatter.ToNamespaceList(ip.ParameterType)));
-
-            var modifier = GetMemberModifierOf(p, out string setAccessibility, out string getAccessibility);
-
-            if (explicitInterface == null && 0 < modifier.Length)
-              sb.Append($"{modifier} ");
-
-            sb.Append($"{p.PropertyType.FormatTypeName(attributeProvider: p, typeWithNamespace: options.MemberDeclarationWithNamespace)} ");
-
-            var propertyName = explicitInterface == null ? p.Name : p.Name.Substring(p.Name.LastIndexOf('.') + 1);
-
-            if (0 < indexParameters.Length &&
-                string.Equals(p.Name, p.DeclaringType.GetCustomAttribute<DefaultMemberAttribute>()?.MemberName, StringComparison.Ordinal))
-              sb.Append("this"); // indexer
-            else if (explicitInterface == null)
-              sb.Append(propertyName);
-            else
-              sb.Append(explicitInterface.FormatTypeName(attributeProvider: p, typeWithNamespace: options.MemberDeclarationWithNamespace)).Append(".").Append(propertyName);
-
-            if (0 < indexParameters.Length)
-              sb.Append($"[{CSharpFormatter.FormatParameterList(indexParameters, typeWithNamespace: options.MemberDeclarationWithNamespace, useDefaultLiteral: options.MemberDeclarationUseDefaultLiteral)}] ");
-            else
-              sb.Append(" ");
-
-            sb.Append("{ ");
-
-            if (emitGetAccessor) {
-              if (explicitInterface == null && 0 < getAccessibility.Length)
-                sb.Append(getAccessibility).Append(" ");
-
-              sb.Append("get");
-
-              if (options.GenerateEmptyImplementation && !p.GetMethod.IsAbstract)
-                sb.Append(" => throw new NotImplementedException(); ");
-              else
-                sb.Append("; ");
-            }
-
-            if (emitSetAccessor) {
-              if (explicitInterface == null && 0 < setAccessibility.Length)
-                sb.Append(setAccessibility).Append(" ");
-
-              sb.Append("set");
-
-              if (options.GenerateEmptyImplementation && !p.SetMethod.IsAbstract)
-                sb.Append(" => throw new NotImplementedException(); ");
-              else
-                sb.Append("; ");
-            }
-
-            sb.Append("}");
-
-#if false
-        if (p.CanRead)
-          sb.Append(" = ").Append(p.GetConstantValue()).Append(";");
-#endif
-
-            break;
-          }
-
-        case MethodBase m: {
-            var explicitInterfaceMethod = m.FindExplicitInterfaceMethod(findOnlyPublicInterfaces: options.IgnorePrivateOrAssembly);
-
-            if (explicitInterfaceMethod == null && (options.IgnorePrivateOrAssembly && (m.IsPrivate || m.IsAssembly || m.IsFamilyAndAssembly)))
-              return null;
-
-            var method = m as MethodInfo;
-            var methodModifiers = GetMemberModifierOf(m);
-            var isByRefReturnType = (method != null && method.ReturnType.IsByRef);
-            var methodReturnType = isByRefReturnType ? "ref " + method.ReturnType.GetElementType().FormatTypeName(attributeProvider: method.ReturnTypeCustomAttributes, typeWithNamespace: options.MemberDeclarationWithNamespace) : method?.ReturnType?.FormatTypeName(attributeProvider: method?.ReturnTypeCustomAttributes, typeWithNamespace: options.MemberDeclarationWithNamespace);
-            var methodName = m.Name;
-            var methodGenericParameters = m.IsGenericMethod ? string.Concat("<", string.Join(", ", m.GetGenericArguments().Select(t => t.FormatTypeName(typeWithNamespace: options.MemberDeclarationWithNamespace))), ">") : null;
-            var methodParameterList = CSharpFormatter.FormatParameterList(m, typeWithNamespace: options.MemberDeclarationWithNamespace, useDefaultLiteral: options.MemberDeclarationUseDefaultLiteral);
-            var methodConstraints = method == null ? null : string.Join(" ", method.GetGenericArguments().Select(arg => Generator.GenerateGenericArgumentConstraintDeclaration(arg, referencingNamespaces, options)).Where(d => d != null));
-            var methodBody = m.IsAbstract ? ";" : options.GenerateEmptyImplementation ? " => throw new NotImplementedException();" : " {}";
-
-            referencingNamespaces?.AddRange(m.GetSignatureTypes().Where(mpt => !mpt.ContainsGenericParameters).SelectMany(CSharpFormatter.ToNamespaceList));
-
-            if (method == null) {
-              // constructors
-              methodName = m.DeclaringType.IsGenericType ? m.DeclaringType.GetGenericTypeName() : m.DeclaringType.Name;
-              methodReturnType = null;
-            }
-            else if (method.IsFamily && string.Equals(method.Name, "Finalize", StringComparison.Ordinal)) {
-              // destructors
-              methodName = "~" + (m.DeclaringType.IsGenericType ? m.DeclaringType.GetGenericTypeName() : m.DeclaringType.Name);
-              methodModifiers = null;
-              methodReturnType = null;
-              methodParameterList = null;
-              methodConstraints = null;
-            }
-            else if (method.IsSpecialName) {
-              // operator overloads, etc
-              switch (method.Name) {
-                // comparison
-                case "op_Equality": methodName = "operator == "; break;
-                case "op_Inequality": methodName = "operator != "; break;
-                case "op_LessThan": methodName = "operator < "; break;
-                case "op_GreaterThan": methodName = "operator > "; break;
-                case "op_LessThanOrEqual": methodName = "operator <= "; break;
-                case "op_GreaterThanOrEqual": methodName = "operator >= "; break;
-
-                // unary
-                case "op_UnaryPlus": methodName = "operator + "; break;
-                case "op_UnaryNegation": methodName = "operator - "; break;
-                case "op_LogicalNot": methodName = "operator ! "; break;
-                case "op_OnesComplement": methodName = "operator ~ "; break;
-                case "op_True": methodName = "operator true "; break;
-                case "op_False": methodName = "operator false "; break;
-                case "op_Increment": methodName = "operator ++ "; break;
-                case "op_Decrement": methodName = "operator -- "; break;
-
-                // binary
-                case "op_Addition": methodName = "operator + "; break;
-                case "op_Subtraction": methodName = "operator - "; break;
-                case "op_Multiply": methodName = "operator * "; break;
-                case "op_Division": methodName = "operator / "; break;
-                case "op_Modulus": methodName = "operator % "; break;
-                case "op_BitwiseAnd": methodName = "operator & "; break;
-                case "op_BitwiseOr": methodName = "operator | "; break;
-                case "op_ExclusiveOr": methodName = "operator ^ "; break;
-                case "op_RightShift": methodName = "operator >> "; break;
-                case "op_LeftShift": methodName = "operator << "; break;
-
-                // type cast
-                case "op_Explicit": methodName = "explicit operator " + methodReturnType; methodReturnType = null; break;
-                case "op_Implicit": methodName = "implicit operator " + methodReturnType; methodReturnType = null; break;
-              }
-            }
-            else if (explicitInterfaceMethod != null) {
-              methodModifiers = null;
-              methodName = explicitInterfaceMethod.DeclaringType.FormatTypeName(typeWithNamespace: options.MemberDeclarationWithNamespace) + "." + explicitInterfaceMethod.Name;
-            }
-            else {
-              // standard methods
-            }
-
-            if (!string.IsNullOrEmpty(methodModifiers))
-              sb.Append(methodModifiers).Append(" ");
-
-            if (!string.IsNullOrEmpty(methodReturnType))
-              sb.Append(methodReturnType).Append(" ");
-
-            sb.Append(methodName);
-
-            if (!string.IsNullOrEmpty(methodGenericParameters))
-              sb.Append(methodGenericParameters);
-
-            sb.Append("(");
-
-            if (!string.IsNullOrEmpty(methodParameterList))
-              sb.Append(methodParameterList);
-
-            sb.Append(")");
-
-            if (!string.IsNullOrEmpty(methodConstraints))
-              sb.Append(" ").Append(methodConstraints);
-
-            sb.Append(methodBody);
-
-            break;
-          }
-
-        case EventInfo ev: {
-            var explicitInterface = ev.GetMethods(true).Select(evm => evm.FindExplicitInterfaceMethod(findOnlyPublicInterfaces: options.IgnorePrivateOrAssembly)?.DeclaringType).FirstOrDefault();
-
-            if (explicitInterface == null && options.IgnorePrivateOrAssembly && ev.GetMethods(true).All(m => m.IsPrivate || m.IsAssembly || m.IsFamilyAndAssembly))
-              return null;
-
-            referencingNamespaces?.AddRange(CSharpFormatter.ToNamespaceList(ev.EventHandlerType));
-
-            var modifier = GetMemberModifierOf(ev.GetMethods(true).First());
-
-            if (explicitInterface == null && 0 < modifier.Length)
-              sb.Append($"{modifier} ");
-
-            sb.Append($"event {ev.EventHandlerType.FormatTypeName(attributeProvider: ev, typeWithNamespace: options.MemberDeclarationWithNamespace)} ");
-
-            var eventName = explicitInterface == null ? ev.Name : ev.Name.Substring(explicitInterface.FullName.Length + 1);
-
-            if (explicitInterface == null)
-              sb.Append(eventName);
-            else
-              sb.Append(explicitInterface.FormatTypeName(attributeProvider: ev, typeWithNamespace: options.MemberDeclarationWithNamespace)).Append(".").Append(eventName);
-
-            sb.Append(";");
-
-            break;
-          }
+        case FieldInfo f: return GenerateFieldDeclaration(f, referencingNamespaces, options);
+        case PropertyInfo p: return GeneratePropertyDeclaration(p, referencingNamespaces, options);
+        case MethodBase m: return GenerateMethodBaseDeclaration(m, referencingNamespaces, options);
+        case EventInfo ev: return GenerateEventDeclaration(ev, referencingNamespaces, options);
 
         default:
           if (member.MemberType == MemberTypes.NestedType)
@@ -569,6 +323,280 @@ namespace Smdn.Reflection.ReverseGenerating {
           else
             throw new NotSupportedException($"unsupported member type: {member.MemberType}");
       }
+    }
+
+    private static string GenerateFieldDeclaration(
+      FieldInfo field,
+      ISet<string> referencingNamespaces,
+      GeneratorOptions options
+    )
+    {
+      if (options.IgnorePrivateOrAssembly && (field.IsPrivate || field.IsAssembly || field.IsFamilyAndAssembly))
+        return null;
+
+      var sb = new StringBuilder();
+
+      if (field.DeclaringType.IsEnum) {
+        if (field.IsStatic) {
+          var val = Convert.ChangeType(field.GetValue(null), field.DeclaringType.GetEnumUnderlyingType());
+
+          sb.Append(field.Name).Append(" = ");
+
+          if (field.DeclaringType.IsEnumFlags())
+            sb.Append("0x").AppendFormat("{0:x" + (Marshal.SizeOf(val) * 2).ToString() + "}", val);
+          else
+            sb.Append(val);
+
+          sb.Append(",");
+        }
+        else {
+          return null; // ignores backing field __value
+        }
+      }
+      else {
+        referencingNamespaces?.AddRange(CSharpFormatter.ToNamespaceList(field.FieldType));
+
+        sb.Append($"{GetMemberModifierOf(field)} {field.FieldType.FormatTypeName(attributeProvider: field, typeWithNamespace: options.MemberDeclarationWithNamespace)} {field.Name}");
+
+        if (field.IsStatic && (field.IsLiteral || field.IsInitOnly) && !field.FieldType.ContainsGenericParameters) {
+          var val = field.GetValue(null);
+          var valueDeclaration = CSharpFormatter.FormatValueDeclaration(val,
+                                                                          field.FieldType,
+                                                                          typeWithNamespace: options.MemberDeclarationWithNamespace,
+                                                                          findConstantField: (field.FieldType != field.DeclaringType),
+                                                                          useDefaultLiteral: options.MemberDeclarationUseDefaultLiteral);
+
+          if (valueDeclaration == null)
+            sb.Append($"; // = \"{CSharpFormatter.EscapeString((val ?? "null").ToString(), escapeDoubleQuote: true)}\"");
+          else
+            sb.Append($" = {valueDeclaration};");
+        }
+        else {
+          sb.Append(";");
+        }
+      }
+
+      return sb.ToString();
+    }
+
+    private static string GeneratePropertyDeclaration(
+      PropertyInfo property,
+      ISet<string> referencingNamespaces,
+      GeneratorOptions options
+    )
+    {
+      var explicitInterface = property.GetAccessors(true).Select(a => a.FindExplicitInterfaceMethod(findOnlyPublicInterfaces: options.IgnorePrivateOrAssembly)?.DeclaringType).FirstOrDefault();
+
+      if (explicitInterface == null && options.IgnorePrivateOrAssembly && property.GetAccessors(true).All(a => a.IsPrivate || a.IsAssembly || a.IsFamilyAndAssembly))
+        return null;
+
+      var sb = new StringBuilder();
+
+      var emitGetAccessor = property.GetMethod != null && !(explicitInterface == null && options.IgnorePrivateOrAssembly && (property.GetMethod.IsPrivate || property.GetMethod.IsAssembly || property.GetMethod.IsFamilyAndAssembly));
+      var emitSetAccessor = property.SetMethod != null && !(explicitInterface == null && options.IgnorePrivateOrAssembly && (property.SetMethod.IsPrivate || property.SetMethod.IsAssembly || property.SetMethod.IsFamilyAndAssembly));
+
+      var indexParameters = property.GetIndexParameters();
+
+      referencingNamespaces?.AddRange(CSharpFormatter.ToNamespaceList(property.PropertyType));
+      referencingNamespaces?.AddRange(indexParameters.SelectMany(ip => CSharpFormatter.ToNamespaceList(ip.ParameterType)));
+
+      var modifier = GetMemberModifierOf(property, out string setAccessibility, out string getAccessibility);
+
+      if (explicitInterface == null && 0 < modifier.Length)
+        sb.Append($"{modifier} ");
+
+      sb.Append($"{property.PropertyType.FormatTypeName(attributeProvider: property, typeWithNamespace: options.MemberDeclarationWithNamespace)} ");
+
+      var propertyName = explicitInterface == null ? property.Name : property.Name.Substring(property.Name.LastIndexOf('.') + 1);
+
+      if (0 < indexParameters.Length &&
+          string.Equals(property.Name, property.DeclaringType.GetCustomAttribute<DefaultMemberAttribute>()?.MemberName, StringComparison.Ordinal))
+        sb.Append("this"); // indexer
+      else if (explicitInterface == null)
+        sb.Append(propertyName);
+      else
+        sb.Append(explicitInterface.FormatTypeName(attributeProvider: property, typeWithNamespace: options.MemberDeclarationWithNamespace)).Append(".").Append(propertyName);
+
+      if (0 < indexParameters.Length)
+        sb.Append($"[{CSharpFormatter.FormatParameterList(indexParameters, typeWithNamespace: options.MemberDeclarationWithNamespace, useDefaultLiteral: options.MemberDeclarationUseDefaultLiteral)}] ");
+      else
+        sb.Append(" ");
+
+      sb.Append("{ ");
+
+      if (emitGetAccessor) {
+        if (explicitInterface == null && 0 < getAccessibility.Length)
+          sb.Append(getAccessibility).Append(" ");
+
+        sb.Append("get");
+
+        if (options.GenerateEmptyImplementation && !property.GetMethod.IsAbstract)
+          sb.Append(" => throw new NotImplementedException(); ");
+        else
+          sb.Append("; ");
+      }
+
+      if (emitSetAccessor) {
+        if (explicitInterface == null && 0 < setAccessibility.Length)
+          sb.Append(setAccessibility).Append(" ");
+
+        sb.Append("set");
+
+        if (options.GenerateEmptyImplementation && !property.SetMethod.IsAbstract)
+          sb.Append(" => throw new NotImplementedException(); ");
+        else
+          sb.Append("; ");
+      }
+
+      sb.Append("}");
+
+#if false
+        if (p.CanRead)
+          sb.Append(" = ").Append(p.GetConstantValue()).Append(";");
+#endif
+
+      return sb.ToString();
+    }
+
+    private static string GenerateMethodBaseDeclaration(
+      MethodBase m,
+      ISet<string> referencingNamespaces,
+      GeneratorOptions options
+    )
+    {
+      var explicitInterfaceMethod = m.FindExplicitInterfaceMethod(findOnlyPublicInterfaces: options.IgnorePrivateOrAssembly);
+
+      if (explicitInterfaceMethod == null && (options.IgnorePrivateOrAssembly && (m.IsPrivate || m.IsAssembly || m.IsFamilyAndAssembly)))
+        return null;
+
+      var method = m as MethodInfo;
+      var methodModifiers = GetMemberModifierOf(m);
+      var isByRefReturnType = (method != null && method.ReturnType.IsByRef);
+      var methodReturnType = isByRefReturnType ? "ref " + method.ReturnType.GetElementType().FormatTypeName(attributeProvider: method.ReturnTypeCustomAttributes, typeWithNamespace: options.MemberDeclarationWithNamespace) : method?.ReturnType?.FormatTypeName(attributeProvider: method?.ReturnTypeCustomAttributes, typeWithNamespace: options.MemberDeclarationWithNamespace);
+      var methodName = m.Name;
+      var methodGenericParameters = m.IsGenericMethod ? string.Concat("<", string.Join(", ", m.GetGenericArguments().Select(t => t.FormatTypeName(typeWithNamespace: options.MemberDeclarationWithNamespace))), ">") : null;
+      var methodParameterList = CSharpFormatter.FormatParameterList(m, typeWithNamespace: options.MemberDeclarationWithNamespace, useDefaultLiteral: options.MemberDeclarationUseDefaultLiteral);
+      var methodConstraints = method == null ? null : string.Join(" ", method.GetGenericArguments().Select(arg => Generator.GenerateGenericArgumentConstraintDeclaration(arg, referencingNamespaces, options)).Where(d => d != null));
+      var methodBody = m.IsAbstract ? ";" : options.GenerateEmptyImplementation ? " => throw new NotImplementedException();" : " {}";
+
+      referencingNamespaces?.AddRange(m.GetSignatureTypes().Where(mpt => !mpt.ContainsGenericParameters).SelectMany(CSharpFormatter.ToNamespaceList));
+
+      if (method == null) {
+        // constructors
+        methodName = m.DeclaringType.IsGenericType ? m.DeclaringType.GetGenericTypeName() : m.DeclaringType.Name;
+        methodReturnType = null;
+      }
+      else if (method.IsFamily && string.Equals(method.Name, "Finalize", StringComparison.Ordinal)) {
+        // destructors
+        methodName = "~" + (m.DeclaringType.IsGenericType ? m.DeclaringType.GetGenericTypeName() : m.DeclaringType.Name);
+        methodModifiers = null;
+        methodReturnType = null;
+        methodParameterList = null;
+        methodConstraints = null;
+      }
+      else if (method.IsSpecialName) {
+        // operator overloads, etc
+        switch (method.Name) {
+          // comparison
+          case "op_Equality": methodName = "operator == "; break;
+          case "op_Inequality": methodName = "operator != "; break;
+          case "op_LessThan": methodName = "operator < "; break;
+          case "op_GreaterThan": methodName = "operator > "; break;
+          case "op_LessThanOrEqual": methodName = "operator <= "; break;
+          case "op_GreaterThanOrEqual": methodName = "operator >= "; break;
+
+          // unary
+          case "op_UnaryPlus": methodName = "operator + "; break;
+          case "op_UnaryNegation": methodName = "operator - "; break;
+          case "op_LogicalNot": methodName = "operator ! "; break;
+          case "op_OnesComplement": methodName = "operator ~ "; break;
+          case "op_True": methodName = "operator true "; break;
+          case "op_False": methodName = "operator false "; break;
+          case "op_Increment": methodName = "operator ++ "; break;
+          case "op_Decrement": methodName = "operator -- "; break;
+
+          // binary
+          case "op_Addition": methodName = "operator + "; break;
+          case "op_Subtraction": methodName = "operator - "; break;
+          case "op_Multiply": methodName = "operator * "; break;
+          case "op_Division": methodName = "operator / "; break;
+          case "op_Modulus": methodName = "operator % "; break;
+          case "op_BitwiseAnd": methodName = "operator & "; break;
+          case "op_BitwiseOr": methodName = "operator | "; break;
+          case "op_ExclusiveOr": methodName = "operator ^ "; break;
+          case "op_RightShift": methodName = "operator >> "; break;
+          case "op_LeftShift": methodName = "operator << "; break;
+
+          // type cast
+          case "op_Explicit": methodName = "explicit operator " + methodReturnType; methodReturnType = null; break;
+          case "op_Implicit": methodName = "implicit operator " + methodReturnType; methodReturnType = null; break;
+        }
+      }
+      else if (explicitInterfaceMethod != null) {
+        methodModifiers = null;
+        methodName = explicitInterfaceMethod.DeclaringType.FormatTypeName(typeWithNamespace: options.MemberDeclarationWithNamespace) + "." + explicitInterfaceMethod.Name;
+      }
+      else {
+        // standard methods
+      }
+
+      var sb = new StringBuilder();
+
+      if (!string.IsNullOrEmpty(methodModifiers))
+        sb.Append(methodModifiers).Append(" ");
+
+      if (!string.IsNullOrEmpty(methodReturnType))
+        sb.Append(methodReturnType).Append(" ");
+
+      sb.Append(methodName);
+
+      if (!string.IsNullOrEmpty(methodGenericParameters))
+        sb.Append(methodGenericParameters);
+
+      sb.Append("(");
+
+      if (!string.IsNullOrEmpty(methodParameterList))
+        sb.Append(methodParameterList);
+
+      sb.Append(")");
+
+      if (!string.IsNullOrEmpty(methodConstraints))
+        sb.Append(" ").Append(methodConstraints);
+
+      sb.Append(methodBody);
+
+      return sb.ToString();
+    }
+
+    private static string GenerateEventDeclaration(
+      EventInfo ev,
+      ISet<string> referencingNamespaces,
+      GeneratorOptions options
+    )
+    {
+      var explicitInterface = ev.GetMethods(true).Select(evm => evm.FindExplicitInterfaceMethod(findOnlyPublicInterfaces: options.IgnorePrivateOrAssembly)?.DeclaringType).FirstOrDefault();
+
+      if (explicitInterface == null && options.IgnorePrivateOrAssembly && ev.GetMethods(true).All(m => m.IsPrivate || m.IsAssembly || m.IsFamilyAndAssembly))
+        return null;
+
+      referencingNamespaces?.AddRange(CSharpFormatter.ToNamespaceList(ev.EventHandlerType));
+
+      var sb = new StringBuilder();
+      var modifier = GetMemberModifierOf(ev.GetMethods(true).First());
+
+      if (explicitInterface == null && 0 < modifier.Length)
+        sb.Append(modifier).Append(" ");
+
+      sb.Append("event ").Append(ev.EventHandlerType.FormatTypeName(attributeProvider: ev, typeWithNamespace: options.MemberDeclarationWithNamespace)).Append(" ");
+
+      var eventName = explicitInterface == null ? ev.Name : ev.Name.Substring(explicitInterface.FullName.Length + 1);
+
+      if (explicitInterface == null)
+        sb.Append(eventName);
+      else
+        sb.Append(explicitInterface.FormatTypeName(attributeProvider: ev, typeWithNamespace: options.MemberDeclarationWithNamespace)).Append(".").Append(eventName);
+
+      sb.Append(";");
 
       return sb.ToString();
     }
