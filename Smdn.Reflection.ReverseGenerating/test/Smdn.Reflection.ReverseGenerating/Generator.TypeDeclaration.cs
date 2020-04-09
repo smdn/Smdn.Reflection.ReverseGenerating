@@ -80,9 +80,6 @@ namespace Smdn.Reflection.ReverseGenerating {
       namespace Structures {
         [TypeDeclarationTestCase("internal struct S0")] internal struct S0 { };
         [TypeDeclarationTestCase("public struct S1")] public struct S1 { };
-        [TypeDeclarationTestCase("public readonly struct S2")] public readonly struct S2 { }
-        [TypeDeclarationTestCase("public ref struct S3")] public ref struct S3 { }
-        [TypeDeclarationTestCase("public readonly ref struct S4")] public readonly ref struct S4 { }
 
         class Accessibilities {
           [TypeDeclarationTestCase("public struct S1")] public struct S1 { }
@@ -93,6 +90,12 @@ namespace Smdn.Reflection.ReverseGenerating {
           [TypeDeclarationTestCase("private protected struct S6")] private protected struct S6 { }
           [TypeDeclarationTestCase("private protected struct S7")] protected private struct S7 { }
           [TypeDeclarationTestCase("private struct S8")] private struct S8 { }
+        }
+
+        class Modifiers {
+          [TypeDeclarationTestCase("public ref struct S0")] public ref struct S0 { }
+          [TypeDeclarationTestCase("public readonly struct S1")] public readonly struct S1 { }
+          [TypeDeclarationTestCase("public readonly ref struct S2")] public readonly ref struct S2 { }
         }
       }
 
