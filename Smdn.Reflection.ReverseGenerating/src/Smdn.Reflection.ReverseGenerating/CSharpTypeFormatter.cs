@@ -60,6 +60,42 @@ namespace Smdn.Reflection.ReverseGenerating {
       "remove", "set", "value", "var", "when", "where", "yield"
     };
 
+    private static readonly Dictionary<MethodSpecialName, string> specialMethodNames = new Dictionary<MethodSpecialName, string>() {
+      // comparison
+      {MethodSpecialName.Equality, "operator =="},
+      {MethodSpecialName.Inequality, "operator !="},
+      {MethodSpecialName.LessThan, "operator <"},
+      {MethodSpecialName.GreaterThan, "operator >"},
+      {MethodSpecialName.LessThanOrEqual, "operator <="},
+      {MethodSpecialName.GreaterThanOrEqual, "operator >="},
+
+      // unary
+      {MethodSpecialName.UnaryPlus, "operator +"},
+      {MethodSpecialName.UnaryNegation, "operator -"},
+      {MethodSpecialName.LogicalNot, "operator !"},
+      {MethodSpecialName.OnesComplement, "operator ~"},
+      {MethodSpecialName.True, "operator true"},
+      {MethodSpecialName.False, "operator false"},
+      {MethodSpecialName.Increment, "operator ++"},
+      {MethodSpecialName.Decrement, "operator --"},
+
+      // binary
+      {MethodSpecialName.Addition, "operator +"},
+      {MethodSpecialName.Subtraction, "operator -"},
+      {MethodSpecialName.Multiply, "operator *"},
+      {MethodSpecialName.Division, "operator /"},
+      {MethodSpecialName.Modulus, "operator %"},
+      {MethodSpecialName.BitwiseAnd, "operator &"},
+      {MethodSpecialName.BitwiseOr, "operator |"},
+      {MethodSpecialName.ExclusiveOr, "operator ^"},
+      {MethodSpecialName.RightShift, "operator >>"},
+      {MethodSpecialName.LeftShift, "operator <<"},
+
+      // type cast
+      {MethodSpecialName.Explicit, "explicit operator"},
+      {MethodSpecialName.Implicit, "implicit operator"},
+    };
+
     public static string FormatAccessibility(Accessibility accessibility)
     {
       if (accessibilities.TryGetValue(accessibility, out var ret))
@@ -76,6 +112,19 @@ namespace Smdn.Reflection.ReverseGenerating {
     public static IEnumerable<string> ToNamespaceList(Type t)
     {
       return t.GetNamespaces(type => IsLanguagePrimitiveType(type, out _));
+    }
+
+    public static string FormatSpecialNameMethod(MethodBase methodOrConstructor, out MethodSpecialName nameType)
+    {
+      nameType = methodOrConstructor.GetNameType();
+
+      if (specialMethodNames.TryGetValue(nameType, out var name))
+        return name;
+
+      if (nameType == MethodSpecialName.Constructor)
+        return methodOrConstructor.DeclaringType.IsGenericType ? methodOrConstructor.DeclaringType.GetGenericTypeName() : methodOrConstructor.DeclaringType.Name;
+
+      return methodOrConstructor.Name; // as default
     }
 
     public static string FormatParameterList(MethodBase m, bool typeWithNamespace = true, bool useDefaultLiteral = false)

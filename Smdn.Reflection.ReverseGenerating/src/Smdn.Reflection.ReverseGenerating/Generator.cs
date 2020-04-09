@@ -519,10 +519,18 @@ namespace Smdn.Reflection.ReverseGenerating {
 
       referencingNamespaces?.AddRange(m.GetSignatureTypes().Where(mpt => !mpt.ContainsGenericParameters).SelectMany(CSharpFormatter.ToNamespaceList));
 
-      if (method == null) {
-        // constructors
-        methodName = m.DeclaringType.IsGenericType ? m.DeclaringType.GetGenericTypeName() : m.DeclaringType.Name;
-        methodReturnType = null;
+      if (m.IsSpecialName) {
+        // constructors, operator overloads, etc
+        methodName = CSharpFormatter.FormatSpecialNameMethod(m, out var nameType);
+
+        switch (nameType) {
+          case MethodSpecialName.None: break;
+          case MethodSpecialName.Unknown: break;
+          case MethodSpecialName.Constructor: methodReturnType = null; break;
+          case MethodSpecialName.Explicit: methodName += " " + methodReturnType; methodReturnType = null; break;
+          case MethodSpecialName.Implicit: methodName += " " + methodReturnType; methodReturnType = null; break;
+          default: methodName += " "; break;
+        }
       }
       else if (method.IsFamily && string.Equals(method.Name, "Finalize", StringComparison.Ordinal)) {
         // destructors
@@ -531,44 +539,6 @@ namespace Smdn.Reflection.ReverseGenerating {
         methodReturnType = null;
         methodParameterList = null;
         methodConstraints = null;
-      }
-      else if (method.IsSpecialName) {
-        // operator overloads, etc
-        switch (method.Name) {
-          // comparison
-          case "op_Equality": methodName = "operator == "; break;
-          case "op_Inequality": methodName = "operator != "; break;
-          case "op_LessThan": methodName = "operator < "; break;
-          case "op_GreaterThan": methodName = "operator > "; break;
-          case "op_LessThanOrEqual": methodName = "operator <= "; break;
-          case "op_GreaterThanOrEqual": methodName = "operator >= "; break;
-
-          // unary
-          case "op_UnaryPlus": methodName = "operator + "; break;
-          case "op_UnaryNegation": methodName = "operator - "; break;
-          case "op_LogicalNot": methodName = "operator ! "; break;
-          case "op_OnesComplement": methodName = "operator ~ "; break;
-          case "op_True": methodName = "operator true "; break;
-          case "op_False": methodName = "operator false "; break;
-          case "op_Increment": methodName = "operator ++ "; break;
-          case "op_Decrement": methodName = "operator -- "; break;
-
-          // binary
-          case "op_Addition": methodName = "operator + "; break;
-          case "op_Subtraction": methodName = "operator - "; break;
-          case "op_Multiply": methodName = "operator * "; break;
-          case "op_Division": methodName = "operator / "; break;
-          case "op_Modulus": methodName = "operator % "; break;
-          case "op_BitwiseAnd": methodName = "operator & "; break;
-          case "op_BitwiseOr": methodName = "operator | "; break;
-          case "op_ExclusiveOr": methodName = "operator ^ "; break;
-          case "op_RightShift": methodName = "operator >> "; break;
-          case "op_LeftShift": methodName = "operator << "; break;
-
-          // type cast
-          case "op_Explicit": methodName = "explicit operator " + methodReturnType; methodReturnType = null; break;
-          case "op_Implicit": methodName = "implicit operator " + methodReturnType; methodReturnType = null; break;
-        }
       }
       else if (explicitInterfaceMethod != null) {
         methodModifiers = null;
