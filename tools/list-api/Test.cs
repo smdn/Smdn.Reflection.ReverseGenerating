@@ -69,11 +69,6 @@ public class Test {
         if (testOfType.Expected != null)
           EvaluateTypeTest(result, options, testOfType, type);
 
-        var testOfBaseType = type.GetCustomAttribute<TestCases.BaseTypeTestAttribute>();
-
-        if (testOfBaseType != null && testOfBaseType.Expected != null)
-          EvaluateBaseTypeTest(result, options, testOfType, testOfBaseType, type);
-
         var testOfNamespaces = type.GetCustomAttribute<TestCases.NamespacesTestAttribute>();
 
         if (testOfNamespaces != null && testOfNamespaces.Expected != null)
@@ -135,18 +130,6 @@ public class Test {
                  member.ToString(),
                  test.Expected,
                  () => Generator.GenerateMemberDeclaration(member, null, opts));
-  }
-
-  static void EvaluateBaseTypeTest(TestResult result, Options options, TestCases.TestAttribute testOfType, TestCases.BaseTypeTestAttribute testOfBaseType, Type type)
-  {
-    var opts = options.Clone();
-
-    opts.TypeDeclarationWithNamespace = testOfType.WithNamespace;
-
-    EvaluateTest(result,
-                 "base types of " + type.ToString(),
-                 testOfBaseType.Expected,
-                 () => string.Join(", ", Generator.GenerateExplicitBaseTypeAndInterfaces(type, null, opts)));
   }
 
   static void EvaluateAttributeTest(TestResult result, Options options, TestCases.TestAttribute testOfType, ICustomAttributeProvider attributeProvider)

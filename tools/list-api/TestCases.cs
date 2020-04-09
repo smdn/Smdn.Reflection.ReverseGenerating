@@ -22,16 +22,6 @@ namespace TestCases {
     }
   }
 
-  [AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct | AttributeTargets.Interface)]
-  class BaseTypeTestAttribute : Attribute {
-    public string Expected { get; private set; }
-
-    public BaseTypeTestAttribute(string expected)
-    {
-      this.Expected = expected;
-    }
-  }
-
   [AttributeUsage(
     AttributeTargets.Class | AttributeTargets.Struct | AttributeTargets.Interface | AttributeTargets.Enum | AttributeTargets.Delegate |
     AttributeTargets.Method | AttributeTargets.Constructor | AttributeTargets.Field | AttributeTargets.Event | AttributeTargets.Property
