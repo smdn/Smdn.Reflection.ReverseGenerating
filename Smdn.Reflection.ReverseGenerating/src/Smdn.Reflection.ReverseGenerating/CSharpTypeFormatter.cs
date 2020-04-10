@@ -277,14 +277,7 @@ namespace Smdn.Reflection.ReverseGenerating {
         var sb = new StringBuilder();
 
         if (t.IsConstructedGenericType && "System".Equals(t.Namespace, StringComparison.Ordinal) && t.GetGenericTypeName().Equals("ValueTuple", StringComparison.Ordinal)) {
-          IList<string> tupleItemNames = null;
-
-          try {
-            tupleItemNames = options.AttributeProvider?.GetCustomAttributes(typeof(TupleElementNamesAttribute), inherit: false)?.Cast<TupleElementNamesAttribute>()?.FirstOrDefault()?.TransformNames.ToList();
-          }
-          catch (TypeLoadException) {
-            Console.Error.WriteLine("could not load TupleElementNamesAttribute");
-          }
+          var tupleItemNames = options.AttributeProvider?.GetCustomAttributes(typeof(TupleElementNamesAttribute), inherit: false)?.Cast<TupleElementNamesAttribute>()?.FirstOrDefault()?.TransformNames.ToList();
 
           if (tupleItemNames != null) {
             for (var index = 0; index < tupleItemNames.Count; index++) {
