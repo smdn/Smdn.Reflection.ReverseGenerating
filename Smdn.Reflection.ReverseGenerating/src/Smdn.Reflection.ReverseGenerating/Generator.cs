@@ -83,8 +83,17 @@ namespace Smdn.Reflection.ReverseGenerating {
         referencingNamespaces?.AddRange(signatureInfo.GetSignatureTypes().Where(mpt => !mpt.ContainsGenericParameters).SelectMany(CSharpFormatter.ToNamespaceList));
 
         var genericArgumentConstraintDeclaration = genericArgumentConstraints.Count == 0 ? string.Empty : " " + string.Join(" ", genericArgumentConstraints);
+        var returnType = signatureInfo.ReturnType.FormatTypeName(
+          attributeProvider: signatureInfo.ReturnTypeCustomAttributes,
+          typeWithNamespace: options.TypeDeclarationWithNamespace
+        );
+        var parameterList = CSharpFormatter.FormatParameterList(
+          signatureInfo,
+          typeWithNamespace: options.TypeDeclarationWithNamespace,
+          useDefaultLiteral: options.MemberDeclarationUseDefaultLiteral
+        );
 
-        yield return $"{accessibilities}delegate {signatureInfo.ReturnType.FormatTypeName(attributeProvider: signatureInfo.ReturnTypeCustomAttributes, typeWithNamespace: options.TypeDeclarationWithNamespace)} {typeName}({CSharpFormatter.FormatParameterList(signatureInfo, typeWithNamespace: options.TypeDeclarationWithNamespace, useDefaultLiteral: options.MemberDeclarationUseDefaultLiteral)}){genericArgumentConstraintDeclaration};";
+        yield return $"{accessibilities}delegate {returnType} {typeName}({parameterList}){genericArgumentConstraintDeclaration};";
         yield break;
       }
 
