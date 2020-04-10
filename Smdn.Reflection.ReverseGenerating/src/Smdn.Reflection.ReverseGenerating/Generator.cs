@@ -315,7 +315,7 @@ namespace Smdn.Reflection.ReverseGenerating {
         return CSharpFormatter.FormatValueDeclaration(
           @value,
           @value?.GetType(),
-          typeWithNamespace: options.MemberDeclarationWithNamespace,
+          typeWithNamespace: options.TypeDeclarationWithNamespace,
           findConstantField: true,
           useDefaultLiteral: options.MemberDeclarationUseDefaultLiteral
         );
