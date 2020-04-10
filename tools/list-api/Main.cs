@@ -207,7 +207,7 @@ class ListApi {
     var ret = new StringBuilder(1024);
     var indent = string.Concat(Enumerable.Repeat(options.Indent, nestLevel));
 
-    // TODO: AttributeTargets.GenericParameter
+    // TODO: AttributeTargets.GenericParameter, AttributeTargets.ReturnValue, AttributeTargets.Parameter
     foreach (var attr in Generator.GenerateAttributeList(t, null, options)) {
       ret.Append(indent)
          .AppendLine(attr);

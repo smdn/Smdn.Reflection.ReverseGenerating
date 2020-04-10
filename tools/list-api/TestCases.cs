@@ -94,92 +94,6 @@ namespace TestCases {
     }
   }
 
-  [AttributeUsage(AttributeTargets.All)]
-  class AttributeTestAttribute : Attribute {
-    public string Expected { get; private set; }
-
-    public AttributeTestAttribute(string expected)
-    {
-      this.Expected = expected;
-    }
-  }
-
-  namespace Attributes {
-    [Test][AttributeTest("[System.Flags]")]
-    [Flags]
-    enum Flags1 : int {}
-
-    [Test(WithNamespace = false)][AttributeTest("[Flags]")]
-    [Flags]
-    enum Flags2 : int {}
-
-    [Test][AttributeTest("[System.Flags], [System.Obsolete]")]
-    [Flags]
-    [Obsolete]
-    enum Flags3 : int {}
-
-    [Test][AttributeTest("[System.Flags], [System.Obsolete]")]
-    [Obsolete]
-    [Flags]
-    enum Flags4 : int {}
-
-    [Test][AttributeTest("[System.Obsolete]")]
-    [Obsolete]
-    class Obsolete1 {}
-
-    [Test][AttributeTest("[System.Obsolete(\"obsolete\")]")]
-    [Obsolete("obsolete")]
-    class Obsolete2 {}
-
-    [Test][AttributeTest("[System.Obsolete(\"deprecated\", true)]")]
-    [Obsolete("deprecated", true)]
-    class Obsolete3 {}
-
-    [Test][AttributeTest("[System.Obsolete(\"deprecated\")]")]
-    [Obsolete("deprecated", false)]
-    class Obsolete4 {}
-
-    [Test][AttributeTest("[System.Serializable]")]
-    [Serializable]
-    class Serializable1 {}
-
-    class Conditionals {
-      [Test][AttributeTest("[System.Diagnostics.Conditional(\"DEBUG\")]")]
-      [System.Diagnostics.Conditional("DEBUG")]
-      public void M1() {}
-
-      [Test(WithNamespace = false)][AttributeTest("[Conditional(\"DEBUG\")]")]
-      [System.Diagnostics.Conditional("DEBUG")]
-      public void M2() {}
-    }
-
-    static class Extension {
-      [Test][AttributeTest("")] // does not emit System.Runtime.CompilerServices.ExtensionAttribute
-      public static void M1(this int x) {}
-    }
-
-    [Test][AttributeTest("[System.Runtime.InteropServices.StructLayout(System.Runtime.InteropServices.LayoutKind.Explicit, Pack = 1)]")]
-    [System.Runtime.InteropServices.StructLayout(System.Runtime.InteropServices.LayoutKind.Explicit, Pack = 1)]
-    struct StructLayout1 {
-      [Test][AttributeTest("[System.Runtime.InteropServices.FieldOffset(0)]")]
-      [System.Runtime.InteropServices.FieldOffset(0)]
-      public byte F0;
-
-      [Test(WithNamespace = false)][AttributeTest("[FieldOffset(1)]")]
-      [System.Runtime.InteropServices.FieldOffset(1)]
-      public byte F1;
-    }
-
-    [Test][AttributeTest("[System.Runtime.InteropServices.StructLayout(System.Runtime.InteropServices.LayoutKind.Explicit, Size = 1)]")]
-    [System.Runtime.InteropServices.StructLayout(System.Runtime.InteropServices.LayoutKind.Explicit, Size = 1)]
-    struct StructLayout2 {
-      [System.Runtime.InteropServices.FieldOffset(0)] public byte F0;
-    }
-
-    [Test][AttributeTest("")]
-    struct NoStructLayout {}
-  }
-
   namespace TypeDeclarationWithExplicitBaseTypeAndInterfaces {
     [Test("public class C1 : System.IDisposable")]
     public class C1 : IDisposable {
@@ -239,9 +153,6 @@ namespace TestCases {
         public object Clone() => throw new NotImplementedException();
       }
     }
-  }
-
-  namespace MemberDefinitions {
   }
 }
 

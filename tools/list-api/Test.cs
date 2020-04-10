@@ -74,9 +74,6 @@ public class Test {
 
         if (testOfNamespaces != null && testOfNamespaces.Expected != null)
           EvaluateNamespacesTest(result, options, testOfType, testOfNamespaces, type);
-
-        // TODO: AttributeTargets.GenericParameter
-        EvaluateAttributeTest(result, options, testOfType, type);
       }
 
       /* test members */
@@ -96,13 +93,6 @@ public class Test {
 
           if (testOfNamespaces != null && testOfNamespaces.Expected != null)
             EvaluateNamespacesTest(result, options, testOfMember, testOfNamespaces, member);
-
-          EvaluateAttributeTest(result, options, testOfMember, member);
-
-          if (member is MethodInfo method) {
-            // TODO: AttributeTargets.ReturnValue, AttributeTargets.Parameter
-            EvaluateAttributeTest(result, options, testOfMember, method.ReturnTypeCustomAttributes);
-          }
         }
       }
     }
@@ -131,23 +121,6 @@ public class Test {
                  member.ToString(),
                  test.Expected,
                  () => Generator.GenerateMemberDeclaration(member, null, opts));
-  }
-
-  static void EvaluateAttributeTest(TestResult result, Options options, TestCases.TestAttribute testOfType, ICustomAttributeProvider attributeProvider)
-  {
-    var testOfAttribute = attributeProvider?.GetCustomAttributes(typeof(TestCases.AttributeTestAttribute), false)?.Cast<TestCases.AttributeTestAttribute>()?.FirstOrDefault();
-
-    if (testOfAttribute?.Expected == null)
-      return;
-
-    var opts = options.Clone();
-
-    opts.TypeDeclarationWithNamespace = testOfType.WithNamespace;
-
-    EvaluateTest(result,
-                 "attributes of " + attributeProvider.ToString(),
-                 testOfAttribute.Expected,
-                 () => string.Join(", ", Generator.GenerateAttributeList(attributeProvider, null, opts)));
   }
 
   static void EvaluateNamespacesTest(TestResult result, Options options, TestCases.TestAttribute testOfTypeOrMember, TestCases.NamespacesTestAttribute testOfNamespaces, MemberInfo memberOrType)
