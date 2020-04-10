@@ -80,6 +80,7 @@ namespace Smdn.Reflection {
           if (t.IsNotPublic) return true;
           if (t.IsNestedAssembly) return true;
           if (t.IsNestedFamANDAssem) return true;
+          if (t.IsNestedPrivate) return true;
 
           return false;
 

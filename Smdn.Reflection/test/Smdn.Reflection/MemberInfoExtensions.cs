@@ -112,6 +112,7 @@ namespace Smdn.Reflection {
     [TestCase(typeof(TestTypesForMemberInfoExtensionsTests.C), "C5", null, false)]
     [TestCase(typeof(TestTypesForMemberInfoExtensionsTests.C.C6), null, null, false)]
     [TestCase(typeof(TestTypesForMemberInfoExtensionsTests.C), "C7", null, true)]
+    [TestCase(typeof(TestTypesForMemberInfoExtensionsTests.C), "C8", null, true)]
     [TestCase(typeof(TestTypesForMemberInfoExtensionsTests.C), null, nameof(TestTypesForMemberInfoExtensionsTests.C.M1), false)]
     [TestCase(typeof(TestTypesForMemberInfoExtensionsTests.C), null, nameof(TestTypesForMemberInfoExtensionsTests.C.M2), true)]
     [TestCase(typeof(TestTypesForMemberInfoExtensionsTests.C), null, "M3", false)]
