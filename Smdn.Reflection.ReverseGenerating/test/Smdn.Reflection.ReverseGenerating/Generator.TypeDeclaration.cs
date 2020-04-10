@@ -43,11 +43,13 @@ namespace Smdn.Reflection.ReverseGenerating {
     namespace TypeDeclaration {
       namespace Options {
         namespace TypeDeclarationWithAccessibility {
-          [TypeDeclarationTestCase("public class C1", TypeWithAccessibility = true, TypeWithNamespace = false)] public class C1 { }
-          [TypeDeclarationTestCase("class C2", TypeWithAccessibility = false, TypeWithNamespace = false)] public class C2 { }
+          [TypeDeclarationTestCase("public class C1", TypeWithAccessibility = true, TypeWithNamespace = false)]
+          [TypeDeclarationTestCase("class C1", TypeWithAccessibility = false, TypeWithNamespace = false)]
+          public class C1 { }
 
-          [TypeDeclarationTestCase("internal class C3", TypeWithAccessibility = true, TypeWithNamespace = false)] class C3 { }
-          [TypeDeclarationTestCase("class C4", TypeWithAccessibility = false, TypeWithNamespace = false)] class C4 { }
+          [TypeDeclarationTestCase("internal class C2", TypeWithAccessibility = true, TypeWithNamespace = false)]
+          [TypeDeclarationTestCase("class C2", TypeWithAccessibility = false, TypeWithNamespace = false)]
+          class C2 { }
 
           [TypeDeclarationTestCase("delegate void D();", TypeWithAccessibility = false, TypeWithNamespace = false)] delegate void D();
           [TypeDeclarationTestCase("enum E : int", TypeWithAccessibility = false, TypeWithNamespace = false)] enum E { }
