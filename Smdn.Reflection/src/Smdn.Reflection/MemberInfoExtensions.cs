@@ -66,5 +66,43 @@ namespace Smdn.Reflection {
 
       return Accessibility.Undefined;
     }
+
+    public static bool IsPrivateOrAssembly(this MemberInfo member)
+    {
+      switch (member) {
+        case null:
+          throw new ArgumentNullException(nameof(member));
+
+        case Type t:
+          if (t.IsNotPublic) return true;
+          if (t.IsNestedAssembly) return true;
+          if (t.IsNestedFamANDAssem) return true;
+
+          return false;
+
+        case FieldInfo f:
+          if (f.IsPrivate) return true;
+          if (f.IsAssembly) return true;
+          if (f.IsFamilyAndAssembly) return true;
+
+          return false;
+
+        case MethodBase m:
+          if (m.IsPrivate) return true;
+          if (m.IsAssembly) return true;
+          if (m.IsFamilyAndAssembly) return true;
+
+          return false;
+
+        case PropertyInfo p:
+          throw new InvalidOperationException("cannot get accessibility of " + nameof(PropertyInfo));
+
+        case EventInfo ev:
+          throw new InvalidOperationException("cannot get accessibility of " + nameof(EventInfo));
+
+        default:
+          throw new NotSupportedException("unknown member type");
+      }
+    }
   }
 }

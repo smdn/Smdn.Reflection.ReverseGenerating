@@ -94,5 +94,58 @@ namespace Smdn.Reflection {
 
       Assert.Throws<InvalidOperationException>(() => member.GetAccessibility());
     }
+
+    [TestCase(typeof(TestTypesForMemberInfoExtensionsTests.C1), null, null, false)]
+    [TestCase(typeof(TestTypesForMemberInfoExtensionsTests.C2), null, null, true)]
+    [TestCase(typeof(TestTypesForMemberInfoExtensionsTests.C.C3), null, null, false)]
+    [TestCase(typeof(TestTypesForMemberInfoExtensionsTests.C.C4), null, null, true)]
+    [TestCase(typeof(TestTypesForMemberInfoExtensionsTests.C), "C5", null, false)]
+    [TestCase(typeof(TestTypesForMemberInfoExtensionsTests.C.C6), null, null, false)]
+    [TestCase(typeof(TestTypesForMemberInfoExtensionsTests.C), "C7", null, true)]
+    [TestCase(typeof(TestTypesForMemberInfoExtensionsTests.C), null, nameof(TestTypesForMemberInfoExtensionsTests.C.M1), false)]
+    [TestCase(typeof(TestTypesForMemberInfoExtensionsTests.C), null, nameof(TestTypesForMemberInfoExtensionsTests.C.M2), true)]
+    [TestCase(typeof(TestTypesForMemberInfoExtensionsTests.C), null, "M3", false)]
+    [TestCase(typeof(TestTypesForMemberInfoExtensionsTests.C), null, nameof(TestTypesForMemberInfoExtensionsTests.C.M4), false)]
+    [TestCase(typeof(TestTypesForMemberInfoExtensionsTests.C), null, "M5", true)]
+    [TestCase(typeof(TestTypesForMemberInfoExtensionsTests.C), null, "M6", true)]
+    [TestCase(typeof(TestTypesForMemberInfoExtensionsTests.C), null, nameof(TestTypesForMemberInfoExtensionsTests.C.F1), false)]
+    [TestCase(typeof(TestTypesForMemberInfoExtensionsTests.C), null, nameof(TestTypesForMemberInfoExtensionsTests.C.F2), true)]
+    [TestCase(typeof(TestTypesForMemberInfoExtensionsTests.C), null, "F3", false)]
+    [TestCase(typeof(TestTypesForMemberInfoExtensionsTests.C), null, nameof(TestTypesForMemberInfoExtensionsTests.C.F4), false)]
+    [TestCase(typeof(TestTypesForMemberInfoExtensionsTests.C), null, "F5", true)]
+    [TestCase(typeof(TestTypesForMemberInfoExtensionsTests.C), null, "F6", true)]
+    public void TestIsPrivateOrAssembly(Type type, string nestedTypeName, string memberName, bool expected)
+    {
+      if (nestedTypeName == null && memberName == null) {
+        Assert.AreEqual(expected, type.IsPrivateOrAssembly(), type.FullName);
+      }
+      else if (nestedTypeName != null) {
+        var nestedType = type.GetNestedType(nestedTypeName, BindingFlags.Public | BindingFlags.NonPublic);
+
+        Assert.AreEqual(expected, nestedType.IsPrivateOrAssembly(), nestedType.FullName);
+      }
+      else {
+        var member = type.GetMember(memberName, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance).First();
+
+        Assert.AreEqual(expected, member.IsPrivateOrAssembly(), $"{type.FullName}.{member.Name}");
+      }
+    }
+
+    [TestCase(typeof(TestTypesForMemberInfoExtensionsTests.C), nameof(TestTypesForMemberInfoExtensionsTests.C.P1))]
+    [TestCase(typeof(TestTypesForMemberInfoExtensionsTests.C), nameof(TestTypesForMemberInfoExtensionsTests.C.E1))]
+    public void TestIsPrivateOrAssembly_MemberInvalid(Type type, string memberName)
+    {
+      var member = type.GetMember(memberName, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance).First();
+
+      Assert.Throws<InvalidOperationException>(() => member.IsPrivateOrAssembly(), $"{type.FullName}.{member.Name}");
+    }
+
+    [Test]
+    public void TestIsPrivateOrAssembly_ArgumentNull()
+    {
+      MemberInfo member = null;
+
+      Assert.Throws<ArgumentNullException>(() => member.IsPrivateOrAssembly());
+    }
   }
 }
