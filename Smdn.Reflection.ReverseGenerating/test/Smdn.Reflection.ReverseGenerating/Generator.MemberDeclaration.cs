@@ -9,6 +9,7 @@ using NUnit.Framework;
 namespace Smdn.Reflection.ReverseGenerating {
   class MemberDeclarationTestCaseAttribute : GeneratorTestCaseAttribute {
     public bool UseDefaultLiteral { get; set; } = false;
+    public bool IgnorePrivateOrAssembly { get; set; } = false;
     public MethodBodyOption MethodBody { get; set; } = MethodBodyOption.EmptyImplementation;
 
     public MemberDeclarationTestCaseAttribute(
@@ -85,6 +86,10 @@ namespace Smdn.Reflection.ReverseGenerating {
           [MemberDeclarationTestCase("private protected int F6;")] private protected int F6;
           [MemberDeclarationTestCase("private protected int F7;")] protected private int F7;
           [MemberDeclarationTestCase("private int F8;")] private int F8;
+
+          [MemberDeclarationTestCase(null, IgnorePrivateOrAssembly = true)] internal int F9;
+          [MemberDeclarationTestCase(null, IgnorePrivateOrAssembly = true)] private protected int F10;
+          [MemberDeclarationTestCase(null, IgnorePrivateOrAssembly = true)] private int F11;
         }
 #pragma warning restore CS0067, CS0169
 
@@ -273,6 +278,10 @@ namespace Smdn.Reflection.ReverseGenerating {
           [MemberDeclarationTestCase("private protected int P6 { get; set; }")] private protected int P6 { get; set; }
           [MemberDeclarationTestCase("private protected int P7 { get; set; }")] protected private int P7 { get; set; }
           [MemberDeclarationTestCase("private int P8 { get; set; }")] private int P8 { get; set; }
+
+          [MemberDeclarationTestCase(null, IgnorePrivateOrAssembly = true)] internal int P9 { get; set; }
+          [MemberDeclarationTestCase(null, IgnorePrivateOrAssembly = true)] private protected int P10 { get; set; }
+          [MemberDeclarationTestCase(null, IgnorePrivateOrAssembly = true)] private int P11 { get; set; }
         }
 
         public class AccessibilitiesOfAccessors_Public {
@@ -283,6 +292,10 @@ namespace Smdn.Reflection.ReverseGenerating {
           [MemberDeclarationTestCase("public int P5 { get; private protected set; }")] public int P5 { get; private protected set; }
           [MemberDeclarationTestCase("public int P6 { get; private protected set; }")] public int P6 { get; protected private set; }
           [MemberDeclarationTestCase("public int P7 { get; private set; }")] public int P7 { get; private set; }
+
+          [MemberDeclarationTestCase("public int P8 { get; }", IgnorePrivateOrAssembly = true)] public int P8 { get; internal set; }
+          [MemberDeclarationTestCase("public int P9 { get; }", IgnorePrivateOrAssembly = true)] public int P9 { get; private protected set; }
+          [MemberDeclarationTestCase("public int P10 { get; }", IgnorePrivateOrAssembly = true)] public int P10 { get; private set; }
         }
 
         public class AccessibilitiesOfAccessors_FamilyOrAssembly {
@@ -292,6 +305,10 @@ namespace Smdn.Reflection.ReverseGenerating {
           [MemberDeclarationTestCase("internal protected int P3 { get; private protected set; }")] internal protected int P3 { get; private protected set; }
           [MemberDeclarationTestCase("internal protected int P4 { get; private protected set; }")] internal protected int P4 { get; protected private set; }
           [MemberDeclarationTestCase("internal protected int P5 { get; private set; }")] internal protected int P5 { get; private set; }
+
+          [MemberDeclarationTestCase("internal protected int P6 { get; }", IgnorePrivateOrAssembly = true)] internal protected int P6 { get; internal set; }
+          [MemberDeclarationTestCase("internal protected int P7 { get; }", IgnorePrivateOrAssembly = true)] internal protected int P7 { get; private protected set; }
+          [MemberDeclarationTestCase("internal protected int P8 { get; }", IgnorePrivateOrAssembly = true)] internal protected int P8 { get; private set; }
         }
 
 #if false
@@ -363,6 +380,10 @@ namespace Smdn.Reflection.ReverseGenerating {
           [MemberDeclarationTestCase("private protected void M6() {}")] private protected void M6() { }
           [MemberDeclarationTestCase("private protected void M7() {}")] protected private void M7() { }
           [MemberDeclarationTestCase("private void M8() {}")] private void M8() { }
+
+          [MemberDeclarationTestCase(null, IgnorePrivateOrAssembly = true)] internal void M9() { }
+          [MemberDeclarationTestCase(null, IgnorePrivateOrAssembly = true)] private protected void M10() { }
+          [MemberDeclarationTestCase(null, IgnorePrivateOrAssembly = true)] private void M11() { }
         }
 
         public class ParameterNames {
@@ -413,6 +434,10 @@ namespace Smdn.Reflection.ReverseGenerating {
             [MemberDeclarationTestCase("private protected Accessibilities(ushort p) {}")] private protected Accessibilities(ushort p) { throw new NotImplementedException(); }
             [MemberDeclarationTestCase("private protected Accessibilities(sbyte p) {}")] protected private Accessibilities(sbyte p) { throw new NotImplementedException(); }
             [MemberDeclarationTestCase("private Accessibilities(bool p) {}")] private Accessibilities(bool p) { throw new NotImplementedException(); }
+
+            [MemberDeclarationTestCase(null, IgnorePrivateOrAssembly = true)] internal Accessibilities(string p) => throw new NotImplementedException();
+            [MemberDeclarationTestCase(null, IgnorePrivateOrAssembly = true)] private protected Accessibilities(object p) => throw new NotImplementedException();
+            [MemberDeclarationTestCase(null, IgnorePrivateOrAssembly = true)] private Accessibilities(long p) => throw new NotImplementedException();
           }
         }
 
@@ -632,6 +657,10 @@ namespace Smdn.Reflection.ReverseGenerating {
           [MemberDeclarationTestCase("private protected System.EventHandler E6;")] private protected EventHandler E6;
           [MemberDeclarationTestCase("private protected System.EventHandler E7;")] protected private EventHandler E7;
           [MemberDeclarationTestCase("private event System.EventHandler E8;")] private event EventHandler E8;
+
+          [MemberDeclarationTestCase(null, IgnorePrivateOrAssembly = true)] internal event EventHandler E9;
+          [MemberDeclarationTestCase(null, IgnorePrivateOrAssembly = true)] private protected event EventHandler E10;
+          [MemberDeclarationTestCase(null, IgnorePrivateOrAssembly = true)] private event EventHandler E11;
         }
 #pragma warning restore CS0067
       }
@@ -887,7 +916,7 @@ namespace Smdn.Reflection.ReverseGenerating {
             continue;
 
           var options = new GeneratorOptions() {
-            IgnorePrivateOrAssembly = false,
+            IgnorePrivateOrAssembly = attr.IgnorePrivateOrAssembly,
             MemberDeclarationWithNamespace = attr.WithNamespace,
             MemberDeclarationUseDefaultLiteral = attr.UseDefaultLiteral,
             MemberDeclarationMethodBody = attr.MethodBody,
