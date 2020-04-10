@@ -284,7 +284,7 @@ namespace Smdn.Reflection.ReverseGenerating {
           [MemberDeclarationTestCase(null, IgnorePrivateOrAssembly = true)] private int P11 { get; set; }
         }
 
-        public class AccessibilitiesOfAccessors_Public {
+        public class AccessibilitiesOfAccessors_SetMethod_Public {
           [MemberDeclarationTestCase("public int P1 { get; internal set; }")] public int P1 { get; internal set; }
           [MemberDeclarationTestCase("public int P2 { get; protected set; }")] public int P2 { get; protected set; }
           [MemberDeclarationTestCase("public int P3 { get; internal protected set; }")] public int P3 { get; protected internal set; }
@@ -296,6 +296,20 @@ namespace Smdn.Reflection.ReverseGenerating {
           [MemberDeclarationTestCase("public int P8 { get; }", IgnorePrivateOrAssembly = true)] public int P8 { get; internal set; }
           [MemberDeclarationTestCase("public int P9 { get; }", IgnorePrivateOrAssembly = true)] public int P9 { get; private protected set; }
           [MemberDeclarationTestCase("public int P10 { get; }", IgnorePrivateOrAssembly = true)] public int P10 { get; private set; }
+        }
+
+        public class AccessibilitiesOfAccessors_GetMethod_Public {
+          [MemberDeclarationTestCase("public int P1 { internal get; set; }")] public int P1 { internal get; set; }
+          [MemberDeclarationTestCase("public int P2 { protected get; set; }")] public int P2 { protected get; set; }
+          [MemberDeclarationTestCase("public int P3 { internal protected get; set; }")] public int P3 { protected internal get; set; }
+          [MemberDeclarationTestCase("public int P4 { internal protected get; set; }")] public int P4 { internal protected get; set; }
+          [MemberDeclarationTestCase("public int P5 { private protected get; set; }")] public int P5 { private protected get; set; }
+          [MemberDeclarationTestCase("public int P6 { private protected get; set; }")] public int P6 { protected private get; set; }
+          [MemberDeclarationTestCase("public int P7 { private get; set; }")] public int P7 { private get; set; }
+
+          [MemberDeclarationTestCase("public int P8 { set; }", IgnorePrivateOrAssembly = true)] public int P8 { internal get; set; }
+          [MemberDeclarationTestCase("public int P9 { set; }", IgnorePrivateOrAssembly = true)] public int P9 { private protected get; set; }
+          [MemberDeclarationTestCase("public int P10 { set; }", IgnorePrivateOrAssembly = true)] public int P10 { private get; set; }
         }
 
         public class AccessibilitiesOfAccessors_FamilyOrAssembly {
