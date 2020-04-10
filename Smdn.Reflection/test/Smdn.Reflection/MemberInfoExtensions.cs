@@ -48,24 +48,26 @@ namespace Smdn.Reflection {
                       member.GetAccessibility());
     }
 
-    [TestCase("TestTypesForMemberInfoExtensionsTests.C1", Accessibility.Public)]
-    [TestCase("TestTypesForMemberInfoExtensionsTests.C2", Accessibility.Assembly)]
-    [TestCase("TestTypesForMemberInfoExtensionsTests.C+C3", Accessibility.Public)]
-    [TestCase("TestTypesForMemberInfoExtensionsTests.C+C4", Accessibility.Assembly)]
-    [TestCase("TestTypesForMemberInfoExtensionsTests.C+C5", Accessibility.Family)]
-    [TestCase("TestTypesForMemberInfoExtensionsTests.C+C6", Accessibility.FamilyOrAssembly)]
-    [TestCase("TestTypesForMemberInfoExtensionsTests.C+C7", Accessibility.FamilyAndAssembly)]
-    [TestCase("TestTypesForMemberInfoExtensionsTests.C+C8", Accessibility.Private)]
-    public void TestGetAccessibility_Types(string typeName, Accessibility expected)
+    [TestCase(typeof(TestTypesForMemberInfoExtensionsTests.C1), null, Accessibility.Public)]
+    [TestCase(typeof(TestTypesForMemberInfoExtensionsTests.C2), null, Accessibility.Assembly)]
+    [TestCase(typeof(TestTypesForMemberInfoExtensionsTests.C.C3), null, Accessibility.Public)]
+    [TestCase(typeof(TestTypesForMemberInfoExtensionsTests.C.C4), null, Accessibility.Assembly)]
+    [TestCase(typeof(TestTypesForMemberInfoExtensionsTests.C), "C5", Accessibility.Family)]
+    [TestCase(typeof(TestTypesForMemberInfoExtensionsTests.C.C6), null, Accessibility.FamilyOrAssembly)]
+    [TestCase(typeof(TestTypesForMemberInfoExtensionsTests.C), "C7", Accessibility.FamilyAndAssembly)]
+    [TestCase(typeof(TestTypesForMemberInfoExtensionsTests.C), "C8", Accessibility.Private)]
+    public void TestGetAccessibility_Types(Type type, string nestedTypeName, Accessibility expected)
     {
-      TestGetAccessibility(Assembly.GetExecutingAssembly().GetType(typeName),
-                           expected);
+      if (nestedTypeName != null)
+        type = type.GetNestedType(nestedTypeName, BindingFlags.Public | BindingFlags.NonPublic);
+
+      TestGetAccessibility(type, expected);
     }
 
-    [TestCase(typeof(TestTypesForMemberInfoExtensionsTests.C), "M1", Accessibility.Public)]
-    [TestCase(typeof(TestTypesForMemberInfoExtensionsTests.C), "M2", Accessibility.Assembly)]
+    [TestCase(typeof(TestTypesForMemberInfoExtensionsTests.C), nameof(TestTypesForMemberInfoExtensionsTests.C.M1), Accessibility.Public)]
+    [TestCase(typeof(TestTypesForMemberInfoExtensionsTests.C), nameof(TestTypesForMemberInfoExtensionsTests.C.M2), Accessibility.Assembly)]
     [TestCase(typeof(TestTypesForMemberInfoExtensionsTests.C), "M3", Accessibility.Family)]
-    [TestCase(typeof(TestTypesForMemberInfoExtensionsTests.C), "M4", Accessibility.FamilyOrAssembly)]
+    [TestCase(typeof(TestTypesForMemberInfoExtensionsTests.C), nameof(TestTypesForMemberInfoExtensionsTests.C.M4), Accessibility.FamilyOrAssembly)]
     [TestCase(typeof(TestTypesForMemberInfoExtensionsTests.C), "M5", Accessibility.FamilyAndAssembly)]
     [TestCase(typeof(TestTypesForMemberInfoExtensionsTests.C), "M6", Accessibility.Private)]
     public void TestGetAccessibility_Methods(Type type, string memberName, Accessibility expected)
@@ -74,10 +76,10 @@ namespace Smdn.Reflection {
                            expected);
     }
 
-    [TestCase(typeof(TestTypesForMemberInfoExtensionsTests.C), "F1", Accessibility.Public)]
-    [TestCase(typeof(TestTypesForMemberInfoExtensionsTests.C), "F2", Accessibility.Assembly)]
+    [TestCase(typeof(TestTypesForMemberInfoExtensionsTests.C), nameof(TestTypesForMemberInfoExtensionsTests.C.F1), Accessibility.Public)]
+    [TestCase(typeof(TestTypesForMemberInfoExtensionsTests.C), nameof(TestTypesForMemberInfoExtensionsTests.C.F2), Accessibility.Assembly)]
     [TestCase(typeof(TestTypesForMemberInfoExtensionsTests.C), "F3", Accessibility.Family)]
-    [TestCase(typeof(TestTypesForMemberInfoExtensionsTests.C), "F4", Accessibility.FamilyOrAssembly)]
+    [TestCase(typeof(TestTypesForMemberInfoExtensionsTests.C), nameof(TestTypesForMemberInfoExtensionsTests.C.F4), Accessibility.FamilyOrAssembly)]
     [TestCase(typeof(TestTypesForMemberInfoExtensionsTests.C), "F5", Accessibility.FamilyAndAssembly)]
     [TestCase(typeof(TestTypesForMemberInfoExtensionsTests.C), "F6", Accessibility.Private)]
     public void TestGetAccessibility_Fields(Type type, string memberName, Accessibility expected)
@@ -124,13 +126,11 @@ namespace Smdn.Reflection {
     [TestCase(typeof(TestTypesForMemberInfoExtensionsTests.C), null, "F6", true)]
     public void TestIsPrivateOrAssembly(Type type, string nestedTypeName, string memberName, bool expected)
     {
-      if (nestedTypeName == null && memberName == null) {
-        Assert.AreEqual(expected, type.IsPrivateOrAssembly(), type.FullName);
-      }
-      else if (nestedTypeName != null) {
-        var nestedType = type.GetNestedType(nestedTypeName, BindingFlags.Public | BindingFlags.NonPublic);
+      if (nestedTypeName != null)
+        type = type.GetNestedType(nestedTypeName, BindingFlags.Public | BindingFlags.NonPublic);
 
-        Assert.AreEqual(expected, nestedType.IsPrivateOrAssembly(), nestedType.FullName);
+      if (memberName == null) {
+        Assert.AreEqual(expected, type.IsPrivateOrAssembly(), type.FullName);
       }
       else {
         var member = type.GetMember(memberName, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance).First();
