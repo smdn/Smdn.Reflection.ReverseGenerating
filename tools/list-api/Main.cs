@@ -40,7 +40,7 @@ class ListApi {
     foreach (var arg in args) {
       switch (arg) {
         case "--generate-impl":
-          options.GenerateEmptyImplementation = true;
+          options.MemberDeclarationMethodBody = MethodBodyOption.ThrowNotImplementedException;
           break;
 
         case "--generate-fullname":

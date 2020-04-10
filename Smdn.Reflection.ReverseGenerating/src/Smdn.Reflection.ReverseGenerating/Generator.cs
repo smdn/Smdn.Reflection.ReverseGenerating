@@ -466,24 +466,14 @@ namespace Smdn.Reflection.ReverseGenerating {
         if (explicitInterface == null && 0 < getAccessibility.Length)
           sb.Append(getAccessibility).Append(" ");
 
-        sb.Append("get");
-
-        if (options.GenerateEmptyImplementation && !property.GetMethod.IsAbstract)
-          sb.Append(" => throw new NotImplementedException(); ");
-        else
-          sb.Append("; ");
+        sb.Append("get").Append(GenerateAccessorBody(property.GetMethod, options));
       }
 
       if (emitSetAccessor) {
         if (explicitInterface == null && 0 < setAccessibility.Length)
           sb.Append(setAccessibility).Append(" ");
 
-        sb.Append("set");
-
-        if (options.GenerateEmptyImplementation && !property.SetMethod.IsAbstract)
-          sb.Append(" => throw new NotImplementedException(); ");
-        else
-          sb.Append("; ");
+        sb.Append("set").Append(GenerateAccessorBody(property.SetMethod, options));
       }
 
       sb.Append("}");
@@ -494,6 +484,17 @@ namespace Smdn.Reflection.ReverseGenerating {
 #endif
 
       return sb.ToString();
+
+      static string GenerateAccessorBody(MethodInfo accessor, GeneratorOptions opts)
+      {
+        switch (accessor.IsAbstract ? MethodBodyOption.EmptyImplementation : opts.MemberDeclarationMethodBody) {
+          case MethodBodyOption.ThrowNotImplementedException: return " => throw new NotImplementedException(); ";
+
+          //case MethodBodyOption.None:
+          //case MethodBodyOption.EmptyImplementation:
+          default: return "; ";
+        }
+      }
     }
 
     private static string GenerateMethodBaseDeclaration(
@@ -515,7 +516,13 @@ namespace Smdn.Reflection.ReverseGenerating {
       var methodGenericParameters = m.IsGenericMethod ? string.Concat("<", string.Join(", ", m.GetGenericArguments().Select(t => t.FormatTypeName(typeWithNamespace: options.MemberDeclarationWithNamespace))), ">") : null;
       var methodParameterList = CSharpFormatter.FormatParameterList(m, typeWithNamespace: options.MemberDeclarationWithNamespace, useDefaultLiteral: options.MemberDeclarationUseDefaultLiteral);
       var methodConstraints = method == null ? null : string.Join(" ", method.GetGenericArguments().Select(arg => Generator.GenerateGenericArgumentConstraintDeclaration(arg, referencingNamespaces, options)).Where(d => d != null));
-      var methodBody = m.IsAbstract ? ";" : options.GenerateEmptyImplementation ? " => throw new NotImplementedException();" : " {}";
+      string methodBody = null;
+
+      switch (options.MemberDeclarationMethodBody) {
+        case MethodBodyOption.None: methodBody = null; break;
+        case MethodBodyOption.EmptyImplementation: methodBody = m.IsAbstract ? ";" : " {}"; break;
+        case MethodBodyOption.ThrowNotImplementedException: methodBody = m.IsAbstract ? ";" : " => throw new NotImplementedException();"; break;
+      }
 
       referencingNamespaces?.AddRange(m.GetSignatureTypes().Where(mpt => !mpt.ContainsGenericParameters).SelectMany(CSharpFormatter.ToNamespaceList));
 

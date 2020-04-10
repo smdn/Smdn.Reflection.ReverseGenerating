@@ -57,6 +57,7 @@ public class Test {
       TypeDeclarationWithNamespace = true,
       MemberDeclarationWithNamespace = true,
       MemberDeclarationUseDefaultLiteral = false,
+      MemberDeclarationMethodBody = MethodBodyOption.EmptyImplementation,
     };
 
     foreach (var type in types.Where(t => t.FullName.StartsWith("TestCases", StringComparison.Ordinal))) {

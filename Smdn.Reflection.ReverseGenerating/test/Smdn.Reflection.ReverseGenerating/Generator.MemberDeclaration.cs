@@ -9,6 +9,7 @@ using NUnit.Framework;
 namespace Smdn.Reflection.ReverseGenerating {
   class MemberDeclarationTestCaseAttribute : GeneratorTestCaseAttribute {
     public bool UseDefaultLiteral { get; set; } = false;
+    public MethodBodyOption MethodBody { get; set; } = MethodBodyOption.EmptyImplementation;
 
     public MemberDeclarationTestCaseAttribute(
       string expected,
@@ -201,6 +202,26 @@ namespace Smdn.Reflection.ReverseGenerating {
       }
 
       namespace Properties {
+        namespace Body {
+          public abstract class Abstract {
+            [MemberDeclarationTestCase("public abstract int P0 { get; set; }", MethodBody = MethodBodyOption.None)]
+            public abstract int P0 { get; set; }
+            [MemberDeclarationTestCase("public abstract int P1 { get; set; }", MethodBody = MethodBodyOption.EmptyImplementation)]
+            public abstract int P1 { get; set; }
+            [MemberDeclarationTestCase("public abstract int P2 { get; set; }", MethodBody = MethodBodyOption.ThrowNotImplementedException)]
+            public abstract int P2 { get; set; }
+          }
+
+          public abstract class NonAbstract {
+            [MemberDeclarationTestCase("public int P0 { get; set; }", MethodBody = MethodBodyOption.None)]
+            public int P0 { get; set; }
+            [MemberDeclarationTestCase("public int P1 { get; set; }", MethodBody = MethodBodyOption.EmptyImplementation)] 
+            public int P1 { get; set; }
+            [MemberDeclarationTestCase("public int P2 { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }", MethodBody = MethodBodyOption.ThrowNotImplementedException)]
+            public int P2 { get; set; }
+          }
+        }
+
         public class Accessors {
           [MemberDeclarationTestCase("public int P1 { get; set; }")] public int P1 { get; set; }
           [MemberDeclarationTestCase("public int P2 { get; }")] public int P2 { get; }
@@ -285,6 +306,20 @@ namespace Smdn.Reflection.ReverseGenerating {
       }
 
       namespace Methods {
+        namespace Body {
+          public abstract class Abstract {
+            [MemberDeclarationTestCase("public abstract void M0()", MethodBody = MethodBodyOption.None)] public abstract void M0();
+            [MemberDeclarationTestCase("public abstract void M1();", MethodBody = MethodBodyOption.EmptyImplementation)] public abstract void M1();
+            [MemberDeclarationTestCase("public abstract void M2();", MethodBody = MethodBodyOption.ThrowNotImplementedException)] public abstract void M2();
+          }
+
+          public abstract class NonAbstract {
+            [MemberDeclarationTestCase("public void M0()", MethodBody = MethodBodyOption.None)] public void M0() => throw new NotImplementedException();
+            [MemberDeclarationTestCase("public void M1() {}", MethodBody = MethodBodyOption.EmptyImplementation)] public void M1() => throw new NotImplementedException();
+            [MemberDeclarationTestCase("public void M2() => throw new NotImplementedException();", MethodBody = MethodBodyOption.ThrowNotImplementedException)] public void M2() => throw new NotImplementedException();
+          }
+        }
+
         namespace Modifiers {
           public class Static {
             [MemberDeclarationTestCase("public static void M1() {}")] public static void M1() { }
@@ -855,6 +890,7 @@ namespace Smdn.Reflection.ReverseGenerating {
             IgnorePrivateOrAssembly = false,
             MemberDeclarationWithNamespace = attr.WithNamespace,
             MemberDeclarationUseDefaultLiteral = attr.UseDefaultLiteral,
+            MemberDeclarationMethodBody = attr.MethodBody,
           };
 
           Assert.AreEqual(
