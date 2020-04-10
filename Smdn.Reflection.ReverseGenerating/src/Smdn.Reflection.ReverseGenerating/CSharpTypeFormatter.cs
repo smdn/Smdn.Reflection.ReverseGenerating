@@ -209,35 +209,54 @@ namespace Smdn.Reflection.ReverseGenerating {
     )
       => FormatTypeName(
         t,
-        attributeProvider: attributeProvider ?? t,
         showVariance: false,
-        typeWithNamespace: typeWithNamespace,
-        withDeclaringTypeName: withDeclaringTypeName,
-        translateLanguagePrimitiveType: translateLanguagePrimitiveType
+        options: new FormatTypeNameOptions(
+          attributeProvider: attributeProvider ?? t,
+          typeWithNamespace: typeWithNamespace,
+          withDeclaringTypeName: withDeclaringTypeName,
+          translateLanguagePrimitiveType: translateLanguagePrimitiveType
+        )
       );
+
+    private readonly /*ref*/ struct FormatTypeNameOptions {
+      public readonly ICustomAttributeProvider AttributeProvider;
+      public readonly bool TypeWithNamespace;
+      public readonly bool WithDeclaringTypeName;
+      public readonly bool TranslateLanguagePrimitiveType;
+
+      public FormatTypeNameOptions(
+        ICustomAttributeProvider attributeProvider,
+        bool typeWithNamespace,
+        bool withDeclaringTypeName,
+        bool translateLanguagePrimitiveType
+      )
+      {
+        this.AttributeProvider = attributeProvider;
+        this.TypeWithNamespace = typeWithNamespace;
+        this.WithDeclaringTypeName = withDeclaringTypeName;
+        this.TranslateLanguagePrimitiveType = translateLanguagePrimitiveType;
+      }
+    }
 
     private static string FormatTypeName(
       Type t,
-      ICustomAttributeProvider attributeProvider,
       bool showVariance,
-      bool typeWithNamespace = true,
-      bool withDeclaringTypeName = true,
-      bool translateLanguagePrimitiveType = true
+      FormatTypeNameOptions options
     )
     {
       if (t.IsArray)
-        return FormatTypeName(t.GetElementType(), attributeProvider, false, typeWithNamespace, withDeclaringTypeName, translateLanguagePrimitiveType) + "[" + new string(',', t.GetArrayRank() - 1) + "]";
+        return FormatTypeName(t.GetElementType(), showVariance: false, options) + "[" + new string(',', t.GetArrayRank() - 1) + "]";
 
       if (t.IsByRef)
-        return FormatTypeName(t.GetElementType(), attributeProvider, false, typeWithNamespace, withDeclaringTypeName, translateLanguagePrimitiveType) + "&";
+        return FormatTypeName(t.GetElementType(), showVariance: false, options) + "&";
 
       if (t.IsPointer)
-        return FormatTypeName(t.GetElementType(), attributeProvider, false, typeWithNamespace, withDeclaringTypeName, translateLanguagePrimitiveType) + "*";
+        return FormatTypeName(t.GetElementType(), showVariance: false, options) + "*";
 
       var nullableUnderlyingType = Nullable.GetUnderlyingType(t);
 
       if (nullableUnderlyingType != null)
-        return FormatTypeName(nullableUnderlyingType, attributeProvider, false, typeWithNamespace, withDeclaringTypeName, translateLanguagePrimitiveType) + "?";
+        return FormatTypeName(nullableUnderlyingType, showVariance: false, options) + "?";
 
       if (t.IsGenericParameter) {
         if (showVariance && t.ContainsGenericParameters) {
@@ -261,7 +280,7 @@ namespace Smdn.Reflection.ReverseGenerating {
           IList<string> tupleItemNames = null;
 
           try {
-            tupleItemNames = attributeProvider?.GetCustomAttributes(typeof(TupleElementNamesAttribute), inherit: false)?.Cast<TupleElementNamesAttribute>()?.FirstOrDefault()?.TransformNames.ToList();
+            tupleItemNames = options.AttributeProvider?.GetCustomAttributes(typeof(TupleElementNamesAttribute), inherit: false)?.Cast<TupleElementNamesAttribute>()?.FirstOrDefault()?.TransformNames.ToList();
           }
           catch (TypeLoadException) {
             Console.Error.WriteLine("could not load TupleElementNamesAttribute");
@@ -274,31 +293,31 @@ namespace Smdn.Reflection.ReverseGenerating {
           }
 
           sb.Append("(")
-            .Append(string.Join(", ", t.GetGenericArguments().Select((arg, index) => FormatTypeName(arg, attributeProvider, true, typeWithNamespace, withDeclaringTypeName, translateLanguagePrimitiveType) + tupleItemNames?[index])))
+            .Append(string.Join(", ", t.GetGenericArguments().Select((arg, index) => FormatTypeName(arg, showVariance: true, options) + tupleItemNames?[index])))
             .Append(")");
         }
         else {
-          if (typeWithNamespace)
+          if (options.TypeWithNamespace)
             sb.Append(t.Namespace).Append(".");
 
           sb.Append(t.GetGenericTypeName())
             .Append("<")
-            .Append(string.Join(", ", t.GetGenericArguments().Select(arg => FormatTypeName(arg, attributeProvider, true, typeWithNamespace, withDeclaringTypeName, translateLanguagePrimitiveType))))
+            .Append(string.Join(", ", t.GetGenericArguments().Select(arg => FormatTypeName(arg, showVariance: true, options))))
             .Append(">");
         }
 
         return sb.ToString();
       }
 
-      if (translateLanguagePrimitiveType && IsLanguagePrimitiveType(t, out var n))
+      if (options.TranslateLanguagePrimitiveType && IsLanguagePrimitiveType(t, out var n))
         return n;
 
-      if (withDeclaringTypeName && t.IsNested)
-        return FormatTypeName(t.DeclaringType, attributeProvider, showVariance, typeWithNamespace, withDeclaringTypeName, translateLanguagePrimitiveType) + "." + t.Name;
-      else if (typeWithNamespace)
+      if (options.WithDeclaringTypeName && t.IsNested)
+        return FormatTypeName(t.DeclaringType, showVariance, options) + "." + t.Name;
+      if (options.TypeWithNamespace)
         return t.Namespace + "." + t.Name;
-      else
-        return t.Name;
+
+      return t.Name;
     }
 
     public static string EscapeString(string s, bool escapeSingleQuote = false, bool escapeDoubleQuote = false)
