@@ -43,6 +43,14 @@ namespace Smdn.Reflection.ReverseGenerating {
           [TypeDeclarationTestCase("private protected delegate void D7();")] protected private delegate void D7();
           [TypeDeclarationTestCase("private delegate void D8();")] private delegate void D8();
         }
+
+#if false
+        class DelegateClasses {
+          [TypeDeclarationTestCase("public delegate void D1();")] public delegate void D1();
+          [TypeDeclarationTestCase("public class D2")] public class D2 : MulticastDelegate { }
+          [TypeDeclarationTestCase("public class D3")] public class D3 : Delegate {}
+        }
+#endif
       }
 
       namespace Enums {

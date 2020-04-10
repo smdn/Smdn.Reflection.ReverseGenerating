@@ -57,7 +57,7 @@ namespace Smdn.Reflection.ReverseGenerating {
         yield break;
       }
 
-      if (t.IsDelegate()) {
+      if (t.IsConcreteDelegate()) {
         var signatureInfo = t.GetDelegateSignatureMethod();
 
         referencingNamespaces?.AddRange(signatureInfo.GetSignatureTypes().Where(mpt => !mpt.ContainsGenericParameters).SelectMany(CSharpFormatter.ToNamespaceList));
