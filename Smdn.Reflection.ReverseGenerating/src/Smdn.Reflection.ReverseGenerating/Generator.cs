@@ -180,7 +180,7 @@ namespace Smdn.Reflection.ReverseGenerating {
 
       return t
         .GetExplicitBaseTypeAndInterfaces()
-        .Where(type => !(options.IgnorePrivateOrAssembly && (type.IsNotPublic || type.IsNestedAssembly || type.IsNestedFamily || type.IsNestedFamANDAssem || type.IsNestedPrivate)))
+        .Where(type => !(options.IgnorePrivateOrAssembly && type.IsPrivateOrAssembly()))
         .Select(type => {
           referencingNamespaces?.AddRange(CSharpFormatter.ToNamespaceList(type));
           return new { IsInterface = type.IsInterface, Name = type.FormatTypeName(typeWithNamespace: options.TypeDeclarationWithNamespace) };
@@ -333,7 +333,7 @@ namespace Smdn.Reflection.ReverseGenerating {
       GeneratorOptions options
     )
     {
-      if (options.IgnorePrivateOrAssembly && (field.IsPrivate || field.IsAssembly || field.IsFamilyAndAssembly))
+      if (options.IgnorePrivateOrAssembly && field.IsPrivateOrAssembly())
         return null;
 
       var sb = new StringBuilder();
@@ -408,12 +408,12 @@ namespace Smdn.Reflection.ReverseGenerating {
       if (
         explicitInterface == null &&
         options.IgnorePrivateOrAssembly &&
-        property.GetAccessors(true).All(a => a.IsPrivate || a.IsAssembly || a.IsFamilyAndAssembly)
+        property.GetAccessors(true).All(a => a.IsPrivateOrAssembly())
       )
         return null;
 
-      var emitGetAccessor = property.GetMethod != null && !(explicitInterface == null && options.IgnorePrivateOrAssembly && (property.GetMethod.IsPrivate || property.GetMethod.IsAssembly || property.GetMethod.IsFamilyAndAssembly));
-      var emitSetAccessor = property.SetMethod != null && !(explicitInterface == null && options.IgnorePrivateOrAssembly && (property.SetMethod.IsPrivate || property.SetMethod.IsAssembly || property.SetMethod.IsFamilyAndAssembly));
+      var emitGetAccessor = property.GetMethod != null && !(explicitInterface == null && options.IgnorePrivateOrAssembly && property.GetMethod.IsPrivateOrAssembly());
+      var emitSetAccessor = property.SetMethod != null && !(explicitInterface == null && options.IgnorePrivateOrAssembly && property.SetMethod.IsPrivateOrAssembly());
 
       var indexParameters = property.GetIndexParameters();
 
@@ -505,7 +505,7 @@ namespace Smdn.Reflection.ReverseGenerating {
     {
       var explicitInterfaceMethod = m.FindExplicitInterfaceMethod(findOnlyPublicInterfaces: options.IgnorePrivateOrAssembly);
 
-      if (explicitInterfaceMethod == null && (options.IgnorePrivateOrAssembly && (m.IsPrivate || m.IsAssembly || m.IsFamilyAndAssembly)))
+      if (explicitInterfaceMethod == null && (options.IgnorePrivateOrAssembly && m.IsPrivateOrAssembly()))
         return null;
 
       var method = m as MethodInfo;
@@ -591,7 +591,7 @@ namespace Smdn.Reflection.ReverseGenerating {
     {
       var explicitInterface = ev.GetMethods(true).Select(evm => evm.FindExplicitInterfaceMethod(findOnlyPublicInterfaces: options.IgnorePrivateOrAssembly)?.DeclaringType).FirstOrDefault();
 
-      if (explicitInterface == null && options.IgnorePrivateOrAssembly && ev.GetMethods(true).All(m => m.IsPrivate || m.IsAssembly || m.IsFamilyAndAssembly))
+      if (explicitInterface == null && options.IgnorePrivateOrAssembly && ev.GetMethods(true).All(m => m.IsPrivateOrAssembly()))
         return null;
 
       referencingNamespaces?.AddRange(CSharpFormatter.ToNamespaceList(ev.EventHandlerType));
