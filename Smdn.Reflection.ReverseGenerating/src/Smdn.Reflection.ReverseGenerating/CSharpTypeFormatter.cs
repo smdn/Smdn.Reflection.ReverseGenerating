@@ -117,22 +117,13 @@ namespace Smdn.Reflection.ReverseGenerating {
     };
 
     public static string FormatAccessibility(Accessibility accessibility)
-    {
-      if (accessibilities.TryGetValue(accessibility, out var ret))
-        return ret;
-      else
-        return null;
-    }
+      => accessibilities.TryGetValue(accessibility, out var ret) ? ret : null;
 
     public static bool IsLanguagePrimitiveType(Type t, out string primitiveTypeName)
-    {
-      return primitiveTypes.TryGetValue(t, out primitiveTypeName);
-    }
+      => primitiveTypes.TryGetValue(t, out primitiveTypeName);
 
     public static IEnumerable<string> ToNamespaceList(Type t)
-    {
-      return t.GetNamespaces(type => IsLanguagePrimitiveType(type, out _));
-    }
+      => t.GetNamespaces(type => IsLanguagePrimitiveType(type, out _));
 
     public static string FormatSpecialNameMethod(MethodBase methodOrConstructor, out MethodSpecialName nameType)
     {
@@ -193,11 +184,13 @@ namespace Smdn.Reflection.ReverseGenerating {
         }
 
         if (p.HasDefaultValue) {
-          var defaultValueDeclaration = FormatValueDeclaration(p.DefaultValue,
-                                                               p.ParameterType,
-                                                               typeWithNamespace: typeWithNamespace,
-                                                               findConstantField: true,
-                                                               useDefaultLiteral: useDefaultLiteral);
+          var defaultValueDeclaration = FormatValueDeclaration(
+            p.DefaultValue,
+            p.ParameterType,
+            typeWithNamespace: typeWithNamespace,
+            findConstantField: true,
+            useDefaultLiteral: useDefaultLiteral
+          );
 
           ret.Append(" = ");
           ret.Append(defaultValueDeclaration);
@@ -207,23 +200,27 @@ namespace Smdn.Reflection.ReverseGenerating {
       }
     }
 
-    public static string FormatTypeName(this Type t,
-                                        ICustomAttributeProvider attributeProvider = null,
-                                        bool typeWithNamespace = true,
-                                        bool withDeclaringTypeName = true)
-    {
-      return FormatTypeName(t,
-                            attributeProvider: attributeProvider ?? t,
-                            showVariance: false,
-                            typeWithNamespace: typeWithNamespace,
-                            withDeclaringTypeName: withDeclaringTypeName);
-    }
+    public static string FormatTypeName(
+      this Type t,
+      ICustomAttributeProvider attributeProvider = null,
+      bool typeWithNamespace = true,
+      bool withDeclaringTypeName = true
+    )
+      => FormatTypeName(
+        t,
+        attributeProvider: attributeProvider ?? t,
+        showVariance: false,
+        typeWithNamespace: typeWithNamespace,
+        withDeclaringTypeName: withDeclaringTypeName
+      );
 
-    private static string FormatTypeName(Type t,
-                                         ICustomAttributeProvider attributeProvider,
-                                         bool showVariance,
-                                         bool typeWithNamespace = true,
-                                         bool withDeclaringTypeName = true)
+    private static string FormatTypeName(
+      Type t,
+      ICustomAttributeProvider attributeProvider,
+      bool showVariance,
+      bool typeWithNamespace = true,
+      bool withDeclaringTypeName = true
+    )
     {
       if (t.IsArray)
         return FormatTypeName(t.GetElementType(), attributeProvider, false, typeWithNamespace, withDeclaringTypeName) + "[" + new string(',', t.GetArrayRank() - 1) + "]";
@@ -323,11 +320,13 @@ namespace Smdn.Reflection.ReverseGenerating {
       return buf.ToString();
     }
 
-    public static string FormatValueDeclaration(object val,
-                                                Type typeOfValue,
-                                                bool typeWithNamespace = true,
-                                                bool findConstantField = false,
-                                                bool useDefaultLiteral = false)
+    public static string FormatValueDeclaration(
+      object val,
+      Type typeOfValue,
+      bool typeWithNamespace = true,
+      bool findConstantField = false,
+      bool useDefaultLiteral = false
+    )
     {
       if (val == null) {
         if (Nullable.GetUnderlyingType(typeOfValue) != null) {
