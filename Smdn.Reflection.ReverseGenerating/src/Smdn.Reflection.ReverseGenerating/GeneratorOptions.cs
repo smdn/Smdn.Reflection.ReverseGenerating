@@ -25,6 +25,9 @@ namespace Smdn.Reflection.ReverseGenerating {
     public string Indent { get; set; } = new string(' ', 2);
 
     public bool IgnorePrivateOrAssembly { get; set; } = true;
+
+    public bool TranslateLanguagePrimitiveTypeDeclaration { get; set; } = false;
+
     public bool TypeDeclarationWithNamespace { get; set; } = false;
     public bool TypeDeclarationWithAccessibility { get; set; } = true;
 

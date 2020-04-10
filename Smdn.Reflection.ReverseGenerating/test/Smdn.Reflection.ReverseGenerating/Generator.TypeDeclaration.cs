@@ -5,9 +5,27 @@ using System.Runtime.CompilerServices;
 using NUnit.Framework;
 
 namespace Smdn.Reflection.ReverseGenerating {
+  [AttributeUsage(AttributeTargets.All, AllowMultiple = true, Inherited = false)]
   class TypeDeclarationTestCaseAttribute : GeneratorTestCaseAttribute {
+    public Type TestTargetType { get; }
+
     public TypeDeclarationTestCaseAttribute(
       string expected,
+      [CallerFilePath] string sourceFilePath = null,
+      [CallerLineNumber] int lineNumber = 0
+    )
+      : this(
+        expected,
+        testTargetType: null,
+        sourceFilePath,
+        lineNumber
+      )
+    {
+    }
+
+    public TypeDeclarationTestCaseAttribute(
+      string expected,
+      Type testTargetType,
       [CallerFilePath] string sourceFilePath = null,
       [CallerLineNumber] int lineNumber = 0
     )
@@ -17,6 +35,7 @@ namespace Smdn.Reflection.ReverseGenerating {
         lineNumber
       )
     {
+      this.TestTargetType = testTargetType;
     }
   }
 
@@ -34,6 +53,18 @@ namespace Smdn.Reflection.ReverseGenerating {
           [TypeDeclarationTestCase("enum E : int", TypeWithAccessibility = false, TypeWithNamespace = false)] enum E { }
           [TypeDeclarationTestCase("interface I", TypeWithAccessibility = false, TypeWithNamespace = false)] interface I { }
           [TypeDeclarationTestCase("struct S", TypeWithAccessibility = false, TypeWithNamespace = false)] struct S { }
+        }
+
+        namespace TranslateLanguagePrimitiveTypeDeclaration {
+          [TypeDeclarationTestCase("public readonly struct int", typeof(int), TranslateLanguagePrimitiveTypeDeclaration = true)]
+          [TypeDeclarationTestCase("public readonly struct Int32", typeof(int), TranslateLanguagePrimitiveTypeDeclaration = false, TypeWithNamespace = true)]
+          [TypeDeclarationTestCase("public readonly struct Int32", typeof(int), TranslateLanguagePrimitiveTypeDeclaration = false, TypeWithNamespace = false)]
+          [TypeDeclarationTestCase("public sealed class string", typeof(string), TranslateLanguagePrimitiveTypeDeclaration = true)]
+          [TypeDeclarationTestCase("public sealed class String", typeof(string), TranslateLanguagePrimitiveTypeDeclaration = false, TypeWithNamespace = true)]
+          [TypeDeclarationTestCase("public sealed class String", typeof(string), TranslateLanguagePrimitiveTypeDeclaration = false, TypeWithNamespace = false)]
+          [TypeDeclarationTestCase("public struct Guid", typeof(Guid), TranslateLanguagePrimitiveTypeDeclaration = true)]
+          [TypeDeclarationTestCase("public struct Guid", typeof(Guid), TranslateLanguagePrimitiveTypeDeclaration = false)]
+          class Placeholder {}
         }
       }
 
@@ -239,16 +270,13 @@ namespace Smdn.Reflection.ReverseGenerating {
     public void TestGenerateTypeDeclaration()
     {
       foreach (var type in FindTypes(t => t.FullName.Contains(".TestCases.TypeDeclaration."))) {
-        var attr = type.GetCustomAttribute<TypeDeclarationTestCaseAttribute>();
-
-        if (attr == null)
-          continue;
-
-        Assert.AreEqual(
-          attr.Expected,
-          Generator.GenerateTypeDeclaration(type, null, GetGeneratorOptions(attr)),
-          message: $"{attr.SourceLocation} ({type.FullName})"
-        );
+        foreach (var attr in type.GetCustomAttributes<TypeDeclarationTestCaseAttribute>()) {
+          Assert.AreEqual(
+            attr.Expected,
+            Generator.GenerateTypeDeclaration(attr.TestTargetType ?? type, null, GetGeneratorOptions(attr)),
+            message: $"{attr.SourceLocation} ({type.FullName})"
+          );
+        }
       }
     }
   }

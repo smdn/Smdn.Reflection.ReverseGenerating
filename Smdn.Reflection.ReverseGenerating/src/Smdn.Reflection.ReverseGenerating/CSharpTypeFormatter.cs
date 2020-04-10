@@ -204,14 +204,16 @@ namespace Smdn.Reflection.ReverseGenerating {
       this Type t,
       ICustomAttributeProvider attributeProvider = null,
       bool typeWithNamespace = true,
-      bool withDeclaringTypeName = true
+      bool withDeclaringTypeName = true,
+      bool translateLanguagePrimitiveType = true
     )
       => FormatTypeName(
         t,
         attributeProvider: attributeProvider ?? t,
         showVariance: false,
         typeWithNamespace: typeWithNamespace,
-        withDeclaringTypeName: withDeclaringTypeName
+        withDeclaringTypeName: withDeclaringTypeName,
+        translateLanguagePrimitiveType: translateLanguagePrimitiveType
       );
 
     private static string FormatTypeName(
@@ -219,22 +221,23 @@ namespace Smdn.Reflection.ReverseGenerating {
       ICustomAttributeProvider attributeProvider,
       bool showVariance,
       bool typeWithNamespace = true,
-      bool withDeclaringTypeName = true
+      bool withDeclaringTypeName = true,
+      bool translateLanguagePrimitiveType = true
     )
     {
       if (t.IsArray)
-        return FormatTypeName(t.GetElementType(), attributeProvider, false, typeWithNamespace, withDeclaringTypeName) + "[" + new string(',', t.GetArrayRank() - 1) + "]";
+        return FormatTypeName(t.GetElementType(), attributeProvider, false, typeWithNamespace, withDeclaringTypeName, translateLanguagePrimitiveType) + "[" + new string(',', t.GetArrayRank() - 1) + "]";
 
       if (t.IsByRef)
-        return FormatTypeName(t.GetElementType(), attributeProvider, false, typeWithNamespace, withDeclaringTypeName) + "&";
+        return FormatTypeName(t.GetElementType(), attributeProvider, false, typeWithNamespace, withDeclaringTypeName, translateLanguagePrimitiveType) + "&";
 
       if (t.IsPointer)
-        return FormatTypeName(t.GetElementType(), attributeProvider, false, typeWithNamespace, withDeclaringTypeName) + "*";
+        return FormatTypeName(t.GetElementType(), attributeProvider, false, typeWithNamespace, withDeclaringTypeName, translateLanguagePrimitiveType) + "*";
 
       var nullableUnderlyingType = Nullable.GetUnderlyingType(t);
 
       if (nullableUnderlyingType != null)
-        return FormatTypeName(nullableUnderlyingType, attributeProvider, false, typeWithNamespace, withDeclaringTypeName) + "?";
+        return FormatTypeName(nullableUnderlyingType, attributeProvider, false, typeWithNamespace, withDeclaringTypeName, translateLanguagePrimitiveType) + "?";
 
       if (t.IsGenericParameter) {
         if (showVariance && t.ContainsGenericParameters) {
@@ -271,7 +274,7 @@ namespace Smdn.Reflection.ReverseGenerating {
           }
 
           sb.Append("(")
-            .Append(string.Join(", ", t.GetGenericArguments().Select((arg, index) => FormatTypeName(arg, attributeProvider, true, typeWithNamespace, withDeclaringTypeName) + tupleItemNames?[index])))
+            .Append(string.Join(", ", t.GetGenericArguments().Select((arg, index) => FormatTypeName(arg, attributeProvider, true, typeWithNamespace, withDeclaringTypeName, translateLanguagePrimitiveType) + tupleItemNames?[index])))
             .Append(")");
         }
         else {
@@ -280,18 +283,18 @@ namespace Smdn.Reflection.ReverseGenerating {
 
           sb.Append(t.GetGenericTypeName())
             .Append("<")
-            .Append(string.Join(", ", t.GetGenericArguments().Select(arg => FormatTypeName(arg, attributeProvider, true, typeWithNamespace, withDeclaringTypeName))))
+            .Append(string.Join(", ", t.GetGenericArguments().Select(arg => FormatTypeName(arg, attributeProvider, true, typeWithNamespace, withDeclaringTypeName, translateLanguagePrimitiveType))))
             .Append(">");
         }
 
         return sb.ToString();
       }
 
-      if (IsLanguagePrimitiveType(t, out var n))
+      if (translateLanguagePrimitiveType && IsLanguagePrimitiveType(t, out var n))
         return n;
 
       if (withDeclaringTypeName && t.IsNested)
-        return FormatTypeName(t.DeclaringType, attributeProvider, showVariance, typeWithNamespace, withDeclaringTypeName) + "." + t.Name;
+        return FormatTypeName(t.DeclaringType, attributeProvider, showVariance, typeWithNamespace, withDeclaringTypeName, translateLanguagePrimitiveType) + "." + t.Name;
       else if (typeWithNamespace)
         return t.Namespace + "." + t.Name;
       else

@@ -61,7 +61,11 @@ namespace Smdn.Reflection.ReverseGenerating {
     )
     {
       var accessibilities = options.TypeDeclarationWithAccessibility ? CSharpFormatter.FormatAccessibility(t.GetAccessibility()) + " " : string.Empty;
-      var typeName = t.FormatTypeName(typeWithNamespace: false, withDeclaringTypeName: false);
+      var typeName = t.FormatTypeName(
+        typeWithNamespace: false,
+        withDeclaringTypeName: false,
+        translateLanguagePrimitiveType: options.TranslateLanguagePrimitiveTypeDeclaration
+      );
 
       var genericArgumentConstraints = t
         .GetGenericArguments()

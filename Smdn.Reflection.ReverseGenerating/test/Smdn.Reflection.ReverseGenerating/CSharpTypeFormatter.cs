@@ -101,6 +101,54 @@ namespace Smdn.Reflection.ReverseGenerating {
       );
     }
 
+    [TestCase(typeof(void), true, "System.Void")]
+    [TestCase(typeof(void), false, "Void")]
+    [TestCase(typeof(object), true, "System.Object")]
+    [TestCase(typeof(object), false, "Object")]
+    [TestCase(typeof(byte), true, "System.Byte")]
+    [TestCase(typeof(byte), false, "Byte")]
+    [TestCase(typeof(sbyte), true, "System.SByte")]
+    [TestCase(typeof(sbyte), false, "SByte")]
+    [TestCase(typeof(ushort), true, "System.UInt16")]
+    [TestCase(typeof(ushort), false, "UInt16")]
+    [TestCase(typeof(short), true, "System.Int16")]
+    [TestCase(typeof(short), false, "Int16")]
+    [TestCase(typeof(uint), true, "System.UInt32")]
+    [TestCase(typeof(uint), false, "UInt32")]
+    [TestCase(typeof(int), true, "System.Int32")]
+    [TestCase(typeof(int), false, "Int32")]
+    [TestCase(typeof(ulong), true, "System.UInt64")]
+    [TestCase(typeof(ulong), false, "UInt64")]
+    [TestCase(typeof(long), true, "System.Int64")]
+    [TestCase(typeof(long), false, "Int64")]
+    [TestCase(typeof(float), true, "System.Single")]
+    [TestCase(typeof(float), false, "Single")]
+    [TestCase(typeof(double), true, "System.Double")]
+    [TestCase(typeof(double), false, "Double")]
+    [TestCase(typeof(decimal), true, "System.Decimal")]
+    [TestCase(typeof(decimal), false, "Decimal")]
+    [TestCase(typeof(char), true, "System.Char")]
+    [TestCase(typeof(char), false, "Char")]
+    [TestCase(typeof(string), true, "System.String")]
+    [TestCase(typeof(string), false, "String")]
+    [TestCase(typeof(bool), true, "System.Boolean")]
+    [TestCase(typeof(bool), false, "Boolean")]
+    public void TestFormatTypeName_NotTranslateLanguagePrimitiveType_PrimitiveType(
+      Type type,
+      bool withNamespace,
+      string expected
+    )
+    {
+      Assert.AreEqual(
+        expected,
+        type.FormatTypeName(
+          null,
+          typeWithNamespace: withNamespace,
+          translateLanguagePrimitiveType: false
+        )
+      );
+    }
+
     [TestCase(typeof(int), "int*")]
     [TestCase(typeof(long), "long*")]
     [TestCase(typeof(bool), "bool*")]
@@ -115,6 +163,30 @@ namespace Smdn.Reflection.ReverseGenerating {
       );
     }
 
+    [TestCase(typeof(int), true, "System.Int32*")]
+    [TestCase(typeof(int), false, "Int32*")]
+    [TestCase(typeof(long), true, "System.Int64*")]
+    [TestCase(typeof(long), false, "Int64*")]
+    [TestCase(typeof(bool), true, "System.Boolean*")]
+    [TestCase(typeof(bool), false, "Boolean*")]
+    [TestCase(typeof(void), true, "System.Void*")]
+    [TestCase(typeof(void), false, "Void*")]
+    public void TestFormatTypeName_NotTranslateLanguagePrimitiveType_PointerType(
+      Type type,
+      bool withNamespace,
+      string expected
+    )
+    {
+      Assert.AreEqual(
+        expected,
+        type.MakePointerType().FormatTypeName(
+          null,
+          typeWithNamespace: withNamespace,
+          translateLanguagePrimitiveType: false
+        )
+      );
+    }
+
     [TestCase(typeof(int), "int&")]
     [TestCase(typeof(long), "long&")]
     [TestCase(typeof(bool), "bool&")]
@@ -123,6 +195,28 @@ namespace Smdn.Reflection.ReverseGenerating {
       Assert.AreEqual(
         expected,
         type.MakeByRefType().FormatTypeName(null)
+      );
+    }
+
+    [TestCase(typeof(int), true, "System.Int32&")]
+    [TestCase(typeof(int), false, "Int32&")]
+    [TestCase(typeof(long), true, "System.Int64&")]
+    [TestCase(typeof(long), false, "Int64&")]
+    [TestCase(typeof(bool), true, "System.Boolean&")]
+    [TestCase(typeof(bool), false, "Boolean&")]
+    public void TestFormatTypeName_NotTranslateLanguagePrimitiveType_PrimitiveByRefType(
+      Type type,
+      bool withNamespace,
+      string expected
+    )
+    {
+      Assert.AreEqual(
+        expected,
+        type.MakeByRefType().FormatTypeName(
+          null,
+          typeWithNamespace: withNamespace,
+          translateLanguagePrimitiveType: false
+        )
       );
     }
 

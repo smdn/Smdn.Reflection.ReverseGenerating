@@ -8,6 +8,7 @@ using NUnit.Framework;
 namespace Smdn.Reflection.ReverseGenerating {
   internal abstract class GeneratorTestCaseAttribute : Attribute {
     public string Expected { get; private set; }
+    public bool TranslateLanguagePrimitiveTypeDeclaration { get; set; } = true;
     public bool MemberWithNamespace { get; set; } = true;
     public bool TypeWithNamespace { get; set; } = true;
     public bool TypeWithAccessibility { get; set; } = true;
@@ -36,6 +37,8 @@ namespace Smdn.Reflection.ReverseGenerating {
     {
       return new GeneratorOptions() {
         IgnorePrivateOrAssembly = testCaseAttribute.IgnorePrivateOrAssembly,
+
+        TranslateLanguagePrimitiveTypeDeclaration = testCaseAttribute.TranslateLanguagePrimitiveTypeDeclaration,
 
         TypeDeclarationWithNamespace = testCaseAttribute.TypeWithNamespace,
         TypeDeclarationWithAccessibility = testCaseAttribute.TypeWithAccessibility,
