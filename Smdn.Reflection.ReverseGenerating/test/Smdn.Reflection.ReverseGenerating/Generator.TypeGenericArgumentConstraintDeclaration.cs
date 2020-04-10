@@ -34,40 +34,40 @@ namespace Smdn.Reflection.ReverseGenerating {
       [TypeGenericArgumentConstraintTestCase("where T : struct")]
       public class C_TStruct<T> where T : struct { }
 
-      [TypeGenericArgumentConstraintTestCase("where T : IDisposable", WithNamespace = false)]
+      [TypeGenericArgumentConstraintTestCase("where T : IDisposable", TypeWithNamespace = false)]
       public class C_TInterface<T> where T : System.IDisposable { }
 
-      [TypeGenericArgumentConstraintTestCase("where T : System.IDisposable", WithNamespace = true)]
+      [TypeGenericArgumentConstraintTestCase("where T : System.IDisposable", TypeWithNamespace = true)]
       public class C_TInterface2<T> where T : System.IDisposable { }
 
-      [TypeGenericArgumentConstraintTestCase("where T : Enum", WithNamespace = false)]
+      [TypeGenericArgumentConstraintTestCase("where T : Enum", TypeWithNamespace = false)]
       public class C_TEnum1<T> where T : System.Enum { }
 
-      [TypeGenericArgumentConstraintTestCase("where T : System.Enum", WithNamespace = true)]
+      [TypeGenericArgumentConstraintTestCase("where T : System.Enum", TypeWithNamespace = true)]
       public class C_TEnum2<T> where T : System.Enum { }
 
-      [TypeGenericArgumentConstraintTestCase("where T : Delegate", WithNamespace = false)]
+      [TypeGenericArgumentConstraintTestCase("where T : Delegate", TypeWithNamespace = false)]
       public class C_TDelegate1<T> where T : System.Delegate { }
 
-      [TypeGenericArgumentConstraintTestCase("where T : System.Delegate", WithNamespace = true)]
+      [TypeGenericArgumentConstraintTestCase("where T : System.Delegate", TypeWithNamespace = true)]
       public class C_TDelegate2<T> where T : System.Delegate { }
 
-      [TypeGenericArgumentConstraintTestCase("where T : MulticastDelegate", WithNamespace = false)]
+      [TypeGenericArgumentConstraintTestCase("where T : MulticastDelegate", TypeWithNamespace = false)]
       public class C_TMulticastDelegate1<T> where T : System.MulticastDelegate { }
 
-      [TypeGenericArgumentConstraintTestCase("where T : System.MulticastDelegate", WithNamespace = true)]
+      [TypeGenericArgumentConstraintTestCase("where T : System.MulticastDelegate", TypeWithNamespace = true)]
       public class C_TMulticastDelegate2<T> where T : System.MulticastDelegate { }
 
-      [TypeGenericArgumentConstraintTestCase("where T : class, new()", WithNamespace = true)]
+      [TypeGenericArgumentConstraintTestCase("where T : class, new()", TypeWithNamespace = true)]
       public class C_TComplex1<T> where T : class, new() { }
 
-      [TypeGenericArgumentConstraintTestCase("where T : class, System.IDisposable, new()", WithNamespace = true)]
+      [TypeGenericArgumentConstraintTestCase("where T : class, System.IDisposable, new()", TypeWithNamespace = true)]
       public class C_TComplex2_1<T> where T : class, IDisposable, new() { }
 
-      [TypeGenericArgumentConstraintTestCase("where T : class, System.ICloneable, System.IDisposable, new()", WithNamespace = true)]
+      [TypeGenericArgumentConstraintTestCase("where T : class, System.ICloneable, System.IDisposable, new()", TypeWithNamespace = true)]
       public class C_TComplex2_2<T> where T : class, IDisposable, ICloneable, new() { }
 
-      [TypeGenericArgumentConstraintTestCase("where T : class, System.ICloneable, System.IDisposable, new()", WithNamespace = true)]
+      [TypeGenericArgumentConstraintTestCase("where T : class, System.ICloneable, System.IDisposable, new()", TypeWithNamespace = true)]
       public class C_TComplex2_3<T> where T : class, ICloneable, IDisposable, new() { }
     }
   }
@@ -82,14 +82,9 @@ namespace Smdn.Reflection.ReverseGenerating {
         if (attr == null)
           continue;
 
-        var options = new GeneratorOptions() {
-          IgnorePrivateOrAssembly = false,
-          TypeDeclarationWithNamespace = attr.WithNamespace
-        };
-
         Assert.AreEqual(
           attr.Expected,
-          Generator.GenerateGenericArgumentConstraintDeclaration(type.GetGenericArguments().First(), null, options),
+          Generator.GenerateGenericArgumentConstraintDeclaration(type.GetGenericArguments().First(), null, GetGeneratorOptions(attr)),
           message: $"{attr.SourceLocation} ({type.FullName})"
         );
       }

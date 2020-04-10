@@ -30,8 +30,8 @@ namespace Smdn.Reflection.ReverseGenerating {
         [TypeDeclarationTestCase("public delegate int D4(int x);")] public delegate int D4(int x);
         [TypeDeclarationTestCase("public delegate int D5(int x, int y);")] public delegate int D5(int x, int y);
 
-        [TypeDeclarationTestCase("public delegate Guid D61();", WithNamespace = false)] public delegate Guid D61();
-        [TypeDeclarationTestCase("public delegate System.Guid D62();", WithNamespace = true)] public delegate Guid D62();
+        [TypeDeclarationTestCase("public delegate Guid D61();", TypeWithNamespace = false)] public delegate Guid D61();
+        [TypeDeclarationTestCase("public delegate System.Guid D62();", TypeWithNamespace = true)] public delegate Guid D62();
 
         class Accessibilities {
           [TypeDeclarationTestCase("public delegate void D1();")] public delegate void D1();
@@ -171,7 +171,7 @@ namespace Smdn.Reflection.ReverseGenerating {
           [TypeDeclarationTestCase("public class C8<T> where T : class, System.ICloneable, new()")] public class C8<T> where T : class, ICloneable, new() { }
           [TypeDeclarationTestCase("public class C9<T> where T : class, System.ICloneable, System.IDisposable, new()")] public class C9<T> where T : class, ICloneable, IDisposable, new() { }
 
-          [TypeDeclarationTestCase("public class C10<T> where T : CBase", WithNamespace = false)]
+          [TypeDeclarationTestCase("public class C10<T> where T : CBase", TypeWithNamespace = false)]
           public class C10<T> where T : CBase { }
           public class CBase { }
 
@@ -229,14 +229,9 @@ namespace Smdn.Reflection.ReverseGenerating {
         if (attr == null)
           continue;
 
-        var options = new GeneratorOptions() {
-          IgnorePrivateOrAssembly = false,
-          TypeDeclarationWithNamespace = attr.WithNamespace
-        };
-
         Assert.AreEqual(
           attr.Expected,
-          Generator.GenerateTypeDeclaration(type, null, options),
+          Generator.GenerateTypeDeclaration(type, null, GetGeneratorOptions(attr)),
           message: $"{attr.SourceLocation} ({type.FullName})"
         );
       }

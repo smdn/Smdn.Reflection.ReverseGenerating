@@ -46,7 +46,7 @@ namespace Smdn.Reflection.ReverseGenerating {
         [Flags]
         enum Flags1 : int { }
 
-        [AttributeTestCase("[Flags]", WithNamespace = false)]
+        [AttributeTestCase("[Flags]", TypeWithNamespace = false)]
         [Flags]
         enum Flags2 : int { }
 
@@ -85,7 +85,7 @@ namespace Smdn.Reflection.ReverseGenerating {
           [System.Diagnostics.Conditional("DEBUG")]
           public void M1() { }
 
-          [AttributeTestCase("[Conditional(\"DEBUG\")]", WithNamespace = false)]
+          [AttributeTestCase("[Conditional(\"DEBUG\")]", TypeWithNamespace = false)]
           [System.Diagnostics.Conditional("DEBUG")]
           public void M2() { }
         }
@@ -102,7 +102,7 @@ namespace Smdn.Reflection.ReverseGenerating {
           [System.Runtime.InteropServices.FieldOffset(0)]
           public byte F0;
 
-          [AttributeTestCase("[FieldOffset(1)]", WithNamespace = false)]
+          [AttributeTestCase("[FieldOffset(1)]", TypeWithNamespace = false)]
           [System.Runtime.InteropServices.FieldOffset(1)]
           public byte F1;
         }
@@ -113,10 +113,10 @@ namespace Smdn.Reflection.ReverseGenerating {
           [AttributeTestCase("[System.Runtime.InteropServices.FieldOffset(0)]")][System.Runtime.InteropServices.FieldOffset(0)] public byte F0;
         }
 
-        [AttributeTestCase("[StructLayout(LayoutKind.Explicit, Size = 1)]", WithNamespace = false)]
+        [AttributeTestCase("[StructLayout(LayoutKind.Explicit, Size = 1)]", TypeWithNamespace = false)]
         [System.Runtime.InteropServices.StructLayout(System.Runtime.InteropServices.LayoutKind.Explicit, Size = 1)]
         struct StructLayout3 {
-          [AttributeTestCase("[FieldOffset(0)]", WithNamespace = false)] [System.Runtime.InteropServices.FieldOffset(0)] public byte F0;
+          [AttributeTestCase("[FieldOffset(0)]", TypeWithNamespace = false)] [System.Runtime.InteropServices.FieldOffset(0)] public byte F0;
         }
 
         [AttributeTestCase("")]
@@ -144,15 +144,9 @@ namespace Smdn.Reflection.ReverseGenerating {
         if (attr == null)
           return;
 
-        var options = new GeneratorOptions() {
-          IgnorePrivateOrAssembly = false,
-          TypeDeclarationWithNamespace = attr.WithNamespace,
-          MemberDeclarationWithNamespace = attr.WithNamespace,
-        };
-
         Assert.AreEqual(
           attr.Expected,
-          string.Join(", ", Generator.GenerateAttributeList(typeOrMember, null, options)),
+          string.Join(", ", Generator.GenerateAttributeList(typeOrMember, null, GetGeneratorOptions(attr))),
           message: $"{attr.SourceLocation} ({typeOrMember.DeclaringType?.FullName}.{typeOrMember.Name})"
         );
       }

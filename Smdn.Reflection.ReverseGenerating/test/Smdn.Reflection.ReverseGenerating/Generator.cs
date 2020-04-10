@@ -8,7 +8,11 @@ using NUnit.Framework;
 namespace Smdn.Reflection.ReverseGenerating {
   internal abstract class GeneratorTestCaseAttribute : Attribute {
     public string Expected { get; private set; }
-    public bool WithNamespace { get; set; } = true;
+    public bool MemberWithNamespace { get; set; } = true;
+    public bool TypeWithNamespace { get; set; } = true;
+    public bool UseDefaultLiteral { get; set; } = false;
+    public bool IgnorePrivateOrAssembly { get; set; } = false;
+    public MethodBodyOption MethodBody { get; set; } = MethodBodyOption.EmptyImplementation;
     public string SourceLocation { get; }
 
     public GeneratorTestCaseAttribute(
@@ -26,5 +30,18 @@ namespace Smdn.Reflection.ReverseGenerating {
   public partial class GeneratorTests {
     private static IEnumerable<Type> FindTypes(Func<Type, bool> predicate)
       => Assembly.GetExecutingAssembly().GetTypes().Where(predicate);
+
+    private static GeneratorOptions GetGeneratorOptions(GeneratorTestCaseAttribute testCaseAttribute)
+    {
+      return new GeneratorOptions() {
+        IgnorePrivateOrAssembly = testCaseAttribute.IgnorePrivateOrAssembly,
+
+        TypeDeclarationWithNamespace = testCaseAttribute.TypeWithNamespace,
+
+        MemberDeclarationWithNamespace = testCaseAttribute.MemberWithNamespace,
+        MemberDeclarationUseDefaultLiteral = testCaseAttribute.UseDefaultLiteral,
+        MemberDeclarationMethodBody = testCaseAttribute.MethodBody,
+      };
+    }
   }
 }
