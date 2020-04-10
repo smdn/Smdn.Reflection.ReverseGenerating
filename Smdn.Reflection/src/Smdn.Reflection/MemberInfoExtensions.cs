@@ -27,6 +27,9 @@ namespace Smdn.Reflection {
     public static Accessibility GetAccessibility(this MemberInfo member)
     {
       switch (member) {
+        case null:
+          throw new ArgumentNullException(nameof(member));
+
         case Type t:
           if (t.IsPublic || t.IsNestedPublic)       return Accessibility.Public;
           if (t.IsNotPublic || t.IsNestedAssembly)  return Accessibility.Assembly;

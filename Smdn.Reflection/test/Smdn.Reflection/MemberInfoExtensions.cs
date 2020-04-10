@@ -95,6 +95,14 @@ namespace Smdn.Reflection {
       Assert.Throws<InvalidOperationException>(() => member.GetAccessibility());
     }
 
+    [Test]
+    public void TestGetAccessibility_ArgumentNull()
+    {
+      MemberInfo member = null;
+
+      Assert.Throws<ArgumentNullException>(() => member.GetAccessibility());
+    }
+
     [TestCase(typeof(TestTypesForMemberInfoExtensionsTests.C1), null, null, false)]
     [TestCase(typeof(TestTypesForMemberInfoExtensionsTests.C2), null, null, true)]
     [TestCase(typeof(TestTypesForMemberInfoExtensionsTests.C.C3), null, null, false)]
