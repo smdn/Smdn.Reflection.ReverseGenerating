@@ -60,7 +60,7 @@ namespace Smdn.Reflection.ReverseGenerating {
       GeneratorOptions options
     )
     {
-      var accessibilities = CSharpFormatter.FormatAccessibility(t.GetAccessibility());
+      var accessibilities = options.TypeDeclarationWithAccessibility ? CSharpFormatter.FormatAccessibility(t.GetAccessibility()) + " " : string.Empty;
       var typeName = t.FormatTypeName(typeWithNamespace: false, withDeclaringTypeName: false);
 
       var genericArgumentConstraints = t
@@ -73,7 +73,7 @@ namespace Smdn.Reflection.ReverseGenerating {
         => genericArgumentConstraints.Count == 0 ? string.Empty : " " + string.Join(" ", genericArgumentConstraints);
 
       if (t.IsEnum) {
-        yield return $"{accessibilities} enum {typeName} : {t.GetEnumUnderlyingType().FormatTypeName()}";
+        yield return $"{accessibilities}enum {typeName} : {t.GetEnumUnderlyingType().FormatTypeName()}";
         yield break;
       }
 
@@ -84,32 +84,32 @@ namespace Smdn.Reflection.ReverseGenerating {
 
         var genericArgumentConstraintDeclaration = genericArgumentConstraints.Count == 0 ? string.Empty : " " + string.Join(" ", genericArgumentConstraints);
 
-        yield return $"{accessibilities} delegate {signatureInfo.ReturnType.FormatTypeName(attributeProvider: signatureInfo.ReturnTypeCustomAttributes, typeWithNamespace: options.TypeDeclarationWithNamespace)} {typeName}({CSharpFormatter.FormatParameterList(signatureInfo, typeWithNamespace: options.TypeDeclarationWithNamespace, useDefaultLiteral: options.MemberDeclarationUseDefaultLiteral)}){genericArgumentConstraintDeclaration};";
+        yield return $"{accessibilities}delegate {signatureInfo.ReturnType.FormatTypeName(attributeProvider: signatureInfo.ReturnTypeCustomAttributes, typeWithNamespace: options.TypeDeclarationWithNamespace)} {typeName}({CSharpFormatter.FormatParameterList(signatureInfo, typeWithNamespace: options.TypeDeclarationWithNamespace, useDefaultLiteral: options.MemberDeclarationUseDefaultLiteral)}){genericArgumentConstraintDeclaration};";
         yield break;
       }
 
       string typeDeclaration = null;
 
       if (t.IsInterface) {
-        typeDeclaration = $"{accessibilities} interface {typeName}";
+        typeDeclaration = $"{accessibilities}interface {typeName}";
       }
       else if (t.IsValueType) {
-        var isReadOnly = t.IsReadOnlyValueType() ? " readonly" : string.Empty;
-        var isByRefLike = t.IsByRefLikeValueType() ? " ref" : string.Empty;
+        var isReadOnly = t.IsReadOnlyValueType() ? "readonly " : string.Empty;
+        var isByRefLike = t.IsByRefLikeValueType() ? "ref " : string.Empty;
 
-        typeDeclaration = $"{accessibilities}{isReadOnly}{isByRefLike} struct {typeName}";
+        typeDeclaration = $"{accessibilities}{isReadOnly}{isByRefLike}struct {typeName}";
       }
       else {
         string modifier = null;
 
         if (t.IsAbstract && t.IsSealed)
-          modifier = " static";
+          modifier = "static ";
         else if (t.IsAbstract)
-          modifier = " abstract";
+          modifier = "abstract ";
         else if (t.IsSealed)
-          modifier = " sealed";
+          modifier = "sealed ";
 
-        typeDeclaration = $"{accessibilities}{modifier} class {typeName}";
+        typeDeclaration = $"{accessibilities}{modifier}class {typeName}";
       }
 
       if (!generateExplicitBaseTypeAndInterfaces) {

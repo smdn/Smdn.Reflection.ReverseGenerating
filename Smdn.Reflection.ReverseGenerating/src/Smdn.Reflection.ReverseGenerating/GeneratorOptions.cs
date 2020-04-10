@@ -26,6 +26,7 @@ namespace Smdn.Reflection.ReverseGenerating {
 
     public bool IgnorePrivateOrAssembly { get; set; } = true;
     public bool TypeDeclarationWithNamespace { get; set; } = false;
+    public bool TypeDeclarationWithAccessibility { get; set; } = true;
 
     public bool MemberDeclarationWithNamespace { get; set; } = false;
     public bool MemberDeclarationUseDefaultLiteral { get; set; } = true;

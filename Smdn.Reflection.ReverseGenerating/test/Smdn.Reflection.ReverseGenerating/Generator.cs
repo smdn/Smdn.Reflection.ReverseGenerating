@@ -10,6 +10,7 @@ namespace Smdn.Reflection.ReverseGenerating {
     public string Expected { get; private set; }
     public bool MemberWithNamespace { get; set; } = true;
     public bool TypeWithNamespace { get; set; } = true;
+    public bool TypeWithAccessibility { get; set; } = true;
     public bool UseDefaultLiteral { get; set; } = false;
     public bool IgnorePrivateOrAssembly { get; set; } = false;
     public MethodBodyOption MethodBody { get; set; } = MethodBodyOption.EmptyImplementation;
@@ -37,6 +38,7 @@ namespace Smdn.Reflection.ReverseGenerating {
         IgnorePrivateOrAssembly = testCaseAttribute.IgnorePrivateOrAssembly,
 
         TypeDeclarationWithNamespace = testCaseAttribute.TypeWithNamespace,
+        TypeDeclarationWithAccessibility = testCaseAttribute.TypeWithAccessibility,
 
         MemberDeclarationWithNamespace = testCaseAttribute.MemberWithNamespace,
         MemberDeclarationUseDefaultLiteral = testCaseAttribute.UseDefaultLiteral,
