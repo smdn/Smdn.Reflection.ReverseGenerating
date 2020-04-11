@@ -7,6 +7,7 @@ using System.Threading;
 using NUnit.Framework;
 
 namespace Smdn.Reflection.ReverseGenerating {
+  [AttributeUsage(AttributeTargets.All, AllowMultiple = true, Inherited = false)]
   class MemberDeclarationTestCaseAttribute : GeneratorTestCaseAttribute {
     public MemberDeclarationTestCaseAttribute(
       string expected,
@@ -26,7 +27,11 @@ namespace Smdn.Reflection.ReverseGenerating {
     namespace MemberDeclaration {
       namespace Fields {
         public class Types {
-          [MemberDeclarationTestCase("public int F1;")] public int F1;
+          [MemberDeclarationTestCase("public int F1;")]
+          [MemberDeclarationTestCase("public int Types.F1;", MemberWithDeclaringTypeName = true, MemberWithNamespace = false)]
+          [MemberDeclarationTestCase("public int Smdn.Reflection.ReverseGenerating.TestCases.MemberDeclaration.Fields.Types.F1;", MemberWithDeclaringTypeName = true, MemberWithNamespace = true)]
+          public int F1;
+
           [MemberDeclarationTestCase("public float F2;")] public float F2;
           [MemberDeclarationTestCase("public string F3;")] public string F3;
           [MemberDeclarationTestCase("public System.Guid F4;")] public Guid F4;
@@ -34,7 +39,11 @@ namespace Smdn.Reflection.ReverseGenerating {
 
         namespace EnumFields {
           public enum Ints : int {
-            [MemberDeclarationTestCase("A = 0,")] A = 0,
+            [MemberDeclarationTestCase("A = 0,")]
+            [MemberDeclarationTestCase("Ints.A = 0,", MemberWithDeclaringTypeName = true, MemberWithNamespace = false)]
+            [MemberDeclarationTestCase("Smdn.Reflection.ReverseGenerating.TestCases.MemberDeclaration.Fields.EnumFields.Ints.A = 0,", MemberWithDeclaringTypeName = true, MemberWithNamespace = true)]
+            A = 0,
+
             [MemberDeclarationTestCase("B = 1,")] B = 1,
             [MemberDeclarationTestCase("C = 2,")] C = 2,
           }
@@ -203,23 +212,23 @@ namespace Smdn.Reflection.ReverseGenerating {
       }
 
       namespace Properties {
-        namespace Body {
+        namespace Options {
           public abstract class Abstract {
-            [MemberDeclarationTestCase("public abstract int P0 { get; set; }", MethodBody = MethodBodyOption.None)]
-            public abstract int P0 { get; set; }
-            [MemberDeclarationTestCase("public abstract int P1 { get; set; }", MethodBody = MethodBodyOption.EmptyImplementation)]
-            public abstract int P1 { get; set; }
-            [MemberDeclarationTestCase("public abstract int P2 { get; set; }", MethodBody = MethodBodyOption.ThrowNotImplementedException)]
-            public abstract int P2 { get; set; }
+            [MemberDeclarationTestCase("public abstract int P { get; set; }", MethodBody = MethodBodyOption.None)]
+            [MemberDeclarationTestCase("public abstract int P { get; set; }", MethodBody = MethodBodyOption.EmptyImplementation)]
+            [MemberDeclarationTestCase("public abstract int P { get; set; }", MethodBody = MethodBodyOption.ThrowNotImplementedException)]
+            [MemberDeclarationTestCase("public abstract int Abstract.P { get; set; }", MemberWithDeclaringTypeName = true, MemberWithNamespace = false, MethodBody = MethodBodyOption.None)]
+            [MemberDeclarationTestCase("public abstract int Smdn.Reflection.ReverseGenerating.TestCases.MemberDeclaration.Properties.Options.Abstract.P { get; set; }", MemberWithDeclaringTypeName = true, MemberWithNamespace = true, MethodBody = MethodBodyOption.None)]
+            public abstract int P { get; set; }
           }
 
           public abstract class NonAbstract {
-            [MemberDeclarationTestCase("public int P0 { get; set; }", MethodBody = MethodBodyOption.None)]
-            public int P0 { get; set; }
-            [MemberDeclarationTestCase("public int P1 { get; set; }", MethodBody = MethodBodyOption.EmptyImplementation)] 
-            public int P1 { get; set; }
-            [MemberDeclarationTestCase("public int P2 { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }", MethodBody = MethodBodyOption.ThrowNotImplementedException)]
-            public int P2 { get; set; }
+            [MemberDeclarationTestCase("public int P { get; set; }", MethodBody = MethodBodyOption.None)]
+            [MemberDeclarationTestCase("public int P { get; set; }", MethodBody = MethodBodyOption.EmptyImplementation)]
+            [MemberDeclarationTestCase("public int P { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }", MethodBody = MethodBodyOption.ThrowNotImplementedException)]
+            [MemberDeclarationTestCase("public int NonAbstract.P { get; set; }", MemberWithDeclaringTypeName = true, MemberWithNamespace = false, MethodBody = MethodBodyOption.None)]
+            [MemberDeclarationTestCase("public int Smdn.Reflection.ReverseGenerating.TestCases.MemberDeclaration.Properties.Options.NonAbstract.P { get; set; }", MemberWithDeclaringTypeName = true, MemberWithNamespace = true, MethodBody = MethodBodyOption.None)]
+            public int P { get; set; }
           }
         }
 
@@ -252,7 +261,10 @@ namespace Smdn.Reflection.ReverseGenerating {
 
         public class Indexers1 {
           [IndexerName("Indexer")]
-          [MemberDeclarationTestCase("public int this[int x] { get; set; }")] public int this[int x] { get { return 0; } set { int val = value; } }
+          [MemberDeclarationTestCase("public int this[int x] { get; set; }")]
+          [MemberDeclarationTestCase("public int Indexers1.Indexer[int x] { get; set; }", MemberWithDeclaringTypeName = true, MemberWithNamespace = false)]
+          [MemberDeclarationTestCase("public int Smdn.Reflection.ReverseGenerating.TestCases.MemberDeclaration.Properties.Indexers1.Indexer[int x] { get; set; }", MemberWithDeclaringTypeName = true, MemberWithNamespace = true)]
+          public int this[int x] { get { return 0; } set { int val = value; } }
         }
 
         public class Indexers2 {
@@ -263,6 +275,18 @@ namespace Smdn.Reflection.ReverseGenerating {
         public class Indexers3 {
           [IndexerName("Indexer")]
           [MemberDeclarationTestCase("public int this[int @in] { get; set; }")] public int this[int @in] { get { return 0; } set { int val = value; } }
+        }
+
+        public class Indexers4 {
+          [IndexerName("Indexer")]
+          [MemberDeclarationTestCase("public int this[string x] { get; set; }")] public int this[string x] { get { return 0; } set { int val = value; } }
+        }
+
+        public class IndexerWithoutIndexerNameAttribute {
+          [MemberDeclarationTestCase("public int this[int x] { get; set; }")]
+          [MemberDeclarationTestCase("public int IndexerWithoutIndexerNameAttribute.Item[int x] { get; set; }", MemberWithDeclaringTypeName = true, MemberWithNamespace = false)]
+          [MemberDeclarationTestCase("public int Smdn.Reflection.ReverseGenerating.TestCases.MemberDeclaration.Properties.IndexerWithoutIndexerNameAttribute.Item[int x] { get; set; }", MemberWithDeclaringTypeName = true, MemberWithNamespace = true)]
+          public int this[int x] { get { return 0; } set { int val = value; } }
         }
 
         public class AccessibilitiesOfProperty {
@@ -333,17 +357,23 @@ namespace Smdn.Reflection.ReverseGenerating {
       }
 
       namespace Methods {
-        namespace Body {
+        namespace Options {
           public abstract class Abstract {
-            [MemberDeclarationTestCase("public abstract void M0()", MethodBody = MethodBodyOption.None)] public abstract void M0();
-            [MemberDeclarationTestCase("public abstract void M1();", MethodBody = MethodBodyOption.EmptyImplementation)] public abstract void M1();
-            [MemberDeclarationTestCase("public abstract void M2();", MethodBody = MethodBodyOption.ThrowNotImplementedException)] public abstract void M2();
+            [MemberDeclarationTestCase("public abstract void M()", MethodBody = MethodBodyOption.None)]
+            [MemberDeclarationTestCase("public abstract void M();", MethodBody = MethodBodyOption.EmptyImplementation)]
+            [MemberDeclarationTestCase("public abstract void M();", MethodBody = MethodBodyOption.ThrowNotImplementedException)]
+            [MemberDeclarationTestCase("public abstract void Abstract.M()", MemberWithDeclaringTypeName = true, MemberWithNamespace = false, MethodBody = MethodBodyOption.None)]
+            [MemberDeclarationTestCase("public abstract void Smdn.Reflection.ReverseGenerating.TestCases.MemberDeclaration.Methods.Options.Abstract.M()", MemberWithDeclaringTypeName = true, MemberWithNamespace = true, MethodBody = MethodBodyOption.None)]
+            public abstract void M();
           }
 
           public abstract class NonAbstract {
-            [MemberDeclarationTestCase("public void M0()", MethodBody = MethodBodyOption.None)] public void M0() => throw new NotImplementedException();
-            [MemberDeclarationTestCase("public void M1() {}", MethodBody = MethodBodyOption.EmptyImplementation)] public void M1() => throw new NotImplementedException();
-            [MemberDeclarationTestCase("public void M2() => throw new NotImplementedException();", MethodBody = MethodBodyOption.ThrowNotImplementedException)] public void M2() => throw new NotImplementedException();
+            [MemberDeclarationTestCase("public void M()", MethodBody = MethodBodyOption.None)]
+            [MemberDeclarationTestCase("public void M() {}", MethodBody = MethodBodyOption.EmptyImplementation)]
+            [MemberDeclarationTestCase("public void M() => throw new NotImplementedException();", MethodBody = MethodBodyOption.ThrowNotImplementedException)]
+            [MemberDeclarationTestCase("public void NonAbstract.M()", MemberWithDeclaringTypeName = true, MemberWithNamespace = false, MethodBody = MethodBodyOption.None)]
+            [MemberDeclarationTestCase("public void Smdn.Reflection.ReverseGenerating.TestCases.MemberDeclaration.Methods.Options.NonAbstract.M()", MemberWithDeclaringTypeName = true, MemberWithNamespace = true, MethodBody = MethodBodyOption.None)]
+            public void M() => throw new NotImplementedException();
           }
         }
 
@@ -421,18 +451,39 @@ namespace Smdn.Reflection.ReverseGenerating {
 
         namespace Constructors {
           public class C {
-            [MemberDeclarationTestCase("public C() {}")] public C() => throw new NotImplementedException();
-            [MemberDeclarationTestCase("static C() {}")] static C() { }
+            [MemberDeclarationTestCase("public C() {}")]
+            [MemberDeclarationTestCase("public C.C()", MemberWithDeclaringTypeName = true, MemberWithNamespace = false, MethodBody = MethodBodyOption.None)]
+            [MemberDeclarationTestCase("public Smdn.Reflection.ReverseGenerating.TestCases.MemberDeclaration.Methods.Constructors.C.C()", MemberWithDeclaringTypeName = true, MemberWithNamespace = true, MethodBody = MethodBodyOption.None)]
+            public C() => throw new NotImplementedException();
+
+            [MemberDeclarationTestCase("static C() {}")]
+            [MemberDeclarationTestCase("static C.C()", MemberWithDeclaringTypeName = true, MemberWithNamespace = false, MethodBody = MethodBodyOption.None)]
+            [MemberDeclarationTestCase("static Smdn.Reflection.ReverseGenerating.TestCases.MemberDeclaration.Methods.Constructors.C.C()", MemberWithDeclaringTypeName = true, MemberWithNamespace = true, MethodBody = MethodBodyOption.None)]
+            static C() { }
           }
 
           public class C<T> {
-            [MemberDeclarationTestCase("public C() {}")] public C() => throw new NotImplementedException();
-            [MemberDeclarationTestCase("static C() {}")] static C() { }
+            [MemberDeclarationTestCase("public C() {}")]
+            [MemberDeclarationTestCase("public C<T>.C()", MemberWithDeclaringTypeName = true, MemberWithNamespace = false, MethodBody = MethodBodyOption.None)]
+            [MemberDeclarationTestCase("public Smdn.Reflection.ReverseGenerating.TestCases.MemberDeclaration.Methods.Constructors.C<T>.C()", MemberWithDeclaringTypeName = true, MemberWithNamespace = true, MethodBody = MethodBodyOption.None)]
+            public C() => throw new NotImplementedException();
+
+            [MemberDeclarationTestCase("static C() {}")]
+            [MemberDeclarationTestCase("static C<T>.C()", MemberWithDeclaringTypeName = true, MemberWithNamespace = false, MethodBody = MethodBodyOption.None)]
+            [MemberDeclarationTestCase("static Smdn.Reflection.ReverseGenerating.TestCases.MemberDeclaration.Methods.Constructors.C<T>.C()", MemberWithDeclaringTypeName = true, MemberWithNamespace = true, MethodBody = MethodBodyOption.None)]
+            static C() { }
           }
 
           public class C<T1, T2> {
-            [MemberDeclarationTestCase("public C() {}")] public C() => throw new NotImplementedException();
-            [MemberDeclarationTestCase("static C() {}")] static C() { }
+            [MemberDeclarationTestCase("public C() {}")]
+            [MemberDeclarationTestCase("public C<T1, T2>.C()", MemberWithDeclaringTypeName = true, MemberWithNamespace = false, MethodBody = MethodBodyOption.None)]
+            [MemberDeclarationTestCase("public Smdn.Reflection.ReverseGenerating.TestCases.MemberDeclaration.Methods.Constructors.C<T1, T2>.C()", MemberWithDeclaringTypeName = true, MemberWithNamespace = true, MethodBody = MethodBodyOption.None)]
+            public C() => throw new NotImplementedException();
+
+            [MemberDeclarationTestCase("static C() {}")]
+            [MemberDeclarationTestCase("static C<T1, T2>.C()", MemberWithDeclaringTypeName = true, MemberWithNamespace = false, MethodBody = MethodBodyOption.None)]
+            [MemberDeclarationTestCase("static Smdn.Reflection.ReverseGenerating.TestCases.MemberDeclaration.Methods.Constructors.C<T1, T2>.C()", MemberWithDeclaringTypeName = true, MemberWithNamespace = true, MethodBody = MethodBodyOption.None)]
+            static C() { }
           }
 
           public class Accessibilities {
@@ -453,99 +504,132 @@ namespace Smdn.Reflection.ReverseGenerating {
 
         namespace Destructors {
           public class C {
-            [MemberDeclarationTestCase("~C() {}")] ~C() => throw new NotImplementedException();
+            [MemberDeclarationTestCase("~C() {}")]
+            [MemberDeclarationTestCase("C.~C()", MemberWithDeclaringTypeName = true, MemberWithNamespace = false, MethodBody = MethodBodyOption.None)]
+            [MemberDeclarationTestCase("Smdn.Reflection.ReverseGenerating.TestCases.MemberDeclaration.Methods.Destructors.C.~C()", MemberWithDeclaringTypeName = true, MemberWithNamespace = true, MethodBody = MethodBodyOption.None)]
+            ~C() => throw new NotImplementedException();
           }
 
           public class C<T> {
-            [MemberDeclarationTestCase("~C() {}")] ~C() => throw new NotImplementedException();
+            [MemberDeclarationTestCase("~C() {}")]
+            [MemberDeclarationTestCase("C<T>.~C()", MemberWithDeclaringTypeName = true, MemberWithNamespace = false, MethodBody = MethodBodyOption.None)]
+            [MemberDeclarationTestCase("Smdn.Reflection.ReverseGenerating.TestCases.MemberDeclaration.Methods.Destructors.C<T>.~C()", MemberWithDeclaringTypeName = true, MemberWithNamespace = true, MethodBody = MethodBodyOption.None)]
+            ~C() => throw new NotImplementedException();
           }
 
           public class C<T1, T2> {
-            [MemberDeclarationTestCase("~C() {}")] ~C() => throw new NotImplementedException();
+            [MemberDeclarationTestCase("~C() {}")]
+            [MemberDeclarationTestCase("C<T1, T2>.~C()", MemberWithDeclaringTypeName = true, MemberWithNamespace = false, MethodBody = MethodBodyOption.None)]
+            [MemberDeclarationTestCase("Smdn.Reflection.ReverseGenerating.TestCases.MemberDeclaration.Methods.Destructors.C<T1, T2>.~C()", MemberWithDeclaringTypeName = true, MemberWithNamespace = true, MethodBody = MethodBodyOption.None)]
+            ~C() => throw new NotImplementedException();
           }
         }
 
         namespace Operators {
           namespace UnaryOperators {
             public class C {
-              [MemberDeclarationTestCase("public static C operator + (C c) {}", MemberWithNamespace = false)]
+              [MemberDeclarationTestCase("public static C operator + (C c) {}", MemberWithNamespace = false, MemberWithDeclaringTypeName = false)]
+              [MemberDeclarationTestCase("public static C operator + (C c) {}", MemberWithNamespace = false, MemberWithDeclaringTypeName = true)]
               public static C operator +(C c) => throw new NotImplementedException();
 
-              [MemberDeclarationTestCase("public static C operator - (C c) {}", MemberWithNamespace = false)]
+              [MemberDeclarationTestCase("public static C operator - (C c) {}", MemberWithNamespace = false, MemberWithDeclaringTypeName = false)]
+              [MemberDeclarationTestCase("public static C operator - (C c) {}", MemberWithNamespace = false, MemberWithDeclaringTypeName = true)]
               public static C operator -(C c) => throw new NotImplementedException();
 
-              [MemberDeclarationTestCase("public static C operator ! (C c) {}", MemberWithNamespace = false)]
+              [MemberDeclarationTestCase("public static C operator ! (C c) {}", MemberWithNamespace = false, MemberWithDeclaringTypeName = false)]
+              [MemberDeclarationTestCase("public static C operator ! (C c) {}", MemberWithNamespace = false, MemberWithDeclaringTypeName = true)]
               public static C operator !(C c) => throw new NotImplementedException();
 
-              [MemberDeclarationTestCase("public static C operator ~ (C c) {}", MemberWithNamespace = false)]
+              [MemberDeclarationTestCase("public static C operator ~ (C c) {}", MemberWithNamespace = false, MemberWithDeclaringTypeName = false)]
+              [MemberDeclarationTestCase("public static C operator ~ (C c) {}", MemberWithNamespace = false, MemberWithDeclaringTypeName = true)]
               public static C operator ~(C c) => throw new NotImplementedException();
 
-              [MemberDeclarationTestCase("public static bool operator true (C c) {}", MemberWithNamespace = false)]
+              [MemberDeclarationTestCase("public static bool operator true (C c) {}", MemberWithNamespace = false, MemberWithDeclaringTypeName = false)]
+              [MemberDeclarationTestCase("public static bool operator true (C c) {}", MemberWithNamespace = false, MemberWithDeclaringTypeName = true)]
               public static bool operator true(C c) => throw new NotImplementedException();
 
-              [MemberDeclarationTestCase("public static bool operator false (C c) {}", MemberWithNamespace = false)]
+              [MemberDeclarationTestCase("public static bool operator false (C c) {}", MemberWithNamespace = false, MemberWithDeclaringTypeName = false)]
+              [MemberDeclarationTestCase("public static bool operator false (C c) {}", MemberWithNamespace = false, MemberWithDeclaringTypeName = true)]
               public static bool operator false(C c) => throw new NotImplementedException();
 
-              [MemberDeclarationTestCase("public static C operator ++ (C c) {}", MemberWithNamespace = false)]
+              [MemberDeclarationTestCase("public static C operator ++ (C c) {}", MemberWithNamespace = false, MemberWithDeclaringTypeName = false)]
+              [MemberDeclarationTestCase("public static C operator ++ (C c) {}", MemberWithNamespace = false, MemberWithDeclaringTypeName = true)]
               public static C operator ++(C c) => throw new NotImplementedException();
 
-              [MemberDeclarationTestCase("public static C operator -- (C c) {}", MemberWithNamespace = false)]
+              [MemberDeclarationTestCase("public static C operator -- (C c) {}", MemberWithNamespace = false, MemberWithDeclaringTypeName = false)]
+              [MemberDeclarationTestCase("public static C operator -- (C c) {}", MemberWithNamespace = false, MemberWithDeclaringTypeName = true)]
               public static C operator --(C c) => throw new NotImplementedException();
             }
           }
 
           namespace BinaryOperators {
             public class C {
-              [MemberDeclarationTestCase("public static C operator + (C x, C y) {}", MemberWithNamespace = false)]
+              [MemberDeclarationTestCase("public static C operator + (C x, C y) {}", MemberWithNamespace = false, MemberWithDeclaringTypeName = false)]
+              [MemberDeclarationTestCase("public static C operator + (C x, C y) {}", MemberWithNamespace = false, MemberWithDeclaringTypeName = true)]
               public static C operator +(C x, C y) => throw new NotImplementedException();
 
-              [MemberDeclarationTestCase("public static C operator - (C x, C y) {}", MemberWithNamespace = false)]
+              [MemberDeclarationTestCase("public static C operator - (C x, C y) {}", MemberWithNamespace = false, MemberWithDeclaringTypeName = false)]
+              [MemberDeclarationTestCase("public static C operator - (C x, C y) {}", MemberWithNamespace = false, MemberWithDeclaringTypeName = true)]
               public static C operator -(C x, C y) => throw new NotImplementedException();
 
-              [MemberDeclarationTestCase("public static C operator * (C x, C y) {}", MemberWithNamespace = false)]
+              [MemberDeclarationTestCase("public static C operator * (C x, C y) {}", MemberWithNamespace = false, MemberWithDeclaringTypeName = false)]
+              [MemberDeclarationTestCase("public static C operator * (C x, C y) {}", MemberWithNamespace = false, MemberWithDeclaringTypeName = true)]
               public static C operator *(C x, C y) => throw new NotImplementedException();
 
-              [MemberDeclarationTestCase("public static C operator / (C x, C y) {}", MemberWithNamespace = false)]
+              [MemberDeclarationTestCase("public static C operator / (C x, C y) {}", MemberWithNamespace = false, MemberWithDeclaringTypeName = false)]
+              [MemberDeclarationTestCase("public static C operator / (C x, C y) {}", MemberWithNamespace = false, MemberWithDeclaringTypeName = true)]
               public static C operator /(C x, C y) => throw new NotImplementedException();
 
-              [MemberDeclarationTestCase("public static C operator % (C x, C y) {}", MemberWithNamespace = false)]
+              [MemberDeclarationTestCase("public static C operator % (C x, C y) {}", MemberWithNamespace = false, MemberWithDeclaringTypeName = false)]
+              [MemberDeclarationTestCase("public static C operator % (C x, C y) {}", MemberWithNamespace = false, MemberWithDeclaringTypeName = true)]
               public static C operator %(C x, C y) => throw new NotImplementedException();
 
-              [MemberDeclarationTestCase("public static C operator & (C x, C y) {}", MemberWithNamespace = false)]
+              [MemberDeclarationTestCase("public static C operator & (C x, C y) {}", MemberWithNamespace = false, MemberWithDeclaringTypeName = false)]
+              [MemberDeclarationTestCase("public static C operator & (C x, C y) {}", MemberWithNamespace = false, MemberWithDeclaringTypeName = true)]
               public static C operator &(C x, C y) => throw new NotImplementedException();
 
-              [MemberDeclarationTestCase("public static C operator | (C x, C y) {}", MemberWithNamespace = false)]
+              [MemberDeclarationTestCase("public static C operator | (C x, C y) {}", MemberWithNamespace = false, MemberWithDeclaringTypeName = false)]
+              [MemberDeclarationTestCase("public static C operator | (C x, C y) {}", MemberWithNamespace = false, MemberWithDeclaringTypeName = true)]
               public static C operator |(C x, C y) => throw new NotImplementedException();
 
-              [MemberDeclarationTestCase("public static C operator ^ (C x, C y) {}", MemberWithNamespace = false)]
+              [MemberDeclarationTestCase("public static C operator ^ (C x, C y) {}", MemberWithNamespace = false, MemberWithDeclaringTypeName = false)]
+              [MemberDeclarationTestCase("public static C operator ^ (C x, C y) {}", MemberWithNamespace = false, MemberWithDeclaringTypeName = true)]
               public static C operator ^(C x, C y) => throw new NotImplementedException();
 
-              [MemberDeclarationTestCase("public static C operator >> (C x, int y) {}", MemberWithNamespace = false)]
+              [MemberDeclarationTestCase("public static C operator >> (C x, int y) {}", MemberWithNamespace = false, MemberWithDeclaringTypeName = false)]
+              [MemberDeclarationTestCase("public static C operator >> (C x, int y) {}", MemberWithNamespace = false, MemberWithDeclaringTypeName = true)]
               public static C operator >>(C x, int y) => throw new NotImplementedException();
 
-              [MemberDeclarationTestCase("public static C operator << (C x, int y) {}", MemberWithNamespace = false)]
+              [MemberDeclarationTestCase("public static C operator << (C x, int y) {}", MemberWithNamespace = false, MemberWithDeclaringTypeName = false)]
+              [MemberDeclarationTestCase("public static C operator << (C x, int y) {}", MemberWithNamespace = false, MemberWithDeclaringTypeName = true)]
               public static C operator <<(C x, int y) => throw new NotImplementedException();
             }
           }
 
           namespace Comparison {
             public class C : IEquatable<C>, IComparable<C> {
-              [MemberDeclarationTestCase("public static bool operator == (C x, C y) {}", MemberWithNamespace = false)]
+              [MemberDeclarationTestCase("public static bool operator == (C x, C y) {}", MemberWithNamespace = false, MemberWithDeclaringTypeName = false)]
+              [MemberDeclarationTestCase("public static bool operator == (C x, C y) {}", MemberWithNamespace = false, MemberWithDeclaringTypeName = true)]
               public static bool operator ==(C x, C y) => throw new NotImplementedException();
 
-              [MemberDeclarationTestCase("public static bool operator != (C x, C y) {}", MemberWithNamespace = false)]
+              [MemberDeclarationTestCase("public static bool operator != (C x, C y) {}", MemberWithNamespace = false, MemberWithDeclaringTypeName = false)]
+              [MemberDeclarationTestCase("public static bool operator != (C x, C y) {}", MemberWithNamespace = false, MemberWithDeclaringTypeName = true)]
               public static bool operator !=(C x, C y) => throw new NotImplementedException();
 
-              [MemberDeclarationTestCase("public static bool operator < (C x, C y) {}", MemberWithNamespace = false)]
+              [MemberDeclarationTestCase("public static bool operator < (C x, C y) {}", MemberWithNamespace = false, MemberWithDeclaringTypeName = false)]
+              [MemberDeclarationTestCase("public static bool operator < (C x, C y) {}", MemberWithNamespace = false, MemberWithDeclaringTypeName = true)]
               public static bool operator <(C x, C y) => throw new NotImplementedException();
 
-              [MemberDeclarationTestCase("public static bool operator > (C x, C y) {}", MemberWithNamespace = false)]
+              [MemberDeclarationTestCase("public static bool operator > (C x, C y) {}", MemberWithNamespace = false, MemberWithDeclaringTypeName = false)]
+              [MemberDeclarationTestCase("public static bool operator > (C x, C y) {}", MemberWithNamespace = false, MemberWithDeclaringTypeName = true)]
               public static bool operator >(C x, C y) => throw new NotImplementedException();
 
-              [MemberDeclarationTestCase("public static bool operator <= (C x, C y) {}", MemberWithNamespace = false)]
+              [MemberDeclarationTestCase("public static bool operator <= (C x, C y) {}", MemberWithNamespace = false, MemberWithDeclaringTypeName = false)]
+              [MemberDeclarationTestCase("public static bool operator <= (C x, C y) {}", MemberWithNamespace = false, MemberWithDeclaringTypeName = true)]
               public static bool operator <=(C x, C y) => throw new NotImplementedException();
 
-              [MemberDeclarationTestCase("public static bool operator >= (C x, C y) {}", MemberWithNamespace = false)]
+              [MemberDeclarationTestCase("public static bool operator >= (C x, C y) {}", MemberWithNamespace = false, MemberWithDeclaringTypeName = false)]
+              [MemberDeclarationTestCase("public static bool operator >= (C x, C y) {}", MemberWithNamespace = false, MemberWithDeclaringTypeName = true)]
               public static bool operator >=(C x, C y) => throw new NotImplementedException();
 
               public bool Equals(C other) => throw new NotImplementedException();
@@ -560,17 +644,21 @@ namespace Smdn.Reflection.ReverseGenerating {
             public class W { }
 
             public class C {
-              [MemberDeclarationTestCase("public static explicit operator C(V v) {}", MemberWithNamespace = false)]
+              [MemberDeclarationTestCase("public static explicit operator C(V v) {}", MemberWithNamespace = false, MemberWithDeclaringTypeName = false)]
+              [MemberDeclarationTestCase("public static explicit operator C(V v) {}", MemberWithNamespace = false, MemberWithDeclaringTypeName = true)]
               public static explicit operator C(V v) => throw new NotImplementedException();
 
-              [MemberDeclarationTestCase("public static explicit operator V(C c) {}", MemberWithNamespace = false)]
+              [MemberDeclarationTestCase("public static explicit operator V(C c) {}", MemberWithNamespace = false, MemberWithDeclaringTypeName = false)]
+              [MemberDeclarationTestCase("public static explicit operator V(C c) {}", MemberWithNamespace = false, MemberWithDeclaringTypeName = true)]
               public static explicit operator V(C c) => throw new NotImplementedException();
 
 
-              [MemberDeclarationTestCase("public static implicit operator C(W w) {}", MemberWithNamespace = false)]
+              [MemberDeclarationTestCase("public static implicit operator C(W w) {}", MemberWithNamespace = false, MemberWithDeclaringTypeName = false)]
+              [MemberDeclarationTestCase("public static implicit operator C(W w) {}", MemberWithNamespace = false, MemberWithDeclaringTypeName = true)]
               public static implicit operator C(W w) => throw new NotImplementedException();
 
-              [MemberDeclarationTestCase("public static implicit operator W(C c) {}", MemberWithNamespace = false)]
+              [MemberDeclarationTestCase("public static implicit operator W(C c) {}", MemberWithNamespace = false, MemberWithDeclaringTypeName = false)]
+              [MemberDeclarationTestCase("public static implicit operator W(C c) {}", MemberWithNamespace = false, MemberWithDeclaringTypeName = true)]
               public static implicit operator W(C c) => throw new NotImplementedException();
             }
           }
@@ -586,20 +674,34 @@ namespace Smdn.Reflection.ReverseGenerating {
           }
 
           public class C {
-            [MemberDeclarationTestCase("public T M<T>(T x) {}")] public T M<T>(T x) => throw new NotImplementedException();
-            [MemberDeclarationTestCase("public T1 M<T1, T2>(T2 x) {}")] public T1 M<T1, T2>(T2 x) => throw new NotImplementedException();
+            [MemberDeclarationTestCase("public T M<T>(T x) {}")]
+            [MemberDeclarationTestCase("public T C.M<T>(T x)", MemberWithDeclaringTypeName = true, MemberWithNamespace = false, MethodBody = MethodBodyOption.None)]
+            [MemberDeclarationTestCase("public T Smdn.Reflection.ReverseGenerating.TestCases.MemberDeclaration.Methods.GenericMethods.C.M<T>(T x)", MemberWithDeclaringTypeName = true, MemberWithNamespace = true, MethodBody = MethodBodyOption.None)]
+            public T M<T>(T x) => throw new NotImplementedException();
+
+            [MemberDeclarationTestCase("public T1 M<T1, T2>(T2 x) {}")]
+            [MemberDeclarationTestCase("public T1 C.M<T1, T2>(T2 x)", MemberWithDeclaringTypeName = true, MemberWithNamespace = false, MethodBody = MethodBodyOption.None)]
+            [MemberDeclarationTestCase("public T1 Smdn.Reflection.ReverseGenerating.TestCases.MemberDeclaration.Methods.GenericMethods.C.M<T1, T2>(T2 x)", MemberWithDeclaringTypeName = true, MemberWithNamespace = true, MethodBody = MethodBodyOption.None)]
+            public T1 M<T1, T2>(T2 x) => throw new NotImplementedException();
           }
 
           public abstract class COpen<T1, T2> {
-            [MemberDeclarationTestCase("public abstract void M(T1 t1, T2 t2);")] public abstract void M(T1 t1, T2 t2);
+            [MemberDeclarationTestCase("public abstract void M(T1 t1, T2 t2);")]
+            public abstract void M(T1 t1, T2 t2);
           }
 
           public class CClose1<T2> : COpen<int, T2> {
-            [MemberDeclarationTestCase("public override void M(int t1, T2 t2) {}")] public override void M(int t1, T2 t2) { }
+            [MemberDeclarationTestCase("public override void M(int t1, T2 t2) {}")]
+            [MemberDeclarationTestCase("public override void CClose1<T2>.M(int t1, T2 t2)", MemberWithDeclaringTypeName = true, MemberWithNamespace = false, MethodBody = MethodBodyOption.None)]
+            [MemberDeclarationTestCase("public override void Smdn.Reflection.ReverseGenerating.TestCases.MemberDeclaration.Methods.GenericMethods.CClose1<T2>.M(int t1, T2 t2)", MemberWithDeclaringTypeName = true, MemberWithNamespace = true, MethodBody = MethodBodyOption.None)]
+            public override void M(int t1, T2 t2) { }
           }
 
           public class CClose2 : CClose1<int> {
-            [MemberDeclarationTestCase("public override void M(int t1, int t2) {}")] public override void M(int t1, int t2) { }
+            [MemberDeclarationTestCase("public override void M(int t1, int t2) {}")]
+            [MemberDeclarationTestCase("public override void CClose2.M(int t1, int t2)", MemberWithDeclaringTypeName = true, MemberWithNamespace = false, MethodBody = MethodBodyOption.None)]
+            [MemberDeclarationTestCase("public override void Smdn.Reflection.ReverseGenerating.TestCases.MemberDeclaration.Methods.GenericMethods.CClose2.M(int t1, int t2)", MemberWithDeclaringTypeName = true, MemberWithNamespace = true, MethodBody = MethodBodyOption.None)]
+            public override void M(int t1, int t2) { }
           }
 
           public class Constraints1 {
@@ -652,6 +754,13 @@ namespace Smdn.Reflection.ReverseGenerating {
 
       namespace Events {
 #pragma warning disable CS0067
+        public class Options {
+          [MemberDeclarationTestCase("public event System.EventHandler E;")]
+          [MemberDeclarationTestCase("public event EventHandler Options.E;", MemberWithDeclaringTypeName = true, MemberWithNamespace = false)]
+          [MemberDeclarationTestCase("public event System.EventHandler Smdn.Reflection.ReverseGenerating.TestCases.MemberDeclaration.Events.Options.E;", MemberWithDeclaringTypeName = true, MemberWithNamespace = true)]
+          public event EventHandler E;
+        }
+
         public class Modifiers {
           [MemberDeclarationTestCase("public event System.EventHandler E1;")] public event EventHandler E1;
           [MemberDeclarationTestCase("public static event System.EventHandler E2;")] public static event EventHandler E2;
@@ -686,14 +795,21 @@ namespace Smdn.Reflection.ReverseGenerating {
 
       namespace ImplementedInterfaceMembers {
         class ImplicitMethod : IDisposable, ICloneable {
-          [MemberDeclarationTestCase("public void Dispose() {}")] public void Dispose() { }
+          [MemberDeclarationTestCase("public void Dispose() {}")]
+          [MemberDeclarationTestCase("public void ImplicitMethod.Dispose()", MemberWithDeclaringTypeName = true, MemberWithNamespace = false, MethodBody = MethodBodyOption.None)]
+          [MemberDeclarationTestCase("public void Smdn.Reflection.ReverseGenerating.TestCases.MemberDeclaration.ImplementedInterfaceMembers.ImplicitMethod.Dispose()", MemberWithDeclaringTypeName = true, MemberWithNamespace = true, MethodBody = MethodBodyOption.None)]
+          public void Dispose() { }
 
           [MemberDeclarationTestCase("public object Clone() {}", MemberWithNamespace = false)]
           public object Clone() => throw new NotImplementedException();
         }
 
         class ExplicitMethod : IDisposable, ICloneable {
-          [MemberDeclarationTestCase("void System.IDisposable.Dispose() {}")] void IDisposable.Dispose() { }
+          [MemberDeclarationTestCase("void System.IDisposable.Dispose() {}", MemberWithNamespace = true)]
+          [MemberDeclarationTestCase("void IDisposable.Dispose() {}", MemberWithNamespace = false)]
+          [MemberDeclarationTestCase("void ExplicitMethod.IDisposable.Dispose()", MemberWithDeclaringTypeName = true, MemberWithNamespace = false, MethodBody = MethodBodyOption.None)]
+          [MemberDeclarationTestCase("void Smdn.Reflection.ReverseGenerating.TestCases.MemberDeclaration.ImplementedInterfaceMembers.ExplicitMethod.System.IDisposable.Dispose()", MemberWithDeclaringTypeName = true, MemberWithNamespace = true, MethodBody = MethodBodyOption.None)]
+          void IDisposable.Dispose() { }
 
           [MemberDeclarationTestCase("object ICloneable.Clone() {}", MemberWithNamespace = false)]
           object ICloneable.Clone() => throw new NotImplementedException();
@@ -713,6 +829,8 @@ namespace Smdn.Reflection.ReverseGenerating {
 
         class ImplicitProperty1 : IProperty {
           [MemberDeclarationTestCase("public int P1 { get; set; }", MemberWithNamespace = false)]
+          [MemberDeclarationTestCase("public int ImplicitProperty1.P1 { get; set; }", MemberWithDeclaringTypeName = true, MemberWithNamespace = false, MethodBody = MethodBodyOption.None)]
+          [MemberDeclarationTestCase("public int Smdn.Reflection.ReverseGenerating.TestCases.MemberDeclaration.ImplementedInterfaceMembers.ImplicitProperty1.P1 { get; set; }", MemberWithDeclaringTypeName = true, MemberWithNamespace = true, MethodBody = MethodBodyOption.None)]
           public int P1 { get; set; }
 
           [MemberDeclarationTestCase("public int P2 { get; }", MemberWithNamespace = false)]
@@ -724,6 +842,8 @@ namespace Smdn.Reflection.ReverseGenerating {
 
         class ExplicitProperty1 : IProperty {
           [MemberDeclarationTestCase("int IProperty.P1 { get; set; }", MemberWithNamespace = false)]
+          [MemberDeclarationTestCase("int ExplicitProperty1.IProperty.P1 { get; set; }", MemberWithDeclaringTypeName = true, MemberWithNamespace = false, MethodBody = MethodBodyOption.None)]
+          [MemberDeclarationTestCase("int Smdn.Reflection.ReverseGenerating.TestCases.MemberDeclaration.ImplementedInterfaceMembers.ExplicitProperty1.Smdn.Reflection.ReverseGenerating.TestCases.MemberDeclaration.ImplementedInterfaceMembers.IProperty.P1 { get; set; }", MemberWithDeclaringTypeName = true, MemberWithNamespace = true, MethodBody = MethodBodyOption.None)]
           int IProperty.P1 { get; set; }
 
           [MemberDeclarationTestCase("int IProperty.P2 { get; }", MemberWithNamespace = false)]
@@ -790,12 +910,16 @@ namespace Smdn.Reflection.ReverseGenerating {
 #pragma warning disable CS0067
         class ImplicitEvent : IEvent {
           [MemberDeclarationTestCase("public event EventHandler E;", MemberWithNamespace = false)]
+          [MemberDeclarationTestCase("public event EventHandler ImplicitEvent.E;", MemberWithDeclaringTypeName = true, MemberWithNamespace = false)]
+          [MemberDeclarationTestCase("public event System.EventHandler Smdn.Reflection.ReverseGenerating.TestCases.MemberDeclaration.ImplementedInterfaceMembers.ImplicitEvent.E;", MemberWithDeclaringTypeName = true, MemberWithNamespace = true)]
           public event EventHandler E;
         }
 #pragma warning restore CS0067
 
         class ExplicitEvent : IEvent {
           [MemberDeclarationTestCase("event EventHandler IEvent.E;", MemberWithNamespace = false)]
+          [MemberDeclarationTestCase("event EventHandler ExplicitEvent.IEvent.E;", MemberWithDeclaringTypeName = true, MemberWithNamespace = false)]
+          [MemberDeclarationTestCase("event System.EventHandler Smdn.Reflection.ReverseGenerating.TestCases.MemberDeclaration.ImplementedInterfaceMembers.ExplicitEvent.Smdn.Reflection.ReverseGenerating.TestCases.MemberDeclaration.ImplementedInterfaceMembers.IEvent.E;", MemberWithDeclaringTypeName = true, MemberWithNamespace = true)]
           event EventHandler IEvent.E {
             add { throw new NotImplementedException(); }
             remove { throw new NotImplementedException(); }
@@ -920,16 +1044,13 @@ namespace Smdn.Reflection.ReverseGenerating {
         const BindingFlags memberBindingFlags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static | BindingFlags.DeclaredOnly;
 
         foreach (var member in type.GetMembers(memberBindingFlags).Where(m => !(m is Type /*except nested type*/))) {
-          var attr = member.GetCustomAttribute<MemberDeclarationTestCaseAttribute>();
-
-          if (attr == null)
-            continue;
-
-          Assert.AreEqual(
-            attr.Expected,
-            Generator.GenerateMemberDeclaration(member, null, GetGeneratorOptions(attr)),
-            message: $"{attr.SourceLocation} ({type.FullName}.{member.Name})"
-          );
+          foreach (var attr in member.GetCustomAttributes<MemberDeclarationTestCaseAttribute>()) {
+            Assert.AreEqual(
+              attr.Expected,
+              Generator.GenerateMemberDeclaration(member, null, GetGeneratorOptions(attr)),
+              message: $"{attr.SourceLocation} ({type.FullName}.{member.Name})"
+            );
+          }
         }
       }
     }

@@ -375,7 +375,7 @@ namespace Smdn.Reflection.ReverseGenerating {
         if (field.IsStatic) {
           var val = Convert.ChangeType(field.GetValue(null), field.DeclaringType.GetEnumUnderlyingType());
 
-          sb.Append(field.Name).Append(" = ");
+          sb.Append(GenerateMemberName(field, options)).Append(" = ");
 
           if (field.DeclaringType.IsEnumFlags())
             sb.Append("0x").AppendFormat("{0:x" + (Marshal.SizeOf(val) * 2).ToString() + "}", val);
@@ -396,7 +396,7 @@ namespace Smdn.Reflection.ReverseGenerating {
           .Append(" ")
           .Append(field.FieldType.FormatTypeName(attributeProvider: field, typeWithNamespace: options.MemberDeclarationWithNamespace))
           .Append(" ")
-          .Append(field.Name);
+          .Append(GenerateMemberName(field, options));
 
         if (field.IsStatic && (field.IsLiteral || field.IsInitOnly) && !field.FieldType.ContainsGenericParameters) {
           var val = field.GetValue(null);
@@ -461,23 +461,32 @@ namespace Smdn.Reflection.ReverseGenerating {
 
       sb.Append(property.PropertyType.FormatTypeName(attributeProvider: property, typeWithNamespace: options.MemberDeclarationWithNamespace)).Append(" ");
 
-      var propertyName = explicitInterface == null ? property.Name : property.Name.Substring(property.Name.LastIndexOf('.') + 1);
+      var attrDefaultMember = property.DeclaringType.GetCustomAttribute<DefaultMemberAttribute>();
 
-      if (0 < indexParameters.Length &&
-          string.Equals(property.Name, property.DeclaringType.GetCustomAttribute<DefaultMemberAttribute>()?.MemberName, StringComparison.Ordinal))
-        sb.Append("this"); // indexer
-      else if (explicitInterface == null)
-        sb.Append(propertyName);
-      else
-        sb
-          .Append(
-            explicitInterface.FormatTypeName(
-              attributeProvider: property,
-              typeWithNamespace: options.MemberDeclarationWithNamespace
-            )
+      if (0 < indexParameters.Length && string.Equals(property.Name, attrDefaultMember?.MemberName, StringComparison.Ordinal))
+        // indexer
+        sb.Append(
+          GenerateMemberName(
+            property,
+            options.MemberDeclarationWithDeclaringTypeName ? attrDefaultMember.MemberName : "this",
+            options
           )
-          .Append(".")
-          .Append(propertyName);
+        );
+      else if (explicitInterface == null)
+        sb.Append(
+          GenerateMemberName(
+            property,
+            options
+          )
+        );
+      else
+        sb.Append(
+          GenerateMemberName(
+            property,
+            explicitInterface.FormatTypeName(typeWithNamespace: options.MemberDeclarationWithNamespace) + "." + property.Name.Substring(property.Name.LastIndexOf('.') + 1),
+            options
+          )
+        );
 
       if (0 < indexParameters.Length)
         sb
@@ -545,10 +554,10 @@ namespace Smdn.Reflection.ReverseGenerating {
       var methodModifiers = GetMemberModifierOf(m);
       var isByRefReturnType = (method != null && method.ReturnType.IsByRef);
       var methodReturnType = isByRefReturnType ? "ref " + method.ReturnType.GetElementType().FormatTypeName(attributeProvider: method.ReturnTypeCustomAttributes, typeWithNamespace: options.MemberDeclarationWithNamespace) : method?.ReturnType?.FormatTypeName(attributeProvider: method?.ReturnTypeCustomAttributes, typeWithNamespace: options.MemberDeclarationWithNamespace);
-      var methodName = m.Name;
       var methodGenericParameters = m.IsGenericMethod ? string.Concat("<", string.Join(", ", m.GetGenericArguments().Select(t => t.FormatTypeName(typeWithNamespace: options.MemberDeclarationWithNamespace))), ">") : null;
       var methodParameterList = CSharpFormatter.FormatParameterList(m, typeWithNamespace: options.MemberDeclarationWithNamespace, useDefaultLiteral: options.MemberDeclarationUseDefaultLiteral);
       var methodConstraints = method == null ? null : string.Join(" ", method.GetGenericArguments().Select(arg => Generator.GenerateGenericArgumentConstraintDeclaration(arg, referencingNamespaces, options)).Where(d => d != null));
+      string methodName = null;
       string methodBody = null;
 
       switch (options.MemberDeclarationMethodBody) {
@@ -566,15 +575,19 @@ namespace Smdn.Reflection.ReverseGenerating {
         switch (nameType) {
           case MethodSpecialName.None: break;
           case MethodSpecialName.Unknown: break;
-          case MethodSpecialName.Constructor: methodReturnType = null; break;
           case MethodSpecialName.Explicit: methodName += " " + methodReturnType; methodReturnType = null; break;
           case MethodSpecialName.Implicit: methodName += " " + methodReturnType; methodReturnType = null; break;
+          case MethodSpecialName.Constructor: methodReturnType = null; methodName = GenerateMemberName(m, methodName, options); break;
           default: methodName += " "; break;
         }
       }
       else if (method.IsFamily && string.Equals(method.Name, "Finalize", StringComparison.Ordinal)) {
         // destructors
-        methodName = "~" + (m.DeclaringType.IsGenericType ? m.DeclaringType.GetGenericTypeName() : m.DeclaringType.Name);
+        methodName = GenerateMemberName(
+          m,
+          "~" + (m.DeclaringType.IsGenericType ? m.DeclaringType.GetGenericTypeName() : m.DeclaringType.Name),
+          options
+        );
         methodModifiers = null;
         methodReturnType = null;
         methodParameterList = null;
@@ -582,10 +595,15 @@ namespace Smdn.Reflection.ReverseGenerating {
       }
       else if (explicitInterfaceMethod != null) {
         methodModifiers = null;
-        methodName = explicitInterfaceMethod.DeclaringType.FormatTypeName(typeWithNamespace: options.MemberDeclarationWithNamespace) + "." + explicitInterfaceMethod.Name;
+        methodName = GenerateMemberName(
+          m,
+          explicitInterfaceMethod.DeclaringType.FormatTypeName(typeWithNamespace: options.MemberDeclarationWithNamespace) + "." + explicitInterfaceMethod.Name,
+          options
+        );
       }
       else {
         // standard methods
+        methodName = GenerateMemberName(m, options);
       }
 
       var sb = new StringBuilder();
@@ -637,16 +655,51 @@ namespace Smdn.Reflection.ReverseGenerating {
 
       sb.Append("event ").Append(ev.EventHandlerType.FormatTypeName(attributeProvider: ev, typeWithNamespace: options.MemberDeclarationWithNamespace)).Append(" ");
 
-      var eventName = explicitInterface == null ? ev.Name : ev.Name.Substring(explicitInterface.FullName.Length + 1);
-
       if (explicitInterface == null)
-        sb.Append(eventName);
+        sb.Append(
+          GenerateMemberName(
+            ev,
+            options
+          )
+        );
       else
-        sb.Append(explicitInterface.FormatTypeName(attributeProvider: ev, typeWithNamespace: options.MemberDeclarationWithNamespace)).Append(".").Append(eventName);
+        sb.Append(
+          GenerateMemberName(
+            ev,
+            explicitInterface.FormatTypeName(typeWithNamespace: options.MemberDeclarationWithNamespace) + "." + ev.Name.Substring(ev.Name.LastIndexOf('.') + 1),
+            options
+          )
+        );
 
       sb.Append(";");
 
       return sb.ToString();
+    }
+
+    private static string GenerateMemberName(
+      MemberInfo member,
+      GeneratorOptions options
+    ) =>
+      GenerateMemberName(
+        member,
+        member.Name,
+        options
+      );
+
+    private static string GenerateMemberName(
+      MemberInfo member,
+      string memberName,
+      GeneratorOptions options
+    )
+    {
+      if (options.MemberDeclarationWithDeclaringTypeName) {
+        return member.DeclaringType.FormatTypeName(
+          typeWithNamespace: options.MemberDeclarationWithNamespace,
+          translateLanguagePrimitiveType: options.TranslateLanguagePrimitiveTypeDeclaration
+        ) + "." + memberName;
+      }
+
+      return memberName;
     }
 
     private static string GetMemberModifierOf(MemberInfo member)
