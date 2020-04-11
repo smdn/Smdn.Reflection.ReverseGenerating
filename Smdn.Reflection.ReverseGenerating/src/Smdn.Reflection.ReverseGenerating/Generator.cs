@@ -96,8 +96,11 @@ namespace Smdn.Reflection.ReverseGenerating {
           typeWithNamespace: options.TypeDeclarationWithNamespace,
           useDefaultLiteral: options.MemberDeclarationUseDefaultLiteral
         );
+        var endOfStatement = options.TypeDeclarationOmitEndOfStatement
+          ? string.Empty
+          : ";";
 
-        yield return $"{accessibilities}delegate {returnType} {typeName}({parameterList}){genericArgumentConstraintDeclaration};";
+        yield return $"{accessibilities}delegate {returnType} {typeName}({parameterList}){genericArgumentConstraintDeclaration}{endOfStatement}";
         yield break;
       }
 
@@ -382,7 +385,8 @@ namespace Smdn.Reflection.ReverseGenerating {
           else
             sb.Append(val);
 
-          sb.Append(",");
+          if (!options.MemberDeclarationOmitEndOfStatement)
+            sb.Append(",");
         }
         else {
           return null; // ignores backing field __value
@@ -408,19 +412,22 @@ namespace Smdn.Reflection.ReverseGenerating {
             useDefaultLiteral: options.MemberDeclarationUseDefaultLiteral
           );
 
-          if (valueDeclaration == null)
+          if (valueDeclaration == null) {
             sb
               .Append("; // = \"")
               .Append(CSharpFormatter.EscapeString((val ?? "null").ToString(), escapeDoubleQuote: true))
               .Append("\"");
-          else
-            sb
-              .Append(" = ")
-              .Append(valueDeclaration)
-              .Append(";");
+          }
+          else {
+            sb.Append(" = ").Append(valueDeclaration);
+
+            if (!options.MemberDeclarationOmitEndOfStatement)
+              sb.Append(";");
+          }
         }
         else {
-          sb.Append(";");
+          if (!options.MemberDeclarationOmitEndOfStatement)
+            sb.Append(";");
         }
       }
 
@@ -560,10 +567,14 @@ namespace Smdn.Reflection.ReverseGenerating {
       string methodName = null;
       string methodBody = null;
 
+      var endOfStatement = options.MemberDeclarationOmitEndOfStatement
+        ? string.Empty
+        : ";";
+
       switch (options.MemberDeclarationMethodBody) {
         case MethodBodyOption.None: methodBody = null; break;
-        case MethodBodyOption.EmptyImplementation: methodBody = m.IsAbstract ? ";" : " {}"; break;
-        case MethodBodyOption.ThrowNotImplementedException: methodBody = m.IsAbstract ? ";" : " => throw new NotImplementedException();"; break;
+        case MethodBodyOption.EmptyImplementation: methodBody = m.IsAbstract ? endOfStatement : " {}"; break;
+        case MethodBodyOption.ThrowNotImplementedException: methodBody = m.IsAbstract ? endOfStatement : " => throw new NotImplementedException()" + endOfStatement; break;
       }
 
       referencingNamespaces?.AddRange(m.GetSignatureTypes().Where(mpt => !mpt.ContainsGenericParameters).SelectMany(CSharpFormatter.ToNamespaceList));
@@ -671,7 +682,8 @@ namespace Smdn.Reflection.ReverseGenerating {
           )
         );
 
-      sb.Append(";");
+      if (!options.MemberDeclarationOmitEndOfStatement)
+        sb.Append(";");
 
       return sb.ToString();
     }

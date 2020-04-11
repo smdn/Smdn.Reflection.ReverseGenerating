@@ -51,7 +51,10 @@ namespace Smdn.Reflection.ReverseGenerating {
           [TypeDeclarationTestCase("class C2", TypeWithAccessibility = false, TypeWithNamespace = false)]
           class C2 { }
 
-          [TypeDeclarationTestCase("delegate void D();", TypeWithAccessibility = false, TypeWithNamespace = false)] delegate void D();
+          [TypeDeclarationTestCase("delegate void D();", TypeWithAccessibility = false, TypeWithNamespace = false)]
+          [TypeDeclarationTestCase("delegate void D()", TypeWithAccessibility = false, TypeWithNamespace = false, TypeOmitEndOfStatement = true)]
+          delegate void D();
+
           [TypeDeclarationTestCase("enum E : int", TypeWithAccessibility = false, TypeWithNamespace = false)] enum E { }
           [TypeDeclarationTestCase("interface I", TypeWithAccessibility = false, TypeWithNamespace = false)] interface I { }
           [TypeDeclarationTestCase("struct S", TypeWithAccessibility = false, TypeWithNamespace = false)] struct S { }

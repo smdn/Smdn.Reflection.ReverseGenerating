@@ -30,10 +30,12 @@ namespace Smdn.Reflection.ReverseGenerating {
 
     public bool TypeDeclarationWithNamespace { get; set; } = false;
     public bool TypeDeclarationWithAccessibility { get; set; } = true;
+    public bool TypeDeclarationOmitEndOfStatement { get; set; } = false;
 
     public bool MemberDeclarationWithNamespace { get; set; } = false;
     public bool MemberDeclarationWithDeclaringTypeName { get; set; } = false;
     public bool MemberDeclarationUseDefaultLiteral { get; set; } = true;
+    public bool MemberDeclarationOmitEndOfStatement { get; set; } = false;
     public MethodBodyOption MemberDeclarationMethodBody { get; set; } = MethodBodyOption.EmptyImplementation;
   }
 }

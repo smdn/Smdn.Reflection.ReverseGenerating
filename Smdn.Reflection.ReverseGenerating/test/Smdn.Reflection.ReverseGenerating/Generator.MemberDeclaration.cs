@@ -28,6 +28,7 @@ namespace Smdn.Reflection.ReverseGenerating {
       namespace Fields {
         public class Types {
           [MemberDeclarationTestCase("public int F1;")]
+          [MemberDeclarationTestCase("public int F1", MemberOmitEndOfStatement = true)]
           [MemberDeclarationTestCase("public int Types.F1;", MemberWithDeclaringTypeName = true, MemberWithNamespace = false)]
           [MemberDeclarationTestCase("public int Smdn.Reflection.ReverseGenerating.TestCases.MemberDeclaration.Fields.Types.F1;", MemberWithDeclaringTypeName = true, MemberWithNamespace = true)]
           public int F1;
@@ -40,6 +41,7 @@ namespace Smdn.Reflection.ReverseGenerating {
         namespace EnumFields {
           public enum Ints : int {
             [MemberDeclarationTestCase("A = 0,")]
+            [MemberDeclarationTestCase("A = 0", MemberOmitEndOfStatement = true)]
             [MemberDeclarationTestCase("Ints.A = 0,", MemberWithDeclaringTypeName = true, MemberWithNamespace = false)]
             [MemberDeclarationTestCase("Smdn.Reflection.ReverseGenerating.TestCases.MemberDeclaration.Fields.EnumFields.Ints.A = 0,", MemberWithDeclaringTypeName = true, MemberWithNamespace = true)]
             A = 0,
@@ -112,7 +114,11 @@ namespace Smdn.Reflection.ReverseGenerating {
           public class ValueTypes {
             [MemberDeclarationTestCase("public int F1;")] public int F1 = 1;
             [MemberDeclarationTestCase("public readonly int F2;")] public readonly int F2 = 2;
-            [MemberDeclarationTestCase("public const int F3 = 3;")] public const int F3 = 3;
+
+            [MemberDeclarationTestCase("public const int F3 = 3;")]
+            [MemberDeclarationTestCase("public const int F3 = 3", MemberOmitEndOfStatement = true)]
+            public const int F3 = 3;
+
             [MemberDeclarationTestCase("public static int F4;")] public static int F4 = 4;
             [MemberDeclarationTestCase("public static readonly int F5 = 5;")] public static readonly int F5 = 5;
             [MemberDeclarationTestCase("public static readonly int F6 = int.MaxValue;")] public static readonly int F6 = int.MaxValue;
@@ -188,6 +194,7 @@ namespace Smdn.Reflection.ReverseGenerating {
           namespace NonPrimitiveValueTypes_FieldOfDeclaringType {
             public struct S1 {
               [MemberDeclarationTestCase("public static readonly S1 Empty; // = \"foo\"", MemberWithNamespace = false)]
+              [MemberDeclarationTestCase("public static readonly S1 Empty; // = \"foo\"", MemberWithNamespace = false, MemberOmitEndOfStatement = true)]
               public static readonly S1 Empty = default(S1);
 
               public override string ToString() => "foo";
@@ -202,8 +209,13 @@ namespace Smdn.Reflection.ReverseGenerating {
           }
 
           public class ReferenceTypes {
-            [MemberDeclarationTestCase("public static readonly System.Uri F1 = null;")] public static readonly Uri F1 = null;
-            [MemberDeclarationTestCase("public static readonly System.Uri F2; // = \"http://example.com/\"")] public static readonly Uri F2 = new Uri("http://example.com/");
+            [MemberDeclarationTestCase("public static readonly System.Uri F1 = null;")]
+            [MemberDeclarationTestCase("public static readonly System.Uri F1 = null", MemberOmitEndOfStatement = true)]
+            public static readonly Uri F1 = null;
+
+            [MemberDeclarationTestCase("public static readonly System.Uri F2; // = \"http://example.com/\"")]
+            [MemberDeclarationTestCase("public static readonly System.Uri F2; // = \"http://example.com/\"", MemberOmitEndOfStatement = true)]
+            public static readonly Uri F2 = new Uri("http://example.com/");
 
             [MemberDeclarationTestCase("public static readonly System.Collections.Generic.IEnumerable<int> F3 = null;")] public static readonly IEnumerable<int> F3 = null;
             [MemberDeclarationTestCase("public static readonly System.Collections.Generic.IEnumerable<int> F4; // = \"System.Int32[]\"")] public static readonly IEnumerable<int> F4 = new int[] {0, 1, 2, 3};
@@ -348,7 +360,10 @@ namespace Smdn.Reflection.ReverseGenerating {
 #if false
       namespace StaticValues {
         class Accessors {
-          [MemberDeclarationTestCase("public int P1 { get; } = 1;")] public int P1 { get; } = 1;
+          [MemberDeclarationTestCase("public int P1 { get; } = 1;")]
+          [MemberDeclarationTestCase("public int P1 { get; } = 1", MemberOmitEndOfStatement = true)]
+          public int P1 { get; } = 1;
+
           [MemberDeclarationTestCase("public int P2 { get; set; } = 2;")] public int P2 { get; set; } = 2;
           [MemberDeclarationTestCase("public int P3 { get; private set; } = 3;")] public int P3 { get; private set; } = 3;
         }
@@ -361,7 +376,9 @@ namespace Smdn.Reflection.ReverseGenerating {
           public abstract class Abstract {
             [MemberDeclarationTestCase("public abstract void M()", MethodBody = MethodBodyOption.None)]
             [MemberDeclarationTestCase("public abstract void M();", MethodBody = MethodBodyOption.EmptyImplementation)]
+            [MemberDeclarationTestCase("public abstract void M()", MethodBody = MethodBodyOption.EmptyImplementation, MemberOmitEndOfStatement = true)]
             [MemberDeclarationTestCase("public abstract void M();", MethodBody = MethodBodyOption.ThrowNotImplementedException)]
+            [MemberDeclarationTestCase("public abstract void M()", MethodBody = MethodBodyOption.ThrowNotImplementedException, MemberOmitEndOfStatement = true)]
             [MemberDeclarationTestCase("public abstract void Abstract.M()", MemberWithDeclaringTypeName = true, MemberWithNamespace = false, MethodBody = MethodBodyOption.None)]
             [MemberDeclarationTestCase("public abstract void Smdn.Reflection.ReverseGenerating.TestCases.MemberDeclaration.Methods.Options.Abstract.M()", MemberWithDeclaringTypeName = true, MemberWithNamespace = true, MethodBody = MethodBodyOption.None)]
             public abstract void M();
@@ -370,7 +387,9 @@ namespace Smdn.Reflection.ReverseGenerating {
           public abstract class NonAbstract {
             [MemberDeclarationTestCase("public void M()", MethodBody = MethodBodyOption.None)]
             [MemberDeclarationTestCase("public void M() {}", MethodBody = MethodBodyOption.EmptyImplementation)]
+            [MemberDeclarationTestCase("public void M() {}", MethodBody = MethodBodyOption.EmptyImplementation, MemberOmitEndOfStatement = true)]
             [MemberDeclarationTestCase("public void M() => throw new NotImplementedException();", MethodBody = MethodBodyOption.ThrowNotImplementedException)]
+            [MemberDeclarationTestCase("public void M() => throw new NotImplementedException()", MethodBody = MethodBodyOption.ThrowNotImplementedException, MemberOmitEndOfStatement = true)]
             [MemberDeclarationTestCase("public void NonAbstract.M()", MemberWithDeclaringTypeName = true, MemberWithNamespace = false, MethodBody = MethodBodyOption.None)]
             [MemberDeclarationTestCase("public void Smdn.Reflection.ReverseGenerating.TestCases.MemberDeclaration.Methods.Options.NonAbstract.M()", MemberWithDeclaringTypeName = true, MemberWithNamespace = true, MethodBody = MethodBodyOption.None)]
             public void M() => throw new NotImplementedException();
@@ -756,6 +775,7 @@ namespace Smdn.Reflection.ReverseGenerating {
 #pragma warning disable CS0067
         public class Options {
           [MemberDeclarationTestCase("public event System.EventHandler E;")]
+          [MemberDeclarationTestCase("public event System.EventHandler E", MemberOmitEndOfStatement = true)]
           [MemberDeclarationTestCase("public event EventHandler Options.E;", MemberWithDeclaringTypeName = true, MemberWithNamespace = false)]
           [MemberDeclarationTestCase("public event System.EventHandler Smdn.Reflection.ReverseGenerating.TestCases.MemberDeclaration.Events.Options.E;", MemberWithDeclaringTypeName = true, MemberWithNamespace = true)]
           public event EventHandler E;
@@ -910,6 +930,7 @@ namespace Smdn.Reflection.ReverseGenerating {
 #pragma warning disable CS0067
         class ImplicitEvent : IEvent {
           [MemberDeclarationTestCase("public event EventHandler E;", MemberWithNamespace = false)]
+          [MemberDeclarationTestCase("public event EventHandler E", MemberWithNamespace = false, MemberOmitEndOfStatement = true)]
           [MemberDeclarationTestCase("public event EventHandler ImplicitEvent.E;", MemberWithDeclaringTypeName = true, MemberWithNamespace = false)]
           [MemberDeclarationTestCase("public event System.EventHandler Smdn.Reflection.ReverseGenerating.TestCases.MemberDeclaration.ImplementedInterfaceMembers.ImplicitEvent.E;", MemberWithDeclaringTypeName = true, MemberWithNamespace = true)]
           public event EventHandler E;
@@ -918,6 +939,7 @@ namespace Smdn.Reflection.ReverseGenerating {
 
         class ExplicitEvent : IEvent {
           [MemberDeclarationTestCase("event EventHandler IEvent.E;", MemberWithNamespace = false)]
+          [MemberDeclarationTestCase("event EventHandler IEvent.E", MemberWithNamespace = false, MemberOmitEndOfStatement = true)]
           [MemberDeclarationTestCase("event EventHandler ExplicitEvent.IEvent.E;", MemberWithDeclaringTypeName = true, MemberWithNamespace = false)]
           [MemberDeclarationTestCase("event System.EventHandler Smdn.Reflection.ReverseGenerating.TestCases.MemberDeclaration.ImplementedInterfaceMembers.ExplicitEvent.Smdn.Reflection.ReverseGenerating.TestCases.MemberDeclaration.ImplementedInterfaceMembers.IEvent.E;", MemberWithDeclaringTypeName = true, MemberWithNamespace = true)]
           event EventHandler IEvent.E {

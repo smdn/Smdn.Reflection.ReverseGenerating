@@ -11,8 +11,10 @@ namespace Smdn.Reflection.ReverseGenerating {
     public bool TranslateLanguagePrimitiveTypeDeclaration { get; set; } = true;
     public bool MemberWithNamespace { get; set; } = true;
     public bool MemberWithDeclaringTypeName { get; set; } = false;
+    public bool MemberOmitEndOfStatement { get; set; } = false;
     public bool TypeWithNamespace { get; set; } = true;
     public bool TypeWithAccessibility { get; set; } = true;
+    public bool TypeOmitEndOfStatement { get; set; } = false;
     public bool UseDefaultLiteral { get; set; } = false;
     public bool IgnorePrivateOrAssembly { get; set; } = false;
     public MethodBodyOption MethodBody { get; set; } = MethodBodyOption.EmptyImplementation;
@@ -43,11 +45,13 @@ namespace Smdn.Reflection.ReverseGenerating {
 
         TypeDeclarationWithNamespace = testCaseAttribute.TypeWithNamespace,
         TypeDeclarationWithAccessibility = testCaseAttribute.TypeWithAccessibility,
+        TypeDeclarationOmitEndOfStatement = testCaseAttribute.TypeOmitEndOfStatement,
 
         MemberDeclarationWithNamespace = testCaseAttribute.MemberWithNamespace,
         MemberDeclarationWithDeclaringTypeName = testCaseAttribute.MemberWithDeclaringTypeName,
         MemberDeclarationUseDefaultLiteral = testCaseAttribute.UseDefaultLiteral,
         MemberDeclarationMethodBody = testCaseAttribute.MethodBody,
+        MemberDeclarationOmitEndOfStatement = testCaseAttribute.MemberOmitEndOfStatement,
       };
     }
   }
