@@ -10,6 +10,18 @@ namespace Smdn.Reflection.ReverseGenerating {
     }
   }
 
+  public class CGeneric<T1, T2> {
+    public class CGenericNested {
+      public class CGenericNestedNested { }
+      public class CGenericNestedNested<TN> { }
+    }
+
+    public class CGenericNested<T3> {
+      public class CGenericNestedNested { }
+      public class CGenericNestedNested<TN> { }
+    }
+  }
+
   [TestFixture]
   public class CSharpTypeFormatterTests {
     [TestCase(typeof(int), "int")]
@@ -229,6 +241,49 @@ namespace Smdn.Reflection.ReverseGenerating {
       Assert.AreEqual(
         expected,
         type.FormatTypeName(null, typeWithNamespace: false)
+      );
+    }
+
+    [TestCase(typeof(Dictionary<,>.KeyCollection), true, true, "System.Collections.Generic.Dictionary<TKey, TValue>.KeyCollection")]
+    [TestCase(typeof(Dictionary<,>.KeyCollection), true, false, "KeyCollection")]
+    [TestCase(typeof(Dictionary<,>.KeyCollection), false, true, "Dictionary<TKey, TValue>.KeyCollection")]
+    [TestCase(typeof(Dictionary<,>.KeyCollection), false, false, "KeyCollection")]
+    [TestCase(typeof(Dictionary<int, string>.KeyCollection), true, true, "System.Collections.Generic.Dictionary<int, string>.KeyCollection")]
+    [TestCase(typeof(Dictionary<int, string>.KeyCollection), true, false, "KeyCollection")]
+    [TestCase(typeof(Dictionary<int, string>.KeyCollection), false, true, "Dictionary<int, string>.KeyCollection")]
+    [TestCase(typeof(Dictionary<int, string>.KeyCollection), false, false, "KeyCollection")]
+
+    [TestCase(typeof(CGeneric<,>.CGenericNested), false, true, "CGeneric<T1, T2>.CGenericNested")]
+    [TestCase(typeof(CGeneric<,>.CGenericNested), false, false, "CGenericNested")]
+    [TestCase(typeof(CGeneric<int, string>.CGenericNested), false, true, "CGeneric<int, string>.CGenericNested")]
+    [TestCase(typeof(CGeneric<int, string>.CGenericNested), false, false, "CGenericNested")]
+    [TestCase(typeof(CGeneric<,>.CGenericNested<>), false, true, "CGeneric<T1, T2>.CGenericNested<T3>")]
+    [TestCase(typeof(CGeneric<,>.CGenericNested<>), false, false, "CGenericNested<T3>")]
+    [TestCase(typeof(CGeneric<int, string>.CGenericNested<bool>), false, true, "CGeneric<int, string>.CGenericNested<bool>")]
+    [TestCase(typeof(CGeneric<int, string>.CGenericNested<bool>), false, false, "CGenericNested<bool>")]
+
+    [TestCase(typeof(CGeneric<,>.CGenericNested.CGenericNestedNested), false, true, "CGeneric<T1, T2>.CGenericNested.CGenericNestedNested")]
+    [TestCase(typeof(CGeneric<,>.CGenericNested.CGenericNestedNested), false, false, "CGenericNestedNested")]
+    [TestCase(typeof(CGeneric<,>.CGenericNested.CGenericNestedNested<>), false, true, "CGeneric<T1, T2>.CGenericNested.CGenericNestedNested<TN>")]
+    [TestCase(typeof(CGeneric<,>.CGenericNested.CGenericNestedNested<>), false, false, "CGenericNestedNested<TN>")]
+    [TestCase(typeof(CGeneric<int, string>.CGenericNested.CGenericNestedNested<bool>), false, true, "CGeneric<int, string>.CGenericNested.CGenericNestedNested<bool>")]
+    [TestCase(typeof(CGeneric<int, string>.CGenericNested.CGenericNestedNested<bool>), false, false, "CGenericNestedNested<bool>")]
+    [TestCase(typeof(CGeneric<,>.CGenericNested<>.CGenericNestedNested), false, true, "CGeneric<T1, T2>.CGenericNested<T3>.CGenericNestedNested")]
+    [TestCase(typeof(CGeneric<,>.CGenericNested<>.CGenericNestedNested), false, false, "CGenericNestedNested")]
+    [TestCase(typeof(CGeneric<,>.CGenericNested<>.CGenericNestedNested<>), false, true, "CGeneric<T1, T2>.CGenericNested<T3>.CGenericNestedNested<TN>")]
+    [TestCase(typeof(CGeneric<,>.CGenericNested<>.CGenericNestedNested<>), false, false, "CGenericNestedNested<TN>")]
+    [TestCase(typeof(CGeneric<int, string>.CGenericNested<bool>.CGenericNestedNested<object>), false, true, "CGeneric<int, string>.CGenericNested<bool>.CGenericNestedNested<object>")]
+    [TestCase(typeof(CGeneric<int, string>.CGenericNested<bool>.CGenericNestedNested<object>), false, false, "CGenericNestedNested<object>")]
+    public void TestFormatTypeName_NestedGenericType(
+      Type type,
+      bool typeWithNamespace,
+      bool withDeclaringTypeName,
+      string expected
+    )
+    {
+      Assert.AreEqual(
+        expected,
+        type.FormatTypeName(null, typeWithNamespace: typeWithNamespace, withDeclaringTypeName: withDeclaringTypeName)
       );
     }
   }

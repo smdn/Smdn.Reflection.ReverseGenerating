@@ -290,13 +290,36 @@ namespace Smdn.Reflection.ReverseGenerating {
             .Append(")");
         }
         else {
-          if (options.TypeWithNamespace)
+          if (options.TypeWithNamespace && !t.IsNested)
             sb.Append(t.Namespace).Append(".");
 
-          sb.Append(t.GetGenericTypeName())
-            .Append("<")
-            .Append(string.Join(", ", t.GetGenericArguments().Select(arg => FormatTypeName(arg, showVariance: true, options))))
-            .Append(">");
+          IEnumerable<Type> genericArgs = t.GetGenericArguments();
+
+          if (t.IsNested) {
+            var genericArgsOfDeclaringType = t.DeclaringType.GetGenericArguments();
+
+            if (options.WithDeclaringTypeName) {
+              sb
+                .Append(
+                  FormatTypeName(
+                    t.DeclaringType.MakeGenericType(
+                      genericArgs.Take(genericArgsOfDeclaringType.Length).ToArray()),
+                      showVariance: true,
+                      options
+                    )
+                 )
+                 .Append(".");
+            }
+
+            genericArgs = genericArgs.Skip(genericArgsOfDeclaringType.Length);
+          }
+
+          sb.Append(t.GetGenericTypeName());
+
+          var formattedGenericArgs = string.Join(", ", genericArgs.Select(arg => FormatTypeName(arg, showVariance: true, options)));
+
+          if (0 < formattedGenericArgs.Length)
+            sb.Append("<").Append(formattedGenericArgs).Append(">");
         }
 
         return sb.ToString();
