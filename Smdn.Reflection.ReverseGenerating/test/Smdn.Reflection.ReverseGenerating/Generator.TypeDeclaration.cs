@@ -266,6 +266,41 @@ namespace Smdn.Reflection.ReverseGenerating {
           [TypeDeclarationTestCase("public delegate void D1<in T>(T x);")] public delegate void D1<in T>(T x);
           [TypeDeclarationTestCase("public delegate T D2<out T>();")] public delegate T D2<out T>();
         }
+
+        namespace NestedTypes {
+          [TypeDeclarationTestCase("public class CN1", TypeWithDeclaringTypeName = false)]
+          [TypeDeclarationTestCase("public class CN1", TypeWithDeclaringTypeName = true)]
+          public class CN1 {
+            [TypeDeclarationTestCase("public class CN2", TypeWithDeclaringTypeName = false)]
+            [TypeDeclarationTestCase("public class CN1.CN2", TypeWithDeclaringTypeName = true)]
+            public class CN2 {
+              [TypeDeclarationTestCase("public class CN3", TypeWithDeclaringTypeName = false)]
+              [TypeDeclarationTestCase("public class CN1.CN2.CN3", TypeWithDeclaringTypeName = true)]
+              public class CN3 {
+              }
+            }
+          }
+
+          public class C<T> {
+            [TypeDeclarationTestCase("public class COpenNested", TypeWithDeclaringTypeName = false)]
+            [TypeDeclarationTestCase("public class C<T>.COpenNested", TypeWithDeclaringTypeName = true)]
+            public class COpenNested { }
+
+            [TypeDeclarationTestCase("public class COpenNested<U>", TypeWithDeclaringTypeName = false)]
+            [TypeDeclarationTestCase("public class C<T>.COpenNested<U>", TypeWithDeclaringTypeName = true)]
+            public class COpenNested<U> {}
+          }
+
+          public class C : C<int> {
+            [TypeDeclarationTestCase("public class CCloseNested", TypeWithDeclaringTypeName = false)]
+            [TypeDeclarationTestCase("public class C.CCloseNested", TypeWithDeclaringTypeName = true)]
+            public class CCloseNested { }
+
+            [TypeDeclarationTestCase("public class CCloseNested<U>", TypeWithDeclaringTypeName = false)]
+            [TypeDeclarationTestCase("public class C.CCloseNested<U>", TypeWithDeclaringTypeName = true)]
+            public class CCloseNested<U> { }
+          }
+        }
       }
     }
   }

@@ -29,6 +29,7 @@ namespace Smdn.Reflection.ReverseGenerating {
     public bool TranslateLanguagePrimitiveTypeDeclaration { get; set; } = false;
 
     public bool TypeDeclarationWithNamespace { get; set; } = false;
+    public bool TypeDeclarationWithDeclaringTypeName { get; set; } = false;
     public bool TypeDeclarationWithAccessibility { get; set; } = true;
     public bool TypeDeclarationOmitEndOfStatement { get; set; } = false;
 
