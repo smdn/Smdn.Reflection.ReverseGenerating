@@ -299,16 +299,11 @@ namespace Smdn.Reflection.ReverseGenerating {
             var genericArgsOfDeclaringType = t.DeclaringType.GetGenericArguments();
 
             if (options.WithDeclaringTypeName) {
-              sb
-                .Append(
-                  FormatTypeName(
-                    t.DeclaringType.MakeGenericType(
-                      genericArgs.Take(genericArgsOfDeclaringType.Length).ToArray()),
-                      showVariance: true,
-                      options
-                    )
-                 )
-                 .Append(".");
+              var declaringType = t.DeclaringType.IsGenericTypeDefinition
+                ? t.DeclaringType.MakeGenericType(genericArgs.Take(genericArgsOfDeclaringType.Length).ToArray())
+                : t.DeclaringType;
+
+              sb.Append(FormatTypeName(declaringType, showVariance: true, options)).Append(".");
             }
 
             genericArgs = genericArgs.Skip(genericArgsOfDeclaringType.Length);
