@@ -25,6 +25,25 @@ namespace Smdn.Reflection.ReverseGenerating {
 
   namespace TestCases {
     namespace MemberDeclaration {
+      namespace MemberOfNestedGenericTypes {
+        class C<T> {
+          public class CNest { }
+          public class CNest<TN> { }
+
+          [MemberDeclarationTestCase("public C<T>.CNest F1;", MemberWithNamespace = false)]
+          [MemberDeclarationTestCase("public C<T>.CNest C<T>.F1;", MemberWithDeclaringTypeName = true, MemberWithNamespace = false)]
+          public CNest F1 = null;
+
+          [MemberDeclarationTestCase("public C<T>.CNest<T> F2;", MemberWithNamespace = false)]
+          [MemberDeclarationTestCase("public C<T>.CNest<T> C<T>.F2;", MemberWithDeclaringTypeName = true, MemberWithNamespace = false)]
+          public CNest<T> F2 = null;
+
+          [MemberDeclarationTestCase("public C<T>.CNest<int> F3;", MemberWithNamespace = false)]
+          [MemberDeclarationTestCase("public C<T>.CNest<int> C<T>.F3;", MemberWithDeclaringTypeName = true, MemberWithNamespace = false)]
+          public CNest<int> F3 = null;
+        }
+      }
+
       namespace Fields {
         public class Types {
           [MemberDeclarationTestCase("public int F1;")]
