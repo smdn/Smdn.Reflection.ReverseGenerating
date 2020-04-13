@@ -22,6 +22,12 @@ namespace Smdn.Reflection.ReverseGenerating {
     }
   }
 
+  public class CCloseGeneric : CGeneric<int, string> {
+    public class CCloseGenericNested : CGenericNested<bool> {
+      public class CCloseGenericNestedNested : CGenericNestedNested<object> { }
+    }
+  }
+
   [TestFixture]
   public class CSharpTypeFormatterTests {
     [TestCase(typeof(int), "int")]
@@ -261,6 +267,8 @@ namespace Smdn.Reflection.ReverseGenerating {
     [TestCase(typeof(CGeneric<,>.CGenericNested<>), false, false, "CGenericNested<T3>")]
     [TestCase(typeof(CGeneric<int, string>.CGenericNested<bool>), false, true, "CGeneric<int, string>.CGenericNested<bool>")]
     [TestCase(typeof(CGeneric<int, string>.CGenericNested<bool>), false, false, "CGenericNested<bool>")]
+    [TestCase(typeof(CCloseGeneric.CCloseGenericNested), false, true, "CCloseGeneric.CCloseGenericNested")]
+    [TestCase(typeof(CCloseGeneric.CCloseGenericNested), false, false, "CCloseGenericNested")]
 
     [TestCase(typeof(CGeneric<,>.CGenericNested.CGenericNestedNested), false, true, "CGeneric<T1, T2>.CGenericNested.CGenericNestedNested")]
     [TestCase(typeof(CGeneric<,>.CGenericNested.CGenericNestedNested), false, false, "CGenericNestedNested")]
@@ -274,6 +282,17 @@ namespace Smdn.Reflection.ReverseGenerating {
     [TestCase(typeof(CGeneric<,>.CGenericNested<>.CGenericNestedNested<>), false, false, "CGenericNestedNested<TN>")]
     [TestCase(typeof(CGeneric<int, string>.CGenericNested<bool>.CGenericNestedNested<object>), false, true, "CGeneric<int, string>.CGenericNested<bool>.CGenericNestedNested<object>")]
     [TestCase(typeof(CGeneric<int, string>.CGenericNested<bool>.CGenericNestedNested<object>), false, false, "CGenericNestedNested<object>")]
+
+    [TestCase(typeof(CCloseGeneric.CGenericNested.CGenericNestedNested), false, true, "CGeneric<int, string>.CGenericNested.CGenericNestedNested")]
+    [TestCase(typeof(CCloseGeneric.CGenericNested.CGenericNestedNested), false, false, "CGenericNestedNested")]
+    [TestCase(typeof(CCloseGeneric.CGenericNested.CGenericNestedNested<>), false, true, "CGeneric<T1, T2>.CGenericNested.CGenericNestedNested<TN>")]
+    [TestCase(typeof(CCloseGeneric.CGenericNested.CGenericNestedNested<>), false, false, "CGenericNestedNested<TN>")]
+    [TestCase(typeof(CCloseGeneric.CGenericNested<>.CGenericNestedNested), false, true, "CGeneric<T1, T2>.CGenericNested<T3>.CGenericNestedNested")]
+    [TestCase(typeof(CCloseGeneric.CGenericNested<>.CGenericNestedNested), false, false, "CGenericNestedNested")]
+    [TestCase(typeof(CCloseGeneric.CGenericNested<>.CGenericNestedNested<>), false, true, "CGeneric<T1, T2>.CGenericNested<T3>.CGenericNestedNested<TN>")]
+    [TestCase(typeof(CCloseGeneric.CGenericNested<>.CGenericNestedNested<>), false, false, "CGenericNestedNested<TN>")]
+    [TestCase(typeof(CCloseGeneric.CCloseGenericNested.CCloseGenericNestedNested), false, true, "CCloseGeneric.CCloseGenericNested.CCloseGenericNestedNested")]
+    [TestCase(typeof(CCloseGeneric.CCloseGenericNested.CCloseGenericNestedNested), false, false, "CCloseGenericNestedNested")]
     public void TestFormatTypeName_NestedGenericType(
       Type type,
       bool typeWithNamespace,
