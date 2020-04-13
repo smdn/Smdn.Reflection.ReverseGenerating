@@ -11,6 +11,7 @@ namespace Smdn.Reflection.ReverseGenerating {
     public bool TranslateLanguagePrimitiveTypeDeclaration { get; set; } = true;
     public bool MemberWithNamespace { get; set; } = true;
     public bool MemberWithDeclaringTypeName { get; set; } = false;
+    public bool MemberWithAccessibility { get; set; } = true;
     public bool MemberOmitEndOfStatement { get; set; } = false;
     public bool TypeWithNamespace { get; set; } = true;
     public bool TypeWithDeclaringTypeName { get; set; } = false;
@@ -51,6 +52,7 @@ namespace Smdn.Reflection.ReverseGenerating {
 
         MemberDeclarationWithNamespace = testCaseAttribute.MemberWithNamespace,
         MemberDeclarationWithDeclaringTypeName = testCaseAttribute.MemberWithDeclaringTypeName,
+        MemberDeclarationWithAccessibility = testCaseAttribute.MemberWithAccessibility,
         MemberDeclarationUseDefaultLiteral = testCaseAttribute.UseDefaultLiteral,
         MemberDeclarationMethodBody = testCaseAttribute.MethodBody,
         MemberDeclarationOmitEndOfStatement = testCaseAttribute.MemberOmitEndOfStatement,

@@ -396,8 +396,7 @@ namespace Smdn.Reflection.ReverseGenerating {
         referencingNamespaces?.AddRange(CSharpFormatter.ToNamespaceList(field.FieldType));
 
         sb
-          .Append(GetMemberModifierOf(field))
-          .Append(" ")
+          .Append(GetMemberModifierOf(field, options))
           .Append(field.FieldType.FormatTypeName(attributeProvider: field, typeWithNamespace: options.MemberDeclarationWithNamespace))
           .Append(" ")
           .Append(GenerateMemberName(field, options));
@@ -461,10 +460,10 @@ namespace Smdn.Reflection.ReverseGenerating {
       referencingNamespaces?.AddRange(indexParameters.SelectMany(ip => CSharpFormatter.ToNamespaceList(ip.ParameterType)));
 
       var sb = new StringBuilder();
-      var modifier = GetMemberModifierOf(property, out string setAccessibility, out string getAccessibility);
+      var modifier = GetMemberModifierOf(property, options, out string setAccessibility, out string getAccessibility);
 
-      if (explicitInterface == null && 0 < modifier.Length)
-        sb.Append(modifier).Append(" ");
+      if (explicitInterface == null)
+        sb.Append(modifier);
 
       sb.Append(property.PropertyType.FormatTypeName(attributeProvider: property, typeWithNamespace: options.MemberDeclarationWithNamespace)).Append(" ");
 
@@ -558,7 +557,7 @@ namespace Smdn.Reflection.ReverseGenerating {
         return null;
 
       var method = m as MethodInfo;
-      var methodModifiers = GetMemberModifierOf(m);
+      var methodModifiers = GetMemberModifierOf(m, options);
       var isByRefReturnType = (method != null && method.ReturnType.IsByRef);
       var methodReturnType = isByRefReturnType ? "ref " + method.ReturnType.GetElementType().FormatTypeName(attributeProvider: method.ReturnTypeCustomAttributes, typeWithNamespace: options.MemberDeclarationWithNamespace) : method?.ReturnType?.FormatTypeName(attributeProvider: method?.ReturnTypeCustomAttributes, typeWithNamespace: options.MemberDeclarationWithNamespace);
       var methodGenericParameters = m.IsGenericMethod ? string.Concat("<", string.Join(", ", m.GetGenericArguments().Select(t => t.FormatTypeName(typeWithNamespace: options.MemberDeclarationWithNamespace))), ">") : null;
@@ -619,8 +618,7 @@ namespace Smdn.Reflection.ReverseGenerating {
 
       var sb = new StringBuilder();
 
-      if (!string.IsNullOrEmpty(methodModifiers))
-        sb.Append(methodModifiers).Append(" ");
+      sb.Append(methodModifiers);
 
       if (!string.IsNullOrEmpty(methodReturnType))
         sb.Append(methodReturnType).Append(" ");
@@ -659,10 +657,9 @@ namespace Smdn.Reflection.ReverseGenerating {
       referencingNamespaces?.AddRange(CSharpFormatter.ToNamespaceList(ev.EventHandlerType));
 
       var sb = new StringBuilder();
-      var modifier = GetMemberModifierOf(ev.GetMethods(true).First());
 
-      if (explicitInterface == null && 0 < modifier.Length)
-        sb.Append(modifier).Append(" ");
+      if (explicitInterface == null)
+        sb.Append(GetMemberModifierOf(ev.GetMethods(true).First(), options));
 
       sb.Append("event ").Append(ev.EventHandlerType.FormatTypeName(attributeProvider: ev, typeWithNamespace: options.MemberDeclarationWithNamespace)).Append(" ");
 
@@ -714,11 +711,16 @@ namespace Smdn.Reflection.ReverseGenerating {
       return memberName;
     }
 
-    private static string GetMemberModifierOf(MemberInfo member)
-      => GetMemberModifierOf(member, out _, out _);
+    private static string GetMemberModifierOf(MemberInfo member, GeneratorOptions options)
+      => GetMemberModifierOf(member, options, out _, out _);
 
     // TODO: async, extern, volatile
-    private static string GetMemberModifierOf(MemberInfo member, out string setMethodAccessibility, out string getMethodAccessibility)
+    private static string GetMemberModifierOf(
+      MemberInfo member,
+      GeneratorOptions options,
+      out string setMethodAccessibility,
+      out string getMethodAccessibility
+    )
     {
       setMethodAccessibility = string.Empty;
       getMethodAccessibility = string.Empty;
@@ -728,6 +730,8 @@ namespace Smdn.Reflection.ReverseGenerating {
 
       var modifiers = new List<string>();
       string accessibility = null;
+
+      modifiers.Add(null); // placeholder for accessibility
 
       IEnumerable<string> GetModifiersOfMethod(MethodBase m)
       {
@@ -761,7 +765,9 @@ namespace Smdn.Reflection.ReverseGenerating {
 
       switch (member) {
         case FieldInfo f:
-          accessibility = CSharpFormatter.FormatAccessibility(f.GetAccessibility());
+          accessibility = options.MemberDeclarationWithAccessibility
+            ? CSharpFormatter.FormatAccessibility(f.GetAccessibility())
+            : null;
 
           if (f.IsStatic && !f.IsLiteral) modifiers.Add("static");
           if (f.IsInitOnly) modifiers.Add("readonly");
@@ -772,7 +778,9 @@ namespace Smdn.Reflection.ReverseGenerating {
         case PropertyInfo p:
           var mostOpenAccessibility = p.GetAccessors(true).Select(Smdn.Reflection.MemberInfoExtensions.GetAccessibility).Max();
 
-          accessibility = CSharpFormatter.FormatAccessibility(mostOpenAccessibility);
+          accessibility = options.MemberDeclarationWithAccessibility
+            ? CSharpFormatter.FormatAccessibility(mostOpenAccessibility)
+            : null;
 
           if (p.GetMethod != null) {
             var getAccessibility = p.GetMethod.GetAccessibility();
@@ -793,21 +801,28 @@ namespace Smdn.Reflection.ReverseGenerating {
           break;
 
         case MethodBase m:
-          accessibility = CSharpFormatter.FormatAccessibility(m.GetAccessibility());
+          accessibility = options.MemberDeclarationWithAccessibility
+            ? CSharpFormatter.FormatAccessibility(m.GetAccessibility())
+            : null;
 
           modifiers.AddRange(GetModifiersOfMethod(m));
 
           break;
       }
 
-      var joinedModifiers = string.Join(" ", modifiers);
+      if (member == member.DeclaringType.TypeInitializer)
+        accessibility = null;
 
-      if (member == member.DeclaringType.TypeInitializer || string.IsNullOrEmpty(accessibility))
-        return string.Join(" ", modifiers);
-      else if (string.IsNullOrEmpty(joinedModifiers))
-        return accessibility;
-      else
-        return accessibility + " " + joinedModifiers;
+      if (accessibility == null) {
+        if (modifiers.Count <= 1)
+          return string.Empty;
+
+        return string.Join(" ", modifiers.Skip(1)) + " ";
+      }
+
+      modifiers[0] = accessibility;
+
+      return string.Join(" ", modifiers) + " ";
     }
   }
 }

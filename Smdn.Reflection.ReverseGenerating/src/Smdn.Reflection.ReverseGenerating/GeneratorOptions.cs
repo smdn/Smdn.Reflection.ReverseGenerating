@@ -35,6 +35,7 @@ namespace Smdn.Reflection.ReverseGenerating {
 
     public bool MemberDeclarationWithNamespace { get; set; } = false;
     public bool MemberDeclarationWithDeclaringTypeName { get; set; } = false;
+    public bool MemberDeclarationWithAccessibility { get; set; } = true;
     public bool MemberDeclarationUseDefaultLiteral { get; set; } = true;
     public bool MemberDeclarationOmitEndOfStatement { get; set; } = false;
     public MethodBodyOption MemberDeclarationMethodBody { get; set; } = MethodBodyOption.EmptyImplementation;
