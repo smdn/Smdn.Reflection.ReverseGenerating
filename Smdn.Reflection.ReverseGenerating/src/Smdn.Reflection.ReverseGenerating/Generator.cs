@@ -209,7 +209,11 @@ namespace Smdn.Reflection.ReverseGenerating {
         return null;
     }
 
-    public static IEnumerable<string> GenerateExplicitBaseTypeAndInterfaces(Type t, ISet<string> referencingNamespaces, GeneratorOptions options)
+    public static IEnumerable<string> GenerateExplicitBaseTypeAndInterfaces(
+      Type t,
+      ISet<string> referencingNamespaces,
+      GeneratorOptions options
+    )
     {
       if (options == null)
         throw new ArgumentNullException(nameof(options));
@@ -219,7 +223,13 @@ namespace Smdn.Reflection.ReverseGenerating {
         .Where(type => !(options.IgnorePrivateOrAssembly && type.IsPrivateOrAssembly()))
         .Select(type => {
           referencingNamespaces?.AddRange(CSharpFormatter.ToNamespaceList(type));
-          return new { IsInterface = type.IsInterface, Name = type.FormatTypeName(typeWithNamespace: options.TypeDeclarationWithNamespace) };
+          return new {
+            IsInterface = type.IsInterface,
+            Name = type.FormatTypeName(
+              typeWithNamespace: options.TypeDeclarationWithNamespace,
+              withDeclaringTypeName: options.TypeDeclarationWithDeclaringTypeName
+            )
+          };
         })
         .OrderBy(type => type.IsInterface)
         .ThenBy(type => type.Name, StringComparer.Ordinal)
