@@ -108,8 +108,12 @@ namespace Smdn.Reflection {
         throw new ArgumentException($"{t} is not a generic type", nameof(t));
 
       var name = t.GetGenericTypeDefinition().Name;
+      var posTypeArgsDelimiter = name.LastIndexOf('`');
 
-      return name.Substring(0, name.LastIndexOf('`'));
+      if (0 < posTypeArgsDelimiter)
+        return name.Substring(0, name.LastIndexOf('`'));
+      else
+        return name;
     }
   }
 }

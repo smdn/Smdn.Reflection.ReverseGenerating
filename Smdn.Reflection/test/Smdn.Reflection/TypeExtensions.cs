@@ -126,6 +126,10 @@ namespace Smdn.Reflection {
     [TestCase(typeof(List<>), "List")]
     [TestCase(typeof(List<int>), "List")]
     [TestCase(typeof(List<KeyValuePair<int, int>>), "List")]
+    [TestCase(typeof(Dictionary<,>), "Dictionary")]
+    [TestCase(typeof(Dictionary<int, int>), "Dictionary")]
+    [TestCase(typeof(Dictionary<,>.KeyCollection), "KeyCollection")]
+    [TestCase(typeof(Dictionary<int, int>.KeyCollection), "KeyCollection")]
     public void TestGetGenericTypeName(Type type, string expected)
     {
       Assert.AreEqual(expected,
