@@ -2,7 +2,7 @@
   <Import Project="..\..\Common\test\Common.Tests.props" />
 
   <PropertyGroup>
-    <TargetFrameworks>net471;netcoreapp2.0</TargetFrameworks>
+    <TargetFrameworks>net471;netcoreapp2.1</TargetFrameworks>
     <RootNamespace>Smdn.Reflection</RootNamespace>
   </PropertyGroup>
 
