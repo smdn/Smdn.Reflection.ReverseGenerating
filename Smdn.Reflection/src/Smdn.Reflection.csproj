@@ -1,31 +1,21 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
+  <Import Project="..\..\Common\src\Common.props" />
+
   <PropertyGroup>
     <TargetFrameworks>net471;netstandard2.0</TargetFrameworks>
-    <AssemblyName>Smdn.Reflection</AssemblyName>
     <RootNamespace>Smdn.Reflection</RootNamespace>
     <VersionPrefix>1.0</VersionPrefix>
     <VersionSuffix></VersionSuffix>
-    <BaseOutputPath>..\build\bin\</BaseOutputPath>
     <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
-    <LangVersion>latest</LangVersion>
   </PropertyGroup>
 
   <PropertyGroup Label="metadata">
-    <Title>Smdn.Reflection.dll</Title>
     <Description>Reflection utility and extension library</Description>
-    <Company>smdn:総武ソフトウェア推進所</Company>
-    <Copyright>Copyright © 2018 smdn</Copyright>
-
-    <!-- AssemblyInfo -->
-    <AssemblyVersion>$(Version)</AssemblyVersion>
-    <InformationalVersion>$(VersionPrefix)$(VersionSuffix) ($(TargetFramework))</InformationalVersion>
-    <Product>$(AssemblyName)-$(InformationalVersion)</Product>
+    <CopyrightYear>2018</CopyrightYear>
 
     <!-- NuGet -->
-    <Authors>smdn</Authors>
-    <Owners>$(Authors)</Owners>
-    <PackageProjectUrl>https://smdn.jp/</PackageProjectUrl>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <PackageIconUrl>https://smdn.jp/works/libs/Smdn.dll/Smdn-3.0_64x64.png</PackageIconUrl>
   </PropertyGroup>
+
+  <Import Project="..\..\Common\src\Common.targets" />
 </Project>
