@@ -1,29 +1,12 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
+  <Import Project="..\..\Common\test\Common.Tests.props" />
+
   <PropertyGroup>
-    <OutputType>Exe</OutputType>
     <TargetFrameworks>net471;netcoreapp2.0</TargetFrameworks>
-    <AssemblyName>Smdn.Reflection.Tests</AssemblyName>
     <RootNamespace>Smdn.Reflection</RootNamespace>
-    <LangVersion>latest</LangVersion>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(MSBuildRuntimeType)' == 'Mono'">
-    <!-- for MonoDevelop test runner -->
-    <OutputType>Library</OutputType>
-  </PropertyGroup>
-  <ItemGroup>
-    <PackageReference Include="NUnit" Version="3.11.0" />
-    <PackageReference Include="NUnitLite" Version="3.11.0" />
-    <PackageReference Include="NUnit3TestAdapter" Version="3.11.2" />
-  </ItemGroup>
-  <ItemGroup Condition="$(TargetFramework.StartsWith('netcoreapp'))">
-    <PackageReference Include="System.Text.Encoding.CodePages" Version="4.5.0" />
-  </ItemGroup>
+
   <ItemGroup>
     <ProjectReference Include="..\src\Smdn.Reflection.csproj" />
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="..\..\NUnit\NUnitLiteTestRunner.cs" Link="NUnitLiteTestRunner.cs" Condition="$(OutputType) == 'Exe'" />
-    <Compile Include="..\..\NUnit\NUnitTestUtils.cs" Link="NUnitTestUtils.cs" />
-    <Compile Include="..\..\NUnit\NUnitTestUtils.Encodings.cs" Link="NUnitTestUtils.Encodings.cs" />
   </ItemGroup>
 </Project>
