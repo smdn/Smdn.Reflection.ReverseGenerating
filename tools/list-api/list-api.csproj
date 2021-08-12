@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFrameworks>netcoreapp2.0;net471</TargetFrameworks>
+    <TargetFrameworks>net5.0;net471</TargetFrameworks>
     <LangVersion>latest</LangVersion>
     <AssemblyName>list-api</AssemblyName>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
