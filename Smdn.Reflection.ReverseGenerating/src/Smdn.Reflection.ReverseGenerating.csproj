@@ -14,11 +14,10 @@
     <CopyrightYear>2020</CopyrightYear>
 
     <!-- NuGet -->
-    <PackageLicenseExpression>MIT</PackageLicenseExpression>
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Smdn.Reflection\src\Smdn.Reflection.csproj" />
+    <ProjectReference Include="$(SmdnFundamentalsDirectory)src\Smdn.Fundamental.Reflection\Smdn.Fundamental.Reflection.csproj" />
   </ItemGroup>
 
   <Import Project="..\..\Common\src\Common.targets" />
