@@ -136,7 +136,7 @@ class ListApi {
     if (options == null)
       throw new ArgumentNullException(nameof(options));
 
-    var types = assm.GetExportedTypes();
+    var types = assm.GetExportedTypes().Union(assm.GetForwardedTypes());
     var typeDeclarations = new StringBuilder(10240);
     var referencingNamespaces = new HashSet<string>(StringComparer.Ordinal);
 
@@ -206,6 +206,11 @@ class ListApi {
 
     var ret = new StringBuilder(1024);
     var indent = string.Concat(Enumerable.Repeat(options.Indent, nestLevel));
+
+    if (t.GetCustomAttribute<TypeForwardedFromAttribute>() is not null) {
+      ret.Append(indent)
+         .AppendLine($"// Forwarded to \"{t.Assembly.GetName().FullName}\"");
+    }
 
     // TODO: AttributeTargets.GenericParameter, AttributeTargets.ReturnValue, AttributeTargets.Parameter
     foreach (var attr in Generator.GenerateAttributeList(t, null, options)) {
