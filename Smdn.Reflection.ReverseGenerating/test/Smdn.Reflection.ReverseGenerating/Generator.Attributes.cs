@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2020 smdn <smdn@smdn.jp>
+// SPDX-License-Identifier: MIT
 using System;
 using System.Reflection;
 using System.Runtime.CompilerServices;
