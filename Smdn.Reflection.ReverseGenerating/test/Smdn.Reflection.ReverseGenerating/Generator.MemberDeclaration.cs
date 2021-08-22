@@ -796,6 +796,9 @@ namespace Smdn.Reflection.ReverseGenerating {
             [MemberDeclarationTestCase("public T M11<T>(T x) where T : System.Enum {}")] public T M11<T>(T x) where T : System.Enum => throw new NotImplementedException();
             [MemberDeclarationTestCase("public T M12<T>(T x) where T : System.Delegate {}")] public T M12<T>(T x) where T : System.Delegate => throw new NotImplementedException();
             [MemberDeclarationTestCase("public T M13<T>(T x) where T : System.MulticastDelegate {}")] public T M13<T>(T x) where T : System.MulticastDelegate => throw new NotImplementedException();
+
+            [MemberDeclarationTestCase("public T M14<T>(T x) where T : notnull {}")] public T M14<T>(T x) where T : notnull => throw new NotImplementedException();
+            [MemberDeclarationTestCase("public T M15<T>(T x) where T : unmanaged {}")] public T M15<T>(T x) where T : unmanaged => throw new NotImplementedException();
           }
 
           class Constraints2 {

@@ -232,6 +232,9 @@ namespace Smdn.Reflection.ReverseGenerating {
           [TypeDeclarationTestCase("public class C12<T> where T : System.Delegate")] public class C12<T> where T : System.Delegate { }
           [TypeDeclarationTestCase("public class C13<T> where T : System.MulticastDelegate")] public class C13<T> where T : System.MulticastDelegate { }
 
+          [TypeDeclarationTestCase("public class C14<T> where T : unmanaged")] public class C14<T> where T : unmanaged { }
+          [TypeDeclarationTestCase("public class C15<T> where T : notnull")] public class C15<T> where T : notnull { }
+
           [TypeDeclarationTestCase("public struct S1<T> where T : new()")] public struct S1<T> where T : new() { }
 
           [TypeDeclarationTestCase("public interface I1<T> where T : new()")] public interface I1<T> where T : new() { }

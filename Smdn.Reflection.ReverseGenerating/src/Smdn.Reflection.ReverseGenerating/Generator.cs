@@ -145,6 +145,12 @@ namespace Smdn.Reflection.ReverseGenerating {
       GeneratorOptions options
     )
     {
+      static bool IsUnmanagedTypeArgument(Type argument)
+        => argument.GetCustomAttributes().Any(attr => attr.GetType().FullName == "System.Runtime.CompilerServices.IsUnmanagedAttribute");
+
+      static bool IsNotNullTypeArgument(Type argument)
+        => argument.GetCustomAttributes().Any(attr => attr.GetType().FullName == "System.Runtime.CompilerServices.NullableAttribute");
+
       static IEnumerable<string> GetGenericArgumentConstraintsOf(Type argument, ISet<string> _referencingNamespaces, bool typeWithNamespace)
       {
         var constraintAttrs = argument.GenericParameterAttributes & GenericParameterAttributes.SpecialConstraintMask;
@@ -161,13 +167,23 @@ namespace Smdn.Reflection.ReverseGenerating {
           constraintAttrs &= ~GenericParameterAttributes.DefaultConstructorConstraint;
           constraintTypes = constraintTypes.Where(ct => ct != typeof(ValueType)).ToArray();
 
-          yield return "struct";
+          if (IsUnmanagedTypeArgument(argument))
+            yield return "unmanaged";
+          else
+            yield return "struct";
         }
-
-        if (constraintAttrs.HasFlag(GenericParameterAttributes.ReferenceTypeConstraint))
+        else if (constraintAttrs.HasFlag(GenericParameterAttributes.ReferenceTypeConstraint)) {
           yield return "class";
-        if (constraintAttrs.HasFlag(GenericParameterAttributes.NotNullableValueTypeConstraint))
-          yield return "struct"; // XXX
+        }
+        else if (constraintAttrs.HasFlag(GenericParameterAttributes.NotNullableValueTypeConstraint)) {
+          if (IsUnmanagedTypeArgument(argument))
+            yield return "unmanaged";
+          else
+            yield return "struct";
+        }
+        else if (constraintAttrs == GenericParameterAttributes.None && IsNotNullTypeArgument(argument)) {
+          yield return "notnull";
+        }
 
         foreach (var ctn in constraintTypes.Select(i => i.FormatTypeName(typeWithNamespace: typeWithNamespace)).OrderBy(name => name, StringComparer.Ordinal))
           yield return ctn;

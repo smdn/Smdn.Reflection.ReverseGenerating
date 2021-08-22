@@ -36,6 +36,12 @@ namespace Smdn.Reflection.ReverseGenerating {
       [TypeGenericArgumentConstraintTestCase("where T : struct")]
       public class C_TStruct<T> where T : struct { }
 
+      [TypeGenericArgumentConstraintTestCase("where T : notnull")]
+      public class C_TNotNull<T> where T : notnull { }
+
+      [TypeGenericArgumentConstraintTestCase("where T : unmanaged")]
+      public class C_TUnmanaged<T> where T : unmanaged { }
+
       [TypeGenericArgumentConstraintTestCase("where T : IDisposable", TypeWithNamespace = false)]
       public class C_TInterface<T> where T : System.IDisposable { }
 
