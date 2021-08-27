@@ -303,6 +303,16 @@ namespace Smdn.Reflection.ReverseGenerating {
           [MemberDeclarationTestCase("public int P1 { get; set; }")] public int P1 { get; set; }
           [MemberDeclarationTestCase("public int P2 { get; }")] public int P2 { get; }
           [MemberDeclarationTestCase("public int P3 { set; }")] public int P3 { set { int x = value; } }
+          [MemberDeclarationTestCase("public int P4 { get; init; }")] public int P4 { get; init; }
+        }
+
+        public struct AccessorsStruct {
+          [MemberDeclarationTestCase("public int P1 { get; init; }")] public int P1 { get; init; }
+          // TODO: [MemberDeclarationTestCase("public readonly int P2 { get; init; }")] public readonly int P2 { get; init; }
+        }
+
+        public readonly struct AccessorsReadOnlyStruct {
+          [MemberDeclarationTestCase("public int P1 { get; init; }")] public int P1 { get; init; }
         }
 
         public class Modifiers1 {

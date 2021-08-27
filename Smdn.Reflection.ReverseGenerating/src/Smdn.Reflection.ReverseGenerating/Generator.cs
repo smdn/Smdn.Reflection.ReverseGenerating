@@ -529,7 +529,12 @@ namespace Smdn.Reflection.ReverseGenerating {
         if (explicitInterface == null && 0 < setAccessibility.Length)
           sb.Append(setAccessibility).Append(" ");
 
-        sb.Append("set").Append(GenerateAccessorBody(property.SetMethod, options));
+        if (property.IsSetMethodInitOnly())
+          sb.Append("init");
+        else
+          sb.Append("set");
+
+        sb.Append(GenerateAccessorBody(property.SetMethod, options));
       }
 
       sb.Append("}");
