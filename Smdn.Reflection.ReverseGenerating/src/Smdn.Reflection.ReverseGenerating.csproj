@@ -17,7 +17,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference VersionRange="[3.0.0,4.0.0)" Include="$(SmdnFundamentalsDirectory)src\Smdn.Fundamental.Reflection\Smdn.Fundamental.Reflection.csproj" />
+    <ProjectReference VersionRange="[3.0.1,4.0.0)" Include="$(SmdnFundamentalsDirectory)src\Smdn.Fundamental.Reflection\Smdn.Fundamental.Reflection.csproj" />
   </ItemGroup>
 
   <Import Project="..\..\Common\src\Common.targets" />
