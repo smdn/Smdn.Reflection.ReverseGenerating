@@ -10,7 +10,7 @@
   </PropertyGroup>
 
   <PropertyGroup Label="metadata">
-    <Description>Reverse code generator</Description>
+    <Description>The reflection library for reverse generating type definitions.</Description>
     <CopyrightYear>2020</CopyrightYear>
 
     <!-- NuGet -->
