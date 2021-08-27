@@ -129,7 +129,7 @@ namespace Smdn.Reflection.ReverseGenerating {
     {
       return string.Join(", ", parameterList.Select(ToString));
 
-      string ToVerbatim(string name)
+      static string ToVerbatim(string name)
       {
         if (keywords.Contains(name))
           return "@" + name;
