@@ -69,11 +69,6 @@ public class Test {
       if (testOfType != null) {
         if (testOfType.Expected != null)
           EvaluateTypeTest(result, options, testOfType, type);
-
-        var testOfNamespaces = type.GetCustomAttribute<TestCases.NamespacesTestAttribute>();
-
-        if (testOfNamespaces != null && testOfNamespaces.Expected != null)
-          EvaluateNamespacesTest(result, options, testOfType, testOfNamespaces, type);
       }
 
       /* test members */
@@ -88,11 +83,6 @@ public class Test {
         if (testOfMember != null) {
           if (testOfMember.Expected != null)
             EvaluateMemberTest(result, options, testOfMember, member);
-
-          var testOfNamespaces = member.GetCustomAttribute<TestCases.NamespacesTestAttribute>();
-
-          if (testOfNamespaces != null && testOfNamespaces.Expected != null)
-            EvaluateNamespacesTest(result, options, testOfMember, testOfNamespaces, member);
         }
       }
     }
@@ -121,32 +111,6 @@ public class Test {
                  member.ToString(),
                  test.Expected,
                  () => Generator.GenerateMemberDeclaration(member, null, opts));
-  }
-
-  static void EvaluateNamespacesTest(TestResult result, Options options, TestCases.TestAttribute testOfTypeOrMember, TestCases.NamespacesTestAttribute testOfNamespaces, MemberInfo memberOrType)
-  {
-    var opts = options.Clone();
-
-    opts.TypeDeclarationWithNamespace = testOfTypeOrMember.WithNamespace;
-    opts.MemberDeclarationWithNamespace = testOfTypeOrMember.WithNamespace;
-    opts.MemberDeclarationUseDefaultLiteral = testOfTypeOrMember.UseDefaultLiteral;
-
-    string GenerateNamespaceList()
-    {
-      var namespaces = new SortedSet<string>(StringComparer.Ordinal);
-
-      if (memberOrType is Type t)
-        ListApi.GenerateTypeAndMemberDeclarations(0, t, namespaces, opts);
-      else
-        Generator.GenerateMemberDeclaration(memberOrType, namespaces, opts);
-
-      return string.Join(", ", namespaces);
-    }
-
-    EvaluateTest(result,
-                 "namespaces of " + memberOrType.ToString(),
-                 testOfNamespaces.Expected,
-                 GenerateNamespaceList);
   }
 
   static void EvaluateTest(TestResult result, string identifier, string expected, Func<string> getActual)

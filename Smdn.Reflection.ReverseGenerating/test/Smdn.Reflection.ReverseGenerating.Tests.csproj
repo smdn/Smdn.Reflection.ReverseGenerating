@@ -4,6 +4,7 @@
   <PropertyGroup>
     <TargetFrameworks>net5.0;net471;netcoreapp2.1</TargetFrameworks>
     <RootNamespace>Smdn.Reflection.ReverseGenerating</RootNamespace>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
 
   <ItemGroup>
