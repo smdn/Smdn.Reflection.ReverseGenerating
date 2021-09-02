@@ -25,7 +25,6 @@ class ListApi {
   {
     var libs = new List<string>();
     var options = new Options();
-    var testMode = false;
     var showUsage = false;
     var stdout = false;
 
@@ -38,10 +37,6 @@ class ListApi {
         case "--generate-fullname":
           options.TypeDeclarationWithNamespace = true;
           options.MemberDeclarationWithNamespace = true;
-          break;
-
-        case "--test":
-          testMode = true;
           break;
 
         case "--stdout":
@@ -62,16 +57,10 @@ class ListApi {
     }
 
     if (showUsage) {
-      Console.Error.WriteLine("--test: run tests");
       Console.Error.WriteLine("--stdout: output to stdout");
       Console.Error.WriteLine("--generate-fullname: generate type and member declaration with full type name");
       Console.Error.WriteLine("--generate-impl: generate with empty implementation");
       Console.Error.WriteLine();
-      return;
-    }
-
-    if (testMode) {
-      Test.RunTests();
       return;
     }
 
