@@ -1,6 +1,7 @@
 // SPDX-FileCopyrightText: 2020 smdn <smdn@smdn.jp>
 // SPDX-License-Identifier: MIT
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using System.Runtime.CompilerServices;
@@ -316,6 +317,82 @@ namespace Smdn.Reflection.ReverseGenerating {
     }
   }
 
+  namespace TestCases {
+    namespace TypeDeclarationWithExplicitBaseTypeAndInterfaces {
+      [TypeDeclarationTestCase("public class C1 : System.IDisposable")]
+      public class C1 : IDisposable {
+        public void Dispose() => throw new NotImplementedException();
+      }
+
+      [TypeDeclarationTestCase(@"public class C2 :
+  System.ICloneable,
+  System.IDisposable")]
+      public class C2 : IDisposable, ICloneable {
+        public object Clone() => throw new NotImplementedException();
+        public void Dispose() => throw new NotImplementedException();
+      }
+
+      [TypeDeclarationTestCase("public struct S1 : System.IDisposable")]
+      public struct S1 : IDisposable {
+        public void Dispose() => throw new NotImplementedException();
+      }
+
+      [TypeDeclarationTestCase(@"public struct S2 :
+  System.ICloneable,
+  System.IDisposable")]
+      public struct S2 : IDisposable, ICloneable {
+        public object Clone() => throw new NotImplementedException();
+        public void Dispose() => throw new NotImplementedException();
+      }
+
+      [TypeDeclarationTestCase("public interface I1 : System.IDisposable")]
+      public interface I1 : IDisposable {
+      }
+
+      [TypeDeclarationTestCase(@"public interface I2 :
+  System.ICloneable,
+  System.IDisposable")]
+      public interface I2 : IDisposable, ICloneable {
+      }
+
+      namespace WithConstraints {
+        [TypeDeclarationTestCase("public class C1<T> : System.Collections.Generic.List<T> where T : class")]
+        public class C1<T> :
+          List<T>
+          where T : class
+        {
+          public void Dispose() => throw new NotImplementedException();
+        }
+
+        [TypeDeclarationTestCase(@"public class C2<T> :
+  System.Collections.Generic.List<T>,
+  System.ICloneable
+  where T : class")]
+        public class C2<T> :
+          List<T>,
+          ICloneable
+          where T : class
+        {
+          public object Clone() => throw new NotImplementedException();
+        }
+
+        [TypeDeclarationTestCase(@"public class C3<TKey, TValue> :
+  System.Collections.Generic.Dictionary<TKey, TValue>,
+  System.ICloneable
+  where TKey : class
+  where TValue : struct")]
+        public class C3<TKey, TValue> :
+          Dictionary<TKey, TValue>,
+          ICloneable
+          where TKey : class
+          where TValue : struct
+        {
+          public object Clone() => throw new NotImplementedException();
+        }
+      }
+    }
+  }
+
   partial class GeneratorTests {
     [Test]
     public void TestGenerateTypeDeclaration()
@@ -325,6 +402,20 @@ namespace Smdn.Reflection.ReverseGenerating {
           Assert.AreEqual(
             attr.Expected,
             Generator.GenerateTypeDeclaration(attr.TestTargetType ?? type, null, GetGeneratorOptions(attr)),
+            message: $"{attr.SourceLocation} ({type.FullName})"
+          );
+        }
+      }
+    }
+
+    [Test]
+    public void TestGenerateTypeDeclarationWithExplicitBaseTypeAndInterfaces()
+    {
+      foreach (var type in FindTypes(t => t.FullName.Contains(".TestCases.TypeDeclarationWithExplicitBaseTypeAndInterfaces."))) {
+        foreach (var attr in type.GetCustomAttributes<TypeDeclarationTestCaseAttribute>()) {
+          Assert.AreEqual(
+            attr.Expected.Replace("\r\n", "\n"),
+            string.Join("\n", Generator.GenerateTypeDeclarationWithExplicitBaseTypeAndInterfaces(attr.TestTargetType ?? type, null, GetGeneratorOptions(attr))),
             message: $"{attr.SourceLocation} ({type.FullName})"
           );
         }

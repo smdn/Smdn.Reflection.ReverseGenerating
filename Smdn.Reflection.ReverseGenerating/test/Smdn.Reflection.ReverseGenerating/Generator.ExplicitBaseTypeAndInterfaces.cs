@@ -37,9 +37,17 @@ namespace Smdn.Reflection.ReverseGenerating {
         [ExplicitBaseTypeAndInterfacesTestCase("CC", TypeWithNamespace = false)]
         public abstract class CCC : CC { }
 
-        [ExplicitBaseTypeAndInterfacesTestCase("System.IDisposable")]
+        [ExplicitBaseTypeAndInterfacesTestCase("IDisposable", TypeWithNamespace = false)]
+        [ExplicitBaseTypeAndInterfacesTestCase("System.IDisposable", TypeWithNamespace = true)]
         public abstract class C0 : IDisposable {
           public abstract void Dispose();
+        }
+
+        [ExplicitBaseTypeAndInterfacesTestCase("IEquatable<int>", TypeWithNamespace = false)]
+        [ExplicitBaseTypeAndInterfacesTestCase("System.IEquatable<int>", TypeWithNamespace = true)]
+        public abstract class C0_1 : IEquatable<int> {
+          public abstract void Dispose();
+          public abstract bool Equals(int other);
         }
 
         [ExplicitBaseTypeAndInterfacesTestCase("C0", TypeWithNamespace = false)]
