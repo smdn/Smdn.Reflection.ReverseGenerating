@@ -66,7 +66,7 @@ namespace Smdn.Reflection.ReverseGenerating {
       if (t.IsConcreteDelegate()) {
         var signatureInfo = t.GetDelegateSignatureMethod();
 
-        referencingNamespaces?.AddRange(signatureInfo.GetSignatureTypes().Where(mpt => !mpt.ContainsGenericParameters).SelectMany(CSharpFormatter.ToNamespaceList));
+        referencingNamespaces?.UnionWith(signatureInfo.GetSignatureTypes().Where(mpt => !mpt.ContainsGenericParameters).SelectMany(CSharpFormatter.ToNamespaceList));
 
         var genericArgumentConstraintDeclaration = genericArgumentConstraints.Count == 0 ? string.Empty : " " + string.Join(" ", genericArgumentConstraints);
         var returnType = signatureInfo.ReturnType.FormatTypeName(
@@ -156,7 +156,7 @@ namespace Smdn.Reflection.ReverseGenerating {
         var constraintAttrs = argument.GenericParameterAttributes & GenericParameterAttributes.SpecialConstraintMask;
         var constraintTypes = argument.GetGenericParameterConstraints();
 
-        _referencingNamespaces?.AddRange(constraintTypes.Where(ct => ct != typeof(ValueType)).SelectMany(CSharpFormatter.ToNamespaceList));
+        _referencingNamespaces?.UnionWith(constraintTypes.Where(ct => ct != typeof(ValueType)).SelectMany(CSharpFormatter.ToNamespaceList));
 
         if (
           constraintAttrs.HasFlag(GenericParameterAttributes.NotNullableValueTypeConstraint) &&
@@ -220,7 +220,7 @@ namespace Smdn.Reflection.ReverseGenerating {
         .GetExplicitBaseTypeAndInterfaces()
         .Where(type => !(options.IgnorePrivateOrAssembly && type.IsPrivateOrAssembly()))
         .Select(type => {
-          referencingNamespaces?.AddRange(CSharpFormatter.ToNamespaceList(type));
+          referencingNamespaces?.UnionWith(CSharpFormatter.ToNamespaceList(type));
           return new {
             IsInterface = type.IsInterface,
             Name = type.FormatTypeName(
@@ -401,7 +401,7 @@ namespace Smdn.Reflection.ReverseGenerating {
         }
       }
       else {
-        referencingNamespaces?.AddRange(CSharpFormatter.ToNamespaceList(field.FieldType));
+        referencingNamespaces?.UnionWith(CSharpFormatter.ToNamespaceList(field.FieldType));
 
         sb
           .Append(GetMemberModifierOf(field, options))
@@ -464,8 +464,8 @@ namespace Smdn.Reflection.ReverseGenerating {
 
       var indexParameters = property.GetIndexParameters();
 
-      referencingNamespaces?.AddRange(CSharpFormatter.ToNamespaceList(property.PropertyType));
-      referencingNamespaces?.AddRange(indexParameters.SelectMany(ip => CSharpFormatter.ToNamespaceList(ip.ParameterType)));
+      referencingNamespaces?.UnionWith(CSharpFormatter.ToNamespaceList(property.PropertyType));
+      referencingNamespaces?.UnionWith(indexParameters.SelectMany(ip => CSharpFormatter.ToNamespaceList(ip.ParameterType)));
 
       var sb = new StringBuilder();
       var modifier = GetMemberModifierOf(property, options, out string setAccessibility, out string getAccessibility);
@@ -589,7 +589,7 @@ namespace Smdn.Reflection.ReverseGenerating {
         case MethodBodyOption.ThrowNotImplementedException: methodBody = m.IsAbstract ? endOfStatement : " => throw new NotImplementedException()" + endOfStatement; break;
       }
 
-      referencingNamespaces?.AddRange(m.GetSignatureTypes().Where(mpt => !mpt.ContainsGenericParameters).SelectMany(CSharpFormatter.ToNamespaceList));
+      referencingNamespaces?.UnionWith(m.GetSignatureTypes().Where(mpt => !mpt.ContainsGenericParameters).SelectMany(CSharpFormatter.ToNamespaceList));
 
       if (m.IsSpecialName) {
         // constructors, operator overloads, etc
@@ -667,7 +667,7 @@ namespace Smdn.Reflection.ReverseGenerating {
       if (explicitInterface == null && options.IgnorePrivateOrAssembly && ev.GetMethods(true).All(m => m.IsPrivateOrAssembly()))
         return null;
 
-      referencingNamespaces?.AddRange(CSharpFormatter.ToNamespaceList(ev.EventHandlerType));
+      referencingNamespaces?.UnionWith(CSharpFormatter.ToNamespaceList(ev.EventHandlerType));
 
       var sb = new StringBuilder();
 
