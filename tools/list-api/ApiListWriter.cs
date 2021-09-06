@@ -14,9 +14,9 @@ class ApiListWriter {
   public TextWriter BaseWriter { get; }
 
   private readonly Assembly assembly;
-  private readonly GeneratorOptions options;
+  private readonly ApiListWriterOptions options;
 
-  public ApiListWriter(TextWriter baseWriter, Assembly assembly, GeneratorOptions options)
+  public ApiListWriter(TextWriter baseWriter, Assembly assembly, ApiListWriterOptions options)
   {
     this.BaseWriter = baseWriter;
     this.assembly = assembly;
@@ -83,7 +83,7 @@ class ApiListWriter {
     int nestLevel,
     IEnumerable<Type> types,
     ISet<string> referencingNamespaces,
-    GeneratorOptions options
+    ApiListWriterOptions options
   )
   {
     var ret = new StringBuilder(10240);
@@ -130,7 +130,7 @@ class ApiListWriter {
     int nestLevel,
     Type t,
     ISet<string> referencingNamespaces,
-    GeneratorOptions options
+    ApiListWriterOptions options
   )
   {
     if (options == null)
@@ -182,7 +182,7 @@ class ApiListWriter {
     int nestLevel,
     Type t,
     ISet<string> referencingNamespaces,
-    GeneratorOptions options
+    ApiListWriterOptions options
   )
   {
     if (options == null)
