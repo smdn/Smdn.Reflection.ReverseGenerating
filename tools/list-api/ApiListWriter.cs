@@ -46,11 +46,16 @@ class ApiListWriter {
 
       typeDeclarations.AppendLine($"namespace {ns} {{");
 
-      typeDeclarations.Append(GenerateTypeAndMemberDeclarations(1,
-                                                                types.Where(type => type.Namespace.Equals(ns, StringComparison.Ordinal))
-                                                                     .Where(type => !type.IsNested),
-                                                                referencingNamespaces,
-                                                                options));
+      typeDeclarations.Append(
+        GenerateTypeAndMemberDeclarations(
+          nestLevel: 1,
+          types
+            .Where(type => type.Namespace.Equals(ns, StringComparison.Ordinal))
+            .Where(type => !type.IsNested),
+          referencingNamespaces,
+          options
+        )
+      );
 
       typeDeclarations.AppendLine("}");
     }
@@ -58,7 +63,11 @@ class ApiListWriter {
     static int OrderOfRootNamespace(string ns)
       => ns.Split('.')[0].StartsWith("System", StringComparison.Ordinal) ? 0 : 1;
 
-    foreach (var ns in referencingNamespaces.OrderBy(OrderOfRootNamespace).ThenBy(ns => ns, StringComparer.Ordinal)) {
+    var orderedReferencingNamespaces = referencingNamespaces
+      .OrderBy(OrderOfRootNamespace)
+      .ThenBy(ns => ns, StringComparer.Ordinal);
+
+    foreach (var ns in orderedReferencingNamespaces) {
       BaseWriter.WriteLine($"using {ns};");
     }
 
@@ -66,7 +75,12 @@ class ApiListWriter {
     BaseWriter.WriteLine(typeDeclarations);
   }
 
-  static string GenerateTypeAndMemberDeclarations(int nestLevel, IEnumerable<Type> types, ISet<string> referencingNamespaces, GeneratorOptions options)
+  static string GenerateTypeAndMemberDeclarations(
+    int nestLevel,
+    IEnumerable<Type> types,
+    ISet<string> referencingNamespaces,
+    GeneratorOptions options
+  )
   {
     var ret = new StringBuilder(10240);
     var isPrevDelegate = false;
@@ -82,13 +96,24 @@ class ApiListWriter {
       return int.MaxValue;
     }
 
-    foreach (var type in types.OrderBy(OrderOfType).ThenBy(type => type.FullName, StringComparer.Ordinal)) {
+    var orderedTypes = types
+      .OrderBy(OrderOfType)
+      .ThenBy(type => type.FullName, StringComparer.Ordinal);
+
+    foreach (var type in orderedTypes) {
       var isDelegate = type.IsDelegate();
 
       if (0 < ret.Length && !(isPrevDelegate && isDelegate))
         ret.AppendLine();
 
-      ret.Append(GenerateTypeAndMemberDeclarations(nestLevel, type, referencingNamespaces, options));
+      ret.Append(
+        GenerateTypeAndMemberDeclarations(
+          nestLevel,
+          type,
+          referencingNamespaces,
+          options
+        )
+      );
 
       isPrevDelegate = isDelegate;
     }
@@ -97,7 +122,12 @@ class ApiListWriter {
   }
 
   // TODO: unsafe types
-  static string GenerateTypeAndMemberDeclarations(int nestLevel, Type t, ISet<string> referencingNamespaces, GeneratorOptions options)
+  static string GenerateTypeAndMemberDeclarations(
+    int nestLevel,
+    Type t,
+    ISet<string> referencingNamespaces,
+    GeneratorOptions options
+  )
   {
     if (options == null)
       throw new ArgumentNullException(nameof(options));
@@ -144,7 +174,12 @@ class ApiListWriter {
     return ret.ToString();
   }
 
-  static string GenerateTypeContentDeclarations(int nestLevel, Type t, ISet<string> referencingNamespaces, GeneratorOptions options)
+  static string GenerateTypeContentDeclarations(
+    int nestLevel,
+    Type t,
+    ISet<string> referencingNamespaces,
+    GeneratorOptions options
+  )
   {
     if (options == null)
       throw new ArgumentNullException(nameof(options));
@@ -174,10 +209,14 @@ class ApiListWriter {
     var prevMemberType = (MemberTypes?)null;
 
     if (0 < nestedTypes.Count) {
-      ret.Append(GenerateTypeAndMemberDeclarations(nestLevel,
-                                                   nestedTypes.Where(nestedType => !(options.IgnorePrivateOrAssembly && (nestedType.IsNestedPrivate || nestedType.IsNestedAssembly))),
-                                                   referencingNamespaces,
-                                                   options));
+      ret.Append(
+        GenerateTypeAndMemberDeclarations(
+          nestLevel,
+          nestedTypes.Where(nestedType => !(options.IgnorePrivateOrAssembly && (nestedType.IsNestedPrivate || nestedType.IsNestedAssembly))),
+          referencingNamespaces,
+          options
+        )
+      );
 
       if (0 < ret.Length)
         prevMemberType = MemberTypes.NestedType;
@@ -185,8 +224,12 @@ class ApiListWriter {
 
     var indent = string.Concat(Enumerable.Repeat(options.Indent, nestLevel));
     var memberAndDeclarations = new List<(MemberInfo member, string declaration)>();
+    var orderedMembers = members
+      .Except(exceptingMembers)
+      .OrderBy(OrderOfMember)
+      .ThenBy(m => m.Name, StringComparer.Ordinal);
 
-    foreach (var member in members.Except(exceptingMembers).OrderBy(OrderOfMember).ThenBy(m => m.Name, StringComparer.Ordinal)) {
+    foreach (var member in orderedMembers) {
       try {
         var declaration = Generator.GenerateMemberDeclaration(member, referencingNamespaces, options);
 
@@ -201,7 +244,12 @@ class ApiListWriter {
       }
     }
 
-    foreach (var (member, declaration) in memberAndDeclarations.OrderBy(p => OrderOfMember(p.member)).ThenBy(p => p.member.Name, StringComparer.Ordinal).ThenBy(p => p.declaration, StringComparer.Ordinal)) {
+    var orderedMemberAndDeclarations = memberAndDeclarations
+      .OrderBy(p => OrderOfMember(p.member))
+      .ThenBy(p => p.member.Name, StringComparer.Ordinal)
+      .ThenBy(p => p.declaration, StringComparer.Ordinal);
+
+    foreach (var (member, declaration) in orderedMemberAndDeclarations) {
       if (prevMemberType != null && prevMemberType != member.MemberType)
         ret.AppendLine();
 
