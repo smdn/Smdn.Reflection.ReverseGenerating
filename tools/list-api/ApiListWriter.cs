@@ -61,7 +61,11 @@ class ApiListWriter {
     }
 
     static int OrderOfRootNamespace(string ns)
-      => ns.Split('.')[0].StartsWith("System", StringComparison.Ordinal) ? 0 : 1;
+      => ns.Split('.')[0] switch {
+        "System" => 0,
+        "Microsoft" => 1,
+        _ => int.MaxValue,
+      };
 
     var orderedReferencingNamespaces = referencingNamespaces
       .OrderBy(OrderOfRootNamespace)
