@@ -210,7 +210,7 @@ class ApiListWriter {
     }
 
     var ret = new StringBuilder(1024);
-    var prevMemberType = (MemberTypes?)null;
+    var generatedNestedTypeDeclarations = false;
 
     if (0 < nestedTypes.Count) {
       ret.Append(
@@ -223,17 +223,13 @@ class ApiListWriter {
       );
 
       if (0 < ret.Length)
-        prevMemberType = MemberTypes.NestedType;
+        generatedNestedTypeDeclarations = true;
     }
 
     var indent = string.Concat(Enumerable.Repeat(options.Indent, nestLevel));
     var memberAndDeclarations = new List<(MemberInfo member, string declaration)>();
-    var orderedMembers = members
-      .Except(exceptingMembers)
-      .OrderBy(OrderOfMember)
-      .ThenBy(m => m.Name, StringComparer.Ordinal);
 
-    foreach (var member in orderedMembers) {
+    foreach (var member in members.Except(exceptingMembers)) {
       try {
         var declaration = Generator.GenerateMemberDeclaration(member, referencingNamespaces, options);
 
@@ -248,13 +244,18 @@ class ApiListWriter {
       }
     }
 
+    var memberComparer = options.OrderStaticMembersFirst
+      ? MemberInfoComparer.StaticMembersFirst
+      : MemberInfoComparer.Default;
     var orderedMemberAndDeclarations = memberAndDeclarations
-      .OrderBy(p => OrderOfMember(p.member))
-      .ThenBy(p => p.member.Name, StringComparer.Ordinal)
-      .ThenBy(p => p.declaration, StringComparer.Ordinal);
+      .Select(t => (t.member, t.declaration, order: memberComparer.GetOrder(t.member)))
+      .OrderBy(t => t.order)
+      .ThenBy(t => t.member.Name, StringComparer.Ordinal)
+      .ThenBy(t => t.declaration, StringComparer.Ordinal);
+    int? prevOrder = 0 < generatedNestedTypeDeclarations ? int.MinValue : (int?)null;
 
-    foreach (var (member, declaration) in orderedMemberAndDeclarations) {
-      if (prevMemberType != null && prevMemberType != member.MemberType)
+    foreach (var (member, declaration, order) in orderedMemberAndDeclarations) {
+      if (prevOrder != null && prevOrder.Value != order)
         ret.AppendLine();
 
       // TODO: AttributeTargets.ReturnValue, AttributeTargets.Parameter
@@ -264,18 +265,9 @@ class ApiListWriter {
 
       ret.Append(indent).AppendLine(declaration);
 
-      prevMemberType = member.MemberType;
+      prevOrder = order;
     }
 
     return ret.ToString();
-
-    static int OrderOfMember(MemberInfo member) => member switch {
-      EventInfo e           => 1,
-      FieldInfo f           => 2,
-      ConstructorInfo ctor  => 3,
-      PropertyInfo p        => 4,
-      MethodInfo m          => 5,
-      _                     => int.MaxValue,
-    };
   }
 }
