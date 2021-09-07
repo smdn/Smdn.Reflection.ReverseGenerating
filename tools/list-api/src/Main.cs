@@ -7,7 +7,7 @@ using System.Runtime.Versioning;
 
 using Smdn.Reflection.ReverseGenerating;
 
-class ListApi {
+class ListApiMain {
   static void Main(string[] args)
   {
     var libs = new List<string>();
