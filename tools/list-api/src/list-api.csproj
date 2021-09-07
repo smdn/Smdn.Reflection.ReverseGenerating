@@ -8,6 +8,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Smdn.Reflection.ReverseGenerating\src\Smdn.Reflection.ReverseGenerating.csproj" />
+    <ProjectReference Include="..\..\..\Smdn.Reflection.ReverseGenerating\src\Smdn.Reflection.ReverseGenerating.csproj" />
   </ItemGroup>
 </Project>
