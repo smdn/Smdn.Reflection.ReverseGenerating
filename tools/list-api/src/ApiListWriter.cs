@@ -121,7 +121,7 @@ class ApiListWriter {
         );
       }
       catch (Exception ex) {
-        throw new InvalidOperationException($"generator error on type '{t.FullName}'", ex);
+        throw new InvalidOperationException($"generator error on type '{type.FullName}'", ex);
       }
 
       isPrevDelegate = isDelegate;
