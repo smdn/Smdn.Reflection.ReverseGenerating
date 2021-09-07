@@ -258,7 +258,7 @@ class ApiListWriter {
       .OrderBy(t => t.order)
       .ThenBy(t => t.member.Name, StringComparer.Ordinal)
       .ThenBy(t => t.declaration, StringComparer.Ordinal);
-    int? prevOrder = 0 < generatedNestedTypeDeclarations ? int.MinValue : (int?)null;
+    int? prevOrder = generatedNestedTypeDeclarations ? int.MinValue : (int?)null;
 
     foreach (var (member, declaration, order) in orderedMemberAndDeclarations) {
       if (prevOrder != null && prevOrder.Value != order)
