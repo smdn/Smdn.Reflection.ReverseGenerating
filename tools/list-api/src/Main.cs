@@ -7,6 +7,8 @@ using System.Runtime.Versioning;
 
 using Smdn.Reflection.ReverseGenerating;
 
+namespace Smdn.Reflection.ReverseGenerating.ListApi;
+
 class ListApiMain {
   static void Main(string[] args)
   {

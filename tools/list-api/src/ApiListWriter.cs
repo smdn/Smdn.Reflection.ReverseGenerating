@@ -10,6 +10,8 @@ using System.Text;
 using Smdn.Reflection;
 using Smdn.Reflection.ReverseGenerating;
 
+namespace Smdn.Reflection.ReverseGenerating.ListApi;
+
 class ApiListWriter {
   public TextWriter BaseWriter { get; }
 
