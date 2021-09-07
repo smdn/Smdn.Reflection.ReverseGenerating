@@ -6,7 +6,7 @@ using Smdn.Reflection;
 
 namespace Smdn.Reflection.ReverseGenerating.ListApi;
 
-class MemberInfoComparer : IComparer<MemberInfo> {
+public class MemberInfoComparer : IComparer<MemberInfo> {
   public static readonly MemberInfoComparer Default = new(orderOfStaticMember: 0, orderOfInstanceMember: 0);
   public static readonly MemberInfoComparer StaticMembersFirst = new(orderOfStaticMember: 0, orderOfInstanceMember: 10);
 
