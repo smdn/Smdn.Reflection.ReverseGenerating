@@ -11,7 +11,7 @@ class ListApi {
   static void Main(string[] args)
   {
     var libs = new List<string>();
-    var options = new GeneratorOptions();
+    var options = new ApiListWriterOptions();
     var showUsage = false;
     var stdout = false;
 
