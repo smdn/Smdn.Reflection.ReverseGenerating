@@ -110,14 +110,19 @@ class ApiListWriter {
       if (0 < ret.Length && !(isPrevDelegate && isDelegate))
         ret.AppendLine();
 
-      ret.Append(
-        GenerateTypeAndMemberDeclarations(
-          nestLevel,
-          type,
-          referencingNamespaces,
-          options
-        )
-      );
+      try {
+        ret.Append(
+          GenerateTypeAndMemberDeclarations(
+            nestLevel,
+            type,
+            referencingNamespaces,
+            options
+          )
+        );
+      }
+      catch (Exception ex) {
+        throw new InvalidOperationException($"generator error on type '{t.FullName}'", ex);
+      }
 
       isPrevDelegate = isDelegate;
     }
