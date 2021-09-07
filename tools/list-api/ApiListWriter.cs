@@ -230,18 +230,19 @@ class ApiListWriter {
     var memberAndDeclarations = new List<(MemberInfo member, string declaration)>();
 
     foreach (var member in members.Except(exceptingMembers)) {
+      string declaration = null;
+
       try {
-        var declaration = Generator.GenerateMemberDeclaration(member, referencingNamespaces, options);
-
-        if (declaration == null)
-          continue; // is private or assembly
-
-        memberAndDeclarations.Add((member, declaration));
+        declaration = Generator.GenerateMemberDeclaration(member, referencingNamespaces, options);
       }
       catch (Exception ex) {
-        Console.Error.WriteLine($"reflection error at member {t.FullName}.{member.Name}");
-        Console.Error.WriteLine(ex);
+        throw new InvalidOperationException($"generator error on member '{t.FullName}.{member.Name}'", ex);
       }
+
+      if (declaration == null)
+        continue; // is private or assembly
+
+      memberAndDeclarations.Add((member, declaration));
     }
 
     var memberComparer = options.OrderStaticMembersFirst
