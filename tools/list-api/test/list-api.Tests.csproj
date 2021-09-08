@@ -4,10 +4,24 @@
   <PropertyGroup>
     <TargetFrameworks>net5.0</TargetFrameworks>
     <RootNamespace>Smdn.Reflection.ReverseGenerating.ListApi</RootNamespace>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <TestAssemblyRootDirectory>$(MSBuildThisFileDirectory)..\assm</TestAssemblyRootDirectory>
   </PropertyGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\src\list-api.csproj" />
   </ItemGroup>
+
+  <Target Name="WriteTestAssemblyInfo" BeforeTargets="BeforeBuild">
+    <ItemGroup>
+      <SourceLines Include="namespace $(RootNamespace)$([MSBuild]::Escape(';'))" />
+      <SourceLines Include="public static class TestAssemblyInfo {" />
+      <SourceLines Include="public static readonly System.IO.DirectoryInfo RootDirectory = new(@&quot;$(TestAssemblyRootDirectory)&quot;)$([MSBuild]::Escape(';'))" />
+      <SourceLines Include="}" />
+    </ItemGroup>
+    <WriteLinesToFile
+      File="$(MSBuildThisFileDirectory)TestAssemblyInfo.cs"
+      Overwrite="true"
+      Lines="@(SourceLines)"
+    />
+  </Target>
 </Project>
