@@ -10,7 +10,7 @@ using Smdn.OperatingSystem;
 
 namespace Smdn.Reflection.ReverseGenerating.ListApi;
 
-public class MSBuildExePath {
+public static class MSBuildExePath {
   private const string patternVersion = @"(?<version>[0-9]+\.[0-9]+\.[0-9]+)";
   private const string patternVersionSuffix = @"(?<version_suffix>preview[0-9\.]+)";
   private const string patternRootPath = @"(?<root_path>[^\]]+)";
