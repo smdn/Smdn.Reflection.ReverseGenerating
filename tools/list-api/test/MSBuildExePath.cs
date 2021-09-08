@@ -11,6 +11,12 @@ namespace Smdn.Reflection.ReverseGenerating.ListApi;
 class MSBuildExePathTests {
   const string MSBUILD_EXE_PATH = nameof(MSBUILD_EXE_PATH);
 
+  [SetUp]
+  public void SetUp()
+  {
+    Environment.SetEnvironmentVariable(MSBUILD_EXE_PATH, null);
+  }
+
   [Test]
   public void EnsureSetEnvVar_PathNotSet()
   {
