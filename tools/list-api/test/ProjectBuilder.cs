@@ -26,6 +26,15 @@ class ProjectBuilderTests {
     );
 
     logger = services.BuildServiceProvider().GetService<ILoggerFactory>()?.CreateLogger("test");
+
+    var outputDirectories = Enumerable.Concat(
+      TestAssemblyInfo.RootDirectory.EnumerateDirectories("bin", SearchOption.AllDirectories),
+      TestAssemblyInfo.RootDirectory.EnumerateDirectories("obj", SearchOption.AllDirectories)
+    ).ToList();
+
+    foreach (var d in outputDirectories) {
+      d.Delete(recursive: true);
+    }
   }
 
   [SetUp]
