@@ -48,11 +48,15 @@ public static class ProjectBuilder {
     if (!string.IsNullOrEmpty(options.RuntimeIdentifier))
       globalProps["RuntimeIdentifier"] = options.RuntimeIdentifier;
 
+    logger?.LogDebug("Build requested");
+    logger?.LogDebug($"  project: {projectFile}");
 
-    logger?.LogDebug("Build properties:");
+    logger?.LogDebug($"  targets: {string.Join(";", options.TargetsToBuild)}");
+
+    logger?.LogDebug("  global properties:");
 
     foreach (var globalProp in globalProps) {
-      logger?.LogDebug($"  {globalProp.Key}: {(string.IsNullOrEmpty(globalProp.Value) ? "-" : globalProp.Value)}");
+      logger?.LogDebug($"    {globalProp.Key}: '{globalProp.Value}'");
     }
 
     var proj = new Project(
