@@ -31,7 +31,6 @@ class ProjectBuilderTests {
   [SetUp]
   public void SetUp()
   {
-
     Environment.SetEnvironmentVariable("MSBUILD_EXE_PATH", null);
 
     MSBuildExePath.EnsureSetEnvVar(logger);
@@ -52,6 +51,19 @@ class ProjectBuilderTests {
 
     Assert.That(assemblyFiles[0].FullName, Does.Contain(Path.DirectorySeparatorChar + ProjectBuilder.Options.DefaultConfiguration + Path.DirectorySeparatorChar));
     Assert.That(assemblyFiles[1].FullName, Does.Contain(Path.DirectorySeparatorChar + ProjectBuilder.Options.DefaultConfiguration + Path.DirectorySeparatorChar));
+  }
+
+  [Test]
+  public void Build_OutputTypeExe()
+  {
+    var assemblyFiles = ProjectBuilder.Build(
+      new(Path.Join(TestAssemblyInfo.RootDirectory.FullName, "Exe", "Exe.csproj")),
+      logger: logger
+    ).ToList();
+
+    Assert.AreEqual(1, assemblyFiles.Count);
+
+    Assert.That(assemblyFiles[0].FullName, Does.Contain(Path.DirectorySeparatorChar + "Exe."));
   }
 
   [Test]
