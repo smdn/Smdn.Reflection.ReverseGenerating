@@ -11,29 +11,47 @@ using Smdn.OperatingSystem;
 namespace Smdn.Reflection.ReverseGenerating.ListApi;
 
 public class MSBuildExePath {
-  private static readonly Regex regexSdkPath = new Regex(@"^(?<version>[0-9]+\.[0-9]+\.[0-9]+) \[(?<path>[^\]]+)\]$", RegexOptions.Multiline | RegexOptions.CultureInvariant | RegexOptions.Compiled);
+  private const string patternVersion = @"(?<version>[0-9]+\.[0-9]+\.[0-9]+)";
+  private const string patternVersionSuffix = @"(?<version_suffix>preview[0-9\.]+)";
+  private const string patternRootPath = @"(?<root_path>[^\]]+)";
+  private static readonly Regex regexSdkPath = new Regex(
+    @$"^(?<version_full>{patternVersion}(\-{patternVersionSuffix})?) \[{patternRootPath}\]$",
+    RegexOptions.Multiline | RegexOptions.CultureInvariant | RegexOptions.Compiled
+  );
 
-  static IEnumerable<(Version version, string path)> GetSkdPaths()
+  static IEnumerable<(Version version, string versionSuffix, string path)> GetSkdPaths()
   {
     foreach (Match match in regexSdkPath.Matches(Shell.Execute("dotnet --list-sdks"))) {
-      if (Version.TryParse(match.Groups["version"].Value, out var version))
-        yield return (version, Path.Combine(match.Groups["path"].Value, match.Groups["version"].Value));
+      if (Version.TryParse(match.Groups["version"].Value, out var version)) {
+        yield return (
+          version,
+          match.Groups["version_suffix"].Value,
+          Path.Join(match.Groups["root_path"].Value, match.Groups["version_full"].Value)
+        );
+      }
     }
   }
 
   static string GetMSBuildExePath()
   {
-    static IEnumerable<(Version sdkVersion, string msbuildPath)> EnumerateMSBuildPath((Version version, string path) sdk)
+    static IEnumerable<(
+      Version sdkVersion,
+      string sdkVersionSuffix,
+      string sdkPath,
+      string msbuildPath
+    )> EnumerateMSBuildPath(
+      (Version version, string versionSuffix, string path) sdk
+    )
     {
-      yield return (sdk.version, Path.Combine(sdk.path, "MSBuild.dll"));
-      yield return (sdk.version, Path.Combine(sdk.path, "MSBuild.exe"));
+      yield return (sdk.version, sdk.versionSuffix, sdk.path, Path.Combine(sdk.path, "MSBuild.dll"));
+      yield return (sdk.version, sdk.versionSuffix, sdk.path, Path.Combine(sdk.path, "MSBuild.exe"));
     }
 
     var msbuildExePath = GetSkdPaths()
       .SelectMany(EnumerateMSBuildPath)
       .Where(static p => File.Exists(p.msbuildPath))
-      .OrderByDescending(p => p.sdkVersion) // newest one
-      .Select(p => p.msbuildPath)
+      .OrderByDescending(static p => p.sdkVersion) // newest one
+      .Select(static p => p.msbuildPath)
       .FirstOrDefault();
 
     return msbuildExePath ?? throw new InvalidOperationException("MSBuild not found");
