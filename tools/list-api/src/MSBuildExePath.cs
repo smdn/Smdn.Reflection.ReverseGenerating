@@ -49,6 +49,7 @@ public class MSBuildExePath {
 
     var msbuildExePath = GetSkdPaths()
       .SelectMany(EnumerateMSBuildPath)
+      .Where(static p => string.IsNullOrEmpty(p.sdkVersionSuffix)) // except preview
       .Where(static p => File.Exists(p.msbuildPath))
       .OrderByDescending(static p => p.sdkVersion) // newest one
       .Select(static p => p.msbuildPath)
