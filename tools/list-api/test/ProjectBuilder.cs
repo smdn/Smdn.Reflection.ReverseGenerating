@@ -67,6 +67,19 @@ class ProjectBuilderTests {
   }
 
   [Test]
+  public void Build_SingleTargetFrameworkAssembly()
+  {
+    var assemblyFiles = ProjectBuilder.Build(
+      new(Path.Join(TestAssemblyInfo.RootDirectory.FullName, "Lib", "Lib.csproj")),
+      logger: logger
+    ).ToList();
+
+    Assert.AreEqual(1, assemblyFiles.Count);
+
+    Assert.That(assemblyFiles[0].FullName, Does.EndWith("Lib.dll"));
+  }
+
+  [Test]
   public void Build_HasProjectReference()
   {
     var assemblyFiles = ProjectBuilder.Build(

@@ -35,13 +35,19 @@ public static class ProjectBuilder {
 
     options ??= new();
 
-    var globalProps = new Dictionary<string, string>() {
-      // values cannnot be null
-      {"Configuration", options.Configuration ?? string.Empty},
-      {"TargetFramework", options.TargetFramework ?? string.Empty},
-      //{"OS", os ?? string.Empty},
-      {"RuntimeIdentifier", options.RuntimeIdentifier ?? string.Empty},
-    };
+    var globalProps = new Dictionary<string, string>();
+
+    if (!string.IsNullOrEmpty(options.Configuration))
+      globalProps["Configuration"] = options.Configuration;
+    if (!string.IsNullOrEmpty(options.TargetFramework))
+      globalProps["TargetFramework"] = options.TargetFramework;
+#if false
+    if (!string.IsNullOrEmpty(options.OS))
+      globalProps["OS"] = options.OS;
+#endif
+    if (!string.IsNullOrEmpty(options.RuntimeIdentifier))
+      globalProps["RuntimeIdentifier"] = options.RuntimeIdentifier;
+
 
     logger?.LogDebug("Build properties:");
 
