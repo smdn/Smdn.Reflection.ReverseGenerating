@@ -4,7 +4,6 @@
     <TargetFrameworks>net5.0</TargetFrameworks>
     <LangVersion>10</LangVersion>
     <AssemblyName>list-api</AssemblyName>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
 
   <ItemGroup>
