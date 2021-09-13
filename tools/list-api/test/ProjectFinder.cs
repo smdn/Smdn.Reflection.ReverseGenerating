@@ -4,6 +4,12 @@ using System;
 using System.IO;
 using NUnit.Framework;
 
+#if NETCOREAPP3_1_OR_GREATER || NET5_0_OR_GREATER
+using PathJoiner = System.IO.Path;
+#else
+using PathJoiner = Smdn.Reflection.ReverseGenerating.ListApi.Shim.Path;
+#endif
+
 namespace Smdn.Reflection.ReverseGenerating.ListApi;
 
 [TestFixture]
@@ -16,7 +22,7 @@ class ProjectFinderTests {
   public void FindSingleProjectOrSolution(string directoryName, string expectedProjectFileName)
   {
     var project = ProjectFinder.FindSingleProjectOrSolution(
-      new(Path.Join(TestAssemblyInfo.RootDirectory.FullName, directoryName))
+      new(PathJoiner.Join(TestAssemblyInfo.RootDirectory.FullName, directoryName))
     );
 
     Assert.IsNotNull(project, nameof(project));
@@ -38,7 +44,7 @@ class ProjectFinderTests {
   {
     Assert.Throws<InvalidOperationException>(() => {
       ProjectFinder.FindSingleProjectOrSolution(
-        new(Path.Join(TestAssemblyInfo.RootDirectory.FullName, "MultipleProj"))
+        new(PathJoiner.Join(TestAssemblyInfo.RootDirectory.FullName, "MultipleProj"))
       );
     });
   }

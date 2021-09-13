@@ -12,7 +12,17 @@ class RootCommandImplementationGetApiListWriterOptionsTests {
   {
     var impl = new RootCommandImplementation();
 
-    return impl.GetApiListWriterOptions(args.Split(" ", StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries));
+    return impl.GetApiListWriterOptions(
+      args.Split(
+#if NET5_0_OR_GREATER
+        " ",
+        StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries
+#else
+        new[] { ' ' },
+        StringSplitOptions.RemoveEmptyEntries
+#endif
+      )
+    );
   }
 
   [TestCase("--generate-fulltypename", true)]

@@ -8,6 +8,12 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Console;
 using NUnit.Framework;
 
+#if NETCOREAPP3_1_OR_GREATER || NET5_0_OR_GREATER
+using PathJoiner = System.IO.Path;
+#else
+using PathJoiner = Smdn.Reflection.ReverseGenerating.ListApi.Shim.Path;
+#endif
+
 namespace Smdn.Reflection.ReverseGenerating.ListApi;
 
 [TestFixture]
@@ -38,13 +44,13 @@ class AssemblyLoaderTests {
     };
 
     assemblyFileLibA = ProjectBuilder.Build(
-      new(Path.Join(TestAssemblyInfo.RootDirectory.FullName, "LibA", "LibA.csproj")),
+      new(PathJoiner.Join(TestAssemblyInfo.RootDirectory.FullName, "LibA", "LibA.csproj")),
       options: options,
       logger: logger
     ).First();
 
     assemblyFileLibB = ProjectBuilder.Build(
-      new(Path.Join(TestAssemblyInfo.RootDirectory.FullName, "LibB", "LibB.csproj")),
+      new(PathJoiner.Join(TestAssemblyInfo.RootDirectory.FullName, "LibB", "LibB.csproj")),
       options: options,
       logger: logger
     ).First();

@@ -8,6 +8,12 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Console;
 using NUnit.Framework;
 
+#if NETCOREAPP3_1_OR_GREATER || NET5_0_OR_GREATER
+using PathJoiner = System.IO.Path;
+#else
+using PathJoiner = Smdn.Reflection.ReverseGenerating.ListApi.Shim.Path;
+#endif
+
 namespace Smdn.Reflection.ReverseGenerating.ListApi;
 
 [TestFixture]
@@ -49,7 +55,7 @@ class ProjectBuilderTests {
   public void Build()
   {
     var assemblyFiles = ProjectBuilder.Build(
-      new(Path.Join(TestAssemblyInfo.RootDirectory.FullName, "LibA", "LibA.csproj")),
+      new(PathJoiner.Join(TestAssemblyInfo.RootDirectory.FullName, "LibA", "LibA.csproj")),
       logger: logger
     ).ToList();
 
@@ -66,7 +72,7 @@ class ProjectBuilderTests {
   public void Build_OutputTypeExe()
   {
     var assemblyFiles = ProjectBuilder.Build(
-      new(Path.Join(TestAssemblyInfo.RootDirectory.FullName, "Exe", "Exe.csproj")),
+      new(PathJoiner.Join(TestAssemblyInfo.RootDirectory.FullName, "Exe", "Exe.csproj")),
       logger: logger
     ).ToList();
 
@@ -79,7 +85,7 @@ class ProjectBuilderTests {
   public void Build_SingleTargetFrameworkAssembly()
   {
     var assemblyFiles = ProjectBuilder.Build(
-      new(Path.Join(TestAssemblyInfo.RootDirectory.FullName, "Lib", "Lib.csproj")),
+      new(PathJoiner.Join(TestAssemblyInfo.RootDirectory.FullName, "Lib", "Lib.csproj")),
       logger: logger
     ).ToList();
 
@@ -92,7 +98,7 @@ class ProjectBuilderTests {
   public void Build_HasProjectReference()
   {
     var assemblyFiles = ProjectBuilder.Build(
-      new(Path.Join(TestAssemblyInfo.RootDirectory.FullName, "LibB", "LibB.csproj")),
+      new(PathJoiner.Join(TestAssemblyInfo.RootDirectory.FullName, "LibB", "LibB.csproj")),
       logger: logger
     ).ToList();
 
@@ -106,13 +112,13 @@ class ProjectBuilderTests {
   public void Build_WithTargetFramework(string targetFramework)
   {
     var assemblyFiles = ProjectBuilder.Build(
-      new(Path.Join(TestAssemblyInfo.RootDirectory.FullName, "LibA", "LibA.csproj")),
+      new(PathJoiner.Join(TestAssemblyInfo.RootDirectory.FullName, "LibA", "LibA.csproj")),
       options: new() { TargetFramework = targetFramework },
       logger: logger
     ).ToList();
 
     Assert.AreEqual(1, assemblyFiles.Count);
-    Assert.That(assemblyFiles[0].FullName, Does.EndWith(Path.Join(targetFramework, "LibA.dll")));
+    Assert.That(assemblyFiles[0].FullName, Does.EndWith(PathJoiner.Join(targetFramework, "LibA.dll")));
   }
 
   [TestCase("Debug")]
@@ -120,7 +126,7 @@ class ProjectBuilderTests {
   public void Build_WithConfiguration(string configuration)
   {
     var assemblyFiles = ProjectBuilder.Build(
-      new(Path.Join(TestAssemblyInfo.RootDirectory.FullName, "LibA", "LibA.csproj")),
+      new(PathJoiner.Join(TestAssemblyInfo.RootDirectory.FullName, "LibA", "LibA.csproj")),
       options: new() { Configuration = configuration },
       logger: logger
     ).ToList();
@@ -134,7 +140,7 @@ class ProjectBuilderTests {
   public void Build_RunTargetClean()
   {
     var assemblyFileFirst = ProjectBuilder.Build(
-      new(Path.Join(TestAssemblyInfo.RootDirectory.FullName, "LibA", "LibA.csproj")),
+      new(PathJoiner.Join(TestAssemblyInfo.RootDirectory.FullName, "LibA", "LibA.csproj")),
       options: new() { TargetsToBuild = new[] { "Restore", "Build" } },
       logger: logger
     ).First();
@@ -142,7 +148,7 @@ class ProjectBuilderTests {
     var creationTimeFirst = assemblyFileFirst.CreationTime;
 
     var assemblyFileSecond = ProjectBuilder.Build(
-      new(Path.Join(TestAssemblyInfo.RootDirectory.FullName, "LibA", "LibA.csproj")),
+      new(PathJoiner.Join(TestAssemblyInfo.RootDirectory.FullName, "LibA", "LibA.csproj")),
       options: new() { TargetsToBuild = new[] { "Clean", "Restore", "Build" } },
       logger: logger
     ).First();
@@ -163,14 +169,14 @@ class ProjectBuilderTests {
     }
 
     // clean output files of prior and inferior project firstly
-    TryDeleteDirectory(Path.Join(TestAssemblyInfo.RootDirectory.FullName, "LibA", "bin"));
-    TryDeleteDirectory(Path.Join(TestAssemblyInfo.RootDirectory.FullName, "LibA", "obj"));
-    TryDeleteDirectory(Path.Join(TestAssemblyInfo.RootDirectory.FullName, "LibB", "bin"));
-    TryDeleteDirectory(Path.Join(TestAssemblyInfo.RootDirectory.FullName, "LibB", "obj"));
+    TryDeleteDirectory(PathJoiner.Join(TestAssemblyInfo.RootDirectory.FullName, "LibA", "bin"));
+    TryDeleteDirectory(PathJoiner.Join(TestAssemblyInfo.RootDirectory.FullName, "LibA", "obj"));
+    TryDeleteDirectory(PathJoiner.Join(TestAssemblyInfo.RootDirectory.FullName, "LibB", "bin"));
+    TryDeleteDirectory(PathJoiner.Join(TestAssemblyInfo.RootDirectory.FullName, "LibB", "obj"));
 
     // then build inferior project
     var assemblyFile = ProjectBuilder.Build(
-      new(Path.Join(TestAssemblyInfo.RootDirectory.FullName, "LibB", "LibB.csproj")),
+      new(PathJoiner.Join(TestAssemblyInfo.RootDirectory.FullName, "LibB", "LibB.csproj")),
       new() {
         TargetsToBuild = runTargetRestore ? new[] { "Restore", "Build" } : new[] { "Build" },
       },

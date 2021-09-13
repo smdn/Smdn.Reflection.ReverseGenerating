@@ -179,7 +179,13 @@ public class RootCommandImplementation {
 
   private static string GetOutputFilePathOf(Assembly assm, DirectoryInfo outputDirectory)
   {
-    return Path.Join(outputDirectory.FullName, $"{GetOutputFileName(assm)}.apilist.cs");
+#if NETCOREAPP3_1_OR_GREATER || NET5_0_OR_GREATER
+    return Path.Join(
+#else
+    return Path.Combine(
+#endif
+      outputDirectory.FullName, $"{GetOutputFileName(assm)}.apilist.cs"
+    );
 
     static string GetOutputFileName(Assembly a)
     {

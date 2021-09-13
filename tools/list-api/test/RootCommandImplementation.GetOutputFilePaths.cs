@@ -7,6 +7,12 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using NUnit.Framework;
 
+#if NETCOREAPP3_1_OR_GREATER || NET5_0_OR_GREATER
+using PathJoiner = System.IO.Path;
+#else
+using PathJoiner = Smdn.Reflection.ReverseGenerating.ListApi.Shim.Path;
+#endif
+
 namespace Smdn.Reflection.ReverseGenerating.ListApi;
 
 [TestFixture]
@@ -34,7 +40,7 @@ class RootCommandImplementationGetOutputFilePathsTests {
   {
     var impl = new RootCommandImplementation(serviceProvider);
     var outputFilePath = impl.GetOutputFilePaths(new[] {
-      Path.Join(TestAssemblyInfo.RootDirectory.FullName, "Exe", "Exe.csproj")
+      PathJoiner.Join(TestAssemblyInfo.RootDirectory.FullName, "Exe", "Exe.csproj")
     }).First();
 
     Assert.AreEqual(
@@ -54,7 +60,7 @@ class RootCommandImplementationGetOutputFilePathsTests {
     var impl = new RootCommandImplementation(serviceProvider);
     var outputFilePath = impl.GetOutputFilePaths(new[] {
       "-o", outputDirectory,
-      Path.Join(TestAssemblyInfo.RootDirectory.FullName, "Exe", "Exe.csproj")
+      PathJoiner.Join(TestAssemblyInfo.RootDirectory.FullName, "Exe", "Exe.csproj")
     }).First();
 
     Assert.AreEqual(
@@ -76,7 +82,7 @@ class RootCommandImplementationGetOutputFilePathsTests {
     var impl = new RootCommandImplementation(serviceProvider);
     var outputFilePaths = impl.GetOutputFilePaths(new[] {
       optionName, configuration,
-      Path.Join(TestAssemblyInfo.RootDirectory.FullName, "LibA", "LibA.csproj")
+      PathJoiner.Join(TestAssemblyInfo.RootDirectory.FullName, "LibA", "LibA.csproj")
     });
 
     CollectionAssert.AreEquivalent(
@@ -97,7 +103,7 @@ class RootCommandImplementationGetOutputFilePathsTests {
     var impl = new RootCommandImplementation(serviceProvider);
     var outputFilePaths = impl.GetOutputFilePaths(new[] {
       optionName, targetFramework,
-      Path.Join(TestAssemblyInfo.RootDirectory.FullName, "LibA", "LibA.csproj")
+      PathJoiner.Join(TestAssemblyInfo.RootDirectory.FullName, "LibA", "LibA.csproj")
     });
 
     CollectionAssert.AreEquivalent(
@@ -117,7 +123,7 @@ class RootCommandImplementationGetOutputFilePathsTests {
     var impl = new RootCommandImplementation(serviceProvider);
     var outputFilePaths = impl.GetOutputFilePaths(new[] {
       optionName, runtime,
-      Path.Join(TestAssemblyInfo.RootDirectory.FullName, "LibA", "LibA.csproj")
+      PathJoiner.Join(TestAssemblyInfo.RootDirectory.FullName, "LibA", "LibA.csproj")
     });
 
     CollectionAssert.AreEquivalent(

@@ -38,7 +38,12 @@ class ApiListWriter {
 
   public void WriteExportedTypes()
   {
-    var types = assembly.GetExportedTypes().Union(assembly.GetForwardedTypes());
+    var types = assembly.GetExportedTypes()
+#if NETCOREAPP2_1_OR_GREATER || NET5_0_OR_GREATER
+      .Union(assembly.GetForwardedTypes())
+#endif
+    ;
+
     var typeDeclarations = new StringBuilder(10240);
     var referencingNamespaces = new HashSet<string>(StringComparer.Ordinal);
 

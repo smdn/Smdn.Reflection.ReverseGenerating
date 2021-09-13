@@ -9,6 +9,86 @@ using Microsoft.Extensions.Logging;
 namespace Smdn.Reflection.ReverseGenerating.ListApi;
 
 public static class AssemblyLoader {
+  public static TResult UsingAssembly<TArg, TResult>(
+    FileInfo assemblyFile,
+    TArg arg,
+    Func<Assembly, TArg, TResult> actionWithLoadedAssembly,
+    out WeakReference context,
+    ILogger logger = null
+  )
+  {
+#if NETFRAMEWORK
+    return UsingAssemblyNetFx(
+#else
+    return UsingAssemblyNetCoreApp(
+#endif
+      assemblyFile,
+      arg,
+      actionWithLoadedAssembly,
+      out context,
+      logger
+    );
+  }
+
+#if NETFRAMEWORK
+  private class AppDomainProxy : MarshalByRefObject {
+    public Assembly LoadAssembly(FileInfo assemblyFile)
+      => Assembly.ReflectionOnlyLoadFrom(assemblyFile.FullName);
+  }
+
+  private static TResult UsingAssemblyNetFx<TArg, TResult>(
+    FileInfo assemblyFile,
+    TArg arg,
+    Func<Assembly, TArg, TResult> actionWithLoadedAssembly,
+    out WeakReference context,
+    ILogger logger = null
+  )
+  {
+    context = null;
+
+    var domain = AppDomain.CreateDomain(
+      friendlyName: assemblyFile.Name,
+      securityInfo: null,
+      appBasePath: assemblyFile.Directory.FullName,
+      appRelativeSearchPath: ".",
+      shadowCopyFiles: false
+    );
+    var domainWeakReference = new WeakReference(domain);
+
+    context = domainWeakReference;
+
+    string assemblyName = null;
+
+    try {
+      var typeOfProxy = typeof(AppDomainProxy);
+      var proxy = (AppDomainProxy)domain.CreateInstanceAndUnwrap(
+        assemblyName: typeOfProxy.Assembly.FullName,
+        typeName: typeOfProxy.FullName
+      );
+
+      logger?.LogDebug($"loading assembly from file '{assemblyFile.FullName}'");
+
+      var assm = proxy.LoadAssembly(assemblyFile);
+
+      if (assm is null) {
+        logger?.LogCritical($"failed to load assembly from file '{assemblyFile.FullName}'");
+
+        return default;
+      }
+
+      assemblyName = assm.FullName;
+
+      logger?.LogInformation($"loaded assembly '{assemblyName}'");
+
+      return actionWithLoadedAssembly(assm, arg);
+    }
+    finally {
+      AppDomain.Unload(domain);
+
+      logger?.LogDebug($"unloaded assembly '{assemblyName}'");
+    }
+  }
+#else // #if NETFRAMEWORK
   private class UnloadableAssemblyLoadContext : AssemblyLoadContext {
     private readonly AssemblyDependencyResolver dependencyResolver;
 
@@ -32,7 +112,7 @@ public static class AssemblyLoader {
   }
 
   [MethodImpl(MethodImplOptions.NoInlining)]
-  public static TResult UsingAssembly<TArg, TResult>(
+  private static TResult UsingAssemblyNetCoreApp<TArg, TResult>(
     FileInfo assemblyFile,
     TArg arg,
     Func<Assembly, TArg, TResult> actionWithLoadedAssembly,
@@ -70,4 +150,5 @@ public static class AssemblyLoader {
       logger?.LogDebug($"unloaded assembly '{assemblyName}'");
     }
   }
+#endif // #if NETFRAMEWORK
 }

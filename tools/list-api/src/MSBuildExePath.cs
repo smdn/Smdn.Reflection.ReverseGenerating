@@ -26,7 +26,13 @@ public static class MSBuildExePath {
         yield return (
           version,
           match.Groups["version_suffix"].Value,
-          Path.Join(match.Groups["root_path"].Value, match.Groups["version_full"].Value)
+#if NETCOREAPP3_1_OR_GREATER || NET5_0_OR_GREATER
+          Path.Join(
+#else
+          Path.Combine(
+#endif
+            match.Groups["root_path"].Value, match.Groups["version_full"].Value
+          )
         );
       }
     }
