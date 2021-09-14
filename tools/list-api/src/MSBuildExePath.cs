@@ -56,8 +56,13 @@ public static class MSBuildExePath {
       (string versionFull, Version version, string versionSuffix, string path) sdk
     )
     {
-      yield return (sdk.versionFull, sdk.version, sdk.versionSuffix, sdk.path, Path.Combine(sdk.path, "MSBuild.dll"));
-      yield return (sdk.versionFull, sdk.version, sdk.versionSuffix, sdk.path, Path.Combine(sdk.path, "MSBuild.exe"));
+      yield return (
+        sdk.versionFull,
+        sdk.version,
+        sdk.versionSuffix,
+        sdk.path,
+        Path.Combine(sdk.path, "MSBuild.dll") // .NET SDK always ships MSBuild executables with the extension 'dll'
+      );
     }
 
     var msbuildExePath = GetSkdPaths()
