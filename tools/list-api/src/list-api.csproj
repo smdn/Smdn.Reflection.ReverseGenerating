@@ -7,6 +7,9 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <!-- Overrides the package version of Newtonsoft.Json which NuGet.Packaging refers to -->
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+
     <PackageReference Include="System.CommandLine" Version="2.0.0-beta1.21308.1" />
     <PackageReference Include="System.Runtime.Loader" Version="4.3.0" Condition="$(TargetFramework.StartsWith('net4'))" />
     <PackageReference Include="Microsoft.Build" Version="16.11.0" />
