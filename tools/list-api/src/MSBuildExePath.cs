@@ -19,11 +19,17 @@ public static class MSBuildExePath {
     RegexOptions.Multiline | RegexOptions.CultureInvariant | RegexOptions.Compiled
   );
 
-  static IEnumerable<(Version version, string versionSuffix, string path)> GetSkdPaths()
+  static IEnumerable<(
+    string versionFull,
+    Version version,
+    string versionSuffix,
+    string path
+  )> GetSkdPaths()
   {
     foreach (Match match in regexSdkPath.Matches(Shell.Execute("dotnet --list-sdks"))) {
       if (Version.TryParse(match.Groups["version"].Value, out var version)) {
         yield return (
+          match.Groups["version_full"].Value,
           version,
           match.Groups["version_suffix"].Value,
 #if NETCOREAPP3_1_OR_GREATER || NET5_0_OR_GREATER
@@ -41,16 +47,17 @@ public static class MSBuildExePath {
   static string GetMSBuildExePath()
   {
     static IEnumerable<(
+      string sdkVersionFull,
       Version sdkVersion,
       string sdkVersionSuffix,
       string sdkPath,
       string msbuildPath
     )> EnumerateMSBuildPath(
-      (Version version, string versionSuffix, string path) sdk
+      (string versionFull, Version version, string versionSuffix, string path) sdk
     )
     {
-      yield return (sdk.version, sdk.versionSuffix, sdk.path, Path.Combine(sdk.path, "MSBuild.dll"));
-      yield return (sdk.version, sdk.versionSuffix, sdk.path, Path.Combine(sdk.path, "MSBuild.exe"));
+      yield return (sdk.versionFull, sdk.version, sdk.versionSuffix, sdk.path, Path.Combine(sdk.path, "MSBuild.dll"));
+      yield return (sdk.versionFull, sdk.version, sdk.versionSuffix, sdk.path, Path.Combine(sdk.path, "MSBuild.exe"));
     }
 
     var msbuildExePath = GetSkdPaths()
