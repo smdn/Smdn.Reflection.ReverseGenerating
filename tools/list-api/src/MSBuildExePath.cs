@@ -12,10 +12,10 @@ namespace Smdn.Reflection.ReverseGenerating.ListApi;
 
 public static class MSBuildExePath {
   private const string patternVersion = @"(?<version>[0-9]+\.[0-9]+\.[0-9]+)";
-  private const string patternVersionSuffix = @"(?<version_suffix>preview[0-9\.]+)";
+  private const string patternVersionSuffix = @"(?<version_suffix>(?:preview|rc)[0-9\.\-]+)";
   private const string patternRootPath = @"(?<root_path>[^\]]+)";
   private static readonly Regex regexSdkPath = new Regex(
-    @$"^(?<version_full>{patternVersion}(\-{patternVersionSuffix})?) \[{patternRootPath}\]$",
+    @$"^(?<version_full>{patternVersion}(\-{patternVersionSuffix})?) \[{patternRootPath}\]\r?$",
     RegexOptions.Multiline | RegexOptions.CultureInvariant | RegexOptions.Compiled
   );
 
