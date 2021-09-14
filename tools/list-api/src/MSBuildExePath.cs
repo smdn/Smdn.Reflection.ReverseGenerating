@@ -24,7 +24,7 @@ public static class MSBuildExePath {
     Version version,
     string versionSuffix,
     string path
-  )> GetSkdPaths()
+  )> GetSdkPaths()
   {
     foreach (Match match in regexSdkPath.Matches(Shell.Execute("dotnet --list-sdks"))) {
       if (Version.TryParse(match.Groups["version"].Value, out var version)) {
@@ -65,7 +65,7 @@ public static class MSBuildExePath {
       );
     }
 
-    var msbuildExePath = GetSkdPaths()
+    var msbuildExePath = GetSdkPaths()
       .SelectMany(EnumerateMSBuildPath)
       .Where(static p => string.IsNullOrEmpty(p.sdkVersionSuffix)) // except preview
       .Where(static p => File.Exists(p.msbuildPath))
