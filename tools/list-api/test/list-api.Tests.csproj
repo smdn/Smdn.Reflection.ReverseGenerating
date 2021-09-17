@@ -5,6 +5,7 @@
     <TargetFrameworks>net5.0;net472</TargetFrameworks>
     <RootNamespace>Smdn.Reflection.ReverseGenerating.ListApi</RootNamespace>
     <TestAssemblyRootDirectory>$(MSBuildThisFileDirectory)..\assm</TestAssemblyRootDirectory>
+    <NoWarn>CS2002;$(NoWarn)</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>
@@ -18,10 +19,17 @@
       <SourceLines Include="public static readonly System.IO.DirectoryInfo RootDirectory = new(@&quot;$(TestAssemblyRootDirectory)&quot;)$([MSBuild]::Escape(';'))" />
       <SourceLines Include="}" />
     </ItemGroup>
+    <PropertyGroup>
+      <TestAssemblyInfoFilePath>$(MSBuildThisFileDirectory)TestAssemblyInfo.cs</TestAssemblyInfoFilePath>
+    </PropertyGroup>
     <WriteLinesToFile
-      File="$(MSBuildThisFileDirectory)TestAssemblyInfo.cs"
+      File="$(TestAssemblyInfoFilePath)"
       Overwrite="true"
       Lines="@(SourceLines)"
     />
+    <ItemGroup>
+      <!-- XXX: This causes compiler warning CS2002. -->
+      <Compile Include="$(TestAssemblyInfoFilePath)" />
+    </ItemGroup>
   </Target>
 </Project>
