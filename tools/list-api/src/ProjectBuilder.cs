@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 
 using Microsoft.Build.Definition;
 using Microsoft.Build.Evaluation;
@@ -62,7 +63,9 @@ public static class ProjectBuilder {
     var proj = new Project(
       projectFile: projectFile.FullName,
       globalProperties: globalProps,
-      toolsVersion: "Current"
+      toolsVersion: RuntimeInformation.FrameworkDescription.Contains(".NET Framework")
+        ? "4.0"
+        : "Current"
     );
 
     var buildRequest = new BuildRequestData(
