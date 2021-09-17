@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFrameworks>net5.0;net472</TargetFrameworks>
+    <TargetFrameworks>net5.0<!-- ;net472 --></TargetFrameworks>
     <LangVersion>10</LangVersion>
     <AssemblyName>list-api</AssemblyName>
   </PropertyGroup>

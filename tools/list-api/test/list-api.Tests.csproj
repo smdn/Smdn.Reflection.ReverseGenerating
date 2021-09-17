@@ -2,7 +2,7 @@
   <Import Project="..\..\..\Common\test\Common.Tests.props" />
 
   <PropertyGroup>
-    <TargetFrameworks>net5.0;net472</TargetFrameworks>
+    <TargetFrameworks>net5.0<!-- ;net472 --></TargetFrameworks>
     <RootNamespace>Smdn.Reflection.ReverseGenerating.ListApi</RootNamespace>
     <TestAssemblyRootDirectory>$(MSBuildThisFileDirectory)..\assm</TestAssemblyRootDirectory>
     <NoWarn>CS2002;$(NoWarn)</NoWarn>
