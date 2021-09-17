@@ -11,6 +11,7 @@ using Smdn.OperatingSystem;
 namespace Smdn.Reflection.ReverseGenerating.ListApi;
 
 public static class MSBuildExePath {
+#if false
   private const string patternVersion = @"(?<version>[0-9]+\.[0-9]+\.[0-9]+)";
   private const string patternVersionSuffix = @"(?<version_suffix>(?:preview|rc)[0-9\.\-]+)";
   private const string patternRootPath = @"(?<root_path>[^\]]+)";
@@ -43,9 +44,55 @@ public static class MSBuildExePath {
       }
     }
   }
+#endif
 
-  static string GetMSBuildExePath()
+  private static readonly Regex regexSdkBasePath = new Regex(
+    @"^\s*Base Path:\s+(?<base_path>.+)$",
+    RegexOptions.Multiline | RegexOptions.CultureInvariant | RegexOptions.Compiled
+  );
+
+  private static string GetSdkBasePath(out string sdkVersion)
   {
+    sdkVersion = default;
+
+    var match = regexSdkBasePath.Match(Shell.Execute("dotnet --info"));
+
+    if (match.Success) {
+      var basePath = match.Groups["base_path"].Value.TrimEnd();
+
+      sdkVersion = new DirectoryInfo(basePath).Name;
+
+      return basePath;
+    }
+
+    return null;
+  }
+
+  static string GetMSBuildExePath(out string sdkVersion)
+  {
+#if true
+    sdkVersion = default;
+
+    var sdkBasePath = GetSdkBasePath(out sdkVersion);
+
+    if (sdkBasePath is null)
+      throw new InvalidOperationException("could not get SDK base path");
+
+    var msbuildExePath =
+#if NETCOREAPP3_1_OR_GREATER || NET5_0_OR_GREATER
+      Path.Join(
+#else
+      Path.Combine(
+#endif
+        sdkBasePath,
+        "MSBuild.dll" // .NET SDK always ships MSBuild executables with the extension 'dll'
+      );
+
+    if (!File.Exists(msbuildExePath))
+      throw new InvalidOperationException("MSBuild not found");
+
+    return msbuildExePath;
+#else
     static IEnumerable<(
       string sdkVersionFull,
       Version sdkVersion,
@@ -65,15 +112,18 @@ public static class MSBuildExePath {
       );
     }
 
-    var msbuildExePath = GetSdkPaths()
+    sdkVersion = default;
+
+    (var msbuildExePath, sdkVersion) = GetSdkPaths()
       .SelectMany(EnumerateMSBuildPath)
       .Where(static p => string.IsNullOrEmpty(p.sdkVersionSuffix)) // except preview
       .Where(static p => File.Exists(p.msbuildPath))
       .OrderByDescending(static p => p.sdkVersion) // newest one
-      .Select(static p => p.msbuildPath)
+      .Select(static p => (p.msbuildPath, p.sdkVersionFull))
       .FirstOrDefault();
 
     return msbuildExePath ?? throw new InvalidOperationException("MSBuild not found");
+#endif
   }
 
   public static void EnsureSetEnvVar(ILogger logger = null)
@@ -81,7 +131,7 @@ public static class MSBuildExePath {
     const string MSBUILD_EXE_PATH = nameof(MSBUILD_EXE_PATH);
 
     if (string.IsNullOrEmpty(Environment.GetEnvironmentVariable(MSBUILD_EXE_PATH)))
-      Environment.SetEnvironmentVariable(MSBUILD_EXE_PATH, GetMSBuildExePath());
+      Environment.SetEnvironmentVariable(MSBUILD_EXE_PATH, GetMSBuildExePath(out _));
 
     logger?.LogDebug($"{MSBUILD_EXE_PATH}: {Environment.GetEnvironmentVariable(MSBUILD_EXE_PATH)}");
   }
