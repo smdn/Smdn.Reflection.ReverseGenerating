@@ -11,6 +11,17 @@ using Smdn.OperatingSystem;
 namespace Smdn.Reflection.ReverseGenerating.ListApi;
 
 public static class MSBuildExePath {
+  private static string JoinPath(string path1, string path2)
+  {
+#if NETCOREAPP3_1_OR_GREATER || NET5_0_OR_GREATER
+    return Path.Join(
+#else
+    return Path.Combine(
+#endif
+      path1, path2
+    );
+  }
+
 #if false
   private const string patternVersion = @"(?<version>[0-9]+\.[0-9]+\.[0-9]+)";
   private const string patternVersionSuffix = @"(?<version_suffix>(?:preview|rc)[0-9\.\-]+)";
@@ -33,13 +44,7 @@ public static class MSBuildExePath {
           match.Groups["version_full"].Value,
           version,
           match.Groups["version_suffix"].Value,
-#if NETCOREAPP3_1_OR_GREATER || NET5_0_OR_GREATER
-          Path.Join(
-#else
-          Path.Combine(
-#endif
-            match.Groups["root_path"].Value, match.Groups["version_full"].Value
-          )
+          JoinPath(match.Groups["root_path"].Value, match.Groups["version_full"].Value)
         );
       }
     }
@@ -78,15 +83,10 @@ public static class MSBuildExePath {
     if (sdkBasePath is null)
       throw new InvalidOperationException("could not get SDK base path");
 
-    var msbuildExePath =
-#if NETCOREAPP3_1_OR_GREATER || NET5_0_OR_GREATER
-      Path.Join(
-#else
-      Path.Combine(
-#endif
-        sdkBasePath,
-        "MSBuild.dll" // .NET SDK always ships MSBuild executables with the extension 'dll'
-      );
+    var msbuildExePath = JoinPath(
+      sdkBasePath,
+      "MSBuild.dll" // .NET SDK always ships MSBuild executables with the extension 'dll'
+    );
 
     if (!File.Exists(msbuildExePath))
       throw new InvalidOperationException("MSBuild not found");
@@ -108,7 +108,10 @@ public static class MSBuildExePath {
         sdk.version,
         sdk.versionSuffix,
         sdk.path,
-        Path.Combine(sdk.path, "MSBuild.dll") // .NET SDK always ships MSBuild executables with the extension 'dll'
+        JoinPath(
+          sdk.path,
+          "MSBuild.dll" // .NET SDK always ships MSBuild executables with the extension 'dll'
+        )
       );
     }
 
