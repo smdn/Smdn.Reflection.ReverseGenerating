@@ -8,7 +8,7 @@ using System.Reflection;
 using NUnit.Framework;
 
 namespace Smdn.Reflection.ReverseGenerating {
-  internal abstract class GeneratorTestCaseAttribute : Attribute {
+  public abstract class GeneratorTestCaseAttribute : Attribute {
     public string Expected { get; private set; }
     public bool TranslateLanguagePrimitiveTypeDeclaration { get; set; } = true;
     public bool MemberWithNamespace { get; set; } = true;

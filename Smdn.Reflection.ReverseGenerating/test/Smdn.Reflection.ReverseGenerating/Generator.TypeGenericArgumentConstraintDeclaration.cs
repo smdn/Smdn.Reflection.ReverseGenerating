@@ -7,7 +7,7 @@ using System.Runtime.CompilerServices;
 using NUnit.Framework;
 
 namespace Smdn.Reflection.ReverseGenerating {
-  class TypeGenericArgumentConstraintTestCaseAttribute : GeneratorTestCaseAttribute {
+  public class TypeGenericArgumentConstraintTestCaseAttribute : GeneratorTestCaseAttribute {
     public TypeGenericArgumentConstraintTestCaseAttribute(
       string expected,
       [CallerFilePath] string sourceFilePath = null,
@@ -81,21 +81,25 @@ namespace Smdn.Reflection.ReverseGenerating {
   }
 
   partial class GeneratorTests {
-    [Test]
-    public void TestGenerateGenericArgumentConstraintDeclaration_OfType()
-    {
-      foreach (var type in FindTypes(t => t.FullName.Contains(".TestCases.TypeGenericArgumentConstraints."))) {
-        var attr = type.GetCustomAttribute<TypeGenericArgumentConstraintTestCaseAttribute>();
-
-        if (attr == null)
-          continue;
-
-        Assert.AreEqual(
-          attr.Expected,
-          Generator.GenerateGenericArgumentConstraintDeclaration(type.GetGenericArguments().First(), null, GetGeneratorOptions(attr)),
-          message: $"{attr.SourceLocation} ({type.FullName})"
+    private static System.Collections.IEnumerable YieldGenericArgumentConstraintDeclarationOfTypeTestCase()
+      => FindTypes(t => t.FullName.Contains(".TestCases.TypeGenericArgumentConstraints."))
+        .SelectMany(
+          t => t.GetCustomAttributes<TypeGenericArgumentConstraintTestCaseAttribute>().Select(
+            a => new object[] { a, t }
+          )
         );
-      }
+
+    [TestCaseSource(nameof(YieldGenericArgumentConstraintDeclarationOfTypeTestCase))]
+    public void TestGenerateGenericArgumentConstraintDeclaration_OfType(
+      TypeGenericArgumentConstraintTestCaseAttribute attrTestCase,
+      Type type
+    )
+    {
+      Assert.AreEqual(
+        attrTestCase.Expected,
+        Generator.GenerateGenericArgumentConstraintDeclaration(type.GetGenericArguments().First(), null, GetGeneratorOptions(attrTestCase)),
+        message: $"{attrTestCase.SourceLocation} ({type.FullName})"
+      );
     }
   }
 }

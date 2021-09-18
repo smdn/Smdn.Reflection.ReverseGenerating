@@ -3,13 +3,14 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using NUnit.Framework;
 
 namespace Smdn.Reflection.ReverseGenerating {
   [AttributeUsage(AttributeTargets.All, AllowMultiple = true, Inherited = false)]
-  class TypeDeclarationTestCaseAttribute : GeneratorTestCaseAttribute {
+  public class TypeDeclarationTestCaseAttribute : GeneratorTestCaseAttribute {
     public Type TestTargetType { get; }
 
     public TypeDeclarationTestCaseAttribute(
@@ -394,32 +395,46 @@ namespace Smdn.Reflection.ReverseGenerating {
   }
 
   partial class GeneratorTests {
-    [Test]
-    public void TestGenerateTypeDeclaration()
+    private static System.Collections.IEnumerable YieldTypeDeclarationTestCase(
+      string namespaceOfTestCase
+    )
+      => FindTypes(t => t.FullName.Contains(namespaceOfTestCase))
+        .SelectMany(
+          t => t.GetCustomAttributes<TypeDeclarationTestCaseAttribute>().Select(
+            a => new object[] { a, t }
+          )
+        );
+
+    [TestCaseSource(
+      nameof(YieldTypeDeclarationTestCase),
+      new object[] { ".TestCases.TypeDeclaration." }
+    )]
+    public void TestGenerateTypeDeclaration(
+      TypeDeclarationTestCaseAttribute attrTestCase,
+      Type type
+    )
     {
-      foreach (var type in FindTypes(t => t.FullName.Contains(".TestCases.TypeDeclaration."))) {
-        foreach (var attr in type.GetCustomAttributes<TypeDeclarationTestCaseAttribute>()) {
-          Assert.AreEqual(
-            attr.Expected,
-            Generator.GenerateTypeDeclaration(attr.TestTargetType ?? type, null, GetGeneratorOptions(attr)),
-            message: $"{attr.SourceLocation} ({type.FullName})"
-          );
-        }
-      }
+      Assert.AreEqual(
+        attrTestCase.Expected,
+        Generator.GenerateTypeDeclaration(attrTestCase.TestTargetType ?? type, null, GetGeneratorOptions(attrTestCase)),
+        message: $"{attrTestCase.SourceLocation} ({type.FullName})"
+      );
     }
 
-    [Test]
-    public void TestGenerateTypeDeclarationWithExplicitBaseTypeAndInterfaces()
+    [TestCaseSource(
+      nameof(YieldTypeDeclarationTestCase),
+      new object[] { ".TestCases.TypeDeclarationWithExplicitBaseTypeAndInterfaces." }
+    )]
+    public void TestGenerateTypeDeclarationWithExplicitBaseTypeAndInterfaces(
+      TypeDeclarationTestCaseAttribute attrTestCase,
+      Type type
+    )
     {
-      foreach (var type in FindTypes(t => t.FullName.Contains(".TestCases.TypeDeclarationWithExplicitBaseTypeAndInterfaces."))) {
-        foreach (var attr in type.GetCustomAttributes<TypeDeclarationTestCaseAttribute>()) {
-          Assert.AreEqual(
-            attr.Expected.Replace("\r\n", "\n"),
-            string.Join("\n", Generator.GenerateTypeDeclarationWithExplicitBaseTypeAndInterfaces(attr.TestTargetType ?? type, null, GetGeneratorOptions(attr))),
-            message: $"{attr.SourceLocation} ({type.FullName})"
-          );
-        }
-      }
+      Assert.AreEqual(
+        attrTestCase.Expected.Replace("\r\n", "\n"),
+        string.Join("\n", Generator.GenerateTypeDeclarationWithExplicitBaseTypeAndInterfaces(attrTestCase.TestTargetType ?? type, null, GetGeneratorOptions(attrTestCase))),
+        message: $"{attrTestCase.SourceLocation} ({type.FullName})"
+      );
     }
   }
 }

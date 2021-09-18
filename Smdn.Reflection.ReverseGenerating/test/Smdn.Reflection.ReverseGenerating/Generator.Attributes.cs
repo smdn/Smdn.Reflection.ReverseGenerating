@@ -1,12 +1,13 @@
 // SPDX-FileCopyrightText: 2020 smdn <smdn@smdn.jp>
 // SPDX-License-Identifier: MIT
 using System;
+using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using NUnit.Framework;
 
 namespace Smdn.Reflection.ReverseGenerating {
-  class AttributeTestCaseAttribute : GeneratorTestCaseAttribute {
+  public class AttributeTestCaseAttribute : GeneratorTestCaseAttribute {
     public AttributeTestCaseAttribute(
       string expected,
       [CallerFilePath] string sourceFilePath = null,
@@ -128,30 +129,33 @@ namespace Smdn.Reflection.ReverseGenerating {
   }
 
   partial class GeneratorTests {
-    [Test]
-    public void TestGenerateAttributeList()
-    {
-      foreach (var type in FindTypes(t => t.FullName.Contains(".TestCases.Attributes."))) {
-        Test(type);
-
-        foreach (var member in type.GetMembers(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.Instance)) {
-          Test(member);
-        }
-      }
-
-      static void Test(MemberInfo typeOrMember)
-      {
-        var attr = typeOrMember.GetCustomAttribute<AttributeTestCaseAttribute>();
-
-        if (attr == null)
-          return;
-
-        Assert.AreEqual(
-          attr.Expected,
-          string.Join(", ", Generator.GenerateAttributeList(typeOrMember, null, GetGeneratorOptions(attr))),
-          message: $"{attr.SourceLocation} ({typeOrMember.DeclaringType?.FullName}.{typeOrMember.Name})"
+    private static System.Collections.IEnumerable YieldAttributeListTestCase()
+      => FindTypes(t => t.FullName.Contains(".TestCases.Attributes."))
+        .SelectMany(t => t
+          .GetMembers(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static | BindingFlags.DeclaredOnly)
+          .Prepend((MemberInfo)t) // prepend type itself as a test target
+        )
+        .SelectMany(
+          m => m.GetCustomAttributes<AttributeTestCaseAttribute>().Select(
+            a => new object[] { a, m }
+          )
         );
-      }
+
+    [TestCaseSource(nameof(YieldAttributeListTestCase))]
+    public void TestGenerateAttributeList(
+      AttributeTestCaseAttribute attrTestCase,
+      MemberInfo typeOrMember
+    )
+    {
+      var typeOrMemberName = typeOrMember is Type t
+        ? t.FullName
+        : $"{typeOrMember.DeclaringType?.FullName}.{typeOrMember.Name}";
+
+      Assert.AreEqual(
+        attrTestCase.Expected,
+        string.Join(", ", Generator.GenerateAttributeList(typeOrMember, null, GetGeneratorOptions(attrTestCase))),
+        message: $"{attrTestCase.SourceLocation} ({typeOrMemberName})"
+      );
     }
   }
 }

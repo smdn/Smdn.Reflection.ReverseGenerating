@@ -10,7 +10,7 @@ using NUnit.Framework;
 
 namespace Smdn.Reflection.ReverseGenerating {
   [AttributeUsage(AttributeTargets.All, AllowMultiple = true, Inherited = false)]
-  class MemberDeclarationTestCaseAttribute : GeneratorTestCaseAttribute {
+  public class MemberDeclarationTestCaseAttribute : GeneratorTestCaseAttribute {
     public MemberDeclarationTestCaseAttribute(
       string expected,
       [CallerFilePath] string sourceFilePath = null,
@@ -1127,22 +1127,27 @@ namespace Smdn.Reflection.ReverseGenerating {
   }
 
   partial class GeneratorTests {
-    [Test]
-    public void TestGenerateMemberDeclaration()
-    {
-      foreach (var type in FindTypes(t => t.FullName.Contains(".TestCases.MemberDeclaration."))) {
-        const BindingFlags memberBindingFlags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static | BindingFlags.DeclaredOnly;
+    private static System.Collections.IEnumerable YieldMemberDeclarationTestCase()
+      => FindTypes(t => t.FullName.Contains(".TestCases.MemberDeclaration."))
+        .SelectMany(t => t.GetMembers(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static | BindingFlags.DeclaredOnly))
+        .Where(m => m is not Type) // except nested type
+        .SelectMany(
+          m => m.GetCustomAttributes<MemberDeclarationTestCaseAttribute>().Select(
+            a => new object[] { a, m }
+          )
+        );
 
-        foreach (var member in type.GetMembers(memberBindingFlags).Where(m => !(m is Type /*except nested type*/))) {
-          foreach (var attr in member.GetCustomAttributes<MemberDeclarationTestCaseAttribute>()) {
-            Assert.AreEqual(
-              attr.Expected,
-              Generator.GenerateMemberDeclaration(member, null, GetGeneratorOptions(attr)),
-              message: $"{attr.SourceLocation} ({type.FullName}.{member.Name})"
-            );
-          }
-        }
-      }
+    [TestCaseSource(nameof(YieldMemberDeclarationTestCase))]
+    public void TestGenerateMemberDeclaration(
+      MemberDeclarationTestCaseAttribute attrTestCase,
+      MemberInfo member
+    )
+    {
+      Assert.AreEqual(
+        attrTestCase.Expected,
+        Generator.GenerateMemberDeclaration(member, null, GetGeneratorOptions(attrTestCase)),
+        message: $"{attrTestCase.SourceLocation} ({member.DeclaringType.FullName}.{member.Name})"
+      );
     }
   }
 }

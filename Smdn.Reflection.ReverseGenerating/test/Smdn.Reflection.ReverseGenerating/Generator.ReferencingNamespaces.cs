@@ -9,7 +9,7 @@ using NUnit.Framework;
 
 namespace Smdn.Reflection.ReverseGenerating {
   [AttributeUsage(AttributeTargets.All, AllowMultiple = true, Inherited = false)]
-  class ReferencingNamespacesTestCaseAttribute : GeneratorTestCaseAttribute {
+  public class ReferencingNamespacesTestCaseAttribute : GeneratorTestCaseAttribute {
     public ReferencingNamespacesTestCaseAttribute(
       string expected,
       [CallerFilePath] string sourceFilePath = null,
@@ -110,47 +110,69 @@ namespace Smdn.Reflection.ReverseGenerating {
   }
 
   partial class GeneratorTests {
-    [Test]
-    public void TestReferencingNamespacesOfType()
+    private static System.Collections.IEnumerable YieldReferencingNamespacesTestCase(
+      string namespaceOfTestCase,
+      Func<MemberInfo, bool> predicate
+    )
+      => FindTypes(t => t.FullName.Contains(namespaceOfTestCase))
+        .SelectMany(t => t
+          .GetMembers(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static | BindingFlags.DeclaredOnly)
+          .Prepend((MemberInfo)t) // prepend type itself as a test target
+        )
+        .Where(predicate)
+        .SelectMany(
+          m => m.GetCustomAttributes<ReferencingNamespacesTestCaseAttribute>().Select(
+            a => new object[] { a, m }
+          )
+        );
+
+    private static System.Collections.IEnumerable YieldReferencingNamespacesOfTypesTestCase()
+      => YieldReferencingNamespacesTestCase(
+        ".TestCases.ReferencingNamespaces.Types.",
+        m => m is Type
+      );
+
+    [TestCaseSource(nameof(YieldReferencingNamespacesOfTypesTestCase))]
+    public void TestReferencingNamespacesOfType(
+      ReferencingNamespacesTestCaseAttribute attrTestCase,
+      Type type
+    )
     {
-      foreach (var type in FindTypes(t => t.FullName.Contains(".TestCases.ReferencingNamespaces.Types."))) {
-        foreach (var attr in type.GetCustomAttributes<ReferencingNamespacesTestCaseAttribute>()) {
-          var namespaces = new HashSet<string>();
+      var namespaces = new HashSet<string>();
 
-          if (attr.TypeDeclarationWithExplicitBaseTypeAndInterfaces)
-            Generator.GenerateTypeDeclarationWithExplicitBaseTypeAndInterfaces(type, namespaces, GetGeneratorOptions(attr)).ToList();
-          else
-            Generator.GenerateTypeDeclaration(type, namespaces, GetGeneratorOptions(attr));
+      if (attrTestCase.TypeDeclarationWithExplicitBaseTypeAndInterfaces)
+        Generator.GenerateTypeDeclarationWithExplicitBaseTypeAndInterfaces(type, namespaces, GetGeneratorOptions(attrTestCase)).ToList();
+      else
+        Generator.GenerateTypeDeclaration(type, namespaces, GetGeneratorOptions(attrTestCase));
 
-          Assert.That(
-            namespaces,
-            Is.EquivalentTo(attr.GetExpectedSet()),
-            message: $"{attr.SourceLocation} ({type.FullName})"
-          );
-        }
-      }
+      Assert.That(
+        namespaces,
+        Is.EquivalentTo(attrTestCase.GetExpectedSet()),
+        message: $"{attrTestCase.SourceLocation} ({type.FullName})"
+      );
     }
 
-    [Test]
-    public void TestReferencingNamespacesOfMembers()
+    private static System.Collections.IEnumerable YieldReferencingNamespacesOfMembersTestCase()
+      => YieldReferencingNamespacesTestCase(
+        ".TestCases.ReferencingNamespaces.Members.",
+        m => m is not Type
+      );
+
+    [TestCaseSource(nameof(YieldReferencingNamespacesOfMembersTestCase))]
+    public void TestReferencingNamespacesOfMembers(
+      ReferencingNamespacesTestCaseAttribute attrTestCase,
+      MemberInfo member
+    )
     {
-      foreach (var type in FindTypes(t => t.FullName.Contains(".TestCases.ReferencingNamespaces.Members."))) {
-        const BindingFlags memberBindingFlags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static | BindingFlags.DeclaredOnly;
+      var namespaces = new HashSet<string>();
 
-        foreach (var member in type.GetMembers(memberBindingFlags)) {
-          foreach (var attr in member.GetCustomAttributes<ReferencingNamespacesTestCaseAttribute>()) {
-            var namespaces = new HashSet<string>();
+      Generator.GenerateMemberDeclaration(member, namespaces, GetGeneratorOptions(attrTestCase));
 
-            Generator.GenerateMemberDeclaration(member, namespaces, GetGeneratorOptions(attr));
-
-            Assert.That(
-              namespaces,
-              Is.EquivalentTo(attr.GetExpectedSet()),
-              message: $"{attr.SourceLocation} ({type.FullName}.{member.Name})"
-            );
-          }
-        }
-      }
+      Assert.That(
+        namespaces,
+        Is.EquivalentTo(attrTestCase.GetExpectedSet()),
+        message: $"{attrTestCase.SourceLocation} ({member.DeclaringType?.FullName}.{member.Name})"
+      );
     }
   }
 }

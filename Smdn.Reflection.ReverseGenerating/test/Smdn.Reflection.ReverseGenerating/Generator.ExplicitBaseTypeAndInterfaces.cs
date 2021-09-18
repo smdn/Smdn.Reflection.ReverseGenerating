@@ -3,13 +3,14 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using NUnit.Framework;
 
 namespace Smdn.Reflection.ReverseGenerating {
   [AttributeUsage(AttributeTargets.All, AllowMultiple = true, Inherited = false)]
-  class ExplicitBaseTypeAndInterfacesTestCaseAttribute : GeneratorTestCaseAttribute {
+  public class ExplicitBaseTypeAndInterfacesTestCaseAttribute : GeneratorTestCaseAttribute {
     public ExplicitBaseTypeAndInterfacesTestCaseAttribute(
       string expected,
       [CallerFilePath] string sourceFilePath = null,
@@ -158,18 +159,25 @@ namespace Smdn.Reflection.ReverseGenerating {
   }
 
   partial class GeneratorTests {
-    [Test]
-    public void TestGenerateExplicitBaseTypeAndInterfaces()
+    private static System.Collections.IEnumerable YieldExplicitBaseTypeAndInterfacesTestCases()
+      => FindTypes(t => t.FullName.Contains(".TestCases.ExplicitBaseTypeAndInterfaces."))
+        .SelectMany(
+          t => t.GetCustomAttributes<ExplicitBaseTypeAndInterfacesTestCaseAttribute>().Select(
+            a => new object[] { a, t }
+          )
+        );
+
+    [TestCaseSource(nameof(YieldExplicitBaseTypeAndInterfacesTestCases))]
+    public void TestGenerateExplicitBaseTypeAndInterfaces(
+      ExplicitBaseTypeAndInterfacesTestCaseAttribute attrTestCase,
+      Type type
+    )
     {
-      foreach (var type in FindTypes(t => t.FullName.Contains(".TestCases.ExplicitBaseTypeAndInterfaces."))) {
-        foreach (var attr in type.GetCustomAttributes<ExplicitBaseTypeAndInterfacesTestCaseAttribute>()) {
-          Assert.AreEqual(
-            attr.Expected,
-            string.Join(", ", Generator.GenerateExplicitBaseTypeAndInterfaces(type, null, GetGeneratorOptions(attr))),
-            message: $"{attr.SourceLocation} ({type.FullName})"
-          );
-        }
-      }
+      Assert.AreEqual(
+        attrTestCase.Expected,
+        string.Join(", ", Generator.GenerateExplicitBaseTypeAndInterfaces(type, null, GetGeneratorOptions(attrTestCase))),
+        message: $"{attrTestCase.SourceLocation} ({type.FullName})"
+      );
     }
   }
 }
