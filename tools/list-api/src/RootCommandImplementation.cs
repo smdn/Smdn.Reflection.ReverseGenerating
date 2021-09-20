@@ -140,7 +140,7 @@ public class RootCommandImplementation {
           writer.WriteAssemblyInfoHeader();
           writer.WriteExportedTypes();
 
-          arg.logger.LogInformation($"generated API list '{outputFilePath}' from assembly '{assm.Location}'");
+          arg.logger?.LogInformation($"generated API list '{outputFilePath}' from assembly '{assm.Location}'");
 
           return outputFilePath;
         }
@@ -302,7 +302,7 @@ public class RootCommandImplementation {
       );
     }
     else {
-      logger.LogWarning($"unknown type of file: {inputFile}");
+      logger?.LogWarning($"unknown type of file: {inputFile}");
 
       // try process as an assembly file
       inputAssemblyFiles = Enumerable.Repeat(inputFile, 1);
