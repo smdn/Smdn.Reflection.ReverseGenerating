@@ -7,10 +7,8 @@ using System.Reflection;
 using System.Text;
 using System.Runtime.InteropServices;
 
-using Smdn.Reflection.Attributes;
-
 namespace Smdn.Reflection.ReverseGenerating {
-  public static class Generator {
+  public static partial class Generator {
     public static string GenerateTypeDeclaration(
       Type t,
       ISet<string> referencingNamespaces,
@@ -232,88 +230,6 @@ namespace Smdn.Reflection.ReverseGenerating {
         .OrderBy(type => type.IsInterface)
         .ThenBy(type => type.Name, StringComparer.Ordinal)
         .Select(type => type.Name);
-    }
-
-    public static IEnumerable<string> GenerateAttributeList(ICustomAttributeProvider attributeProvider, ISet<string> referencingNamespaces, GeneratorOptions options)
-    {
-      if (attributeProvider is null)
-        throw new ArgumentNullException(nameof(attributeProvider));
-
-      return GetAttributes(attributeProvider)
-        .OrderBy(attr => attr.GetAttributeType().FullName)
-        .Select(attr =>
-          (
-            name: ConvertAttributeName(attr),
-            args: string.Join(", ", ConvertAttributeArguments(attr))
-          )
-        )
-        .Select(a => "[" + a.name + (string.IsNullOrEmpty(a.args) ? string.Empty : "(" + a.args + ")") + "]");
-
-      static IEnumerable<CustomAttributeData> GetAttributes(ICustomAttributeProvider attributeProvider)
-      {
-        foreach (var attr in attributeProvider.GetCustomAttributeDataList()) {
-          if (attr.AttributeType == typeof(System.CLSCompliantAttribute))
-            continue; // ignore
-          if (attr.AttributeType == typeof(System.Reflection.DefaultMemberAttribute))
-            continue; // ignore
-
-          var nsAttr = attr.AttributeType.Namespace;
-
-          if (string.Equals("System.Runtime.CompilerServices", nsAttr, StringComparison.Ordinal))
-            continue; // ignore
-
-          if (string.Equals("System", nsAttr.Split('.')[0], StringComparison.Ordinal))
-            yield return attr;
-        }
-
-        if (
-          attributeProvider is Type t &&
-          t.IsValueType &&
-          !t.IsEnum &&
-          !t.IsStructLayoutDefault()
-        ) {
-          // yield pseudo CustomAttributeData for StructLayoutAttribute
-          yield return new StructLayoutCustomAttributeData(t.StructLayoutAttribute);
-        }
-      }
-
-      string ConvertAttributeName(CustomAttributeData attr)
-      {
-        referencingNamespaces?.Add(attr.GetAttributeType().Namespace);
-
-        var nameOfAttr = attr.GetAttributeType().FormatTypeName(typeWithNamespace: options.TypeDeclarationWithNamespace);
-
-        if (nameOfAttr.EndsWith("Attribute", StringComparison.Ordinal))
-          nameOfAttr = nameOfAttr.Substring(0, nameOfAttr.Length - 9);
-
-        return nameOfAttr;
-      }
-
-      IEnumerable<string> ConvertAttributeArguments(CustomAttributeData attr)
-      {
-        foreach (var param in attr.Constructor.GetParameters()) {
-          yield return ConvertAttributeTypedArgument(
-            attr.ConstructorArguments[param.Position]
-          );
-        }
-
-        foreach (var namedArg in attr.NamedArguments) {
-          yield return string.Concat(
-            namedArg.MemberName,
-            " = ",
-            ConvertAttributeTypedArgument(namedArg.TypedValue)
-          );
-        }
-      }
-
-      string ConvertAttributeTypedArgument(CustomAttributeTypedArgument arg)
-        => CSharpFormatter.FormatValueDeclaration(
-          arg.GetTypedValue(),
-          arg.ArgumentType,
-          typeWithNamespace: options.TypeDeclarationWithNamespace,
-          findConstantField: true,
-          useDefaultLiteral: options.MemberDeclarationUseDefaultLiteral
-        );
     }
 
     public static string GenerateMemberDeclaration(
