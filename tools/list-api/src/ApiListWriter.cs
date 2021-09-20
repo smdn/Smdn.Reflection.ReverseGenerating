@@ -27,7 +27,7 @@ class ApiListWriter {
 
   public void WriteAssemblyInfoHeader()
   {
-    BaseWriter.WriteLine($"// {assembly.GetCustomAttribute<AssemblyProductAttribute>()?.Product}");
+    BaseWriter.WriteLine($"// {Path.GetFileName(assembly.Location)} ({assembly.GetCustomAttribute<AssemblyProductAttribute>()?.Product})");
     BaseWriter.WriteLine($"//   Name: {assembly.GetName().Name}");
     BaseWriter.WriteLine($"//   AssemblyVersion: {assembly.GetName().Version}");
     BaseWriter.WriteLine($"//   InformationalVersion: {assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion}");
