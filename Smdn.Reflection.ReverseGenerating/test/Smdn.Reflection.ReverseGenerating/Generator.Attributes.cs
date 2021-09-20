@@ -75,7 +75,7 @@ namespace Smdn.Reflection.ReverseGenerating {
         [Obsolete("deprecated", true)]
         class Obsolete3 { }
 
-        [AttributeTestCase("[System.Obsolete(\"deprecated\")]")]
+        [AttributeTestCase("[System.Obsolete(\"deprecated\", false)]")]
         [Obsolete("deprecated", false)]
         class Obsolete4 { }
 
