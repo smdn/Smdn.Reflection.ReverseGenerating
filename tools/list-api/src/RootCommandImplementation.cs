@@ -72,7 +72,7 @@ public class RootCommandImplementation {
   public RootCommandImplementation(IServiceProvider serviceProvider = null)
   {
     this.serviceProvider = serviceProvider;
-    this.logger = serviceProvider?.GetService<ILoggerFactory>()?.CreateLogger<RootCommandImplementation>();
+    this.logger = serviceProvider?.GetService<ILoggerFactory>()?.CreateLogger(Program.LoggerCategoryName);
   }
 
   internal Command CreateCommand()

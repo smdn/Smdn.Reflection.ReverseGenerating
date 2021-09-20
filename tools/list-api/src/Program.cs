@@ -11,6 +11,8 @@ using Microsoft.Extensions.Logging.Console;
 namespace Smdn.Reflection.ReverseGenerating.ListApi;
 
 class Program {
+  internal static string LoggerCategoryName => typeof(Program).Assembly.GetName().Name;
+
   static int Main(string[] args)
   {
     var services = new ServiceCollection();
