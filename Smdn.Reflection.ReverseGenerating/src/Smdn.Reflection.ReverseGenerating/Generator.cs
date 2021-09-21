@@ -462,22 +462,28 @@ namespace Smdn.Reflection.ReverseGenerating {
       var method = m as MethodInfo;
       var methodModifiers = GetMemberModifierOf(m, options);
       var isByRefReturnType = (method != null && method.ReturnType.IsByRef);
-      var methodReturnType = isByRefReturnType ? "ref " + method.ReturnType.GetElementType().FormatTypeName(attributeProvider: method.ReturnTypeCustomAttributes, typeWithNamespace: memberOptions.WithNamespace) : method?.ReturnType?.FormatTypeName(attributeProvider: method?.ReturnTypeCustomAttributes, typeWithNamespace: memberOptions.WithNamespace);
-      var methodGenericParameters = m.IsGenericMethod ? string.Concat("<", string.Join(", ", m.GetGenericArguments().Select(t => t.FormatTypeName(typeWithNamespace: memberOptions.WithNamespace))), ">") : null;
+      var methodReturnType = isByRefReturnType
+        ? "ref " + method.ReturnType.GetElementType().FormatTypeName(attributeProvider: method.ReturnTypeCustomAttributes, typeWithNamespace: memberOptions.WithNamespace)
+        : method?.ReturnType?.FormatTypeName(attributeProvider: method?.ReturnTypeCustomAttributes, typeWithNamespace: memberOptions.WithNamespace);
+      var methodGenericParameters = m.IsGenericMethod
+        ? string.Concat("<", string.Join(", ", m.GetGenericArguments().Select(t => t.FormatTypeName(typeWithNamespace: memberOptions.WithNamespace))), ">")
+        : null;
       var methodParameterList = CSharpFormatter.FormatParameterList(m, typeWithNamespace: memberOptions.WithNamespace, useDefaultLiteral: valueOptions.UseDefaultLiteral);
-      var methodConstraints = method == null ? null : string.Join(" ", method.GetGenericArguments().Select(arg => Generator.GenerateGenericArgumentConstraintDeclaration(arg, referencingNamespaces, options)).Where(d => d != null));
+      var methodConstraints = method == null
+        ? null
+        : string.Join(" ", method.GetGenericArguments().Select(arg => Generator.GenerateGenericArgumentConstraintDeclaration(arg, referencingNamespaces, options)).Where(d => d != null));
       string methodName = null;
-      string methodBody = null;
 
       var endOfStatement = memberOptions.OmitEndOfStatement
         ? string.Empty
         : ";";
 
-      switch (memberOptions.MethodBody) {
-        case MethodBodyOption.None: methodBody = null; break;
-        case MethodBodyOption.EmptyImplementation: methodBody = m.IsAbstract ? endOfStatement : " {}"; break;
-        case MethodBodyOption.ThrowNotImplementedException: methodBody = m.IsAbstract ? endOfStatement : " => throw new NotImplementedException()" + endOfStatement; break;
-      }
+      var methodBody = memberOptions.MethodBody switch {
+        MethodBodyOption.None => null,
+        MethodBodyOption.EmptyImplementation => m.IsAbstract ? endOfStatement : " {}",
+        MethodBodyOption.ThrowNotImplementedException => m.IsAbstract ? endOfStatement : " => throw new NotImplementedException()" + endOfStatement,
+        _ => throw new InvalidOperationException($"invalid value of {nameof(MethodBodyOption)} ({memberOptions.MethodBody})"),
+      };
 
       referencingNamespaces?.UnionWith(m.GetSignatureTypes().Where(mpt => !mpt.ContainsGenericParameters).SelectMany(CSharpFormatter.ToNamespaceList));
 
