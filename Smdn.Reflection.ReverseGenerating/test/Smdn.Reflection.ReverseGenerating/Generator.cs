@@ -42,23 +42,29 @@ namespace Smdn.Reflection.ReverseGenerating {
 
     private static GeneratorOptions GetGeneratorOptions(GeneratorTestCaseAttribute testCaseAttribute)
     {
-      return new GeneratorOptions() {
+      var options = new GeneratorOptions() {
         IgnorePrivateOrAssembly = testCaseAttribute.IgnorePrivateOrAssembly,
 
         TranslateLanguagePrimitiveTypeDeclaration = testCaseAttribute.TranslateLanguagePrimitiveTypeDeclaration,
-
-        TypeDeclarationWithNamespace = testCaseAttribute.TypeWithNamespace,
-        TypeDeclarationWithDeclaringTypeName = testCaseAttribute.TypeWithDeclaringTypeName,
-        TypeDeclarationWithAccessibility = testCaseAttribute.TypeWithAccessibility,
-        TypeDeclarationOmitEndOfStatement = testCaseAttribute.TypeOmitEndOfStatement,
-
-        MemberDeclarationWithNamespace = testCaseAttribute.MemberWithNamespace,
-        MemberDeclarationWithDeclaringTypeName = testCaseAttribute.MemberWithDeclaringTypeName,
-        MemberDeclarationWithAccessibility = testCaseAttribute.MemberWithAccessibility,
-        MemberDeclarationUseDefaultLiteral = testCaseAttribute.UseDefaultLiteral,
-        MemberDeclarationMethodBody = testCaseAttribute.MethodBody,
-        MemberDeclarationOmitEndOfStatement = testCaseAttribute.MemberOmitEndOfStatement,
       };
+
+      var typeDeclarationOptions = options.TypeDeclaration;
+
+      typeDeclarationOptions.WithNamespace = testCaseAttribute.TypeWithNamespace;
+      typeDeclarationOptions.WithDeclaringTypeName = testCaseAttribute.TypeWithDeclaringTypeName;
+      typeDeclarationOptions.WithAccessibility = testCaseAttribute.TypeWithAccessibility;
+      typeDeclarationOptions.OmitEndOfStatement = testCaseAttribute.TypeOmitEndOfStatement;
+
+      var memberDeclarationOptions = options.MemberDeclaration;
+
+      memberDeclarationOptions.WithNamespace = testCaseAttribute.MemberWithNamespace;
+      memberDeclarationOptions.WithDeclaringTypeName = testCaseAttribute.MemberWithDeclaringTypeName;
+      memberDeclarationOptions.WithAccessibility = testCaseAttribute.MemberWithAccessibility;
+      memberDeclarationOptions.UseDefaultLiteral = testCaseAttribute.UseDefaultLiteral;
+      memberDeclarationOptions.MethodBody = testCaseAttribute.MethodBody;
+      memberDeclarationOptions.OmitEndOfStatement = testCaseAttribute.MemberOmitEndOfStatement;
+
+      return options;
     }
   }
 }

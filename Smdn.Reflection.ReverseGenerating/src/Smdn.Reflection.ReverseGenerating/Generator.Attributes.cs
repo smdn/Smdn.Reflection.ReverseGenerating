@@ -56,7 +56,7 @@ namespace Smdn.Reflection.ReverseGenerating {
       {
         referencingNamespaces?.Add(attr.GetAttributeType().Namespace);
 
-        var nameOfAttr = attr.GetAttributeType().FormatTypeName(typeWithNamespace: options.TypeDeclarationWithNamespace);
+        var nameOfAttr = attr.GetAttributeType().FormatTypeName(typeWithNamespace: options.TypeDeclaration.WithNamespace);
 
         if (nameOfAttr.EndsWith("Attribute", StringComparison.Ordinal))
           nameOfAttr = nameOfAttr.Substring(0, nameOfAttr.Length - 9);
@@ -85,9 +85,9 @@ namespace Smdn.Reflection.ReverseGenerating {
         => CSharpFormatter.FormatValueDeclaration(
           arg.GetTypedValue(),
           arg.ArgumentType,
-          typeWithNamespace: options.TypeDeclarationWithNamespace,
+          typeWithNamespace: options.TypeDeclaration.WithNamespace,
           findConstantField: true,
-          useDefaultLiteral: options.MemberDeclarationUseDefaultLiteral
+          useDefaultLiteral: options.MemberDeclaration.UseDefaultLiteral
         );
     }
   }

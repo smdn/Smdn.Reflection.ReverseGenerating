@@ -40,10 +40,10 @@ namespace Smdn.Reflection.ReverseGenerating {
       GeneratorOptions options
     )
     {
-      var accessibilities = options.TypeDeclarationWithAccessibility ? CSharpFormatter.FormatAccessibility(t.GetAccessibility()) + " " : string.Empty;
+      var accessibilities = options.TypeDeclaration.WithAccessibility ? CSharpFormatter.FormatAccessibility(t.GetAccessibility()) + " " : string.Empty;
       var typeName = t.FormatTypeName(
         typeWithNamespace: false,
-        withDeclaringTypeName: options.TypeDeclarationWithDeclaringTypeName,
+        withDeclaringTypeName: options.TypeDeclaration.WithDeclaringTypeName,
         translateLanguagePrimitiveType: options.TranslateLanguagePrimitiveTypeDeclaration
       );
 
@@ -69,14 +69,14 @@ namespace Smdn.Reflection.ReverseGenerating {
         var genericArgumentConstraintDeclaration = genericArgumentConstraints.Count == 0 ? string.Empty : " " + string.Join(" ", genericArgumentConstraints);
         var returnType = signatureInfo.ReturnType.FormatTypeName(
           attributeProvider: signatureInfo.ReturnTypeCustomAttributes,
-          typeWithNamespace: options.TypeDeclarationWithNamespace
+          typeWithNamespace: options.TypeDeclaration.WithNamespace
         );
         var parameterList = CSharpFormatter.FormatParameterList(
           signatureInfo,
-          typeWithNamespace: options.TypeDeclarationWithNamespace,
-          useDefaultLiteral: options.MemberDeclarationUseDefaultLiteral
+          typeWithNamespace: options.TypeDeclaration.WithNamespace,
+          useDefaultLiteral: options.MemberDeclaration.UseDefaultLiteral
         );
-        var endOfStatement = options.TypeDeclarationOmitEndOfStatement
+        var endOfStatement = options.TypeDeclaration.OmitEndOfStatement
           ? string.Empty
           : ";";
 
@@ -195,7 +195,7 @@ namespace Smdn.Reflection.ReverseGenerating {
         GetGenericArgumentConstraintsOf(
           genericArgument,
           referencingNamespaces,
-          genericArgument.DeclaringMethod == null ? options.TypeDeclarationWithNamespace : options.MemberDeclarationWithNamespace
+          genericArgument.DeclaringMethod == null ? options.TypeDeclaration.WithNamespace : options.MemberDeclaration.WithNamespace
         )
       );
 
@@ -222,8 +222,8 @@ namespace Smdn.Reflection.ReverseGenerating {
           return new {
             IsInterface = type.IsInterface,
             Name = type.FormatTypeName(
-              typeWithNamespace: options.TypeDeclarationWithNamespace,
-              withDeclaringTypeName: options.TypeDeclarationWithDeclaringTypeName
+              typeWithNamespace: options.TypeDeclaration.WithNamespace,
+              withDeclaringTypeName: options.TypeDeclaration.WithDeclaringTypeName
             )
           };
         })
@@ -267,6 +267,7 @@ namespace Smdn.Reflection.ReverseGenerating {
         return null;
 
       var sb = new StringBuilder();
+      var memberOptions = options.MemberDeclaration;
 
       if (field.DeclaringType.IsEnum) {
         if (field.IsStatic) {
@@ -279,7 +280,7 @@ namespace Smdn.Reflection.ReverseGenerating {
           else
             sb.Append(val);
 
-          if (!options.MemberDeclarationOmitEndOfStatement)
+          if (!memberOptions.OmitEndOfStatement)
             sb.Append(",");
         }
         else {
@@ -291,7 +292,7 @@ namespace Smdn.Reflection.ReverseGenerating {
 
         sb
           .Append(GetMemberModifierOf(field, options))
-          .Append(field.FieldType.FormatTypeName(attributeProvider: field, typeWithNamespace: options.MemberDeclarationWithNamespace))
+          .Append(field.FieldType.FormatTypeName(attributeProvider: field, typeWithNamespace: memberOptions.WithNamespace))
           .Append(" ")
           .Append(GenerateMemberName(field, options));
 
@@ -300,9 +301,9 @@ namespace Smdn.Reflection.ReverseGenerating {
           var valueDeclaration = CSharpFormatter.FormatValueDeclaration(
             val,
             field.FieldType,
-            typeWithNamespace: options.MemberDeclarationWithNamespace,
+            typeWithNamespace: memberOptions.WithNamespace,
             findConstantField: (field.FieldType != field.DeclaringType),
-            useDefaultLiteral: options.MemberDeclarationUseDefaultLiteral
+            useDefaultLiteral: memberOptions.UseDefaultLiteral
           );
 
           if (valueDeclaration == null) {
@@ -314,12 +315,12 @@ namespace Smdn.Reflection.ReverseGenerating {
           else {
             sb.Append(" = ").Append(valueDeclaration);
 
-            if (!options.MemberDeclarationOmitEndOfStatement)
+            if (!memberOptions.OmitEndOfStatement)
               sb.Append(";");
           }
         }
         else {
-          if (!options.MemberDeclarationOmitEndOfStatement)
+          if (!memberOptions.OmitEndOfStatement)
             sb.Append(";");
         }
       }
@@ -354,12 +355,13 @@ namespace Smdn.Reflection.ReverseGenerating {
       referencingNamespaces?.UnionWith(indexParameters.SelectMany(ip => CSharpFormatter.ToNamespaceList(ip.ParameterType)));
 
       var sb = new StringBuilder();
-      var modifier = GetMemberModifierOf(property, options, out string setAccessibility, out string getAccessibility);
+      var memberOptions = options.MemberDeclaration;
+      var modifier = GetMemberModifierOf(property, memberOptions, out string setAccessibility, out string getAccessibility);
 
       if (explicitInterface == null)
         sb.Append(modifier);
 
-      sb.Append(property.PropertyType.FormatTypeName(attributeProvider: property, typeWithNamespace: options.MemberDeclarationWithNamespace)).Append(" ");
+      sb.Append(property.PropertyType.FormatTypeName(attributeProvider: property, typeWithNamespace: memberOptions.WithNamespace)).Append(" ");
 
       var attrDefaultMember = property.DeclaringType.GetCustomAttribute<DefaultMemberAttribute>();
 
@@ -368,7 +370,7 @@ namespace Smdn.Reflection.ReverseGenerating {
         sb.Append(
           GenerateMemberName(
             property,
-            options.MemberDeclarationWithDeclaringTypeName ? attrDefaultMember.MemberName : "this",
+            memberOptions.WithDeclaringTypeName ? attrDefaultMember.MemberName : "this",
             options
           )
         );
@@ -383,7 +385,7 @@ namespace Smdn.Reflection.ReverseGenerating {
         sb.Append(
           GenerateMemberName(
             property,
-            explicitInterface.FormatTypeName(typeWithNamespace: options.MemberDeclarationWithNamespace) + "." + property.Name.Substring(property.Name.LastIndexOf('.') + 1),
+            explicitInterface.FormatTypeName(typeWithNamespace: memberOptions.WithNamespace) + "." + property.Name.Substring(property.Name.LastIndexOf('.') + 1),
             options
           )
         );
@@ -394,8 +396,8 @@ namespace Smdn.Reflection.ReverseGenerating {
           .Append(
             CSharpFormatter.FormatParameterList(
               indexParameters,
-              typeWithNamespace: options.MemberDeclarationWithNamespace,
-              useDefaultLiteral: options.MemberDeclarationUseDefaultLiteral
+              typeWithNamespace: memberOptions.WithNamespace,
+              useDefaultLiteral: memberOptions.UseDefaultLiteral
             )
           )
           .Append("] ");
@@ -434,7 +436,7 @@ namespace Smdn.Reflection.ReverseGenerating {
 
       static string GenerateAccessorBody(MethodInfo accessor, GeneratorOptions opts)
       {
-        switch (accessor.IsAbstract ? MethodBodyOption.EmptyImplementation : opts.MemberDeclarationMethodBody) {
+        switch (accessor.IsAbstract ? MethodBodyOption.EmptyImplementation : opts.MemberDeclaration.MethodBody) {
           case MethodBodyOption.ThrowNotImplementedException: return " => throw new NotImplementedException(); ";
 
           //case MethodBodyOption.None:
@@ -455,21 +457,22 @@ namespace Smdn.Reflection.ReverseGenerating {
       if (explicitInterfaceMethod == null && (options.IgnorePrivateOrAssembly && m.IsPrivateOrAssembly()))
         return null;
 
+      var memberOptions = options.MemberDeclaration;
       var method = m as MethodInfo;
       var methodModifiers = GetMemberModifierOf(m, options);
       var isByRefReturnType = (method != null && method.ReturnType.IsByRef);
-      var methodReturnType = isByRefReturnType ? "ref " + method.ReturnType.GetElementType().FormatTypeName(attributeProvider: method.ReturnTypeCustomAttributes, typeWithNamespace: options.MemberDeclarationWithNamespace) : method?.ReturnType?.FormatTypeName(attributeProvider: method?.ReturnTypeCustomAttributes, typeWithNamespace: options.MemberDeclarationWithNamespace);
-      var methodGenericParameters = m.IsGenericMethod ? string.Concat("<", string.Join(", ", m.GetGenericArguments().Select(t => t.FormatTypeName(typeWithNamespace: options.MemberDeclarationWithNamespace))), ">") : null;
-      var methodParameterList = CSharpFormatter.FormatParameterList(m, typeWithNamespace: options.MemberDeclarationWithNamespace, useDefaultLiteral: options.MemberDeclarationUseDefaultLiteral);
+      var methodReturnType = isByRefReturnType ? "ref " + method.ReturnType.GetElementType().FormatTypeName(attributeProvider: method.ReturnTypeCustomAttributes, typeWithNamespace: memberOptions.WithNamespace) : method?.ReturnType?.FormatTypeName(attributeProvider: method?.ReturnTypeCustomAttributes, typeWithNamespace: memberOptions.WithNamespace);
+      var methodGenericParameters = m.IsGenericMethod ? string.Concat("<", string.Join(", ", m.GetGenericArguments().Select(t => t.FormatTypeName(typeWithNamespace: memberOptions.WithNamespace))), ">") : null;
+      var methodParameterList = CSharpFormatter.FormatParameterList(m, typeWithNamespace: memberOptions.WithNamespace, useDefaultLiteral: memberOptions.UseDefaultLiteral);
       var methodConstraints = method == null ? null : string.Join(" ", method.GetGenericArguments().Select(arg => Generator.GenerateGenericArgumentConstraintDeclaration(arg, referencingNamespaces, options)).Where(d => d != null));
       string methodName = null;
       string methodBody = null;
 
-      var endOfStatement = options.MemberDeclarationOmitEndOfStatement
+      var endOfStatement = memberOptions.OmitEndOfStatement
         ? string.Empty
         : ";";
 
-      switch (options.MemberDeclarationMethodBody) {
+      switch (memberOptions.MethodBody) {
         case MethodBodyOption.None: methodBody = null; break;
         case MethodBodyOption.EmptyImplementation: methodBody = m.IsAbstract ? endOfStatement : " {}"; break;
         case MethodBodyOption.ThrowNotImplementedException: methodBody = m.IsAbstract ? endOfStatement : " => throw new NotImplementedException()" + endOfStatement; break;
@@ -506,7 +509,7 @@ namespace Smdn.Reflection.ReverseGenerating {
         methodModifiers = null;
         methodName = GenerateMemberName(
           m,
-          explicitInterfaceMethod.DeclaringType.FormatTypeName(typeWithNamespace: options.MemberDeclarationWithNamespace) + "." + explicitInterfaceMethod.Name,
+          explicitInterfaceMethod.DeclaringType.FormatTypeName(typeWithNamespace: memberOptions.WithNamespace) + "." + explicitInterfaceMethod.Name,
           options
         );
       }
@@ -556,11 +559,12 @@ namespace Smdn.Reflection.ReverseGenerating {
       referencingNamespaces?.UnionWith(CSharpFormatter.ToNamespaceList(ev.EventHandlerType));
 
       var sb = new StringBuilder();
+      var memberOptions = options.MemberDeclaration;
 
       if (explicitInterface == null)
         sb.Append(GetMemberModifierOf(ev.GetMethods(true).First(), options));
 
-      sb.Append("event ").Append(ev.EventHandlerType.FormatTypeName(attributeProvider: ev, typeWithNamespace: options.MemberDeclarationWithNamespace)).Append(" ");
+      sb.Append("event ").Append(ev.EventHandlerType.FormatTypeName(attributeProvider: ev, typeWithNamespace: memberOptions.WithNamespace)).Append(" ");
 
       if (explicitInterface == null)
         sb.Append(
@@ -573,12 +577,12 @@ namespace Smdn.Reflection.ReverseGenerating {
         sb.Append(
           GenerateMemberName(
             ev,
-            explicitInterface.FormatTypeName(typeWithNamespace: options.MemberDeclarationWithNamespace) + "." + ev.Name.Substring(ev.Name.LastIndexOf('.') + 1),
+            explicitInterface.FormatTypeName(typeWithNamespace: memberOptions.WithNamespace) + "." + ev.Name.Substring(ev.Name.LastIndexOf('.') + 1),
             options
           )
         );
 
-      if (!options.MemberDeclarationOmitEndOfStatement)
+      if (!memberOptions.OmitEndOfStatement)
         sb.Append(";");
 
       return sb.ToString();
@@ -600,9 +604,9 @@ namespace Smdn.Reflection.ReverseGenerating {
       GeneratorOptions options
     )
     {
-      if (options.MemberDeclarationWithDeclaringTypeName) {
+      if (options.MemberDeclaration.WithDeclaringTypeName) {
         return member.DeclaringType.FormatTypeName(
-          typeWithNamespace: options.MemberDeclarationWithNamespace,
+          typeWithNamespace: options.MemberDeclaration.WithNamespace,
           translateLanguagePrimitiveType: options.TranslateLanguagePrimitiveTypeDeclaration
         ) + "." + memberName;
       }
@@ -611,12 +615,12 @@ namespace Smdn.Reflection.ReverseGenerating {
     }
 
     private static string GetMemberModifierOf(MemberInfo member, GeneratorOptions options)
-      => GetMemberModifierOf(member, options, out _, out _);
+      => GetMemberModifierOf(member, options.MemberDeclaration, out _, out _);
 
     // TODO: async, extern, volatile
     private static string GetMemberModifierOf(
       MemberInfo member,
-      GeneratorOptions options,
+      GeneratorOptions.MemberDeclarationOptions memberOptions,
       out string setMethodAccessibility,
       out string getMethodAccessibility
     )
@@ -664,7 +668,7 @@ namespace Smdn.Reflection.ReverseGenerating {
 
       switch (member) {
         case FieldInfo f:
-          accessibility = options.MemberDeclarationWithAccessibility
+          accessibility = memberOptions.WithAccessibility
             ? CSharpFormatter.FormatAccessibility(f.GetAccessibility())
             : null;
 
@@ -677,7 +681,7 @@ namespace Smdn.Reflection.ReverseGenerating {
         case PropertyInfo p:
           var mostOpenAccessibility = p.GetAccessors(true).Select(Smdn.Reflection.MemberInfoExtensions.GetAccessibility).Max();
 
-          accessibility = options.MemberDeclarationWithAccessibility
+          accessibility = memberOptions.WithAccessibility
             ? CSharpFormatter.FormatAccessibility(mostOpenAccessibility)
             : null;
 
@@ -700,7 +704,7 @@ namespace Smdn.Reflection.ReverseGenerating {
           break;
 
         case MethodBase m:
-          accessibility = options.MemberDeclarationWithAccessibility
+          accessibility = memberOptions.WithAccessibility
             ? CSharpFormatter.FormatAccessibility(m.GetAccessibility())
             : null;
 
