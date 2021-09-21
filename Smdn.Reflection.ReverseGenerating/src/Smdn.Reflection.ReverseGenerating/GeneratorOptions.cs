@@ -25,9 +25,14 @@ namespace Smdn.Reflection.ReverseGenerating {
       public bool WithNamespace { get; set; } = false;
       public bool WithDeclaringTypeName { get; set; } = false;
       public bool WithAccessibility { get; set; } = true;
-      public bool UseDefaultLiteral { get; set; } = true;
       public bool OmitEndOfStatement { get; set; } = false;
       public MethodBodyOption MethodBody { get; set; } = MethodBodyOption.EmptyImplementation;
+    }
+
+    public ValueDeclarationOptions ValueDeclaration { get; } = new();
+
+    public class ValueDeclarationOptions {
+      public bool UseDefaultLiteral { get; set; }= false;
     }
   }
 }

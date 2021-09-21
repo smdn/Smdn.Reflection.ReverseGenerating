@@ -87,7 +87,7 @@ namespace Smdn.Reflection.ReverseGenerating {
           arg.ArgumentType,
           typeWithNamespace: options.TypeDeclaration.WithNamespace,
           findConstantField: true,
-          useDefaultLiteral: options.MemberDeclaration.UseDefaultLiteral
+          useDefaultLiteral: options.ValueDeclaration.UseDefaultLiteral
         );
     }
   }

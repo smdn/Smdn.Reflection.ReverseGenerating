@@ -74,7 +74,7 @@ namespace Smdn.Reflection.ReverseGenerating {
         var parameterList = CSharpFormatter.FormatParameterList(
           signatureInfo,
           typeWithNamespace: options.TypeDeclaration.WithNamespace,
-          useDefaultLiteral: options.MemberDeclaration.UseDefaultLiteral
+          useDefaultLiteral: options.ValueDeclaration.UseDefaultLiteral
         );
         var endOfStatement = options.TypeDeclaration.OmitEndOfStatement
           ? string.Empty
@@ -303,7 +303,7 @@ namespace Smdn.Reflection.ReverseGenerating {
             field.FieldType,
             typeWithNamespace: memberOptions.WithNamespace,
             findConstantField: (field.FieldType != field.DeclaringType),
-            useDefaultLiteral: memberOptions.UseDefaultLiteral
+            useDefaultLiteral: options.ValueDeclaration.UseDefaultLiteral
           );
 
           if (valueDeclaration == null) {
@@ -397,7 +397,7 @@ namespace Smdn.Reflection.ReverseGenerating {
             CSharpFormatter.FormatParameterList(
               indexParameters,
               typeWithNamespace: memberOptions.WithNamespace,
-              useDefaultLiteral: memberOptions.UseDefaultLiteral
+              useDefaultLiteral: options.ValueDeclaration.UseDefaultLiteral
             )
           )
           .Append("] ");
@@ -458,12 +458,13 @@ namespace Smdn.Reflection.ReverseGenerating {
         return null;
 
       var memberOptions = options.MemberDeclaration;
+      var valueOptions = options.ValueDeclaration;
       var method = m as MethodInfo;
       var methodModifiers = GetMemberModifierOf(m, options);
       var isByRefReturnType = (method != null && method.ReturnType.IsByRef);
       var methodReturnType = isByRefReturnType ? "ref " + method.ReturnType.GetElementType().FormatTypeName(attributeProvider: method.ReturnTypeCustomAttributes, typeWithNamespace: memberOptions.WithNamespace) : method?.ReturnType?.FormatTypeName(attributeProvider: method?.ReturnTypeCustomAttributes, typeWithNamespace: memberOptions.WithNamespace);
       var methodGenericParameters = m.IsGenericMethod ? string.Concat("<", string.Join(", ", m.GetGenericArguments().Select(t => t.FormatTypeName(typeWithNamespace: memberOptions.WithNamespace))), ">") : null;
-      var methodParameterList = CSharpFormatter.FormatParameterList(m, typeWithNamespace: memberOptions.WithNamespace, useDefaultLiteral: memberOptions.UseDefaultLiteral);
+      var methodParameterList = CSharpFormatter.FormatParameterList(m, typeWithNamespace: memberOptions.WithNamespace, useDefaultLiteral: valueOptions.UseDefaultLiteral);
       var methodConstraints = method == null ? null : string.Join(" ", method.GetGenericArguments().Select(arg => Generator.GenerateGenericArgumentConstraintDeclaration(arg, referencingNamespaces, options)).Where(d => d != null));
       string methodName = null;
       string methodBody = null;

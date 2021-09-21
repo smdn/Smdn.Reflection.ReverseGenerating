@@ -60,9 +60,12 @@ namespace Smdn.Reflection.ReverseGenerating {
       memberDeclarationOptions.WithNamespace = testCaseAttribute.MemberWithNamespace;
       memberDeclarationOptions.WithDeclaringTypeName = testCaseAttribute.MemberWithDeclaringTypeName;
       memberDeclarationOptions.WithAccessibility = testCaseAttribute.MemberWithAccessibility;
-      memberDeclarationOptions.UseDefaultLiteral = testCaseAttribute.UseDefaultLiteral;
       memberDeclarationOptions.MethodBody = testCaseAttribute.MethodBody;
       memberDeclarationOptions.OmitEndOfStatement = testCaseAttribute.MemberOmitEndOfStatement;
+
+      var valueDeclarationOptions = options.ValueDeclaration;
+
+      valueDeclarationOptions.UseDefaultLiteral = testCaseAttribute.UseDefaultLiteral;
 
       return options;
     }
