@@ -19,6 +19,8 @@ namespace Smdn.Reflection.ReverseGenerating {
     public bool TypeWithDeclaringTypeName { get; set; } = false;
     public bool TypeWithAccessibility { get; set; } = true;
     public bool TypeOmitEndOfStatement { get; set; } = false;
+    public bool AttributeWithNamespace { get; set; } = true;
+    public bool AttributeWithNamedArguments { get; set; } = false;
     public bool UseDefaultLiteral { get; set; } = false;
     public bool IgnorePrivateOrAssembly { get; set; } = false;
     public MethodBodyOption MethodBody { get; set; } = MethodBodyOption.EmptyImplementation;
@@ -62,6 +64,11 @@ namespace Smdn.Reflection.ReverseGenerating {
       memberDeclarationOptions.WithAccessibility = testCaseAttribute.MemberWithAccessibility;
       memberDeclarationOptions.MethodBody = testCaseAttribute.MethodBody;
       memberDeclarationOptions.OmitEndOfStatement = testCaseAttribute.MemberOmitEndOfStatement;
+
+      var attributeDeclarationOptions = options.AttributeDeclaration;
+
+      attributeDeclarationOptions.WithNamespace = testCaseAttribute.AttributeWithNamespace;
+      attributeDeclarationOptions.WithNamedArguments = testCaseAttribute.AttributeWithNamedArguments;
 
       var valueDeclarationOptions = options.ValueDeclaration;
 

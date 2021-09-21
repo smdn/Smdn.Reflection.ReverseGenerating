@@ -7,6 +7,7 @@ using System.Runtime.CompilerServices;
 using NUnit.Framework;
 
 namespace Smdn.Reflection.ReverseGenerating {
+  [AttributeUsage(AttributeTargets.All, AllowMultiple = true, Inherited = false)]
   public class AttributeTestCaseAttribute : GeneratorTestCaseAttribute {
     public AttributeTestCaseAttribute(
       string expected,
@@ -49,7 +50,8 @@ namespace Smdn.Reflection.ReverseGenerating {
         [Flags]
         enum Flags1 : int { }
 
-        [AttributeTestCase("[Flags]", TypeWithNamespace = false)]
+        [AttributeTestCase("[System.Flags]", AttributeWithNamespace = true)]
+        [AttributeTestCase("[Flags]", AttributeWithNamespace = false)]
         [Flags]
         enum Flags2 : int { }
 
@@ -71,11 +73,13 @@ namespace Smdn.Reflection.ReverseGenerating {
         [Obsolete("obsolete")]
         class Obsolete2 { }
 
-        [AttributeTestCase("[System.Obsolete(\"deprecated\", true)]")]
+        [AttributeTestCase("[System.Obsolete(\"deprecated\", true)]", AttributeWithNamedArguments = false)]
+        [AttributeTestCase("[System.Obsolete(message: \"deprecated\", error: true)]", AttributeWithNamedArguments = true)]
         [Obsolete("deprecated", true)]
         class Obsolete3 { }
 
-        [AttributeTestCase("[System.Obsolete(\"deprecated\", false)]")]
+        [AttributeTestCase("[System.Obsolete(\"deprecated\", false)]", AttributeWithNamedArguments = false)]
+        [AttributeTestCase("[System.Obsolete(message: \"deprecated\", error: false)]", AttributeWithNamedArguments = true)]
         [Obsolete("deprecated", false)]
         class Obsolete4 { }
 
@@ -85,12 +89,9 @@ namespace Smdn.Reflection.ReverseGenerating {
 
         class Conditionals {
           [AttributeTestCase("[System.Diagnostics.Conditional(\"DEBUG\")]")]
+          [AttributeTestCase("[Conditional(\"DEBUG\")]", AttributeWithNamespace = false)]
           [System.Diagnostics.Conditional("DEBUG")]
-          public void M1() { }
-
-          [AttributeTestCase("[Conditional(\"DEBUG\")]", TypeWithNamespace = false)]
-          [System.Diagnostics.Conditional("DEBUG")]
-          public void M2() { }
+          public void M() { }
         }
 
         static class Extension {
@@ -98,28 +99,27 @@ namespace Smdn.Reflection.ReverseGenerating {
           public static void M1(this int x) { }
         }
 
-        [AttributeTestCase("[System.Runtime.InteropServices.StructLayout(System.Runtime.InteropServices.LayoutKind.Explicit, Pack = 1)]")]
+        [AttributeTestCase("[System.Runtime.InteropServices.StructLayout(System.Runtime.InteropServices.LayoutKind.Explicit, Pack = 1)]", AttributeWithNamespace = true, TypeWithNamespace = true)]
+        [AttributeTestCase("[System.Runtime.InteropServices.StructLayout(LayoutKind.Explicit, Pack = 1)]", AttributeWithNamespace = true, TypeWithNamespace = false)]
+        [AttributeTestCase("[StructLayout(System.Runtime.InteropServices.LayoutKind.Explicit, Pack = 1)]", AttributeWithNamespace = false, TypeWithNamespace = true)]
+        [AttributeTestCase("[StructLayout(LayoutKind.Explicit, Pack = 1)]", AttributeWithNamespace = false, TypeWithNamespace = false)]
         [System.Runtime.InteropServices.StructLayout(System.Runtime.InteropServices.LayoutKind.Explicit, Pack = 1)]
         struct StructLayout1 {
           [AttributeTestCase("[System.Runtime.InteropServices.FieldOffset(0)]")]
+          [AttributeTestCase("[FieldOffset(0)]", AttributeWithNamespace = false)]
           [System.Runtime.InteropServices.FieldOffset(0)]
           public byte F0;
-
-          [AttributeTestCase("[FieldOffset(1)]", TypeWithNamespace = false)]
-          [System.Runtime.InteropServices.FieldOffset(1)]
-          public byte F1;
         }
 
-        [AttributeTestCase("[System.Runtime.InteropServices.StructLayout(System.Runtime.InteropServices.LayoutKind.Explicit, Size = 1)]")]
+        [AttributeTestCase("[System.Runtime.InteropServices.StructLayout(System.Runtime.InteropServices.LayoutKind.Explicit, Size = 1)]", AttributeWithNamespace = true, TypeWithNamespace = true)]
+        [AttributeTestCase("[System.Runtime.InteropServices.StructLayout(LayoutKind.Explicit, Size = 1)]", AttributeWithNamespace = true, TypeWithNamespace = false)]
+        [AttributeTestCase("[StructLayout(System.Runtime.InteropServices.LayoutKind.Explicit, Size = 1)]", AttributeWithNamespace = false, TypeWithNamespace = true)]
+        [AttributeTestCase("[StructLayout(LayoutKind.Explicit, Size = 1)]", AttributeWithNamespace = false, TypeWithNamespace = false)]
         [System.Runtime.InteropServices.StructLayout(System.Runtime.InteropServices.LayoutKind.Explicit, Size = 1)]
         struct StructLayout2 {
-          [AttributeTestCase("[System.Runtime.InteropServices.FieldOffset(0)]")][System.Runtime.InteropServices.FieldOffset(0)] public byte F0;
-        }
-
-        [AttributeTestCase("[StructLayout(LayoutKind.Explicit, Size = 1)]", TypeWithNamespace = false)]
-        [System.Runtime.InteropServices.StructLayout(System.Runtime.InteropServices.LayoutKind.Explicit, Size = 1)]
-        struct StructLayout3 {
-          [AttributeTestCase("[FieldOffset(0)]", TypeWithNamespace = false)] [System.Runtime.InteropServices.FieldOffset(0)] public byte F0;
+          [AttributeTestCase("[System.Runtime.InteropServices.FieldOffset(0)]")]
+          [AttributeTestCase("[FieldOffset(0)]", AttributeWithNamespace = false)]
+          [System.Runtime.InteropServices.FieldOffset(0)] public byte F0;
         }
 
         [AttributeTestCase("")]

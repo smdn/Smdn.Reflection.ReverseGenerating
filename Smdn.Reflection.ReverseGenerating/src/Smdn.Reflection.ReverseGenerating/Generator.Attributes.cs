@@ -56,7 +56,7 @@ namespace Smdn.Reflection.ReverseGenerating {
       {
         referencingNamespaces?.Add(attr.GetAttributeType().Namespace);
 
-        var nameOfAttr = attr.GetAttributeType().FormatTypeName(typeWithNamespace: options.TypeDeclaration.WithNamespace);
+        var nameOfAttr = attr.GetAttributeType().FormatTypeName(typeWithNamespace: options.AttributeDeclaration.WithNamespace);
 
         if (nameOfAttr.EndsWith("Attribute", StringComparison.Ordinal))
           nameOfAttr = nameOfAttr.Substring(0, nameOfAttr.Length - 9);
@@ -67,9 +67,18 @@ namespace Smdn.Reflection.ReverseGenerating {
       IEnumerable<string> ConvertAttributeArguments(CustomAttributeData attr)
       {
         foreach (var param in attr.Constructor.GetParameters()) {
-          yield return ConvertAttributeTypedArgument(
-            attr.ConstructorArguments[param.Position]
-          );
+          var arg = attr.ConstructorArguments[param.Position];
+
+          if (options.AttributeDeclaration.WithNamedArguments) {
+            yield return string.Concat(
+              param.Name,
+              ": ",
+              ConvertAttributeTypedArgument(arg)
+            );
+          }
+          else {
+            yield return ConvertAttributeTypedArgument(arg);
+          }
         }
 
         foreach (var namedArg in attr.NamedArguments) {

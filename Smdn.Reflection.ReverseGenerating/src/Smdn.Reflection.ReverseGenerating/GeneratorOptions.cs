@@ -29,6 +29,13 @@ namespace Smdn.Reflection.ReverseGenerating {
       public MethodBodyOption MethodBody { get; set; } = MethodBodyOption.EmptyImplementation;
     }
 
+    public AttributeDeclarationOptions AttributeDeclaration { get; } = new();
+
+    public class AttributeDeclarationOptions {
+      public bool WithNamespace { get; set; } = false;
+      public bool WithNamedArguments { get; set; } = false;
+    }
+
     public ValueDeclarationOptions ValueDeclaration { get; } = new();
 
     public class ValueDeclarationOptions {
