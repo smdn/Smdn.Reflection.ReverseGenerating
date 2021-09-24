@@ -121,13 +121,53 @@ namespace Smdn.Reflection.ReverseGenerating {
     }
 
     public static string FormatParameterList(MethodBase m, bool typeWithNamespace = true, bool useDefaultLiteral = false)
-    {
-      return FormatParameterList(m.GetParameters(), typeWithNamespace, useDefaultLiteral);
-    }
+      => FormatParameterList(m.GetParameters(), typeWithNamespace, useDefaultLiteral);
 
     public static string FormatParameterList(ParameterInfo[] parameterList, bool typeWithNamespace = true, bool useDefaultLiteral = false)
+      => string.Join(", ", parameterList.Select(p => FormatParameter(p, typeWithNamespace, useDefaultLiteral)));
+
+    public static string FormatParameter(ParameterInfo p, bool typeWithNamespace = true, bool useDefaultLiteral = false)
     {
-      return string.Join(", ", parameterList.Select(ToString));
+      var ret = new StringBuilder(capacity: 64);
+
+      if (p.ParameterType.IsByRef) {
+        var typeAndName = p.ParameterType.GetElementType().FormatTypeName(attributeProvider: p, typeWithNamespace: typeWithNamespace) + " " + ToVerbatim(p.Name);
+
+        if (p.IsIn)
+          ret.Append("in ").Append(typeAndName);
+        else if (p.IsOut)
+          ret.Append("out ").Append(typeAndName);
+        else
+          ret.Append("ref ").Append(typeAndName);
+      }
+      else {
+        var typeAndName = p.ParameterType.FormatTypeName(attributeProvider: p, typeWithNamespace: typeWithNamespace) + " " + ToVerbatim(p.Name);
+
+        if (p.Position == 0 && p.Member.GetCustomAttribute<ExtensionAttribute>() != null) {
+          ret.Append("this ").Append(typeAndName);
+        }
+        else if (p.GetCustomAttribute<ParamArrayAttribute>() != null) {
+          ret.Append("params ").Append(typeAndName);
+        }
+        else {
+          ret.Append(typeAndName);
+        }
+      }
+
+      if (p.HasDefaultValue) {
+        var defaultValueDeclaration = FormatValueDeclaration(
+          p.DefaultValue,
+          p.ParameterType,
+          typeWithNamespace: typeWithNamespace,
+          findConstantField: true,
+          useDefaultLiteral: useDefaultLiteral
+        );
+
+        ret.Append(" = ");
+        ret.Append(defaultValueDeclaration);
+      }
+
+      return ret.ToString();
 
       static string ToVerbatim(string name)
       {
@@ -135,50 +175,6 @@ namespace Smdn.Reflection.ReverseGenerating {
           return "@" + name;
         else
           return name;
-      }
-
-      string ToString(ParameterInfo p)
-      {
-        var ret = new StringBuilder();
-
-        if (p.ParameterType.IsByRef) {
-          var typeAndName = p.ParameterType.GetElementType().FormatTypeName(attributeProvider: p, typeWithNamespace: typeWithNamespace) + " " + ToVerbatim(p.Name);
-
-          if (p.IsIn)
-            ret.Append("in ").Append(typeAndName);
-          else if (p.IsOut)
-            ret.Append("out ").Append(typeAndName);
-          else
-            ret.Append("ref ").Append(typeAndName);
-        }
-        else {
-          var typeAndName = p.ParameterType.FormatTypeName(attributeProvider: p, typeWithNamespace: typeWithNamespace) + " " + ToVerbatim(p.Name);
-
-          if (p.Position == 0 && p.Member.GetCustomAttribute<ExtensionAttribute>() != null) {
-            ret.Append("this ").Append(typeAndName);
-          }
-          else if (p.GetCustomAttribute<ParamArrayAttribute>() != null) {
-            ret.Append("params ").Append(typeAndName);
-          }
-          else {
-            ret.Append(typeAndName);
-          }
-        }
-
-        if (p.HasDefaultValue) {
-          var defaultValueDeclaration = FormatValueDeclaration(
-            p.DefaultValue,
-            p.ParameterType,
-            typeWithNamespace: typeWithNamespace,
-            findConstantField: true,
-            useDefaultLiteral: useDefaultLiteral
-          );
-
-          ret.Append(" = ");
-          ret.Append(defaultValueDeclaration);
-        }
-
-        return ret.ToString();
       }
     }
 

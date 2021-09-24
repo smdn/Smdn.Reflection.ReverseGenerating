@@ -4,6 +4,7 @@ using System;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 using NUnit.Framework;
 
 namespace Smdn.Reflection.ReverseGenerating {
@@ -35,12 +36,36 @@ namespace Smdn.Reflection.ReverseGenerating {
         [AttributeTestCase("")] class N { }
 
 #pragma warning disable CS0414
-        class X {
-          [AttributeTestCase("[System.Obsolete]")][Obsolete] public X() { }
+        class AttributeTargetsMember {
+          [AttributeTestCase("[System.Obsolete]")][Obsolete] public AttributeTargetsMember() { }
           [AttributeTestCase("[System.Obsolete]")][Obsolete] public void M() { }
           [AttributeTestCase("[System.Obsolete]")][Obsolete] public int P { get; set; }
           [AttributeTestCase("[System.Obsolete]")][Obsolete] public event EventHandler E = null;
           [AttributeTestCase("[System.Obsolete]")][Obsolete] public int F = default;
+        }
+
+        class AttributeTargetsReturnValue {
+#if NETFRAMEWORK
+          [return: AttributeTestCase("[return: System.Runtime.InteropServices.MarshalAs(System.Runtime.InteropServices.UnmanagedType.Bool)]")]
+          [return: MarshalAs(UnmanagedType.Bool)]
+          public bool M0() => throw new NotImplementedException();
+#endif
+
+          [return: AttributeTestCase("[return: System.Xml.Serialization.XmlIgnore]")]
+          [return: System.Xml.Serialization.XmlIgnore]
+          public bool M1() => throw new NotImplementedException();
+        }
+
+        class AttributeTargetsParameter {
+          public bool M(
+            [AttributeTestCase("[System.Runtime.CompilerServices.CallerFilePath], [System.Runtime.InteropServices.Optional]")]
+            [CallerFilePath]
+            string sourceFilePath = default,
+
+            [AttributeTestCase("[System.Runtime.CompilerServices.CallerLineNumber], [System.Runtime.InteropServices.Optional]")]
+            [CallerLineNumber]
+            int sourceLineNumber = default
+          ) => throw new NotImplementedException();
         }
 #pragma warning restore CS0414
       }
@@ -155,6 +180,33 @@ namespace Smdn.Reflection.ReverseGenerating {
         attrTestCase.Expected,
         string.Join(", ", Generator.GenerateAttributeList(typeOrMember, null, GetGeneratorOptions(attrTestCase))),
         message: $"{attrTestCase.SourceLocation} ({typeOrMemberName})"
+      );
+    }
+
+    private static System.Collections.IEnumerable YieldAttributeListOfParameterInfoTestCase()
+      => FindTypes(t => t.FullName.Contains(".TestCases.Attributes."))
+        .SelectMany(t =>
+          t.GetMethods(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static | BindingFlags.DeclaredOnly)
+        )
+        .SelectMany(method =>
+          method.GetParameters().Prepend(method.ReturnParameter)
+        )
+        .SelectMany(
+          p => p.GetCustomAttributes<AttributeTestCaseAttribute>().Select(
+            a => new object[] { a, p }
+          )
+        );
+
+    [TestCaseSource(nameof(YieldAttributeListOfParameterInfoTestCase))]
+    public void TestGenerateAttributeListOfParameterInfo(
+      AttributeTestCaseAttribute attrTestCase,
+      ParameterInfo param
+    )
+    {
+      Assert.AreEqual(
+        attrTestCase.Expected,
+        string.Join(", ", Generator.GenerateAttributeList(param, null, GetGeneratorOptions(attrTestCase))),
+        message: $"{attrTestCase.SourceLocation} ({param.Member.DeclaringType.FullName}.{param.Member.Name} {(param.Name ?? "return value")})"
       );
     }
   }

@@ -465,10 +465,11 @@ namespace Smdn.Reflection.ReverseGenerating {
       var methodReturnType = isByRefReturnType
         ? "ref " + method.ReturnType.GetElementType().FormatTypeName(attributeProvider: method.ReturnTypeCustomAttributes, typeWithNamespace: memberOptions.WithNamespace)
         : method?.ReturnType?.FormatTypeName(attributeProvider: method?.ReturnTypeCustomAttributes, typeWithNamespace: memberOptions.WithNamespace);
+      var methodReturnTypeAttributes = method is null ? null : GenerateParameterAttributeList(method.ReturnParameter, referencingNamespaces, options);
       var methodGenericParameters = m.IsGenericMethod
         ? string.Concat("<", string.Join(", ", m.GetGenericArguments().Select(t => t.FormatTypeName(typeWithNamespace: memberOptions.WithNamespace))), ">")
         : null;
-      var methodParameterList = CSharpFormatter.FormatParameterList(m, typeWithNamespace: memberOptions.WithNamespace, useDefaultLiteral: valueOptions.UseDefaultLiteral);
+      var methodParameterList = string.Join(", ", m.GetParameters().Select(p => GenerateParameterDeclaration(p, referencingNamespaces, options)));
       var methodConstraints = method == null
         ? null
         : string.Join(" ", method.GetGenericArguments().Select(arg => Generator.GenerateGenericArgumentConstraintDeclaration(arg, referencingNamespaces, options)).Where(d => d != null));
@@ -509,6 +510,7 @@ namespace Smdn.Reflection.ReverseGenerating {
         );
         methodModifiers = null;
         methodReturnType = null;
+        methodReturnTypeAttributes = null;
         methodParameterList = null;
         methodConstraints = null;
       }
@@ -526,6 +528,9 @@ namespace Smdn.Reflection.ReverseGenerating {
       }
 
       var sb = new StringBuilder();
+
+      if (!string.IsNullOrEmpty(methodReturnTypeAttributes))
+        sb.Append(methodReturnTypeAttributes).Append(" ");
 
       sb.Append(methodModifiers);
 
@@ -551,6 +556,59 @@ namespace Smdn.Reflection.ReverseGenerating {
 
       return sb.ToString();
     }
+
+    private static string GenerateParameterDeclaration(
+      ParameterInfo p,
+      ISet<string> referencingNamespaces,
+      GeneratorOptions options
+    )
+    {
+      var param = CSharpFormatter.FormatParameter(
+        p,
+        typeWithNamespace: options.MemberDeclaration.WithNamespace,
+        useDefaultLiteral: options.ValueDeclaration.UseDefaultLiteral
+      );
+      var paramAttributeList = GenerateParameterAttributeList(
+        p,
+        referencingNamespaces,
+        options
+      );
+
+      if (string.IsNullOrEmpty(paramAttributeList))
+        return param;
+      else
+        return string.Concat(paramAttributeList, " ", param);
+    }
+
+    private static string GenerateParameterAttributeList(
+      ParameterInfo p,
+      ISet<string> referencingNamespaces,
+      GeneratorOptions options
+    )
+      => string.Join(
+        " ",
+        GenerateAttributeList(
+          p,
+          referencingNamespaces,
+          options,
+          static attrType => {
+            if (attrType == typeof(System.Runtime.InteropServices.OptionalAttribute))
+              return false;
+            if (attrType == typeof(System.Runtime.InteropServices.InAttribute))
+              return false;
+            if (attrType == typeof(System.Runtime.InteropServices.OutAttribute))
+              return false;
+            if (attrType == typeof(System.ParamArrayAttribute))
+              return false;
+            if (string.Equals("System.Runtime.CompilerServices.TupleElementNamesAttribute", attrType.FullName, StringComparison.Ordinal))
+              return false;
+            if (string.Equals("System.Runtime.CompilerServices.IsReadOnlyAttribute", attrType.FullName, StringComparison.Ordinal))
+              return false;
+
+            return true;
+          }
+        )
+      );
 
     private static string GenerateEventDeclaration(
       EventInfo ev,

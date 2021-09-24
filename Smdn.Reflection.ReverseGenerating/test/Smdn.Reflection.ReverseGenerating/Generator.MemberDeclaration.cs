@@ -837,6 +837,27 @@ namespace Smdn.Reflection.ReverseGenerating {
               => throw new NotImplementedException();
           }
         }
+
+        public class ParametersWithAttribute {
+          [MemberDeclarationTestCase(
+            "[return: System.Xml.Serialization.XmlIgnore] public string M([System.Runtime.CompilerServices.CallerFilePath] string sourceFilePath = null, [System.Runtime.CompilerServices.CallerLineNumber] int sourceLineNumber = 0)",
+            AttributeWithNamespace = true,
+            MethodBody = MethodBodyOption.None
+          )]
+          [MemberDeclarationTestCase(
+            "[return: XmlIgnore] public string M([CallerFilePath] string sourceFilePath = null, [CallerLineNumber] int sourceLineNumber = 0)",
+            AttributeWithNamespace = false,
+            MethodBody = MethodBodyOption.None
+          )]
+          [return: System.Xml.Serialization.XmlIgnore]
+          public string M(
+            [System.Runtime.CompilerServices.CallerFilePath] string sourceFilePath = default,
+            [System.Runtime.CompilerServices.CallerLineNumber] int sourceLineNumber = default
+          )
+          {
+            throw new NotImplementedException();
+          }
+        }
       }
 
       namespace Events {
