@@ -422,6 +422,13 @@ namespace Smdn.Reflection.ReverseGenerating {
           [MemberDeclarationTestCase("internal protected int P8 { get; }", IgnorePrivateOrAssembly = true)] internal protected int P8 { get; private set; }
         }
 
+        public class BackingFieldAttributes {
+          [SkipTestCase("not implemented")]
+          [MemberDeclarationTestCase("[field: System.NotSerialized] public int P")]
+          [field: NonSerialized]
+          public int P { get; set; }
+        }
+
 #if false
       namespace StaticValues {
         class Accessors {
@@ -1164,6 +1171,8 @@ namespace Smdn.Reflection.ReverseGenerating {
       MemberInfo member
     )
     {
+      member.GetCustomAttribute<SkipTestCaseAttribute>()?.Throw();
+
       Assert.AreEqual(
         attrTestCase.Expected,
         Generator.GenerateMemberDeclaration(member, null, GetGeneratorOptions(attrTestCase)),

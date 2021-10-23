@@ -37,6 +37,18 @@ namespace Smdn.Reflection.ReverseGenerating {
     }
   }
 
+  [AttributeUsage(AttributeTargets.All, AllowMultiple = false, Inherited = false)]
+  public class SkipTestCaseAttribute : Attribute {
+    public string Reason { get; init; }
+
+    public SkipTestCaseAttribute(string reason)
+    {
+      this.Reason = reason;
+    }
+
+    public void Throw() => throw new IgnoreException(Reason);
+  }
+
   [TestFixture]
   public partial class GeneratorTests {
     private static IEnumerable<Type> FindTypes(Func<Type, bool> predicate)
