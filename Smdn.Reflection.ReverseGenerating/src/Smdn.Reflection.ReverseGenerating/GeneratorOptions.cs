@@ -39,7 +39,7 @@ namespace Smdn.Reflection.ReverseGenerating {
     public ValueDeclarationOptions ValueDeclaration { get; } = new();
 
     public class ValueDeclarationOptions {
-      public bool UseDefaultLiteral { get; set; }= false;
+      public bool UseDefaultLiteral { get; set; } = false;
     }
   }
 }
