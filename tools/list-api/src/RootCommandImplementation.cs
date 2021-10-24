@@ -198,7 +198,7 @@ public class RootCommandImplementation {
 
     static string GetOutputFileName(Assembly a)
     {
-      var prefix = $"{a.GetName().Name}-{a.GetName().Version}";
+      var prefix = a.GetName().Name;
       var targetFramework = GetTargetFramework(a);
 
       if (targetFramework is null)
