@@ -257,7 +257,7 @@ class ApiListWriter {
       memberAndDeclarations.Add((member, declaration));
     }
 
-    var memberComparer = options.WriterOrderStaticMembersFirst
+    var memberComparer = options.Writer.OrderStaticMembersFirst
       ? MemberInfoComparer.StaticMembersFirst
       : MemberInfoComparer.Default;
     var orderedMemberAndDeclarations = memberAndDeclarations

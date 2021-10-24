@@ -104,14 +104,20 @@ public class RootCommandImplementation {
     => GetApiListWriterOptions(ParseCommandLineArgs(args));
 
   private static ApiListWriterOptions GetApiListWriterOptions(ParseResult parseResult)
-    => new() {
-      TypeDeclarationWithNamespace    = parseResult.ValueForOption(optionGenerateFullTypeName),
-      MemberDeclarationWithNamespace  = parseResult.ValueForOption(optionGenerateFullTypeName),
+  {
+    var options = new ApiListWriterOptions();
 
-      MemberDeclarationMethodBody     = parseResult.ValueForOption(optionGenerateMethodBody),
+    options.TypeDeclaration.WithNamespace       = parseResult.ValueForOption(optionGenerateFullTypeName);
+    options.MemberDeclaration.WithNamespace     = parseResult.ValueForOption(optionGenerateFullTypeName);
+    options.AttributeDeclaration.WithNamespace  = parseResult.ValueForOption(optionGenerateFullTypeName);
 
-      WriterOrderStaticMembersFirst   = parseResult.ValueForOption(optionGenerateStaticMembersFirst),
-    };
+    options.MemberDeclaration.MethodBody        = parseResult.ValueForOption(optionGenerateMethodBody);
+
+    options.Writer.OrderStaticMembersFirst      = parseResult.ValueForOption(optionGenerateStaticMembersFirst);
+
+
+    return options;
+  }
 
   private static DirectoryInfo GetOutputDirectory(ParseResult parseResult)
     => parseResult.ValueForOption(optionOutputDirectory) ?? new(Environment.CurrentDirectory);

@@ -33,8 +33,8 @@ class RootCommandImplementationGetApiListWriterOptionsTests {
   {
     var options = GetApiListWriterOptions(args);
 
-    Assert.AreEqual(expected, options.TypeDeclarationWithNamespace, $"args='{args}'");
-    Assert.AreEqual(expected, options.MemberDeclarationWithNamespace, $"args='{args}'");
+    Assert.AreEqual(expected, options.TypeDeclaration.WithNamespace, $"args='{args}'");
+    Assert.AreEqual(expected, options.MemberDeclaration.WithNamespace, $"args='{args}'");
   }
 
   [TestCase("--generate-methodbody=EmptyImplementation", MethodBodyOption.EmptyImplementation)]
@@ -45,7 +45,7 @@ class RootCommandImplementationGetApiListWriterOptionsTests {
   {
     var options = GetApiListWriterOptions(args);
 
-    Assert.AreEqual(expected, options.MemberDeclarationMethodBody, $"args='{args}'");
+    Assert.AreEqual(expected, options.MemberDeclaration.MethodBody, $"args='{args}'");
   }
 
   [TestCase("--generate-staticmembersfirst", true)]
@@ -56,6 +56,6 @@ class RootCommandImplementationGetApiListWriterOptionsTests {
   {
     var options = GetApiListWriterOptions(args);
 
-    Assert.AreEqual(expected, options.WriterOrderStaticMembersFirst, $"args='{args}'");
+    Assert.AreEqual(expected, options.Writer.OrderStaticMembersFirst, $"args='{args}'");
   }
 }
