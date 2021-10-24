@@ -12,8 +12,7 @@ namespace Smdn.Reflection.ReverseGenerating {
     public static IEnumerable<string> GenerateAttributeList(
       ICustomAttributeProvider attributeProvider,
       ISet<string> referencingNamespaces,
-      GeneratorOptions options,
-      Func<Type, bool> attributeTypePredicate = null
+      GeneratorOptions options
     )
     {
       if (attributeProvider is null)
@@ -21,7 +20,7 @@ namespace Smdn.Reflection.ReverseGenerating {
 
       var prefix = (attributeProvider is ParameterInfo p && p.IsReturnParameter()) ? "[return: " : "[";
 
-      return GetAttributes(attributeProvider, attributeTypePredicate)
+      return GetAttributes(attributeProvider, options.AttributeDeclaration.TypeFilter)
         .OrderBy(attr => attr.GetAttributeType().FullName)
         .Select(attr =>
           (
@@ -31,23 +30,16 @@ namespace Smdn.Reflection.ReverseGenerating {
         )
         .Select(a => prefix + a.name + (string.IsNullOrEmpty(a.args) ? string.Empty : "(" + a.args + ")") + "]");
 
-      static IEnumerable<CustomAttributeData> GetAttributes(ICustomAttributeProvider attributeProvider, Func<Type, bool> predicate)
+      static IEnumerable<CustomAttributeData> GetAttributes(
+        ICustomAttributeProvider attributeProvider,
+        AttributeTypeFilter filter
+      )
       {
         foreach (var attr in attributeProvider.GetCustomAttributeDataList()) {
-          if (predicate is not null && !predicate(attr.AttributeType))
+          if (filter is not null && !filter(attr.AttributeType, attributeProvider))
             continue;
 
-          if (attr.AttributeType == typeof(System.CLSCompliantAttribute))
-            continue; // ignore
-          if (attr.AttributeType == typeof(System.Reflection.DefaultMemberAttribute))
-            continue; // ignore
-          if (attributeProvider is MethodBase) {
-            if (string.Equals("System.Runtime.CompilerServices.ExtensionAttribute", attr.AttributeType.FullName, StringComparison.Ordinal))
-              continue; // ignore
-          }
-
-          if (string.Equals("System", attr.AttributeType.Namespace.Split('.')[0], StringComparison.Ordinal))
-            yield return attr;
+          yield return attr;
         }
 
         if (

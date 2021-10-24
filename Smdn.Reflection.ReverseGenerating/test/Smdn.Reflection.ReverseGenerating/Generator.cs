@@ -21,6 +21,8 @@ namespace Smdn.Reflection.ReverseGenerating {
     public bool TypeOmitEndOfStatement { get; set; } = false;
     public bool AttributeWithNamespace { get; set; } = true;
     public bool AttributeWithNamedArguments { get; set; } = false;
+    public Type TypeOfAttributeTypeFilterFunc { get; set; } = null;
+    public string NameOfAttributeTypeFilterFunc { get; set; } = null;
     public bool UseDefaultLiteral { get; set; } = false;
     public bool IgnorePrivateOrAssembly { get; set; } = false;
     public MethodBodyOption MethodBody { get; set; } = MethodBodyOption.EmptyImplementation;
@@ -81,6 +83,21 @@ namespace Smdn.Reflection.ReverseGenerating {
 
       attributeDeclarationOptions.WithNamespace = testCaseAttribute.AttributeWithNamespace;
       attributeDeclarationOptions.WithNamedArguments = testCaseAttribute.AttributeWithNamedArguments;
+
+      if (testCaseAttribute.TypeOfAttributeTypeFilterFunc is not null && !string.IsNullOrEmpty(testCaseAttribute.NameOfAttributeTypeFilterFunc)) {
+        var methodSignatureOfAttributeTypeFilter = typeof(AttributeTypeFilter).GetDelegateSignatureMethod();
+        var filterFunc = testCaseAttribute.TypeOfAttributeTypeFilterFunc.GetMethod(
+          name: testCaseAttribute.NameOfAttributeTypeFilterFunc,
+          bindingAttr: BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic,
+          binder: null,
+          callConvention: methodSignatureOfAttributeTypeFilter.CallingConvention,
+          types: Array.ConvertAll(methodSignatureOfAttributeTypeFilter.GetParameters(), static p => p.ParameterType),
+          modifiers: null
+        );
+
+        if (filterFunc is not null)
+          attributeDeclarationOptions.TypeFilter = (AttributeTypeFilter)Delegate.CreateDelegate(typeof(AttributeTypeFilter), filterFunc);
+      }
 
       var valueDeclarationOptions = options.ValueDeclaration;
 

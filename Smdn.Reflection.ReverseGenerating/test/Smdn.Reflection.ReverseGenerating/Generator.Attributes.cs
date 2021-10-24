@@ -58,15 +58,45 @@ namespace Smdn.Reflection.ReverseGenerating {
 
         class AttributeTargetsParameter {
           public bool M(
-            [AttributeTestCase("[System.Runtime.CompilerServices.CallerFilePath], [System.Runtime.InteropServices.Optional]")]
+            [AttributeTestCase(
+              "[System.Runtime.CompilerServices.CallerFilePath], [System.Runtime.InteropServices.Optional]",
+              AttributeWithNamespace = true
+            )]
+            [AttributeTestCase(
+              "[CallerFilePath], [Optional]",
+              AttributeWithNamespace = false
+            )]
             [CallerFilePath]
             string sourceFilePath = default,
 
-            [AttributeTestCase("[System.Runtime.CompilerServices.CallerLineNumber], [System.Runtime.InteropServices.Optional]")]
+            [AttributeTestCase(
+              "[System.Runtime.CompilerServices.CallerLineNumber], [System.Runtime.InteropServices.Optional]",
+              AttributeWithNamespace = true
+            )]
+            [AttributeTestCase(
+              "[CallerLineNumber], [Optional]",
+              AttributeWithNamespace = false
+            )]
             [CallerLineNumber]
             int sourceLineNumber = default
           ) => throw new NotImplementedException();
         }
+
+        public class AttributeTargetsReturnParameter {
+          [MemberDeclarationTestCase(
+            "[return: System.Xml.Serialization.XmlIgnore] public string M()",
+            AttributeWithNamespace = true,
+            MethodBody = MethodBodyOption.None
+          )]
+          [MemberDeclarationTestCase(
+            "[return: XmlIgnore] public string M()",
+            AttributeWithNamespace = false,
+            MethodBody = MethodBodyOption.None
+          )]
+          [return: System.Xml.Serialization.XmlIgnore]
+          public string M() => throw new NotImplementedException();
+        }
+
 #pragma warning restore CS0414
       }
 
@@ -119,8 +149,9 @@ namespace Smdn.Reflection.ReverseGenerating {
           public void M() { }
         }
 
+        [AttributeTestCase("[System.Runtime.CompilerServices.Extension]")]
         static class Extension {
-          [AttributeTestCase("")] // does not emit System.Runtime.CompilerServices.ExtensionAttribute
+          [AttributeTestCase("[System.Runtime.CompilerServices.Extension]")]
           public static void M1(this int x) { }
         }
 
@@ -172,13 +203,17 @@ namespace Smdn.Reflection.ReverseGenerating {
       MemberInfo typeOrMember
     )
     {
+      var options = GetGeneratorOptions(attrTestCase);
+
+      options.AttributeDeclaration.TypeFilter = static (type, _) => type.Namespace.StartsWith("System", StringComparison.Ordinal);
+
       var typeOrMemberName = typeOrMember is Type t
         ? t.FullName
         : $"{typeOrMember.DeclaringType?.FullName}.{typeOrMember.Name}";
 
       Assert.AreEqual(
         attrTestCase.Expected,
-        string.Join(", ", Generator.GenerateAttributeList(typeOrMember, null, GetGeneratorOptions(attrTestCase))),
+        string.Join(", ", Generator.GenerateAttributeList(typeOrMember, null, options)),
         message: $"{attrTestCase.SourceLocation} ({typeOrMemberName})"
       );
     }
@@ -203,9 +238,13 @@ namespace Smdn.Reflection.ReverseGenerating {
       ParameterInfo param
     )
     {
+      var options = GetGeneratorOptions(attrTestCase);
+
+      options.AttributeDeclaration.TypeFilter = static (type, _) => type.Namespace.StartsWith("System", StringComparison.Ordinal);
+
       Assert.AreEqual(
         attrTestCase.Expected,
-        string.Join(", ", Generator.GenerateAttributeList(param, null, GetGeneratorOptions(attrTestCase))),
+        string.Join(", ", Generator.GenerateAttributeList(param, null, options)),
         message: $"{attrTestCase.SourceLocation} ({param.Member.DeclaringType.FullName}.{param.Member.Name} {(param.Name ?? "return value")})"
       );
     }

@@ -847,23 +847,46 @@ namespace Smdn.Reflection.ReverseGenerating {
 
         public class ParametersWithAttribute {
           [MemberDeclarationTestCase(
-            "[return: System.Xml.Serialization.XmlIgnore] public string M([System.Runtime.CompilerServices.CallerFilePath] string sourceFilePath = null, [System.Runtime.CompilerServices.CallerLineNumber] int sourceLineNumber = 0)",
-            AttributeWithNamespace = true,
+            "public void M([CallerFilePath] [Optional] string sourceFilePath = null, [CallerLineNumber] [Optional] int sourceLineNumber = 0)",
+            AttributeWithNamespace = false,
+            TypeOfAttributeTypeFilterFunc = typeof(ParametersWithAttribute),
+            NameOfAttributeTypeFilterFunc = nameof(_Filter),
             MethodBody = MethodBodyOption.None
           )]
           [MemberDeclarationTestCase(
-            "[return: XmlIgnore] public string M([CallerFilePath] string sourceFilePath = null, [CallerLineNumber] int sourceLineNumber = 0)",
+            "public void M([System.Runtime.CompilerServices.CallerFilePath] [System.Runtime.InteropServices.Optional] string sourceFilePath = null, [System.Runtime.CompilerServices.CallerLineNumber] [System.Runtime.InteropServices.Optional] int sourceLineNumber = 0)",
+            AttributeWithNamespace = true,
+            TypeOfAttributeTypeFilterFunc = typeof(ParametersWithAttribute),
+            NameOfAttributeTypeFilterFunc = nameof(_Filter),
+            MethodBody = MethodBodyOption.None
+          )]
+          public void M(
+            [System.Runtime.CompilerServices.CallerFilePath] string sourceFilePath = default,
+            [System.Runtime.CompilerServices.CallerLineNumber] int sourceLineNumber = default
+          ) => throw new NotImplementedException();
+
+          private static bool _Filter(Type attr, ICustomAttributeProvider attrProvider) => true;
+        }
+
+        public class ReturnParametersWithAttribute {
+          [MemberDeclarationTestCase(
+            "[return: XmlIgnore] public string M()",
             AttributeWithNamespace = false,
+            TypeOfAttributeTypeFilterFunc = typeof(ReturnParametersWithAttribute),
+            NameOfAttributeTypeFilterFunc = nameof(_Filter),
+            MethodBody = MethodBodyOption.None
+          )]
+          [MemberDeclarationTestCase(
+            "[return: System.Xml.Serialization.XmlIgnore] public string M()",
+            AttributeWithNamespace = true,
+            TypeOfAttributeTypeFilterFunc = typeof(ReturnParametersWithAttribute),
+            NameOfAttributeTypeFilterFunc = nameof(_Filter),
             MethodBody = MethodBodyOption.None
           )]
           [return: System.Xml.Serialization.XmlIgnore]
-          public string M(
-            [System.Runtime.CompilerServices.CallerFilePath] string sourceFilePath = default,
-            [System.Runtime.CompilerServices.CallerLineNumber] int sourceLineNumber = default
-          )
-          {
-            throw new NotImplementedException();
-          }
+          public string M() => throw new NotImplementedException();
+
+          private static bool _Filter(Type attr, ICustomAttributeProvider attrProvider) => true;
         }
       }
 
@@ -1173,9 +1196,13 @@ namespace Smdn.Reflection.ReverseGenerating {
     {
       member.GetCustomAttribute<SkipTestCaseAttribute>()?.Throw();
 
+      var options = GetGeneratorOptions(attrTestCase);
+
+      options.AttributeDeclaration.TypeFilter ??= static (_, _) => false;
+
       Assert.AreEqual(
         attrTestCase.Expected,
-        Generator.GenerateMemberDeclaration(member, null, GetGeneratorOptions(attrTestCase)),
+        Generator.GenerateMemberDeclaration(member, null, options),
         message: $"{attrTestCase.SourceLocation} ({member.DeclaringType.FullName}.{member.Name})"
       );
     }

@@ -590,23 +590,7 @@ namespace Smdn.Reflection.ReverseGenerating {
         GenerateAttributeList(
           p,
           referencingNamespaces,
-          options,
-          static attrType => {
-            if (attrType == typeof(System.Runtime.InteropServices.OptionalAttribute))
-              return false;
-            if (attrType == typeof(System.Runtime.InteropServices.InAttribute))
-              return false;
-            if (attrType == typeof(System.Runtime.InteropServices.OutAttribute))
-              return false;
-            if (attrType == typeof(System.ParamArrayAttribute))
-              return false;
-            if (string.Equals("System.Runtime.CompilerServices.TupleElementNamesAttribute", attrType.FullName, StringComparison.Ordinal))
-              return false;
-            if (string.Equals("System.Runtime.CompilerServices.IsReadOnlyAttribute", attrType.FullName, StringComparison.Ordinal))
-              return false;
-
-            return true;
-          }
+          options
         )
       );
 
