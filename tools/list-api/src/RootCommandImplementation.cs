@@ -115,6 +115,7 @@ public class RootCommandImplementation {
 
     options.Writer.OrderStaticMembersFirst      = parseResult.ValueForOption(optionGenerateStaticMembersFirst);
 
+    options.AttributeDeclaration.TypeFilter     = ApiListWriter.DefaultAttributeFilter;
 
     return options;
   }

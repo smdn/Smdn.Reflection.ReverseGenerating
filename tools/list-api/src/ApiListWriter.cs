@@ -156,7 +156,7 @@ class ApiListWriter {
          .AppendLine($"// Forwarded to \"{t.Assembly.GetName().FullName}\"");
     }
 
-    // TODO: AttributeTargets.GenericParameter, AttributeTargets.ReturnValue, AttributeTargets.Parameter
+    // TODO: AttributeTargets.GenericParameter
     foreach (var attr in Generator.GenerateAttributeList(t, null, options)) {
       ret.Append(indent)
          .AppendLine(attr);
@@ -282,5 +282,46 @@ class ApiListWriter {
     }
 
     return ret.ToString();
+  }
+
+  internal static bool DefaultAttributeFilter(Type attrType, ICustomAttributeProvider attrProvider)
+  {
+    if (attrType == typeof(System.CLSCompliantAttribute))
+      return false;
+    if (attrType == typeof(System.Reflection.DefaultMemberAttribute))
+      return false;
+
+    switch (attrProvider) {
+      case Type t:
+        if (string.Equals("System.Runtime.CompilerServices.IsReadOnlyAttribute", attrType.FullName, StringComparison.Ordinal))
+          return false;
+        if (string.Equals("System.Runtime.CompilerServices.ExtensionAttribute", attrType.FullName, StringComparison.Ordinal))
+          return false;
+        break;
+
+      case MethodBase m:
+        if (string.Equals("System.Runtime.CompilerServices.ExtensionAttribute", attrType.FullName, StringComparison.Ordinal))
+          return false;
+        if (string.Equals("System.Runtime.CompilerServices.IteratorStateMachineAttribute", attrType.FullName, StringComparison.Ordinal))
+          return false;
+        break;
+
+      case ParameterInfo para:
+        if (attrType == typeof(System.Runtime.InteropServices.OptionalAttribute))
+          return false;
+        if (attrType == typeof(System.Runtime.InteropServices.InAttribute))
+          return false;
+        if (attrType == typeof(System.Runtime.InteropServices.OutAttribute))
+          return false;
+        if (attrType == typeof(System.ParamArrayAttribute))
+          return false;
+        if (string.Equals("System.Runtime.CompilerServices.TupleElementNamesAttribute", attrType.FullName, StringComparison.Ordinal))
+          return false;
+        if (string.Equals("System.Runtime.CompilerServices.IsReadOnlyAttribute", attrType.FullName, StringComparison.Ordinal))
+          return false;
+        break;
+    }
+
+    return true;
   }
 }
