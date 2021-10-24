@@ -117,6 +117,8 @@ public class RootCommandImplementation {
 
     options.AttributeDeclaration.TypeFilter     = ApiListWriter.DefaultAttributeFilter;
 
+    options.ValueDeclaration.UseDefaultLiteral  = true;
+
     return options;
   }
 
