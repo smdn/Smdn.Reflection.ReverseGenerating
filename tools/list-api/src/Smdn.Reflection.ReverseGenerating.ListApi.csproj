@@ -1,9 +1,11 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>Exe</OutputType>
+    <PackAsTool>true</PackAsTool>
     <TargetFrameworks>net5.0<!-- ;net472 --></TargetFrameworks>
     <LangVersion>10</LangVersion>
     <AssemblyName>Smdn.Reflection.ReverseGenerating.ListApi</AssemblyName>
+    <ToolCommandName>list-api</ToolCommandName>
   </PropertyGroup>
 
   <ItemGroup>
