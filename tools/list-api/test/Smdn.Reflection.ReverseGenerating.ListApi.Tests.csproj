@@ -9,7 +9,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\src\list-api.csproj" />
+    <ProjectReference Include="..\src\Smdn.Reflection.ReverseGenerating.ListApi.csproj" />
   </ItemGroup>
 
   <Target Name="WriteTestAssemblyInfo" BeforeTargets="BeforeBuild">
