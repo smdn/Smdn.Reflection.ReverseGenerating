@@ -44,7 +44,7 @@ class RootCommandImplementationGetOutputFilePathsTests {
     }).First();
 
     Assert.AreEqual(
-      "Exe-1.0.0.0-net5.0.apilist.cs",
+      "Exe-net5.0.apilist.cs",
       Path.GetFileName(outputFilePath)
     );
     Assert.AreEqual(
@@ -64,7 +64,7 @@ class RootCommandImplementationGetOutputFilePathsTests {
     }).First();
 
     Assert.AreEqual(
-      "Exe-1.0.0.0-net5.0.apilist.cs",
+      "Exe-net5.0.apilist.cs",
       Path.GetFileName(outputFilePath)
     );
     Assert.AreEqual(
@@ -87,8 +87,8 @@ class RootCommandImplementationGetOutputFilePathsTests {
 
     CollectionAssert.AreEquivalent(
       new[] {
-        "LibA-1.0.0.0-netstandard2.1.apilist.cs",
-        "LibA-1.0.0.0-net5.0.apilist.cs",
+        "LibA-netstandard2.1.apilist.cs",
+        "LibA-net5.0.apilist.cs",
       },
       outputFilePaths.Select(f => Path.GetFileName(f))
     );
@@ -108,7 +108,7 @@ class RootCommandImplementationGetOutputFilePathsTests {
 
     CollectionAssert.AreEquivalent(
       new[] {
-        $"LibA-1.0.0.0-{targetFramework}.apilist.cs",
+        $"LibA-{targetFramework}.apilist.cs",
       },
       outputFilePaths.Select(f => Path.GetFileName(f))
     );
@@ -128,8 +128,8 @@ class RootCommandImplementationGetOutputFilePathsTests {
 
     CollectionAssert.AreEquivalent(
       new[] {
-        "LibA-1.0.0.0-netstandard2.1.apilist.cs",
-        "LibA-1.0.0.0-net5.0.apilist.cs",
+        "LibA-netstandard2.1.apilist.cs",
+        "LibA-net5.0.apilist.cs",
       },
       outputFilePaths.Select(f => Path.GetFileName(f))
     );
