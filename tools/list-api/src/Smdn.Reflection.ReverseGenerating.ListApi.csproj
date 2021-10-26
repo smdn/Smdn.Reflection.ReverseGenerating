@@ -6,6 +6,7 @@
     <LangVersion>10</LangVersion>
     <AssemblyName>Smdn.Reflection.ReverseGenerating.ListApi</AssemblyName>
     <ToolCommandName>list-api</ToolCommandName>
+    <DefineConstants Condition=" '$(Configuration)' != 'Release' ">$(DefineConstants);FEATURE_BUILD_PROJ</DefineConstants>
   </PropertyGroup>
 
   <ItemGroup>

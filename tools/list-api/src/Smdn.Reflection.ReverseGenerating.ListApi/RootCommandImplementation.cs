@@ -22,7 +22,11 @@ public class RootCommandImplementation {
 
   private static readonly Argument<FileSystemInfo> argumentInput = new(
     name: "input",
-    description: "Path to project/solution/assembly file to generate. The command will search for an project file from the current directory if not specified, or search from the directory if a directory is specified.",
+#if FEATURE_BUILD_PROJ
+    description: "Path to project/solution/assembly file to generate the API list. The command will search for an project file from the current directory if not specified, or search from the directory if a directory is specified.",
+#else
+    description: "Path to an assembly file to generate the API list.",
+#endif
     getDefaultValue: () => new DirectoryInfo(Environment.CurrentDirectory)
   );
 
@@ -82,10 +86,12 @@ public class RootCommandImplementation {
 
     rootCommand.Add(argumentInput);
 
+#if FEATURE_BUILD_PROJ
     rootCommand.Add(optionConfiguration);
     rootCommand.Add(optionTargetFramework);
     //rootCommand.Add(optionOS);
     rootCommand.Add(optionRuntimeIdentifier);
+#endif
     rootCommand.Add(optionOutputDirectory);
     rootCommand.Add(VerbosityOption.Option);
     rootCommand.Add(optionGenerateFullTypeName);
@@ -275,14 +281,14 @@ public class RootCommandImplementation {
       }
     }
     else if (input is FileInfo f) {
-      logger?.LogDebug($"input file: '{f.FullName}'");
-
       inputFile = f;
     }
     else {
       // TODO: dereference symlink
       throw new CommandOperationNotSupportedException($"unsupported input: {input}");
     }
+
+    logger?.LogInformation($"input file: '{inputFile.FullName}'");
 
     IEnumerable<FileInfo> inputAssemblyFiles = null;
 
@@ -294,9 +300,10 @@ public class RootCommandImplementation {
     }
     else if (string.Equals(".sln", inputFile.Extension, StringComparison.OrdinalIgnoreCase)) {
       // TODO
-      throw new CommandOperationNotSupportedException("solution file is not supported currently");
+      throw new CommandOperationNotSupportedException("generating from the solution file is not supported currently");
     }
     else if (inputFile.Extension.EndsWith("proj", StringComparison.OrdinalIgnoreCase)) {
+#if FEATURE_BUILD_PROJ
       MSBuildExePath.EnsureSetEnvVar(logger);
 
       inputAssemblyFiles = ProjectBuilder.Build(
@@ -310,6 +317,9 @@ public class RootCommandImplementation {
         },
         logger: logger
       );
+#else
+      throw new CommandOperationNotSupportedException("generating from the project file is not supported currently");
+#endif
     }
     else {
       logger?.LogWarning($"unknown type of file: {inputFile}");
