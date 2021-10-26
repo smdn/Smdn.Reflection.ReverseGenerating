@@ -1,0 +1,8 @@
+* text=auto
+
+*.sln           text eol=crlf
+*.csproj        text eol=crlf
+*.vbproj        text eol=crlf
+*.resx          text eol=crlf
+*.runsettings   text eol=crlf
+
