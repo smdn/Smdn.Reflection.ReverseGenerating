@@ -1,6 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
-  <Import Project="..\..\..\Common\test\Common.Tests.props" />
-
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFrameworks>net5.0<!-- ;net472 --></TargetFrameworks>
     <RootNamespace>Smdn.Reflection.ReverseGenerating.ListApi</RootNamespace>
@@ -9,7 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\src\Smdn.Reflection.ReverseGenerating.ListApi.csproj" />
+    <ProjectReference Include="..\..\src\Smdn.Reflection.ReverseGenerating.ListApi\Smdn.Reflection.ReverseGenerating.ListApi.csproj" />
   </ItemGroup>
 
   <Target Name="WriteTestAssemblyInfo" BeforeTargets="BeforeBuild">

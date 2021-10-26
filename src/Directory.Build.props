@@ -1,0 +1,26 @@
+<!--
+SPDX-FileCopyrightText: 2021 smdn <smdn@smdn.jp>
+SPDX-License-Identifier: MIT
+-->
+<Project>
+  <PropertyGroup>
+    <LangVersion>latest</LangVersion>
+    <Deterministic>true</Deterministic>
+    <AssemblyCLSCompliant>true</AssemblyCLSCompliant>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="$(MSBuildThisFileDirectory)package-icon.png" Pack="true" Visible="false" PackagePath="\$(MSBuildProjectName).png"/>
+  </ItemGroup>
+
+  <PropertyGroup Label="metadata">
+    <Authors>smdn</Authors>
+
+    <!-- NuGet -->
+    <PackageIcon>$(MSBuildProjectName).png</PackageIcon>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageProjectUrl>https://smdn.jp/works/tools/list-api/</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/smdn/Smdn.Reflection.ReverseGenerating</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+  </PropertyGroup>
+</Project>
