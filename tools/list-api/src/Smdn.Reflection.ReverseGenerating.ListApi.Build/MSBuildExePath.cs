@@ -8,7 +8,7 @@ using Microsoft.Extensions.Logging;
 
 using Smdn.OperatingSystem;
 
-namespace Smdn.Reflection.ReverseGenerating.ListApi;
+namespace Smdn.Reflection.ReverseGenerating.ListApi.Build;
 
 public static class MSBuildExePath {
   private static string JoinPath(string path1, string path2)

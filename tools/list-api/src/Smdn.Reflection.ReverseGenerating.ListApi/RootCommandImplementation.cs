@@ -13,6 +13,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
 using Smdn.Reflection.ReverseGenerating;
+using Smdn.Reflection.ReverseGenerating.ListApi.Build;
 
 namespace Smdn.Reflection.ReverseGenerating.ListApi;
 

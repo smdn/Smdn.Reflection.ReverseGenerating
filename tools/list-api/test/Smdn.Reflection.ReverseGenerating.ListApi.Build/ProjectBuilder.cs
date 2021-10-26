@@ -14,7 +14,7 @@ using PathJoiner = System.IO.Path;
 using PathJoiner = Smdn.Reflection.ReverseGenerating.ListApi.Shim.Path;
 #endif
 
-namespace Smdn.Reflection.ReverseGenerating.ListApi;
+namespace Smdn.Reflection.ReverseGenerating.ListApi.Build;
 
 [TestFixture]
 class ProjectBuilderTests {

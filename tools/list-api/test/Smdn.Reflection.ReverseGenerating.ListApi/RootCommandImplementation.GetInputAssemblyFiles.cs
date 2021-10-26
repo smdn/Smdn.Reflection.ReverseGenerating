@@ -8,6 +8,7 @@ using Microsoft.Build.Framework;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using NUnit.Framework;
+using Smdn.Reflection.ReverseGenerating.ListApi.Build;
 
 #if NETCOREAPP3_1_OR_GREATER || NET5_0_OR_GREATER
 using PathJoiner = System.IO.Path;

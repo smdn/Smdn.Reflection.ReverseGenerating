@@ -5,7 +5,7 @@ using System.Linq;
 using System.Reflection;
 using NUnit.Framework;
 
-namespace Smdn.Reflection.ReverseGenerating.ListApi;
+namespace Smdn.Reflection.ReverseGenerating.ListApi.Build;
 
 [TestFixture]
 class MSBuildExePathTests {

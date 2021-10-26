@@ -11,7 +11,7 @@ using Microsoft.Build.Framework;
 using Microsoft.Build.Logging;
 using Microsoft.Extensions.Logging;
 
-namespace Smdn.Reflection.ReverseGenerating.ListApi;
+namespace Smdn.Reflection.ReverseGenerating.ListApi.Build;
 
 public static class ProjectBuilder {
   public class Options {
