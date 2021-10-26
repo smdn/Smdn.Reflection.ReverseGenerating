@@ -1,0 +1,40 @@
+<?xml version="1.0" standalone="no" ?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg width="320px" height="320px" version="1.1" xmlns="http://www.w3.org/2000/svg">
+ <title>Smdn.Reflection.ReverseGenerating package icon</title>
+ <defs>
+  <linearGradient id="gradient-bg" x1="0%" y1="0%" x2="0%" y2="100%" color-rendering="optimizeQuality">
+   <stop offset="0%" stop-color="#1034b8"/>
+   <stop offset="100%" stop-color="#020d7c"/>
+  </linearGradient>
+ </defs>
+ <g>
+  <desc>box</desc>
+  <rect fill="url(#gradient-bg)" stroke="#000850" stroke-width="5%" x="2.5%" y="2.5%" width="95%" height="95%" rx="10%" ry="10%" shape-rendering="geometricPrecision"/>
+ </g>
+ <g fill="white" stroke="#000850" stroke-width="0.25%" shape-rendering="geometricPrecision">
+  <desc>circles</desc>
+  <g>
+   <desc>s</desc>
+   <circle cx="15.62500%" cy="24.21875%" r="7.81250%"/>
+   <circle cx="67.18750%" cy="24.21875%" r="7.81250%"/>
+   <circle cx="84.37500%" cy="24.21875%" r="7.81250%"/>
+  </g>
+  <g>
+   <desc>m</desc>
+   <circle cx="32.81250%" cy="41.40625%" r="7.81250%"/>
+   <circle cx="50.00000%" cy="41.40625%" r="7.81250%"/>
+   <circle cx="84.37500%" cy="41.40625%" r="7.81250%"/>
+  </g>
+  <g>
+   <desc>d</desc>
+   <circle cx="50.00000%" cy="58.59375%" r="7.81250%"/>
+  </g>
+  <g>
+   <desc>n</desc>
+   <circle cx="32.81250%" cy="75.78125%" r="7.81250%"/>
+   <circle cx="50.00000%" cy="75.78125%" r="7.81250%"/>
+   <circle cx="67.18750%" cy="75.78125%" r="7.81250%"/>
+  </g>
+ </g>
+</svg>
