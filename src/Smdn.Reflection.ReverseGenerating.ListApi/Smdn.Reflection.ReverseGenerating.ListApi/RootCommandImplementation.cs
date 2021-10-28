@@ -138,6 +138,8 @@ public class RootCommandImplementation {
 
   private void CommandMain(ParseResult parseResult, IConsole console)
   {
+    logger?.LogDebug(parseResult.ToString());
+
     var options = GetApiListWriterOptions(parseResult);
     var outputDirectory = GetOutputDirectory(parseResult);
 
