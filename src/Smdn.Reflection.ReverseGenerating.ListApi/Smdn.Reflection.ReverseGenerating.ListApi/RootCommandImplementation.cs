@@ -32,7 +32,10 @@ public class RootCommandImplementation {
     description: "Path to an assembly file to generate the API list.",
 #endif
     getDefaultValue: () => new DirectoryInfo(Environment.CurrentDirectory)
-  );
+  ) {
+    //Arity = ArgumentArity.OneOrMore
+    Arity = ArgumentArity.ExactlyOne
+  };
 
   private static readonly Option<string> optionConfiguration = new(
     aliases: new[] { "-c", "--configuration" },
