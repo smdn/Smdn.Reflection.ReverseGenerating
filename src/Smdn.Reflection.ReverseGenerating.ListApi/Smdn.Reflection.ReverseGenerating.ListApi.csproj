@@ -14,6 +14,7 @@ SPDX-License-Identifier: MIT
   </PropertyGroup>
 
   <PropertyGroup Label="metadata">
+    <Title>list-api</Title>
     <Description>.NET tool for reverse generation of API lists from assemblies.</Description>
     <CopyrightYear>2021</CopyrightYear>
 
