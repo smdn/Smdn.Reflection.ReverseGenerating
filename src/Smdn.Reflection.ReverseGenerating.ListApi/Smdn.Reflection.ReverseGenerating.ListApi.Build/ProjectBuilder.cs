@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: 2021 smdn <smdn@smdn.jp>
+// SPDX-License-Identifier: MIT
+
 #if FEATURE_BUILD_PROJ
 using System;
 using System.Collections.Generic;

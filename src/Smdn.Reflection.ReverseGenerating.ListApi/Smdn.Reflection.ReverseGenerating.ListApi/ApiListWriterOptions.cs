@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2021 smdn <smdn@smdn.jp>
+// SPDX-License-Identifier: MIT
 using Smdn.Reflection.ReverseGenerating;
 
 namespace Smdn.Reflection.ReverseGenerating.ListApi;
