@@ -1,3 +1,4 @@
+#if FEATURE_BUILD_PROJ
 using System;
 using System.IO;
 using System.Linq;
@@ -139,3 +140,4 @@ public static class MSBuildExePath {
     logger?.LogDebug($"{MSBUILD_EXE_PATH}: {Environment.GetEnvironmentVariable(MSBUILD_EXE_PATH)}");
   }
 }
+#endif

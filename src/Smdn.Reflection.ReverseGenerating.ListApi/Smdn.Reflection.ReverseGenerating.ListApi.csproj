@@ -6,23 +6,30 @@
     <LangVersion>10</LangVersion>
     <AssemblyName>Smdn.Reflection.ReverseGenerating.ListApi</AssemblyName>
     <ToolCommandName>list-api</ToolCommandName>
-    <DefineConstants Condition=" '$(Configuration)' != 'Release' ">$(DefineConstants);FEATURE_BUILD_PROJ</DefineConstants>
+    <EnableFeatureBuildProjectFile Condition=" '$(Configuration)' != 'Release' ">true</EnableFeatureBuildProjectFile>
+  </PropertyGroup>
+
+  <PropertyGroup Condition=" '$(EnableFeatureBuildProjectFile)' == 'True' ">
+    <DefineConstants>$(DefineConstants);FEATURE_BUILD_PROJ</DefineConstants>
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="System.CommandLine" Version="2.0.0-beta1.21308.1" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="5.0.0" />
+    <ProjectReference VersionRange="[1.0,2.0)" Include="..\Smdn.Reflection.ReverseGenerating\Smdn.Reflection.ReverseGenerating.csproj" />
+  </ItemGroup>
+
+  <ItemGroup Condition=" '$(EnableFeatureBuildProjectFile)' == 'True' ">
     <!-- Overrides the package version of Newtonsoft.Json which NuGet.Packaging refers to -->
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
 
-    <PackageReference Include="System.CommandLine" Version="2.0.0-beta1.21308.1" />
     <PackageReference Include="System.Runtime.Loader" Version="4.3.0" Condition="$(TargetFramework.StartsWith('net4'))" />
     <PackageReference Include="Microsoft.Build" Version="16.11.0" />
     <PackageReference Include="Microsoft.Build.Utilities.Core" Version="16.11.0" />
     <PackageReference Include="Microsoft.Build.Tasks.Core" Version="16.11.0" />
     <PackageReference Include="Microsoft.Extensions.DependencyModel" Version="5.0.0" />
-    <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="5.0.0" />
     <PackageReference Include="Microsoft.NET.HostModel" Version="3.1.16" />
     <PackageReference Include="NuGet.ProjectModel" Version="5.11.0" />
     <PackageReference Include="Smdn.Fundamental.Shell" Version="3.0.0" />
-    <ProjectReference VersionRange="[1.0,2.0)" Include="..\Smdn.Reflection.ReverseGenerating\Smdn.Reflection.ReverseGenerating.csproj" />
   </ItemGroup>
 </Project>

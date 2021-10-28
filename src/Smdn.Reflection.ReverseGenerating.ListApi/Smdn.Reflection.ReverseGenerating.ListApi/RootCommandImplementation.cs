@@ -13,7 +13,9 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
 using Smdn.Reflection.ReverseGenerating;
+#if FEATURE_BUILD_PROJ
 using Smdn.Reflection.ReverseGenerating.ListApi.Build;
+#endif
 
 namespace Smdn.Reflection.ReverseGenerating.ListApi;
 

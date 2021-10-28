@@ -4,7 +4,9 @@ using System.CommandLine;
 using System.CommandLine.Parsing;
 using System.Threading.Tasks;
 
+#if FEATURE_BUILD_PROJ
 using Microsoft.Build.Framework;
+#endif
 using Microsoft.Extensions.Logging;
 
 namespace Smdn.Reflection.ReverseGenerating.ListApi;
@@ -35,6 +37,7 @@ public static class VerbosityOption {
       _                       => LogLevel.Information,
     };
 
+#if FEATURE_BUILD_PROJ
   public static LoggerVerbosity ParseLoggerVerbosity(string[] args)
   {
     var command = new RootCommand();
@@ -53,4 +56,5 @@ public static class VerbosityOption {
       "diag" or "diagnostic"  => LoggerVerbosity.Diagnostic,
       _                       => LoggerVerbosity.Minimal,
     };
+#endif
 }

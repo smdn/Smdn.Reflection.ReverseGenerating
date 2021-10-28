@@ -1,3 +1,4 @@
+#if FEATURE_BUILD_PROJ
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -125,3 +126,4 @@ public static class ProjectBuilder {
     }
   }
 }
+#endif
