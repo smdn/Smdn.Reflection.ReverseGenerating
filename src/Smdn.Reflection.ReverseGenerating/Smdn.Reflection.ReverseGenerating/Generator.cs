@@ -152,7 +152,7 @@ namespace Smdn.Reflection.ReverseGenerating {
       static IEnumerable<string> GetGenericArgumentConstraintsOf(Type argument, ISet<string> _referencingNamespaces, bool typeWithNamespace)
       {
         var constraintAttrs = argument.GenericParameterAttributes & GenericParameterAttributes.SpecialConstraintMask;
-        var constraintTypes = argument.GetGenericParameterConstraints();
+        IEnumerable<Type> constraintTypes = argument.GetGenericParameterConstraints();
 
         _referencingNamespaces?.UnionWith(constraintTypes.Where(ct => ct != typeof(ValueType)).SelectMany(CSharpFormatter.ToNamespaceList));
 
@@ -163,7 +163,7 @@ namespace Smdn.Reflection.ReverseGenerating {
         ) {
           constraintAttrs &= ~GenericParameterAttributes.NotNullableValueTypeConstraint;
           constraintAttrs &= ~GenericParameterAttributes.DefaultConstructorConstraint;
-          constraintTypes = constraintTypes.Where(ct => ct != typeof(ValueType)).ToArray();
+          constraintTypes = constraintTypes.Where(ct => ct != typeof(ValueType));
 
           if (IsUnmanagedTypeArgument(argument))
             yield return "unmanaged";
