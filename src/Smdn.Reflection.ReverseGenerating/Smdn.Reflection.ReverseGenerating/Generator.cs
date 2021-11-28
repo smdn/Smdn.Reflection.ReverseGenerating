@@ -143,7 +143,7 @@ namespace Smdn.Reflection.ReverseGenerating {
       GeneratorOptions options
     )
     {
-      static bool IsUnmanagedTypeArgument(Type genericParameter)
+      static bool HasUnmanagedConstraint(Type genericParameter)
         => genericParameter.GetCustomAttributes().Any(attr => attr.GetType().FullName == "System.Runtime.CompilerServices.IsUnmanagedAttribute");
 
       static bool IsNullableAttribute(CustomAttributeData attr)
@@ -153,7 +153,7 @@ namespace Smdn.Reflection.ReverseGenerating {
         => attr.AttributeType.FullName.Equals("System.Runtime.CompilerServices.NullableContextAttribute", StringComparison.Ordinal);
 
       // ref: https://github.com/dotnet/roslyn/blob/main/docs/features/nullable-metadata.md#type-parameters
-      static bool IsNotNullConstraint(Type genericParameter)
+      static bool HasNotNullConstraint(Type genericParameter)
       {
         var attrNullable = genericParameter.CustomAttributes.FirstOrDefault(IsNullableAttribute);
 
@@ -184,7 +184,7 @@ namespace Smdn.Reflection.ReverseGenerating {
         if (
           constraintAttrs == GenericParameterAttributes.None &&
           !constraintTypes.Any() &&
-          IsNotNullConstraint(genericParameter)
+          HasNotNullConstraint(genericParameter)
         ) {
           yield return "notnull";
         }
@@ -197,7 +197,7 @@ namespace Smdn.Reflection.ReverseGenerating {
           constraintAttrs &= ~GenericParameterAttributes.DefaultConstructorConstraint;
           constraintTypes = constraintTypes.Where(ct => ct != typeof(ValueType));
 
-          if (IsUnmanagedTypeArgument(genericParameter))
+          if (HasUnmanagedConstraint(genericParameter))
             yield return "unmanaged";
           else
             yield return "struct";
@@ -206,7 +206,7 @@ namespace Smdn.Reflection.ReverseGenerating {
           yield return "class";
         }
         else if (constraintAttrs.HasFlag(GenericParameterAttributes.NotNullableValueTypeConstraint)) {
-          if (IsUnmanagedTypeArgument(genericParameter))
+          if (HasUnmanagedConstraint(genericParameter))
             yield return "unmanaged";
           else
             yield return "struct";
