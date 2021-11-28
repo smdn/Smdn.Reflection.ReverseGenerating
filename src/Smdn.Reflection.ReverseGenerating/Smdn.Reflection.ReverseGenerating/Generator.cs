@@ -143,8 +143,8 @@ namespace Smdn.Reflection.ReverseGenerating {
       GeneratorOptions options
     )
     {
-      static bool IsUnmanagedTypeArgument(Type argument)
-        => argument.GetCustomAttributes().Any(attr => attr.GetType().FullName == "System.Runtime.CompilerServices.IsUnmanagedAttribute");
+      static bool IsUnmanagedTypeArgument(Type genericParameter)
+        => genericParameter.GetCustomAttributes().Any(attr => attr.GetType().FullName == "System.Runtime.CompilerServices.IsUnmanagedAttribute");
 
       static bool IsNullableAttribute(CustomAttributeData attr)
         => attr.AttributeType.FullName.Equals("System.Runtime.CompilerServices.NullableAttribute", StringComparison.Ordinal);
@@ -153,17 +153,17 @@ namespace Smdn.Reflection.ReverseGenerating {
         => attr.AttributeType.FullName.Equals("System.Runtime.CompilerServices.NullableContextAttribute", StringComparison.Ordinal);
 
       // ref: https://github.com/dotnet/roslyn/blob/main/docs/features/nullable-metadata.md#type-parameters
-      static bool IsNotNullConstraint(Type argument)
+      static bool IsNotNullConstraint(Type genericParameter)
       {
-        var attrNullable = argument.CustomAttributes.FirstOrDefault(IsNullableAttribute);
+        var attrNullable = genericParameter.CustomAttributes.FirstOrDefault(IsNullableAttribute);
 
-        if (argument.DeclaringMethod is null) { // is a generic parameter of the type
+        if (genericParameter.DeclaringMethod is null) { // is a generic parameter of the type
           return (attrNullable is not null && (byte)attrNullable.ConstructorArguments[0].Value == 1);
         }
         else { // is a generic parameter of the method
           var attrNullableContext =
-            argument.DeclaringMethod.CustomAttributes.FirstOrDefault(IsNullableContextAttribute) ??
-            argument.DeclaringType  .CustomAttributes.FirstOrDefault(IsNullableContextAttribute);
+            genericParameter.DeclaringMethod.CustomAttributes.FirstOrDefault(IsNullableContextAttribute) ??
+            genericParameter.DeclaringType  .CustomAttributes.FirstOrDefault(IsNullableContextAttribute);
 
           if (attrNullableContext is not null && (byte)attrNullableContext.ConstructorArguments[0].Value == 1)
             // `#nullable enable` context
@@ -174,17 +174,17 @@ namespace Smdn.Reflection.ReverseGenerating {
         }
       }
 
-      static IEnumerable<string> GetGenericArgumentConstraintsOf(Type argument, ISet<string> _referencingNamespaces, bool typeWithNamespace)
+      static IEnumerable<string> GetGenericArgumentConstraintsOf(Type genericParameter, ISet<string> _referencingNamespaces, bool typeWithNamespace)
       {
-        var constraintAttrs = argument.GenericParameterAttributes & GenericParameterAttributes.SpecialConstraintMask;
-        IEnumerable<Type> constraintTypes = argument.GetGenericParameterConstraints();
+        var constraintAttrs = genericParameter.GenericParameterAttributes & GenericParameterAttributes.SpecialConstraintMask;
+        IEnumerable<Type> constraintTypes = genericParameter.GetGenericParameterConstraints();
 
         _referencingNamespaces?.UnionWith(constraintTypes.Where(ct => ct != typeof(ValueType)).SelectMany(CSharpFormatter.ToNamespaceList));
 
         if (
           constraintAttrs == GenericParameterAttributes.None &&
           !constraintTypes.Any() &&
-          IsNotNullConstraint(argument)
+          IsNotNullConstraint(genericParameter)
         ) {
           yield return "notnull";
         }
@@ -197,7 +197,7 @@ namespace Smdn.Reflection.ReverseGenerating {
           constraintAttrs &= ~GenericParameterAttributes.DefaultConstructorConstraint;
           constraintTypes = constraintTypes.Where(ct => ct != typeof(ValueType));
 
-          if (IsUnmanagedTypeArgument(argument))
+          if (IsUnmanagedTypeArgument(genericParameter))
             yield return "unmanaged";
           else
             yield return "struct";
@@ -206,7 +206,7 @@ namespace Smdn.Reflection.ReverseGenerating {
           yield return "class";
         }
         else if (constraintAttrs.HasFlag(GenericParameterAttributes.NotNullableValueTypeConstraint)) {
-          if (IsUnmanagedTypeArgument(argument))
+          if (IsUnmanagedTypeArgument(genericParameter))
             yield return "unmanaged";
           else
             yield return "struct";
