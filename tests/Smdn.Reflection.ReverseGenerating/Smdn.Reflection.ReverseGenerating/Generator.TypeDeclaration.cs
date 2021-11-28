@@ -222,6 +222,13 @@ namespace Smdn.Reflection.ReverseGenerating {
         [TypeDeclarationTestCase("public delegate void D3<T1, T2, T3>(T1 x, T2 y, T3 z);")] public delegate void D3<T1, T2, T3>(T1 x, T2 y, T3 z);
 
         namespace Constraints1 {
+#nullable enable
+          [TypeDeclarationTestCase("public class C0_NullableEnableContext<T>")] public class C0_NullableEnableContext<T> { }
+#nullable restore
+#nullable disable
+          [TypeDeclarationTestCase("public class C0_NullableDisableContext<T>")] public class C0_NullableDisableContext<T> { }
+#nullable restore
+
           [TypeDeclarationTestCase("public class C1<T> where T : new()")] public class C1<T> where T : new() { }
           [TypeDeclarationTestCase("public class C2<T> where T : struct")] public class C2<T> where T : struct { }
           [TypeDeclarationTestCase("public class C3<T> where T : class")] public class C3<T> where T : class { }
@@ -241,7 +248,27 @@ namespace Smdn.Reflection.ReverseGenerating {
           [TypeDeclarationTestCase("public class C13<T> where T : System.MulticastDelegate")] public class C13<T> where T : System.MulticastDelegate { }
 
           [TypeDeclarationTestCase("public class C14<T> where T : unmanaged")] public class C14<T> where T : unmanaged { }
-          [TypeDeclarationTestCase("public class C15<T> where T : notnull")] public class C15<T> where T : notnull { }
+
+#nullable enable
+          [TypeDeclarationTestCase("public class C15_0_NullableEnableContext<T> where T : notnull")]
+          public class C15_0_NullableEnableContext<T> where T : notnull { }
+
+          [TypeDeclarationTestCase("public class C15_1_NullableEnableContext<T0, T1> where T0 : notnull")]
+          public class C15_1_NullableEnableContext<T0, T1> where T0 : notnull { }
+
+          [TypeDeclarationTestCase("public class C15_2_NullableEnableContext<T0, T1> where T1 : notnull")]
+          public class C15_2_NullableEnableContext<T0, T1> where T1 : notnull { }
+#nullable restore
+#nullable disable
+          [TypeDeclarationTestCase("public class C15_0_NullableDisableContext<T> where T : notnull")]
+          public class C15_0_NullableDisableContext<T> where T : notnull { }
+
+          [TypeDeclarationTestCase("public class C15_1_NullableDisableContext<T0, T1> where T0 : notnull")]
+          public class C15_1_NullableDisableContext<T0, T1> where T0 : notnull { }
+
+          [TypeDeclarationTestCase("public class C15_2_NullableDisableContext<T0, T1> where T1 : notnull")]
+          public class C15_2_NullableDisableContext<T0, T1> where T1 : notnull { }
+#nullable restore
 
           [TypeDeclarationTestCase("public struct S1<T> where T : new()")] public struct S1<T> where T : new() { }
 

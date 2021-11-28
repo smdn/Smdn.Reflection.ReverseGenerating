@@ -796,6 +796,12 @@ namespace Smdn.Reflection.ReverseGenerating {
           }
 
           public class Constraints1 {
+#nullable enable
+            [MemberDeclarationTestCase("public T M0_NullableEnableContext<T>(T x) {}")] public T M0_NullableEnableContext<T>(T x) => throw new NotImplementedException();
+#nullable restore
+#nullable disable
+            [MemberDeclarationTestCase("public T M0_NullableDisableContext<T>(T x) {}")] public T M0_NullableDisableContext<T>(T x) => throw new NotImplementedException();
+#nullable restore
             [MemberDeclarationTestCase("public T M1<T>(T x) where T : new() {}")] public T M1<T>(T x) where T : new() => throw new NotImplementedException();
             [MemberDeclarationTestCase("public T M2<T>(T x) where T : struct {}")] public T M2<T>(T x) where T : struct => throw new NotImplementedException();
             [MemberDeclarationTestCase("public T M3<T>(T x) where T : class {}")] public T M3<T>(T x) where T : class => throw new NotImplementedException();
@@ -814,7 +820,26 @@ namespace Smdn.Reflection.ReverseGenerating {
             [MemberDeclarationTestCase("public T M12<T>(T x) where T : System.Delegate {}")] public T M12<T>(T x) where T : System.Delegate => throw new NotImplementedException();
             [MemberDeclarationTestCase("public T M13<T>(T x) where T : System.MulticastDelegate {}")] public T M13<T>(T x) where T : System.MulticastDelegate => throw new NotImplementedException();
 
-            [MemberDeclarationTestCase("public T M14<T>(T x) where T : notnull {}")] public T M14<T>(T x) where T : notnull => throw new NotImplementedException();
+#nullable enable
+            [MemberDeclarationTestCase("public void M14_0_NullableEnableContext<T0, T1>(T0 t0, T1 t1) where T0 : notnull {}")]
+            public void M14_0_NullableEnableContext<T0, T1>(T0 t0, T1 t1) where T0 : notnull => throw new NotImplementedException();
+
+            [MemberDeclarationTestCase("public T0 M14_1_NullableEnableContext<T0, T1>(T0 t0, T1 t1) where T0 : notnull {}")]
+            public T0 M14_1_NullableEnableContext<T0, T1>(T0 t0, T1 t1) where T0 : notnull => throw new NotImplementedException();
+
+            [MemberDeclarationTestCase("public T1 M14_2_NullableEnableContext<T0, T1>(T0 t0, T1 t1) where T0 : notnull {}")]
+            public T1 M14_2_NullableEnableContext<T0, T1>(T0 t0, T1 t1) where T0 : notnull => throw new NotImplementedException();
+#nullable restore
+#nullable disable
+            [MemberDeclarationTestCase("public void M14_0_NullableDisableContext<T0, T1>(T0 t0, T1 t1) where T0 : notnull {}")]
+            public void M14_0_NullableDisableContext<T0, T1>(T0 t0, T1 t1) where T0 : notnull => throw new NotImplementedException();
+
+            [MemberDeclarationTestCase("public T0 M14_1_NullableDisableContext<T0, T1>(T0 t0, T1 t1) where T0 : notnull {}")]
+            public T0 M14_1_NullableDisableContext<T0, T1>(T0 t0, T1 t1) where T0 : notnull => throw new NotImplementedException();
+
+            [MemberDeclarationTestCase("public T1 M14_2_NullableDisableContext<T0, T1>(T0 t0, T1 t1) where T0 : notnull {}")]
+            public T1 M14_2_NullableDisableContext<T0, T1>(T0 t0, T1 t1) where T0 : notnull => throw new NotImplementedException();
+#nullable restore
             [MemberDeclarationTestCase("public T M15<T>(T x) where T : unmanaged {}")] public T M15<T>(T x) where T : unmanaged => throw new NotImplementedException();
           }
 
