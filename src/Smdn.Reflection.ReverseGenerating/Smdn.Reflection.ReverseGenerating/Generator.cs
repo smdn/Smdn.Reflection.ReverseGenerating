@@ -146,8 +146,33 @@ namespace Smdn.Reflection.ReverseGenerating {
       static bool IsUnmanagedTypeArgument(Type argument)
         => argument.GetCustomAttributes().Any(attr => attr.GetType().FullName == "System.Runtime.CompilerServices.IsUnmanagedAttribute");
 
-      static bool IsNotNullTypeArgument(Type argument)
-        => argument.GetCustomAttributes().Any(attr => attr.GetType().FullName == "System.Runtime.CompilerServices.NullableAttribute");
+      static bool IsNullableAttribute(CustomAttributeData attr)
+        => attr.AttributeType.FullName.Equals("System.Runtime.CompilerServices.NullableAttribute", StringComparison.Ordinal);
+
+      static bool IsNullableContextAttribute(CustomAttributeData attr)
+        => attr.AttributeType.FullName.Equals("System.Runtime.CompilerServices.NullableContextAttribute", StringComparison.Ordinal);
+
+      // ref: https://github.com/dotnet/roslyn/blob/main/docs/features/nullable-metadata.md#type-parameters
+      static bool IsNotNullConstraint(Type argument)
+      {
+        var attrNullable = argument.CustomAttributes.FirstOrDefault(IsNullableAttribute);
+
+        if (argument.DeclaringMethod is null) { // is a generic parameter of the type
+          return (attrNullable is not null && (byte)attrNullable.ConstructorArguments[0].Value == 1);
+        }
+        else { // is a generic parameter of the method
+          var attrNullableContext =
+            argument.DeclaringMethod.CustomAttributes.FirstOrDefault(IsNullableContextAttribute) ??
+            argument.DeclaringType  .CustomAttributes.FirstOrDefault(IsNullableContextAttribute);
+
+          if (attrNullableContext is not null && (byte)attrNullableContext.ConstructorArguments[0].Value == 1)
+            // `#nullable enable` context
+            return attrNullable is null;
+          else
+            // `#nullable disable` context
+            return (attrNullable is not null && (byte)attrNullable.ConstructorArguments[0].Value == 1);
+        }
+      }
 
       static IEnumerable<string> GetGenericArgumentConstraintsOf(Type argument, ISet<string> _referencingNamespaces, bool typeWithNamespace)
       {
@@ -156,6 +181,13 @@ namespace Smdn.Reflection.ReverseGenerating {
 
         _referencingNamespaces?.UnionWith(constraintTypes.Where(ct => ct != typeof(ValueType)).SelectMany(CSharpFormatter.ToNamespaceList));
 
+        if (
+          constraintAttrs == GenericParameterAttributes.None &&
+          !constraintTypes.Any() &&
+          IsNotNullConstraint(argument)
+        ) {
+          yield return "notnull";
+        }
         if (
           constraintAttrs.HasFlag(GenericParameterAttributes.NotNullableValueTypeConstraint) &&
           constraintAttrs.HasFlag(GenericParameterAttributes.DefaultConstructorConstraint) &&
@@ -178,9 +210,6 @@ namespace Smdn.Reflection.ReverseGenerating {
             yield return "unmanaged";
           else
             yield return "struct";
-        }
-        else if (constraintAttrs == GenericParameterAttributes.None && IsNotNullTypeArgument(argument)) {
-          yield return "notnull";
         }
 
         foreach (var ctn in constraintTypes.Select(i => i.FormatTypeName(typeWithNamespace: typeWithNamespace)).OrderBy(name => name, StringComparer.Ordinal))
