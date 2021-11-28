@@ -144,7 +144,7 @@ namespace Smdn.Reflection.ReverseGenerating {
     )
     {
       static bool HasUnmanagedConstraint(Type genericParameter)
-        => genericParameter.GetCustomAttributes().Any(attr => attr.GetType().FullName == "System.Runtime.CompilerServices.IsUnmanagedAttribute");
+        => genericParameter.CustomAttributes.Any(attr => attr.AttributeType.FullName.Equals("System.Runtime.CompilerServices.IsUnmanagedAttribute", StringComparison.Ordinal));
 
       static bool IsNullableAttribute(CustomAttributeData attr)
         => attr.AttributeType.FullName.Equals("System.Runtime.CompilerServices.NullableAttribute", StringComparison.Ordinal);
