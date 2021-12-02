@@ -156,22 +156,16 @@ namespace Smdn.Reflection.ReverseGenerating {
       static bool HasNotNullConstraint(Type genericParameter)
       {
         var attrNullable = genericParameter.CustomAttributes.FirstOrDefault(IsNullableAttribute);
+        var attrNullableContext =
+          genericParameter.DeclaringMethod?.CustomAttributes?.FirstOrDefault(IsNullableContextAttribute) ??
+          genericParameter.DeclaringType   .CustomAttributes .FirstOrDefault(IsNullableContextAttribute);
 
-        if (genericParameter.DeclaringMethod is null) { // is a generic parameter of the type
+        if (attrNullableContext is not null && (byte)attrNullableContext.ConstructorArguments[0].Value == 1)
+          // `#nullable enable` context
+          return attrNullable is null;
+        else
+          // `#nullable disable` context
           return (attrNullable is not null && (byte)attrNullable.ConstructorArguments[0].Value == 1);
-        }
-        else { // is a generic parameter of the method
-          var attrNullableContext =
-            genericParameter.DeclaringMethod.CustomAttributes.FirstOrDefault(IsNullableContextAttribute) ??
-            genericParameter.DeclaringType  .CustomAttributes.FirstOrDefault(IsNullableContextAttribute);
-
-          if (attrNullableContext is not null && (byte)attrNullableContext.ConstructorArguments[0].Value == 1)
-            // `#nullable enable` context
-            return attrNullable is null;
-          else
-            // `#nullable disable` context
-            return (attrNullable is not null && (byte)attrNullable.ConstructorArguments[0].Value == 1);
-        }
       }
 
       static IEnumerable<string> GetGenericArgumentConstraintsOf(Type genericParameter, ISet<string> _referencingNamespaces, bool typeWithNamespace)
@@ -183,7 +177,6 @@ namespace Smdn.Reflection.ReverseGenerating {
 
         if (
           constraintAttrs == GenericParameterAttributes.None &&
-          !constraintTypes.Any() &&
           HasNotNullConstraint(genericParameter)
         ) {
           yield return "notnull";
