@@ -172,6 +172,7 @@ namespace Smdn.Reflection.ReverseGenerating {
       {
         var constraintAttrs = genericParameter.GenericParameterAttributes & GenericParameterAttributes.SpecialConstraintMask;
         IEnumerable<Type> constraintTypes = genericParameter.GetGenericParameterConstraints();
+        IEnumerable<Type> constraintTypesExceptValueType = constraintTypes;
 
         _referencingNamespaces?.UnionWith(constraintTypes.Where(ct => ct != typeof(ValueType)).SelectMany(CSharpFormatter.ToNamespaceList));
 
@@ -188,7 +189,7 @@ namespace Smdn.Reflection.ReverseGenerating {
         ) {
           constraintAttrs &= ~GenericParameterAttributes.NotNullableValueTypeConstraint;
           constraintAttrs &= ~GenericParameterAttributes.DefaultConstructorConstraint;
-          constraintTypes = constraintTypes.Where(ct => ct != typeof(ValueType));
+          constraintTypesExceptValueType = constraintTypes.Where(ct => ct != typeof(ValueType));
 
           if (HasUnmanagedConstraint(genericParameter))
             yield return "unmanaged";
@@ -205,7 +206,7 @@ namespace Smdn.Reflection.ReverseGenerating {
             yield return "struct";
         }
 
-        foreach (var ctn in constraintTypes.Select(i => i.FormatTypeName(typeWithNamespace: typeWithNamespace)).OrderBy(name => name, StringComparer.Ordinal))
+        foreach (var ctn in constraintTypesExceptValueType.Select(i => i.FormatTypeName(typeWithNamespace: typeWithNamespace)).OrderBy(name => name, StringComparer.Ordinal))
           yield return ctn;
 
         if (constraintAttrs.HasFlag(GenericParameterAttributes.DefaultConstructorConstraint))
