@@ -803,8 +803,10 @@ namespace Smdn.Reflection.ReverseGenerating {
             [MemberDeclarationTestCase("public T M0_NullableDisableContext<T>(T x) {}")] public T M0_NullableDisableContext<T>(T x) => throw new NotImplementedException();
 #nullable restore
             [MemberDeclarationTestCase("public T M1<T>(T x) where T : new() {}")] public T M1<T>(T x) where T : new() => throw new NotImplementedException();
-            [MemberDeclarationTestCase("public T M2<T>(T x) where T : struct {}")] public T M2<T>(T x) where T : struct => throw new NotImplementedException();
-            [MemberDeclarationTestCase("public T M3<T>(T x) where T : class {}")] public T M3<T>(T x) where T : class => throw new NotImplementedException();
+            [MemberDeclarationTestCase("public T M2_0<T>(T x) where T : struct {}")] public T M2_0<T>(T x) where T : struct => throw new NotImplementedException();
+            [MemberDeclarationTestCase("public T M2_1<T>(T x) where T : struct, System.IDisposable {}")] public T M2_1<T>(T x) where T : struct, IDisposable => throw new NotImplementedException();
+            [MemberDeclarationTestCase("public T M3_0<T>(T x) where T : class {}")] public T M3_0<T>(T x) where T : class => throw new NotImplementedException();
+            [MemberDeclarationTestCase("public T M3_1<T>(T x) where T : class, System.IDisposable {}")] public T M3_1<T>(T x) where T : class, IDisposable => throw new NotImplementedException();
             [MemberDeclarationTestCase("public T M4<T>(T x) where T : System.IDisposable {}")] public T M4<T>(T x) where T : IDisposable => throw new NotImplementedException();
             [MemberDeclarationTestCase("public T M5<T>(T x) where T : System.ICloneable, System.IDisposable {}")] public T M5<T>(T x) where T : IDisposable, ICloneable => throw new NotImplementedException();
             [MemberDeclarationTestCase("public T M6<T>(T x) where T : System.ICloneable, new() {}")] public T M6<T>(T x) where T : ICloneable, new() => throw new NotImplementedException();
@@ -829,6 +831,9 @@ namespace Smdn.Reflection.ReverseGenerating {
 
             [MemberDeclarationTestCase("public T1 M14_2_NullableEnableContext<T0, T1>(T0 t0, T1 t1) where T0 : notnull {}")]
             public T1 M14_2_NullableEnableContext<T0, T1>(T0 t0, T1 t1) where T0 : notnull => throw new NotImplementedException();
+
+            [MemberDeclarationTestCase("public void M14_3_NullableEnableContext<T>(T t) where T : notnull, System.IDisposable {}")]
+            public void M14_3_NullableEnableContext<T>(T t) where T : notnull, IDisposable => throw new NotImplementedException();
 #nullable restore
 #nullable disable
             [MemberDeclarationTestCase("public void M14_0_NullableDisableContext<T0, T1>(T0 t0, T1 t1) where T0 : notnull {}")]
@@ -839,8 +844,13 @@ namespace Smdn.Reflection.ReverseGenerating {
 
             [MemberDeclarationTestCase("public T1 M14_2_NullableDisableContext<T0, T1>(T0 t0, T1 t1) where T0 : notnull {}")]
             public T1 M14_2_NullableDisableContext<T0, T1>(T0 t0, T1 t1) where T0 : notnull => throw new NotImplementedException();
+
+            [MemberDeclarationTestCase("public void M14_3_NullableDisableContext<T>(T t) where T : notnull, System.IDisposable {}")]
+            public void M14_3_NullableDisableContext<T>(T t) where T : notnull, IDisposable => throw new NotImplementedException();
 #nullable restore
-            [MemberDeclarationTestCase("public T M15<T>(T x) where T : unmanaged {}")] public T M15<T>(T x) where T : unmanaged => throw new NotImplementedException();
+
+            [MemberDeclarationTestCase("public T M15_0<T>(T x) where T : unmanaged {}")] public T M15_0<T>(T x) where T : unmanaged => throw new NotImplementedException();
+            [MemberDeclarationTestCase("public T M15_1<T>(T x) where T : unmanaged, System.IDisposable {}")] public T M15_1<T>(T x) where T : unmanaged, IDisposable => throw new NotImplementedException();
           }
 
           class Constraints2 {

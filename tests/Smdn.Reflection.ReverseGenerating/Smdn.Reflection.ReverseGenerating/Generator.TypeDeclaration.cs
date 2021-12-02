@@ -230,8 +230,10 @@ namespace Smdn.Reflection.ReverseGenerating {
 #nullable restore
 
           [TypeDeclarationTestCase("public class C1<T> where T : new()")] public class C1<T> where T : new() { }
-          [TypeDeclarationTestCase("public class C2<T> where T : struct")] public class C2<T> where T : struct { }
-          [TypeDeclarationTestCase("public class C3<T> where T : class")] public class C3<T> where T : class { }
+          [TypeDeclarationTestCase("public class C2_0<T> where T : struct")] public class C2_0<T> where T : struct { }
+          [TypeDeclarationTestCase("public class C2_1<T> where T : struct, System.IDisposable")] public class C2_1<T> where T : struct, IDisposable { }
+          [TypeDeclarationTestCase("public class C3_0<T> where T : class")] public class C3_0<T> where T : class { }
+          [TypeDeclarationTestCase("public class C3_1<T> where T : class, System.IDisposable")] public class C3_1<T> where T : class, IDisposable { }
           [TypeDeclarationTestCase("public class C4<T> where T : System.IDisposable")] public class C4<T> where T : IDisposable { }
           [TypeDeclarationTestCase("public class C5<T> where T : System.ICloneable, System.IDisposable")] public class C5<T> where T : IDisposable, ICloneable { }
           [TypeDeclarationTestCase("public class C6<T> where T : System.ICloneable, new()")] public class C6<T> where T : ICloneable, new() { }
@@ -247,7 +249,8 @@ namespace Smdn.Reflection.ReverseGenerating {
           [TypeDeclarationTestCase("public class C12<T> where T : System.Delegate")] public class C12<T> where T : System.Delegate { }
           [TypeDeclarationTestCase("public class C13<T> where T : System.MulticastDelegate")] public class C13<T> where T : System.MulticastDelegate { }
 
-          [TypeDeclarationTestCase("public class C14<T> where T : unmanaged")] public class C14<T> where T : unmanaged { }
+          [TypeDeclarationTestCase("public class C14_0<T> where T : unmanaged")] public class C14_0<T> where T : unmanaged { }
+          [TypeDeclarationTestCase("public class C14_1<T> where T : unmanaged, System.IDisposable")] public class C14_1<T> where T : unmanaged, IDisposable { }
 
 #nullable enable
           [TypeDeclarationTestCase("public class C15_0_NullableEnableContext<T> where T : notnull")]
@@ -258,6 +261,9 @@ namespace Smdn.Reflection.ReverseGenerating {
 
           [TypeDeclarationTestCase("public class C15_2_NullableEnableContext<T0, T1> where T1 : notnull")]
           public class C15_2_NullableEnableContext<T0, T1> where T1 : notnull { }
+
+          [TypeDeclarationTestCase("public class C15_3_NullableEnableContext<T> where T : notnull, System.IDisposable")]
+          public class C15_3_NullableEnableContext<T> where T : notnull, IDisposable { }
 #nullable restore
 #nullable disable
           [TypeDeclarationTestCase("public class C15_0_NullableDisableContext<T> where T : notnull")]
@@ -268,6 +274,9 @@ namespace Smdn.Reflection.ReverseGenerating {
 
           [TypeDeclarationTestCase("public class C15_2_NullableDisableContext<T0, T1> where T1 : notnull")]
           public class C15_2_NullableDisableContext<T0, T1> where T1 : notnull { }
+
+          [TypeDeclarationTestCase("public class C15_3_NullableDisableContext<T> where T : notnull, System.IDisposable")]
+          public class C15_3_NullableDisableContext<T> where T : notnull, IDisposable { }
 #nullable restore
 
           [TypeDeclarationTestCase("public struct S1<T> where T : new()")] public struct S1<T> where T : new() { }
