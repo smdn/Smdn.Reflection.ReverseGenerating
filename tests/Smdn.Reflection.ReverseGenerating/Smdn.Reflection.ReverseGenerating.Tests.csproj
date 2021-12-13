@@ -4,7 +4,7 @@ SPDX-License-Identifier: MIT
 -->
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks>net5.0;net47;net45;netcoreapp3.1</TargetFrameworks>
+    <TargetFrameworks>net6.0;net5.0;net47;net45;netcoreapp3.1</TargetFrameworks>
     <RootNamespace>Smdn.Reflection.ReverseGenerating</RootNamespace>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>

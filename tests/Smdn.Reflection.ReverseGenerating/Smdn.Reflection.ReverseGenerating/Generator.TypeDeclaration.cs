@@ -77,8 +77,13 @@ namespace Smdn.Reflection.ReverseGenerating {
           [TypeDeclarationTestCase("public sealed class string", typeof(string), TranslateLanguagePrimitiveTypeDeclaration = true)]
           [TypeDeclarationTestCase("public sealed class String", typeof(string), TranslateLanguagePrimitiveTypeDeclaration = false, TypeWithNamespace = true)]
           [TypeDeclarationTestCase("public sealed class String", typeof(string), TranslateLanguagePrimitiveTypeDeclaration = false, TypeWithNamespace = false)]
+#if NET6_0_OR_GREATER
+          [TypeDeclarationTestCase("public readonly struct Guid", typeof(Guid), TranslateLanguagePrimitiveTypeDeclaration = true)]
+          [TypeDeclarationTestCase("public readonly struct Guid", typeof(Guid), TranslateLanguagePrimitiveTypeDeclaration = false)]
+#else
           [TypeDeclarationTestCase("public struct Guid", typeof(Guid), TranslateLanguagePrimitiveTypeDeclaration = true)]
           [TypeDeclarationTestCase("public struct Guid", typeof(Guid), TranslateLanguagePrimitiveTypeDeclaration = false)]
+#endif
           class Placeholder {}
         }
       }
