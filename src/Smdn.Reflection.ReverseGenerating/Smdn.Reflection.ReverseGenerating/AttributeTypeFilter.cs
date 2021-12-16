@@ -3,6 +3,6 @@
 using System;
 using System.Reflection;
 
-namespace Smdn.Reflection.ReverseGenerating {
-  public delegate bool AttributeTypeFilter(Type type, ICustomAttributeProvider attributeProvider);
-}
+namespace Smdn.Reflection.ReverseGenerating;
+
+public delegate bool AttributeTypeFilter(Type type, ICustomAttributeProvider attributeProvider);

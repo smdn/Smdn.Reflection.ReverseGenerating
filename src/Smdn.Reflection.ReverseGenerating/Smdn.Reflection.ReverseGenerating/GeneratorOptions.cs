@@ -2,45 +2,45 @@
 // SPDX-License-Identifier: MIT
 using System;
 
-namespace Smdn.Reflection.ReverseGenerating {
-  public class GeneratorOptions {
-    public string Indent { get; set; } = new string(' ', 2);
+namespace Smdn.Reflection.ReverseGenerating;
 
-    public bool IgnorePrivateOrAssembly { get; set; } = true;
+public class GeneratorOptions {
+  public string Indent { get; set; } = new string(' ', 2);
 
-    public bool TranslateLanguagePrimitiveTypeDeclaration { get; set; } = false;
+  public bool IgnorePrivateOrAssembly { get; set; } = true;
 
-    public TypeDeclarationOptions TypeDeclaration { get; } = new();
+  public bool TranslateLanguagePrimitiveTypeDeclaration { get; set; } = false;
 
-    public class TypeDeclarationOptions {
-      public bool WithNamespace { get; set; } = false;
-      public bool WithDeclaringTypeName { get; set; } = false;
-      public bool WithAccessibility { get; set; } = true;
-      public bool OmitEndOfStatement { get; set; } = false;
-    }
+  public TypeDeclarationOptions TypeDeclaration { get; } = new();
 
-    public MemberDeclarationOptions MemberDeclaration { get; } = new();
+  public class TypeDeclarationOptions {
+    public bool WithNamespace { get; set; } = false;
+    public bool WithDeclaringTypeName { get; set; } = false;
+    public bool WithAccessibility { get; set; } = true;
+    public bool OmitEndOfStatement { get; set; } = false;
+  }
 
-    public class MemberDeclarationOptions {
-      public bool WithNamespace { get; set; } = false;
-      public bool WithDeclaringTypeName { get; set; } = false;
-      public bool WithAccessibility { get; set; } = true;
-      public bool OmitEndOfStatement { get; set; } = false;
-      public MethodBodyOption MethodBody { get; set; } = MethodBodyOption.EmptyImplementation;
-    }
+  public MemberDeclarationOptions MemberDeclaration { get; } = new();
 
-    public AttributeDeclarationOptions AttributeDeclaration { get; } = new();
+  public class MemberDeclarationOptions {
+    public bool WithNamespace { get; set; } = false;
+    public bool WithDeclaringTypeName { get; set; } = false;
+    public bool WithAccessibility { get; set; } = true;
+    public bool OmitEndOfStatement { get; set; } = false;
+    public MethodBodyOption MethodBody { get; set; } = MethodBodyOption.EmptyImplementation;
+  }
 
-    public class AttributeDeclarationOptions {
-      public bool WithNamespace { get; set; } = false;
-      public bool WithNamedArguments { get; set; } = false;
-      public AttributeTypeFilter TypeFilter { get; set; } = null;
-    }
+  public AttributeDeclarationOptions AttributeDeclaration { get; } = new();
 
-    public ValueDeclarationOptions ValueDeclaration { get; } = new();
+  public class AttributeDeclarationOptions {
+    public bool WithNamespace { get; set; } = false;
+    public bool WithNamedArguments { get; set; } = false;
+    public AttributeTypeFilter TypeFilter { get; set; } = null;
+  }
 
-    public class ValueDeclarationOptions {
-      public bool UseDefaultLiteral { get; set; } = false;
-    }
+  public ValueDeclarationOptions ValueDeclaration { get; } = new();
+
+  public class ValueDeclarationOptions {
+    public bool UseDefaultLiteral { get; set; } = false;
   }
 }
