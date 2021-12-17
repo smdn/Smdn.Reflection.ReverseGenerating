@@ -9,12 +9,9 @@ using System.Runtime.CompilerServices;
 using System.Runtime.Versioning;
 using System.Text;
 
-using Smdn.Reflection;
-using Smdn.Reflection.ReverseGenerating;
-
 namespace Smdn.Reflection.ReverseGenerating.ListApi;
 
-class ApiListWriter {
+internal class ApiListWriter {
   public TextWriter BaseWriter { get; }
 
   private readonly Assembly assembly;
@@ -88,7 +85,7 @@ class ApiListWriter {
     BaseWriter.WriteLine(typeDeclarations);
   }
 
-  static string GenerateTypeAndMemberDeclarations(
+  private static string GenerateTypeAndMemberDeclarations(
     int nestLevel,
     IEnumerable<Type> types,
     ISet<string> referencingNamespaces,
@@ -100,11 +97,11 @@ class ApiListWriter {
 
     static int OrderOfType(Type t)
     {
-      if (t.IsDelegate())   return 1;
-      if (t.IsInterface)    return 2;
-      if (t.IsEnum)         return 3;
-      if (t.IsClass)        return 4;
-      if (t.IsValueType)    return 5;
+      if (t.IsDelegate()) return 1;
+      if (t.IsInterface) return 2;
+      if (t.IsEnum) return 3;
+      if (t.IsClass) return 4;
+      if (t.IsValueType) return 5;
 
       return int.MaxValue;
     }
@@ -140,7 +137,7 @@ class ApiListWriter {
   }
 
   // TODO: unsafe types
-  static string GenerateTypeAndMemberDeclarations(
+  private static string GenerateTypeAndMemberDeclarations(
     int nestLevel,
     Type t,
     ISet<string> referencingNamespaces,
@@ -192,7 +189,7 @@ class ApiListWriter {
     return ret.ToString();
   }
 
-  static string GenerateTypeContentDeclarations(
+  private static string GenerateTypeContentDeclarations(
     int nestLevel,
     Type t,
     ISet<string> referencingNamespaces,
@@ -241,7 +238,7 @@ class ApiListWriter {
     }
 
     var indent = string.Concat(Enumerable.Repeat(options.Indent, nestLevel));
-    var memberAndDeclarations = new List<(MemberInfo member, string declaration)>();
+    var memberAndDeclarations = new List<(MemberInfo Member, string Declaration)>();
 
     foreach (var member in members.Except(exceptingMembers)) {
       string declaration = null;
@@ -263,11 +260,11 @@ class ApiListWriter {
       ? MemberInfoComparer.StaticMembersFirst
       : MemberInfoComparer.Default;
     var orderedMemberAndDeclarations = memberAndDeclarations
-      .Select(t => (t.member, t.declaration, order: memberComparer.GetOrder(t.member)))
-      .OrderBy(t => t.order)
-      .ThenBy(t => t.member.Name, StringComparer.Ordinal)
-      .ThenBy(t => t.declaration, StringComparer.Ordinal);
-    int? prevOrder = generatedNestedTypeDeclarations ? int.MinValue : (int?)null;
+      .Select(t => (t.Member, t.Declaration, Order: memberComparer.GetOrder(t.Member)))
+      .OrderBy(t => t.Order)
+      .ThenBy(t => t.Member.Name, StringComparer.Ordinal)
+      .ThenBy(t => t.Declaration, StringComparer.Ordinal);
+    int? prevOrder = generatedNestedTypeDeclarations ? int.MinValue : null;
 
     foreach (var (member, declaration, order) in orderedMemberAndDeclarations) {
       if (prevOrder != null && prevOrder.Value != order)

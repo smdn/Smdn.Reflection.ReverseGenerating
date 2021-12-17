@@ -9,7 +9,9 @@ using Smdn.Reflection.Attributes;
 
 namespace Smdn.Reflection.ReverseGenerating;
 
+#pragma warning disable IDE0040
 partial class Generator {
+#pragma warning restore IDE0040
   public static IEnumerable<string> GenerateAttributeList(
     ICustomAttributeProvider attributeProvider,
     ISet<string> referencingNamespaces,

@@ -8,14 +8,13 @@ using System.Reflection;
 
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Logging.Console;
 
 namespace Smdn.Reflection.ReverseGenerating.ListApi;
 
-class Program {
+internal class Program {
   internal static string LoggerCategoryName => typeof(Program).Assembly.GetName().Name;
 
-  static int Main(string[] args)
+  private static int Main(string[] args)
   {
     var services = new ServiceCollection();
 

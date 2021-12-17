@@ -18,14 +18,14 @@ internal class StructLayoutCustomAttributeData : CustomAttributeData {
 
     ConstructorArguments = Array.AsReadOnly(
       new CustomAttributeTypedArgument[] {
-        new(attr.Value.GetType(), attr.Value)
+        new(attr.Value.GetType(), attr.Value),
       }
     );
 
     const BindingFlags attributeFieldBindingFlags = BindingFlags.Public | BindingFlags.Instance;
     var namedArgs = new List<CustomAttributeNamedArgument>(capacity: 3);
 
-    if (!(attr.CharSet == CharSet.Auto || attr.CharSet == CharSet.Ansi)) {
+    if (attr.CharSet is not (CharSet.Auto or CharSet.Ansi)) {
       namedArgs.Add(
         new(
           typeof(StructLayoutAttribute).GetField(nameof(attr.CharSet), attributeFieldBindingFlags),

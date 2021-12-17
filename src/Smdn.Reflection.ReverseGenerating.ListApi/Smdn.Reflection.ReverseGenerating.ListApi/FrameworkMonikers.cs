@@ -6,11 +6,10 @@ using System.Runtime.Versioning;
 namespace Smdn.Reflection.ReverseGenerating.ListApi;
 
 public static class FrameworkMonikers {
-  private static readonly Version versionNET5OrGreater = new Version(5, 0);
+  private static readonly Version versionNET5OrGreater = new(5, 0);
 
   /// <remarks>
-  ///   <see cref="FrameworkName.Profile"/> of <paramref name="frameworkName"/> is not supported currently.</remarks>
-  ///   <paramref name="osSpecifier"/> is not supported currently.
+  ///   <see cref="FrameworkName.Profile"/> of <paramref name="frameworkName"/> is not supported currently.
   /// </remarks>
   public static bool TryGetMoniker(FrameworkName frameworkName, string osSpecifier, out string frameworkMoniker)
   {

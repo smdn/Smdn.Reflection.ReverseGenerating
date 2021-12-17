@@ -4,8 +4,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Text;
 using System.Runtime.InteropServices;
+using System.Text;
 
 namespace Smdn.Reflection.ReverseGenerating;
 
@@ -159,23 +159,23 @@ public static partial class Generator {
       var attrNullable = genericParameter.CustomAttributes.FirstOrDefault(IsNullableAttribute);
       var attrNullableContext =
         genericParameter.DeclaringMethod?.CustomAttributes?.FirstOrDefault(IsNullableContextAttribute) ??
-        genericParameter.DeclaringType   .CustomAttributes .FirstOrDefault(IsNullableContextAttribute);
+        genericParameter.DeclaringType.CustomAttributes.FirstOrDefault(IsNullableContextAttribute);
 
       if (attrNullableContext is not null && (byte)attrNullableContext.ConstructorArguments[0].Value == 1)
         // `#nullable enable` context
         return attrNullable is null;
       else
         // `#nullable disable` context
-        return (attrNullable is not null && (byte)attrNullable.ConstructorArguments[0].Value == 1);
+        return attrNullable is not null && (byte)attrNullable.ConstructorArguments[0].Value == 1;
     }
 
-    static IEnumerable<string> GetGenericArgumentConstraintsOf(Type genericParameter, ISet<string> _referencingNamespaces, bool typeWithNamespace)
+    static IEnumerable<string> GetGenericArgumentConstraintsOf(Type genericParameter, ISet<string> referencingNns, bool typeWithNamespace)
     {
       var constraintAttrs = genericParameter.GenericParameterAttributes & GenericParameterAttributes.SpecialConstraintMask;
       IEnumerable<Type> constraintTypes = genericParameter.GetGenericParameterConstraints();
       IEnumerable<Type> constraintTypesExceptValueType = constraintTypes;
 
-      _referencingNamespaces?.UnionWith(constraintTypes.Where(ct => ct != typeof(ValueType)).SelectMany(CSharpFormatter.ToNamespaceList));
+      referencingNns?.UnionWith(constraintTypes.Where(ct => ct != typeof(ValueType)).SelectMany(CSharpFormatter.ToNamespaceList));
 
       if (
         constraintAttrs == GenericParameterAttributes.None &&
@@ -183,6 +183,7 @@ public static partial class Generator {
       ) {
         yield return "notnull";
       }
+
       if (
         constraintAttrs.HasFlag(GenericParameterAttributes.NotNullableValueTypeConstraint) &&
         constraintAttrs.HasFlag(GenericParameterAttributes.DefaultConstructorConstraint) &&
@@ -244,11 +245,11 @@ public static partial class Generator {
       .Select(type => {
         referencingNamespaces?.UnionWith(CSharpFormatter.ToNamespaceList(type));
         return new {
-          IsInterface = type.IsInterface,
+          type.IsInterface,
           Name = type.FormatTypeName(
             typeWithNamespace: options.TypeDeclaration.WithNamespace,
             withDeclaringTypeName: options.TypeDeclaration.WithDeclaringTypeName
-          )
+          ),
         };
       })
       .OrderBy(type => type.IsInterface)
@@ -295,17 +296,17 @@ public static partial class Generator {
 
     if (field.DeclaringType.IsEnum) {
       if (field.IsStatic) {
-        var val = Convert.ChangeType(field.GetValue(null), field.DeclaringType.GetEnumUnderlyingType());
+        var val = Convert.ChangeType(field.GetValue(null), field.DeclaringType.GetEnumUnderlyingType(), provider: null);
 
         sb.Append(GenerateMemberName(field, options)).Append(" = ");
 
         if (field.DeclaringType.IsEnumFlags())
-          sb.Append("0x").AppendFormat("{0:x" + (Marshal.SizeOf(val) * 2).ToString() + "}", val);
+          sb.Append("0x").AppendFormat(null, "{0:x" + (Marshal.SizeOf(val) * 2).ToString("D", null) + "}", val);
         else
           sb.Append(val);
 
         if (!memberOptions.OmitEndOfStatement)
-          sb.Append(",");
+          sb.Append(',');
       }
       else {
         return null; // ignores backing field __value
@@ -317,7 +318,7 @@ public static partial class Generator {
       sb
         .Append(GetMemberModifierOf(field, options))
         .Append(field.FieldType.FormatTypeName(attributeProvider: field, typeWithNamespace: memberOptions.WithNamespace))
-        .Append(" ")
+        .Append(' ')
         .Append(GenerateMemberName(field, options));
 
       if (field.IsStatic && (field.IsLiteral || field.IsInitOnly) && !field.FieldType.ContainsGenericParameters) {
@@ -326,7 +327,7 @@ public static partial class Generator {
           val,
           field.FieldType,
           typeWithNamespace: memberOptions.WithNamespace,
-          findConstantField: (field.FieldType != field.DeclaringType),
+          findConstantField: field.FieldType != field.DeclaringType,
           useDefaultLiteral: options.ValueDeclaration.UseDefaultLiteral
         );
 
@@ -334,18 +335,18 @@ public static partial class Generator {
           sb
             .Append("; // = \"")
             .Append(CSharpFormatter.EscapeString((val ?? "null").ToString(), escapeDoubleQuote: true))
-            .Append("\"");
+            .Append('"');
         }
         else {
           sb.Append(" = ").Append(valueDeclaration);
 
           if (!memberOptions.OmitEndOfStatement)
-            sb.Append(";");
+            sb.Append(';');
         }
       }
       else {
         if (!memberOptions.OmitEndOfStatement)
-          sb.Append(";");
+          sb.Append(';');
       }
     }
 
@@ -367,8 +368,9 @@ public static partial class Generator {
       explicitInterface == null &&
       options.IgnorePrivateOrAssembly &&
       property.GetAccessors(true).All(a => a.IsPrivateOrAssembly())
-    )
+    ) {
       return null;
+    }
 
     var emitGetAccessor = property.GetMethod != null && !(explicitInterface == null && options.IgnorePrivateOrAssembly && property.GetMethod.IsPrivateOrAssembly());
     var emitSetAccessor = property.SetMethod != null && !(explicitInterface == null && options.IgnorePrivateOrAssembly && property.SetMethod.IsPrivateOrAssembly());
@@ -385,11 +387,11 @@ public static partial class Generator {
     if (explicitInterface == null)
       sb.Append(modifier);
 
-    sb.Append(property.PropertyType.FormatTypeName(attributeProvider: property, typeWithNamespace: memberOptions.WithNamespace)).Append(" ");
+    sb.Append(property.PropertyType.FormatTypeName(attributeProvider: property, typeWithNamespace: memberOptions.WithNamespace)).Append(' ');
 
     var attrDefaultMember = property.DeclaringType.GetCustomAttribute<DefaultMemberAttribute>();
 
-    if (0 < indexParameters.Length && string.Equals(property.Name, attrDefaultMember?.MemberName, StringComparison.Ordinal))
+    if (0 < indexParameters.Length && string.Equals(property.Name, attrDefaultMember?.MemberName, StringComparison.Ordinal)) {
       // indexer
       sb.Append(
         GenerateMemberName(
@@ -398,14 +400,16 @@ public static partial class Generator {
           options
         )
       );
-    else if (explicitInterface == null)
+    }
+    else if (explicitInterface == null) {
       sb.Append(
         GenerateMemberName(
           property,
           options
         )
       );
-    else
+    }
+    else {
       sb.Append(
         GenerateMemberName(
           property,
@@ -413,10 +417,11 @@ public static partial class Generator {
           options
         )
       );
+    }
 
-    if (0 < indexParameters.Length)
+    if (0 < indexParameters.Length) {
       sb
-        .Append("[")
+        .Append('[')
         .Append(
           CSharpFormatter.FormatParameterList(
             indexParameters,
@@ -425,21 +430,23 @@ public static partial class Generator {
           )
         )
         .Append("] ");
-    else
-      sb.Append(" ");
+    }
+    else {
+      sb.Append(' ');
+    }
 
     sb.Append("{ ");
 
     if (emitGetAccessor) {
       if (explicitInterface == null && 0 < getAccessibility.Length)
-        sb.Append(getAccessibility).Append(" ");
+        sb.Append(getAccessibility).Append(' ');
 
       sb.Append("get").Append(GenerateAccessorBody(property.GetMethod, options));
     }
 
     if (emitSetAccessor) {
       if (explicitInterface == null && 0 < setAccessibility.Length)
-        sb.Append(setAccessibility).Append(" ");
+        sb.Append(setAccessibility).Append(' ');
 
       if (property.IsSetMethodInitOnly())
         sb.Append("init");
@@ -449,7 +456,7 @@ public static partial class Generator {
       sb.Append(GenerateAccessorBody(property.SetMethod, options));
     }
 
-    sb.Append("}");
+    sb.Append('}');
 
 #if false
       if (p.CanRead)
@@ -460,13 +467,13 @@ public static partial class Generator {
 
     static string GenerateAccessorBody(MethodInfo accessor, GeneratorOptions opts)
     {
-      switch (accessor.IsAbstract ? MethodBodyOption.EmptyImplementation : opts.MemberDeclaration.MethodBody) {
-        case MethodBodyOption.ThrowNotImplementedException: return " => throw new NotImplementedException(); ";
+      return (accessor.IsAbstract ? MethodBodyOption.EmptyImplementation : opts.MemberDeclaration.MethodBody) switch {
+        MethodBodyOption.ThrowNotImplementedException => " => throw new NotImplementedException(); ",
 
-        //case MethodBodyOption.None:
-        //case MethodBodyOption.EmptyImplementation:
-        default: return "; ";
-      }
+        // MethodBodyOption.None or
+        // MethodBodyOption.EmptyImplementation or
+        _ => "; ",
+      };
     }
   }
 
@@ -478,14 +485,14 @@ public static partial class Generator {
   {
     var explicitInterfaceMethod = m.FindExplicitInterfaceMethod(findOnlyPublicInterfaces: options.IgnorePrivateOrAssembly);
 
-    if (explicitInterfaceMethod == null && (options.IgnorePrivateOrAssembly && m.IsPrivateOrAssembly()))
+    if (explicitInterfaceMethod == null && options.IgnorePrivateOrAssembly && m.IsPrivateOrAssembly())
       return null;
 
     var memberOptions = options.MemberDeclaration;
     var valueOptions = options.ValueDeclaration;
     var method = m as MethodInfo;
     var methodModifiers = GetMemberModifierOf(m, options);
-    var isByRefReturnType = (method != null && method.ReturnType.IsByRef);
+    var isByRefReturnType = method != null && method.ReturnType.IsByRef;
     var methodReturnType = isByRefReturnType
       ? "ref " + method.ReturnType.GetElementType().FormatTypeName(attributeProvider: method.ReturnTypeCustomAttributes, typeWithNamespace: memberOptions.WithNamespace)
       : method?.ReturnType?.FormatTypeName(attributeProvider: method?.ReturnTypeCustomAttributes, typeWithNamespace: memberOptions.WithNamespace);
@@ -554,27 +561,27 @@ public static partial class Generator {
     var sb = new StringBuilder();
 
     if (!string.IsNullOrEmpty(methodReturnTypeAttributes))
-      sb.Append(methodReturnTypeAttributes).Append(" ");
+      sb.Append(methodReturnTypeAttributes).Append(' ');
 
     sb.Append(methodModifiers);
 
     if (!string.IsNullOrEmpty(methodReturnType))
-      sb.Append(methodReturnType).Append(" ");
+      sb.Append(methodReturnType).Append(' ');
 
     sb.Append(methodName);
 
     if (!string.IsNullOrEmpty(methodGenericParameters))
       sb.Append(methodGenericParameters);
 
-    sb.Append("(");
+    sb.Append('(');
 
     if (!string.IsNullOrEmpty(methodParameterList))
       sb.Append(methodParameterList);
 
-    sb.Append(")");
+    sb.Append(')');
 
     if (!string.IsNullOrEmpty(methodConstraints))
-      sb.Append(" ").Append(methodConstraints);
+      sb.Append(' ').Append(methodConstraints);
 
     sb.Append(methodBody);
 
@@ -637,16 +644,17 @@ public static partial class Generator {
     if (explicitInterface == null)
       sb.Append(GetMemberModifierOf(ev.GetMethods(true).First(), options));
 
-    sb.Append("event ").Append(ev.EventHandlerType.FormatTypeName(attributeProvider: ev, typeWithNamespace: memberOptions.WithNamespace)).Append(" ");
+    sb.Append("event ").Append(ev.EventHandlerType.FormatTypeName(attributeProvider: ev, typeWithNamespace: memberOptions.WithNamespace)).Append(' ');
 
-    if (explicitInterface == null)
+    if (explicitInterface == null) {
       sb.Append(
         GenerateMemberName(
           ev,
           options
         )
       );
-    else
+    }
+    else {
       sb.Append(
         GenerateMemberName(
           ev,
@@ -654,9 +662,10 @@ public static partial class Generator {
           options
         )
       );
+    }
 
     if (!memberOptions.OmitEndOfStatement)
-      sb.Append(";");
+      sb.Append(';');
 
     return sb.ToString();
   }
@@ -709,7 +718,7 @@ public static partial class Generator {
 
     modifiers.Add(null); // placeholder for accessibility
 
-    IEnumerable<string> GetModifiersOfMethod(MethodBase m)
+    static IEnumerable<string> GetModifiersOfMethod(MethodBase m)
     {
       if (m == null)
         yield break;

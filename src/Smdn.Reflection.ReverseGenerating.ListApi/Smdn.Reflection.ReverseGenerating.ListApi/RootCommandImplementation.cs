@@ -8,13 +8,13 @@ using System.CommandLine.Invocation;
 using System.CommandLine.Parsing;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Reflection;
 using System.Runtime.Versioning;
+using System.Text;
+
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
-using Smdn.Reflection.ReverseGenerating;
 #if FEATURE_BUILD_PROJ
 using Smdn.Reflection.ReverseGenerating.ListApi.Build;
 #endif
@@ -33,8 +33,8 @@ public class RootCommandImplementation {
 #endif
     getDefaultValue: () => new DirectoryInfo(Environment.CurrentDirectory)
   ) {
-    //Arity = ArgumentArity.OneOrMore
-    Arity = ArgumentArity.ExactlyOne
+    // Arity = ArgumentArity.OneOrMore
+    Arity = ArgumentArity.ExactlyOne,
   };
 
   private static readonly Option<string> optionConfiguration = new(
@@ -89,21 +89,20 @@ public class RootCommandImplementation {
 
   internal Command CreateCommand()
   {
-    var rootCommand = new RootCommand();
-
-    rootCommand.Add(argumentInput);
-
+    var rootCommand = new RootCommand {
+      argumentInput,
 #if FEATURE_BUILD_PROJ
-    rootCommand.Add(optionConfiguration);
-    rootCommand.Add(optionTargetFramework);
-    //rootCommand.Add(optionOS);
-    rootCommand.Add(optionRuntimeIdentifier);
+      optionConfiguration,
+      optionTargetFramework,
+      // optionOS
+      optionRuntimeIdentifier,
 #endif
-    rootCommand.Add(optionOutputDirectory);
-    rootCommand.Add(VerbosityOption.Option);
-    rootCommand.Add(optionGenerateFullTypeName);
-    rootCommand.Add(optionGenerateMethodBody);
-    rootCommand.Add(optionGenerateStaticMembersFirst);
+      optionOutputDirectory,
+      VerbosityOption.Option,
+      optionGenerateFullTypeName,
+      optionGenerateMethodBody,
+      optionGenerateStaticMembersFirst,
+    };
 
     rootCommand.Handler = CommandHandler.Create<ParseResult, IConsole>(CommandMain);
 
@@ -121,6 +120,7 @@ public class RootCommandImplementation {
   {
     var options = new ApiListWriterOptions();
 
+#pragma warning disable IDE0055
     options.TypeDeclaration.WithNamespace       = parseResult.ValueForOption(optionGenerateFullTypeName);
     options.MemberDeclaration.WithNamespace     = parseResult.ValueForOption(optionGenerateFullTypeName);
     options.AttributeDeclaration.WithNamespace  = parseResult.ValueForOption(optionGenerateFullTypeName);
@@ -132,6 +132,7 @@ public class RootCommandImplementation {
     options.AttributeDeclaration.TypeFilter     = ApiListWriter.DefaultAttributeFilter;
 
     options.ValueDeclaration.UseDefaultLiteral  = true;
+#pragma warning restore IDE0055
 
     return options;
   }
@@ -204,11 +205,13 @@ public class RootCommandImplementation {
 
   private static string GetOutputFilePathOf(Assembly assm, DirectoryInfo outputDirectory)
   {
+#pragma warning restore SA1114
 #if NETCOREAPP3_1_OR_GREATER || NET5_0_OR_GREATER
     return Path.Join(
 #else
     return Path.Combine(
 #endif
+#pragma warning disable SA1114
       outputDirectory.FullName, $"{GetOutputFileName(assm)}.apilist.cs"
     );
 
@@ -224,8 +227,7 @@ public class RootCommandImplementation {
       if (
         TryParseFrameworkName(targetFramework, out var targetFrameworkName) &&
         FrameworkMonikers.TryGetMoniker(targetFrameworkName, osSpecifier: null, out var targetFrameworkMoniker)
-      )
-      {
+      ) {
         return $"{prefix}-{targetFrameworkMoniker}";
       }
 
@@ -320,7 +322,7 @@ public class RootCommandImplementation {
         options: new() {
           Configuration = parseResult.ValueForOption(optionConfiguration),
           TargetFramework = parseResult.ValueForOption(optionTargetFramework),
-          //OS: parseResult.ValueForOption(optionOS),
+          // OS: parseResult.ValueForOption(optionOS),
           RuntimeIdentifier = parseResult.ValueForOption(optionRuntimeIdentifier),
           LoggerVerbosity = VerbosityOption.ParseLoggerVerbosity(parseResult),
         },

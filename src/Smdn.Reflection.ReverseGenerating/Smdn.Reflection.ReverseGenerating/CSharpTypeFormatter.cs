@@ -7,96 +7,167 @@ using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Text;
 
-using Smdn.Reflection;
-
 namespace Smdn.Reflection.ReverseGenerating;
 
 public static class CSharpFormatter /* ITypeFormatter */ {
-  private static readonly Dictionary<Accessibility, string> accessibilities = new Dictionary<Accessibility, string>() {
-    {Accessibility.Public,            "public"},
-    {Accessibility.Assembly,          "internal"},
-    {Accessibility.Family,            "protected"},
-    {Accessibility.FamilyOrAssembly,  "internal protected"},
-    {Accessibility.FamilyAndAssembly, "private protected"},
-    {Accessibility.Private,           "private"},
+  private static readonly Dictionary<Accessibility, string> accessibilities = new() {
+    { Accessibility.Public,            "public" },
+    { Accessibility.Assembly,          "internal" },
+    { Accessibility.Family,            "protected" },
+    { Accessibility.FamilyOrAssembly,  "internal protected" },
+    { Accessibility.FamilyAndAssembly, "private protected" },
+    { Accessibility.Private,           "private" },
   };
 
-  private static readonly Dictionary<Type, string> primitiveTypes = new Dictionary<Type, string>() {
-    {typeof(void), "void"},
-
-    {typeof(sbyte), "sbyte"},
-    {typeof(short), "short"},
-    {typeof(int), "int"},
-    {typeof(long), "long"},
-
-    {typeof(byte), "byte"},
-    {typeof(ushort), "ushort"},
-    {typeof(uint), "uint"},
-    {typeof(ulong), "ulong"},
-
-    {typeof(float), "float"},
-    {typeof(double), "double"},
-    {typeof(decimal), "decimal"},
-
-    {typeof(char), "char"},
-    {typeof(string), "string"},
-
-    {typeof(object), "object"},
-    {typeof(bool), "bool"},
+  private static readonly Dictionary<Type, string> primitiveTypes = new() {
+    { typeof(void), "void" },
+    { typeof(sbyte), "sbyte" },
+    { typeof(short), "short" },
+    { typeof(int), "int" },
+    { typeof(long), "long" },
+    { typeof(byte), "byte" },
+    { typeof(ushort), "ushort" },
+    { typeof(uint), "uint" },
+    { typeof(ulong), "ulong" },
+    { typeof(float), "float" },
+    { typeof(double), "double" },
+    { typeof(decimal), "decimal" },
+    { typeof(char), "char" },
+    { typeof(string), "string" },
+    { typeof(object), "object" },
+    { typeof(bool), "bool" },
   };
 
-  private static readonly HashSet<string> keywords = new HashSet<string>(StringComparer.Ordinal) {
-    "abstract", "as", "base", "bool", "break", "byte", "case", "catch",
-    "char", "checked", "class", "const", "continue", "decimal", "default",
-    "delegate", "do", "double", "else", "enum", "event", "explicit",
-    "extern", "false", "finally", "fixed", "float", "for", "foreach",
-    "goto", "if", "implicit", "in", "int", "interface", "internal",
-    "is", "lock", "long", "namespace", "new", "null", "object", "operator",
-    "out", "override", "params", "private", "protected", "public","readonly",
-    "ref", "return", "sbyte", "sealed", "short", "sizeof", "stackalloc",
-    "static", "string", "struct", "switch", "this", "throw", "true",
-    "try", "typeof", "uint", "ulong", "unchecked", "unsafe", "ushort",
-    "using", "virtual", "void", "volatile", "while",
+  private static readonly HashSet<string> keywords = new(StringComparer.Ordinal) {
+    "abstract",
+    "as",
+    "base",
+    "bool",
+    "break",
+    "byte",
+    "case",
+    "catch",
+    "char",
+    "checked",
+    "class",
+    "const",
+    "continue",
+    "decimal",
+    "default",
+    "delegate",
+    "do",
+    "double",
+    "else",
+    "enum",
+    "event",
+    "explicit",
+    "extern",
+    "false",
+    "finally",
+    "fixed",
+    "float",
+    "for",
+    "foreach",
+    "goto",
+    "if",
+    "implicit",
+    "in",
+    "int",
+    "interface",
+    "internal",
+    "is",
+    "lock",
+    "long",
+    "namespace",
+    "new",
+    "null",
+    "object",
+    "operator",
+    "out",
+    "override",
+    "params",
+    "private",
+    "protected",
+    "public",
+    "readonly",
+    "ref",
+    "return",
+    "sbyte",
+    "sealed",
+    "short",
+    "sizeof",
+    "stackalloc",
+    "static",
+    "string",
+    "struct",
+    "switch",
+    "this",
+    "throw",
+    "true",
+    "try",
+    "typeof",
+    "uint",
+    "ulong",
+    "unchecked",
+    "unsafe",
+    "ushort",
+    "using",
+    "virtual",
+    "void",
+    "volatile",
+    "while",
 
     // context keywords
-    "add", "async", "await", "dynamic", "get", "global", "partial",
-    "remove", "set", "value", "var", "when", "where", "yield"
+    "add",
+    "async",
+    "await",
+    "dynamic",
+    "get",
+    "global",
+    "partial",
+    "remove",
+    "set",
+    "value",
+    "var",
+    "when",
+    "where",
+    "yield",
   };
 
-  private static readonly Dictionary<MethodSpecialName, string> specialMethodNames = new Dictionary<MethodSpecialName, string>() {
+  private static readonly Dictionary<MethodSpecialName, string> specialMethodNames = new() {
     // comparison
-    {MethodSpecialName.Equality, "operator =="},
-    {MethodSpecialName.Inequality, "operator !="},
-    {MethodSpecialName.LessThan, "operator <"},
-    {MethodSpecialName.GreaterThan, "operator >"},
-    {MethodSpecialName.LessThanOrEqual, "operator <="},
-    {MethodSpecialName.GreaterThanOrEqual, "operator >="},
+    { MethodSpecialName.Equality, "operator ==" },
+    { MethodSpecialName.Inequality, "operator !=" },
+    { MethodSpecialName.LessThan, "operator <" },
+    { MethodSpecialName.GreaterThan, "operator >" },
+    { MethodSpecialName.LessThanOrEqual, "operator <=" },
+    { MethodSpecialName.GreaterThanOrEqual, "operator >=" },
 
     // unary
-    {MethodSpecialName.UnaryPlus, "operator +"},
-    {MethodSpecialName.UnaryNegation, "operator -"},
-    {MethodSpecialName.LogicalNot, "operator !"},
-    {MethodSpecialName.OnesComplement, "operator ~"},
-    {MethodSpecialName.True, "operator true"},
-    {MethodSpecialName.False, "operator false"},
-    {MethodSpecialName.Increment, "operator ++"},
-    {MethodSpecialName.Decrement, "operator --"},
+    { MethodSpecialName.UnaryPlus, "operator +" },
+    { MethodSpecialName.UnaryNegation, "operator -" },
+    { MethodSpecialName.LogicalNot, "operator !" },
+    { MethodSpecialName.OnesComplement, "operator ~" },
+    { MethodSpecialName.True, "operator true" },
+    { MethodSpecialName.False, "operator false" },
+    { MethodSpecialName.Increment, "operator ++" },
+    { MethodSpecialName.Decrement, "operator --" },
 
     // binary
-    {MethodSpecialName.Addition, "operator +"},
-    {MethodSpecialName.Subtraction, "operator -"},
-    {MethodSpecialName.Multiply, "operator *"},
-    {MethodSpecialName.Division, "operator /"},
-    {MethodSpecialName.Modulus, "operator %"},
-    {MethodSpecialName.BitwiseAnd, "operator &"},
-    {MethodSpecialName.BitwiseOr, "operator |"},
-    {MethodSpecialName.ExclusiveOr, "operator ^"},
-    {MethodSpecialName.RightShift, "operator >>"},
-    {MethodSpecialName.LeftShift, "operator <<"},
+    { MethodSpecialName.Addition, "operator +" },
+    { MethodSpecialName.Subtraction, "operator -" },
+    { MethodSpecialName.Multiply, "operator *" },
+    { MethodSpecialName.Division, "operator /" },
+    { MethodSpecialName.Modulus, "operator %" },
+    { MethodSpecialName.BitwiseAnd, "operator &" },
+    { MethodSpecialName.BitwiseOr, "operator |" },
+    { MethodSpecialName.ExclusiveOr, "operator ^" },
+    { MethodSpecialName.RightShift, "operator >>" },
+    { MethodSpecialName.LeftShift, "operator <<" },
 
     // type cast
-    {MethodSpecialName.Explicit, "explicit operator"},
-    {MethodSpecialName.Implicit, "implicit operator"},
+    { MethodSpecialName.Explicit, "explicit operator" },
+    { MethodSpecialName.Implicit, "implicit operator" },
   };
 
   public static string FormatAccessibility(Accessibility accessibility)
@@ -264,13 +335,13 @@ public static class CSharpFormatter /* ITypeFormatter */ {
           }
         }
 
-        sb.Append("(")
+        sb.Append('(')
           .Append(string.Join(", ", t.GetGenericArguments().Select((arg, index) => FormatTypeName(arg, showVariance: true, options) + tupleItemNames?[index])))
-          .Append(")");
+          .Append(')');
       }
       else {
         if (options.TypeWithNamespace && !t.IsNested)
-          sb.Append(t.Namespace).Append(".");
+          sb.Append(t.Namespace).Append('.');
 
         IEnumerable<Type> genericArgs = t.GetGenericArguments();
 
@@ -282,7 +353,7 @@ public static class CSharpFormatter /* ITypeFormatter */ {
               ? t.DeclaringType.MakeGenericType(genericArgs.Take(genericArgsOfDeclaringType.Length).ToArray())
               : t.DeclaringType;
 
-            sb.Append(FormatTypeName(declaringType, showVariance: true, options)).Append(".");
+            sb.Append(FormatTypeName(declaringType, showVariance: true, options)).Append('.');
           }
 
           genericArgs = genericArgs.Skip(genericArgsOfDeclaringType.Length);
@@ -293,7 +364,7 @@ public static class CSharpFormatter /* ITypeFormatter */ {
         var formattedGenericArgs = string.Join(", ", genericArgs.Select(arg => FormatTypeName(arg, showVariance: true, options)));
 
         if (0 < formattedGenericArgs.Length)
-          sb.Append("<").Append(formattedGenericArgs).Append(">");
+          sb.Append('<').Append(formattedGenericArgs).Append('>');
       }
 
       return sb.ToString();
@@ -319,8 +390,8 @@ public static class CSharpFormatter /* ITypeFormatter */ {
     var buf = new StringBuilder(chars.Length);
 
     for (var i = 0; i < chars.Length; i++) {
-      if (Char.IsControl(chars[i]))
-        buf.Append("\\u").Append(((int)chars[i]).ToString("X4"));
+      if (char.IsControl(chars[i]))
+        buf.Append("\\u").Append(((int)chars[i]).ToString("X4", provider: null));
       else if (escapeSingleQuote && chars[i] == '\'')
         buf.Append("\\\'");
       else if (escapeDoubleQuote && chars[i] == '"')
@@ -364,7 +435,7 @@ public static class CSharpFormatter /* ITypeFormatter */ {
       return "\'" + EscapeString(((char)val).ToString(), escapeSingleQuote: true) + "\'";
     }
     else if (typeOfValue == typeof(bool)) {
-      if ((bool)val == true)
+      if ((bool)val)
         return "true";
       else
         return "false";
@@ -386,7 +457,7 @@ public static class CSharpFormatter /* ITypeFormatter */ {
       }
 
       if (typeOfValue.IsEnum)
-        return $"({typeOfValue.FormatTypeName(typeWithNamespace: typeWithNamespace)}){Convert.ChangeType(val, typeOfValue.GetEnumUnderlyingType())}";
+        return $"({typeOfValue.FormatTypeName(typeWithNamespace: typeWithNamespace)}){Convert.ChangeType(val, typeOfValue.GetEnumUnderlyingType(), provider: null)}";
 
       if (typeOfValue.IsPrimitive && typeOfValue.IsValueType)
         return val.ToString();

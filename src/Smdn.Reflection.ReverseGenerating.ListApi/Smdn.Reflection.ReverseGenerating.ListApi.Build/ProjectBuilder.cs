@@ -8,7 +8,6 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 
-using Microsoft.Build.Definition;
 using Microsoft.Build.Evaluation;
 using Microsoft.Build.Execution;
 using Microsoft.Build.Framework;
@@ -18,115 +17,115 @@ using Microsoft.Extensions.Logging;
 namespace Smdn.Reflection.ReverseGenerating.ListApi.Build;
 
 public static class ProjectBuilder {
-public class Options {
-  public const string DefaultConfiguration = "Debug";
+  public class Options {
+    public const string DefaultConfiguration = "Debug";
 
-  public string Configuration { get; init; } = DefaultConfiguration;
-  public string TargetFramework { get; init; } = null;
-  //public string OS { get; init; }
-  public string RuntimeIdentifier { get; init; } = null;
-  public string[] TargetsToBuild { get; init; } = new[] { "Restore", "Build" };
-  public LoggerVerbosity LoggerVerbosity { get; init; } = LoggerVerbosity.Minimal;
-}
-
-public static IEnumerable<FileInfo> Build(
-  FileInfo projectFile,
-  Options options = null,
-  Microsoft.Extensions.Logging.ILogger logger = null
-)
-{
-  if (projectFile is null)
-    throw new ArgumentNullException(nameof(projectFile));
-
-  options ??= new();
-
-  var globalProps = new Dictionary<string, string>();
-
-  if (!string.IsNullOrEmpty(options.Configuration))
-    globalProps["Configuration"] = options.Configuration;
-  if (!string.IsNullOrEmpty(options.TargetFramework))
-    globalProps["TargetFramework"] = options.TargetFramework;
-#if false
-  if (!string.IsNullOrEmpty(options.OS))
-    globalProps["OS"] = options.OS;
-#endif
-  if (!string.IsNullOrEmpty(options.RuntimeIdentifier))
-    globalProps["RuntimeIdentifier"] = options.RuntimeIdentifier;
-
-  logger?.LogDebug("Build requested");
-  logger?.LogDebug($"  project: {projectFile}");
-
-  logger?.LogDebug($"  targets: {string.Join(";", options.TargetsToBuild)}");
-
-  logger?.LogDebug("  global properties:");
-
-  foreach (var globalProp in globalProps) {
-    logger?.LogDebug($"    {globalProp.Key}: '{globalProp.Value}'");
+    public string Configuration { get; init; } = DefaultConfiguration;
+    public string TargetFramework { get; init; } = null;
+    // public string OS { get; init; }
+    public string RuntimeIdentifier { get; init; } = null;
+    public string[] TargetsToBuild { get; init; } = new[] { "Restore", "Build" };
+    public LoggerVerbosity LoggerVerbosity { get; init; } = LoggerVerbosity.Minimal;
   }
 
-  var proj = new Project(
-    projectFile: projectFile.FullName,
-    globalProperties: globalProps,
-    toolsVersion: RuntimeInformation.FrameworkDescription.Contains(".NET Framework")
-      ? "4.0"
-      : "Current"
-  );
+  public static IEnumerable<FileInfo> Build(
+    FileInfo projectFile,
+    Options options = null,
+    Microsoft.Extensions.Logging.ILogger logger = null
+  )
+  {
+    if (projectFile is null)
+      throw new ArgumentNullException(nameof(projectFile));
 
-  var buildRequest = new BuildRequestData(
-    projectInstance: proj.CreateProjectInstance(),
-    targetsToBuild: options.TargetsToBuild ?? Array.Empty<string>(),
-    hostServices: null,
-    flags: BuildRequestDataFlags.ProvideProjectStateAfterBuild,
-    propertiesToTransfer: null
-  );
+    options ??= new();
 
-  var buildParams = new BuildParameters() {
-    Loggers = new[] {
-      new ConsoleLogger() {
-        Verbosity = options.LoggerVerbosity,
-        ShowSummary = true,
-      }
+    var globalProps = new Dictionary<string, string>();
+
+    if (!string.IsNullOrEmpty(options.Configuration))
+      globalProps["Configuration"] = options.Configuration;
+    if (!string.IsNullOrEmpty(options.TargetFramework))
+      globalProps["TargetFramework"] = options.TargetFramework;
+#if false
+    if (!string.IsNullOrEmpty(options.OS))
+      globalProps["OS"] = options.OS;
+#endif
+    if (!string.IsNullOrEmpty(options.RuntimeIdentifier))
+      globalProps["RuntimeIdentifier"] = options.RuntimeIdentifier;
+
+    logger?.LogDebug("Build requested");
+    logger?.LogDebug($"  project: {projectFile}");
+
+    logger?.LogDebug($"  targets: {string.Join(";", options.TargetsToBuild)}");
+
+    logger?.LogDebug("  global properties:");
+
+    foreach (var globalProp in globalProps) {
+      logger?.LogDebug($"    {globalProp.Key}: '{globalProp.Value}'");
     }
-  };
 
-  //using var buildManager = new BuildManager("default");
-  var buildManager = BuildManager.DefaultBuildManager;
+    var proj = new Project(
+      projectFile: projectFile.FullName,
+      globalProperties: globalProps,
+      toolsVersion: RuntimeInformation.FrameworkDescription.Contains(".NET Framework")
+        ? "4.0"
+        : "Current"
+    );
 
-  try {
-    var result = buildManager.Build(buildParams, buildRequest);
+    var buildRequest = new BuildRequestData(
+      projectInstance: proj.CreateProjectInstance(),
+      targetsToBuild: options.TargetsToBuild ?? Array.Empty<string>(),
+      hostServices: null,
+      flags: BuildRequestDataFlags.ProvideProjectStateAfterBuild,
+      propertiesToTransfer: null
+    );
 
-    if (result.OverallResult == BuildResultCode.Success) {
-      // retrieve %(InnerOutput.Identity) / for in case of building with multiple target frameworks
-      var innerOutputFullPaths = result.ProjectStateAfterBuild
-        .Items
-        .Where(item => item.ItemType == "InnerOutput")
-        .Select(item => item.GetMetadataValue("Identity"));
+    var buildParams = new BuildParameters() {
+      Loggers = new[] {
+        new ConsoleLogger() {
+          Verbosity = options.LoggerVerbosity,
+          ShowSummary = true,
+        },
+      },
+    };
 
-      foreach (var innerOutputFullPath in innerOutputFullPaths) {
-        logger?.LogDebug($"build output file: {innerOutputFullPath}");
+    // using var buildManager = new BuildManager("default");
+    var buildManager = BuildManager.DefaultBuildManager;
 
-        yield return new FileInfo(innerOutputFullPath);
-      }
+    try {
+      var result = buildManager.Build(buildParams, buildRequest);
 
-      // retrieve Build target result / for in cace of building with single target framework
-      if (result.HasResultsForTarget("Build")) {
-        var buildTargetResult = result.ResultsByTarget["Build"];
-
-        var buildOutputFullPaths = buildTargetResult
+      if (result.OverallResult == BuildResultCode.Success) {
+        // retrieve %(InnerOutput.Identity) / for in case of building with multiple target frameworks
+        var innerOutputFullPaths = result.ProjectStateAfterBuild
           .Items
-          .Select(item => item.GetMetadata("Identity"));
+          .Where(item => item.ItemType == "InnerOutput")
+          .Select(item => item.GetMetadataValue("Identity"));
 
-        foreach (var buildOutputFullPath in buildOutputFullPaths) {
-          logger?.LogDebug($"build output file: {buildOutputFullPath}");
+        foreach (var innerOutputFullPath in innerOutputFullPaths) {
+          logger?.LogDebug($"build output file: {innerOutputFullPath}");
 
-          yield return new FileInfo(buildOutputFullPath);
+          yield return new FileInfo(innerOutputFullPath);
+        }
+
+        // retrieve Build target result / for in cace of building with single target framework
+        if (result.HasResultsForTarget("Build")) {
+          var buildTargetResult = result.ResultsByTarget["Build"];
+
+          var buildOutputFullPaths = buildTargetResult
+            .Items
+            .Select(item => item.GetMetadata("Identity"));
+
+          foreach (var buildOutputFullPath in buildOutputFullPaths) {
+            logger?.LogDebug($"build output file: {buildOutputFullPath}");
+
+            yield return new FileInfo(buildOutputFullPath);
+          }
         }
       }
     }
+    finally {
+      ProjectCollection.GlobalProjectCollection.UnloadAllProjects();
+    }
   }
-  finally {
-    ProjectCollection.GlobalProjectCollection.UnloadAllProjects();
-  }
-}
 }
 #endif

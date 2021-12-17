@@ -4,8 +4,6 @@
 #if FEATURE_BUILD_PROJ
 using System;
 using System.IO;
-using System.Linq;
-using System.Collections.Generic;
 using System.Text.RegularExpressions;
 
 using Microsoft.Extensions.Logging;
@@ -17,11 +15,13 @@ namespace Smdn.Reflection.ReverseGenerating.ListApi.Build;
 public static class MSBuildExePath {
   private static string JoinPath(string path1, string path2)
   {
+#pragma warning disable SA1114
 #if NETCOREAPP3_1_OR_GREATER || NET5_0_OR_GREATER
     return Path.Join(
 #else
     return Path.Combine(
 #endif
+#pragma warning restore SA1114
       path1, path2
     );
   }
@@ -55,7 +55,7 @@ public static class MSBuildExePath {
   }
 #endif
 
-  private static readonly Regex regexSdkBasePath = new Regex(
+  private static readonly Regex regexSdkBasePath = new(
     @"^\s*Base Path:\s+(?<base_path>.+)$",
     RegexOptions.Multiline | RegexOptions.CultureInvariant | RegexOptions.Compiled
   );
@@ -77,7 +77,7 @@ public static class MSBuildExePath {
     return null;
   }
 
-  static string GetMSBuildExePath(out string sdkVersion)
+  private static string GetMSBuildExePath(out string sdkVersion)
   {
 #if true
     sdkVersion = default;

@@ -19,11 +19,13 @@ public static class AssemblyLoader {
     ILogger logger = null
   )
   {
+#pragma warning disable SA1114
 #if NETFRAMEWORK
     return UsingAssemblyNetFx(
 #else
     return UsingAssemblyNetCoreApp(
 #endif
+#pragma warning restore SA1114
       assemblyFile,
       arg,
       actionWithLoadedAssembly,

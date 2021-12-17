@@ -1,10 +1,7 @@
 // SPDX-FileCopyrightText: 2021 smdn <smdn@smdn.jp>
 // SPDX-License-Identifier: MIT
-using System;
 using System.Collections.Generic;
 using System.Reflection;
-
-using Smdn.Reflection;
 
 namespace Smdn.Reflection.ReverseGenerating.ListApi;
 
@@ -33,6 +30,7 @@ public class MemberInfoComparer : IComparer<MemberInfo> {
 
   public int GetOrder(MemberInfo member)
     => member switch {
+#pragma warning disable IDE0055
       null                  => 0,
       EventInfo e           => 1 + GetStaticMemberOrder(e.IsStatic()),
       FieldInfo f           => 2 + GetStaticMemberOrder(f.IsStatic),
@@ -40,5 +38,6 @@ public class MemberInfoComparer : IComparer<MemberInfo> {
       PropertyInfo p        => 4 + GetStaticMemberOrder(p.IsStatic()),
       MethodInfo m          => 5 + GetStaticMemberOrder(m.IsStatic),
       _                     => 9999,
+#pragma warning restore IDE0055
     };
 }
