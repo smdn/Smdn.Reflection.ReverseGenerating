@@ -10,7 +10,7 @@ SPDX-License-Identifier: MIT
     <AssemblyCLSCompliant>true</AssemblyCLSCompliant>
   </PropertyGroup>
 
-  <ItemGroup>
+  <ItemGroup Label="common resources">
     <None Include="$(MSBuildThisFileDirectory)package-icon.png" Pack="true" Visible="false" PackagePath="\$(MSBuildProjectName).png"/>
   </ItemGroup>
 
