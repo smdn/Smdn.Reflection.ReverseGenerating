@@ -6,6 +6,7 @@ SPDX-License-Identifier: MIT
   <PropertyGroup>
     <LangVersion>latest</LangVersion>
     <Deterministic>true</Deterministic>
+    <EnablePackageValidation>true</EnablePackageValidation>
     <AssemblyCLSCompliant>true</AssemblyCLSCompliant>
   </PropertyGroup>
 
