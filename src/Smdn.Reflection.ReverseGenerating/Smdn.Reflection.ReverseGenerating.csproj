@@ -6,7 +6,7 @@ SPDX-License-Identifier: MIT
   <PropertyGroup>
     <TargetFrameworks>net5.0;net47;net45;netstandard2.0</TargetFrameworks>
     <RootNamespace>Smdn.Reflection.ReverseGenerating</RootNamespace>
-    <VersionPrefix>1.0.2</VersionPrefix>
+    <VersionPrefix>1.0.3</VersionPrefix>
     <VersionSuffix></VersionSuffix>
     <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
     <DefineConstants Condition="
