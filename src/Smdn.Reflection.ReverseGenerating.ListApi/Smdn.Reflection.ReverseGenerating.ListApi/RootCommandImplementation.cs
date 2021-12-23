@@ -144,6 +144,11 @@ public class RootCommandImplementation {
   {
     logger?.LogDebug(parseResult.ToString());
 
+    // ref: https://docs.microsoft.com/en-us/dotnet/core/dependency-loading/default-probing
+    logger?.LogDebug($"APP_PATHS={AppContext.GetData("APP_PATHS")}");
+    logger?.LogDebug($"APP_CONTEXT_DEPS_FILES={AppContext.GetData("APP_CONTEXT_DEPS_FILES")}");
+    logger?.LogDebug($"TRUSTED_PLATFORM_ASSEMBLIES={AppContext.GetData("TRUSTED_PLATFORM_ASSEMBLIES")}");
+
     var options = GetApiListWriterOptions(parseResult);
     var outputDirectory = GetOutputDirectory(parseResult);
 
