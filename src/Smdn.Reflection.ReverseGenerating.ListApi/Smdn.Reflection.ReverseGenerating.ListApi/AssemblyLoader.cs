@@ -37,7 +37,10 @@ public static class AssemblyLoader {
 #if NETFRAMEWORK
   private class AppDomainProxy : MarshalByRefObject {
     public Assembly LoadAssembly(FileInfo assemblyFile)
-      => Assembly.ReflectionOnlyLoadFrom(assemblyFile.FullName);
+    {
+      // TODO: logging
+      Assembly.ReflectionOnlyLoadFrom(assemblyFile.FullName);
+    }
   }
 
   private static TResult UsingAssemblyNetFx<TArg, TResult>(
@@ -95,21 +98,28 @@ public static class AssemblyLoader {
 #else // #if NETFRAMEWORK
   private class UnloadableAssemblyLoadContext : AssemblyLoadContext {
     private readonly AssemblyDependencyResolver dependencyResolver;
+    private readonly ILogger logger;
 
-    public UnloadableAssemblyLoadContext(string componentAssemblyPath)
+    public UnloadableAssemblyLoadContext(string componentAssemblyPath, ILogger logger = null)
       : base(
         isCollectible: true // is required to unload assembly
       )
     {
       this.dependencyResolver = new(componentAssemblyPath);
+      this.logger = logger;
     }
 
     protected override Assembly Load(AssemblyName name)
     {
       var assemblyPath = dependencyResolver.ResolveAssemblyToPath(name);
 
-      if (assemblyPath is null)
+      if (assemblyPath is null) {
+        logger?.LogDebug($"could not resolve assembly path of '{name}'");
+
         return null;
+      }
+
+      logger?.LogDebug($"attempting to load assembly from '{assemblyPath}'");
 
       return LoadFromAssemblyPath(assemblyPath);
     }
@@ -126,7 +136,7 @@ public static class AssemblyLoader {
   {
     context = null;
 
-    var alc = new UnloadableAssemblyLoadContext(assemblyFile.FullName);
+    var alc = new UnloadableAssemblyLoadContext(assemblyFile.FullName, logger);
     var alcWeakReference = new WeakReference(alc);
 
     logger?.LogDebug($"loading assembly from file '{assemblyFile.FullName}'");
