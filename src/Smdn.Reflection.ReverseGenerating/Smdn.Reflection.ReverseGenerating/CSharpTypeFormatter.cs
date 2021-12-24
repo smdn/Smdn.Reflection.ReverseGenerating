@@ -215,10 +215,13 @@ public static class CSharpFormatter /* ITypeFormatter */ {
     else {
       var typeAndName = p.ParameterType.FormatTypeName(attributeProvider: p, typeWithNamespace: typeWithNamespace) + " " + ToVerbatim(p.Name);
 
-      if (p.Position == 0 && p.Member.GetCustomAttribute<ExtensionAttribute>() != null) {
+      if (
+        p.Position == 0 &&
+        p.Member.GetCustomAttributesData().Any(static d => typeof(ExtensionAttribute).FullName.Equals(d.AttributeType.FullName, StringComparison.Ordinal))
+      ) {
         ret.Append("this ").Append(typeAndName);
       }
-      else if (p.GetCustomAttribute<ParamArrayAttribute>() != null) {
+      else if (p.GetCustomAttributesData().Any(static d => typeof(ParamArrayAttribute).FullName.Equals(d.AttributeType.FullName, StringComparison.Ordinal))) {
         ret.Append("params ").Append(typeAndName);
       }
       else {
@@ -444,7 +447,7 @@ public static class CSharpFormatter /* ITypeFormatter */ {
       if (typeOfValue.IsValueType && findConstantField) {
         // try to find constant field
         foreach (var f in typeOfValue.GetFields(BindingFlags.Static | BindingFlags.Public)) {
-          if ((f.IsLiteral || f.IsInitOnly) && val.Equals(f.GetValue(null)))
+          if ((f.IsLiteral || f.IsInitOnly) && f.TryGetValue(null, out var constantFieldValue) && val.Equals(constantFieldValue))
             return FormatTypeName(typeOfValue, typeWithNamespace: typeWithNamespace) + "." + f.Name;
         }
 

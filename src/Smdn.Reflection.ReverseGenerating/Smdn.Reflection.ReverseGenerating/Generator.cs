@@ -296,14 +296,18 @@ public static partial class Generator {
 
     if (field.DeclaringType.IsEnum) {
       if (field.IsStatic) {
-        var val = Convert.ChangeType(field.GetValue(null), field.DeclaringType.GetEnumUnderlyingType(), provider: null);
+        sb.Append(GenerateMemberName(field, options));
 
-        sb.Append(GenerateMemberName(field, options)).Append(" = ");
+        if (field.TryGetValue(null, out var fieldValue)) {
+          sb.Append(" = ");
 
-        if (field.DeclaringType.IsEnumFlags())
-          sb.Append("0x").AppendFormat(null, "{0:x" + (Marshal.SizeOf(val) * 2).ToString("D", null) + "}", val);
-        else
-          sb.Append(val);
+          var val = Convert.ChangeType(fieldValue, field.DeclaringType.GetEnumUnderlyingType(), provider: null);
+
+          if (field.DeclaringType.IsEnumFlags())
+            sb.Append("0x").AppendFormat(null, "{0:x" + (Marshal.SizeOf(val) * 2).ToString("D", null) + "}", val);
+          else
+            sb.Append(val);
+        }
 
         if (!memberOptions.OmitEndOfStatement)
           sb.Append(',');
@@ -322,24 +326,29 @@ public static partial class Generator {
         .Append(GenerateMemberName(field, options));
 
       if (field.IsStatic && (field.IsLiteral || field.IsInitOnly) && !field.FieldType.ContainsGenericParameters) {
-        var val = field.GetValue(null);
-        var valueDeclaration = CSharpFormatter.FormatValueDeclaration(
-          val,
-          field.FieldType,
-          typeWithNamespace: memberOptions.WithNamespace,
-          findConstantField: field.FieldType != field.DeclaringType,
-          useDefaultLiteral: options.ValueDeclaration.UseDefaultLiteral
-        );
+        if (field.TryGetValue(null, out var val)) {
+          var valueDeclaration = CSharpFormatter.FormatValueDeclaration(
+            val,
+            field.FieldType,
+            typeWithNamespace: memberOptions.WithNamespace,
+            findConstantField: field.FieldType != field.DeclaringType,
+            useDefaultLiteral: options.ValueDeclaration.UseDefaultLiteral
+          );
 
-        if (valueDeclaration == null) {
-          sb
-            .Append("; // = \"")
-            .Append(CSharpFormatter.EscapeString((val ?? "null").ToString(), escapeDoubleQuote: true))
-            .Append('"');
+          if (valueDeclaration == null) {
+            sb
+              .Append("; // = \"")
+              .Append(CSharpFormatter.EscapeString((val ?? "null").ToString(), escapeDoubleQuote: true))
+              .Append('"');
+          }
+          else {
+            sb.Append(" = ").Append(valueDeclaration);
+
+            if (!memberOptions.OmitEndOfStatement)
+              sb.Append(';');
+          }
         }
         else {
-          sb.Append(" = ").Append(valueDeclaration);
-
           if (!memberOptions.OmitEndOfStatement)
             sb.Append(';');
         }
@@ -389,14 +398,21 @@ public static partial class Generator {
 
     sb.Append(property.PropertyType.FormatTypeName(attributeProvider: property, typeWithNamespace: memberOptions.WithNamespace)).Append(' ');
 
-    var attrDefaultMember = property.DeclaringType.GetCustomAttribute<DefaultMemberAttribute>();
+    var defaultMemberName = property
+      .DeclaringType
+      .GetCustomAttributesData()
+      .FirstOrDefault(static d => typeof(DefaultMemberAttribute).FullName.Equals(d.AttributeType.FullName, StringComparison.Ordinal))
+      ?.ConstructorArguments
+      ?.FirstOrDefault()
+      .Value
+      as string;
 
-    if (0 < indexParameters.Length && string.Equals(property.Name, attrDefaultMember?.MemberName, StringComparison.Ordinal)) {
+    if (0 < indexParameters.Length && string.Equals(property.Name, defaultMemberName, StringComparison.Ordinal)) {
       // indexer
       sb.Append(
         GenerateMemberName(
           property,
-          memberOptions.WithDeclaringTypeName ? attrDefaultMember.MemberName : "this",
+          memberOptions.WithDeclaringTypeName ? defaultMemberName : "this",
           options
         )
       );
@@ -731,7 +747,7 @@ public static partial class Generator {
       if (m.IsAbstract) {
         yield return "abstract";
       }
-      else if (mm != null && mm.GetBaseDefinition() != mm) {
+      else if (mm != null && mm.IsOverridden()) {
         if (m.IsFinal)
           yield return "sealed";
 
