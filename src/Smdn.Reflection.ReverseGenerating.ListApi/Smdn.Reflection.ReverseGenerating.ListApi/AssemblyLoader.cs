@@ -85,7 +85,7 @@ public static class AssemblyLoader {
 
       assemblyName = assm.FullName;
 
-      logger?.LogInformation($"loaded assembly '{assemblyName}'");
+      logger?.LogDebug($"loaded assembly '{assemblyName}'");
 
       return actionWithLoadedAssembly(assm, arg);
     }
@@ -153,7 +153,7 @@ public static class AssemblyLoader {
 
     var assemblyName = assm.FullName;
 
-    logger?.LogInformation($"loaded assembly '{assemblyName}'");
+    logger?.LogDebug($"loaded assembly '{assemblyName}'");
 
     try {
       return actionWithLoadedAssembly(assm, arg);

@@ -304,7 +304,7 @@ public class RootCommandImplementation {
       throw new CommandOperationNotSupportedException($"unsupported input: {input}");
     }
 
-    logger?.LogInformation($"input file: '{inputFile.FullName}'");
+    logger?.LogDebug($"input file: '{inputFile.FullName}'");
 
     IEnumerable<FileInfo> inputAssemblyFiles = null;
 
