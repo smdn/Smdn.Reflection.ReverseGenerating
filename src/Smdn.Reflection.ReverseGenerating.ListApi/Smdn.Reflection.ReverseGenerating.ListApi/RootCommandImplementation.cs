@@ -171,7 +171,8 @@ public class RootCommandImplementation {
           writer.WriteAssemblyInfoHeader();
           writer.WriteExportedTypes();
 
-          arg.logger?.LogInformation($"generated API list '{outputFilePath}' from assembly '{assm.Location}'");
+          arg.logger?.LogDebug($"generated API list {outputFilePath}");
+          arg.logger?.LogInformation($"{assm.Location} -> {outputFilePath}");
 
           return outputFilePath;
         }
