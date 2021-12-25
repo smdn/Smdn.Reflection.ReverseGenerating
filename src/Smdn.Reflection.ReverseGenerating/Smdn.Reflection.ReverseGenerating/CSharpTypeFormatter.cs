@@ -7,6 +7,8 @@ using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Text;
 
+using Smdn.Reflection.Attributes;
+
 namespace Smdn.Reflection.ReverseGenerating;
 
 public static class CSharpFormatter /* ITypeFormatter */ {
@@ -19,23 +21,23 @@ public static class CSharpFormatter /* ITypeFormatter */ {
     { Accessibility.Private,           "private" },
   };
 
-  private static readonly Dictionary<Type, string> primitiveTypes = new() {
-    { typeof(void), "void" },
-    { typeof(sbyte), "sbyte" },
-    { typeof(short), "short" },
-    { typeof(int), "int" },
-    { typeof(long), "long" },
-    { typeof(byte), "byte" },
-    { typeof(ushort), "ushort" },
-    { typeof(uint), "uint" },
-    { typeof(ulong), "ulong" },
-    { typeof(float), "float" },
-    { typeof(double), "double" },
-    { typeof(decimal), "decimal" },
-    { typeof(char), "char" },
-    { typeof(string), "string" },
-    { typeof(object), "object" },
-    { typeof(bool), "bool" },
+  private static readonly Dictionary<string, string> primitiveTypes = new(StringComparer.Ordinal) {
+    { typeof(void).FullName, "void" },
+    { typeof(sbyte).FullName, "sbyte" },
+    { typeof(short).FullName, "short" },
+    { typeof(int).FullName, "int" },
+    { typeof(long).FullName, "long" },
+    { typeof(byte).FullName, "byte" },
+    { typeof(ushort).FullName, "ushort" },
+    { typeof(uint).FullName, "uint" },
+    { typeof(ulong).FullName, "ulong" },
+    { typeof(float).FullName, "float" },
+    { typeof(double).FullName, "double" },
+    { typeof(decimal).FullName, "decimal" },
+    { typeof(char).FullName, "char" },
+    { typeof(string).FullName, "string" },
+    { typeof(object).FullName, "object" },
+    { typeof(bool).FullName, "bool" },
   };
 
   private static readonly HashSet<string> keywords = new(StringComparer.Ordinal) {
@@ -174,7 +176,7 @@ public static class CSharpFormatter /* ITypeFormatter */ {
     => accessibilities.TryGetValue(accessibility, out var ret) ? ret : null;
 
   public static bool IsLanguagePrimitiveType(Type t, out string primitiveTypeName)
-    => primitiveTypes.TryGetValue(t, out primitiveTypeName);
+    => primitiveTypes.TryGetValue(t.FullName, out primitiveTypeName);
 
   public static IEnumerable<string> ToNamespaceList(Type t)
     => t.GetNamespaces(type => IsLanguagePrimitiveType(type, out _));
@@ -330,16 +332,28 @@ public static class CSharpFormatter /* ITypeFormatter */ {
       var sb = new StringBuilder();
 
       if (t.IsConstructedGenericType && "System".Equals(t.Namespace, StringComparison.Ordinal) && t.GetGenericTypeName().Equals("ValueTuple", StringComparison.Ordinal)) {
-        var tupleItemNames = options.AttributeProvider?.GetCustomAttributes(typeof(TupleElementNamesAttribute), inherit: false)?.Cast<TupleElementNamesAttribute>()?.FirstOrDefault()?.TransformNames.ToList();
-
-        if (tupleItemNames != null) {
-          for (var index = 0; index < tupleItemNames.Count; index++) {
-            tupleItemNames[index] = " " + tupleItemNames[index]; // append delimiter between type and name
-          }
-        }
+        var tupleItemNames = options
+          .AttributeProvider
+          ?.GetCustomAttributeDataList()
+          ?.FirstOrDefault(static d => typeof(TupleElementNamesAttribute).FullName.Equals(d.AttributeType.FullName, StringComparison.Ordinal))
+          ?.ConstructorArguments
+          ?.FirstOrDefault()
+          .Value
+          as IReadOnlyList<CustomAttributeTypedArgument>;
 
         sb.Append('(')
-          .Append(string.Join(", ", t.GetGenericArguments().Select((arg, index) => FormatTypeName(arg, showVariance: true, options) + tupleItemNames?[index])))
+          .Append(
+            string.Join(
+              ", ",
+              t
+                .GetGenericArguments()
+                .Select((arg, index) => string.Concat(
+                  FormatTypeName(arg, showVariance: true, options),
+                  tupleItemNames is null ? null : " ", // append delimiter between type and name
+                  tupleItemNames?[index].Value
+                ))
+            )
+          )
           .Append(')');
       }
       else {
@@ -431,13 +445,13 @@ public static class CSharpFormatter /* ITypeFormatter */ {
 
     typeOfValue = Nullable.GetUnderlyingType(typeOfValue) ?? typeOfValue;
 
-    if (typeOfValue == typeof(string)) {
+    if (string.Equals(typeOfValue.FullName, typeof(string).FullName, StringComparison.Ordinal)) {
       return "\"" + EscapeString((string)val, escapeDoubleQuote: true) + "\"";
     }
-    else if (typeOfValue == typeof(char)) {
+    else if (string.Equals(typeOfValue.FullName, typeof(char).FullName, StringComparison.Ordinal)) {
       return "\'" + EscapeString(((char)val).ToString(), escapeSingleQuote: true) + "\'";
     }
-    else if (typeOfValue == typeof(bool)) {
+    else if (string.Equals(typeOfValue.FullName, typeof(bool).FullName, StringComparison.Ordinal)) {
       if ((bool)val)
         return "true";
       else

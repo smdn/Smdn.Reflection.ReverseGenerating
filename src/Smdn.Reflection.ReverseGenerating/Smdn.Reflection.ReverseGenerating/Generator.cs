@@ -169,13 +169,16 @@ public static partial class Generator {
         return attrNullable is not null && (byte)attrNullable.ConstructorArguments[0].Value == 1;
     }
 
+    static bool IsValueType(Type t) => string.Equals(t.FullName, typeof(ValueType).FullName, StringComparison.Ordinal);
+    static bool IsNotValueType(Type t) => !string.Equals(t.FullName, typeof(ValueType).FullName, StringComparison.Ordinal);
+
     static IEnumerable<string> GetGenericArgumentConstraintsOf(Type genericParameter, ISet<string> referencingNns, bool typeWithNamespace)
     {
       var constraintAttrs = genericParameter.GenericParameterAttributes & GenericParameterAttributes.SpecialConstraintMask;
       IEnumerable<Type> constraintTypes = genericParameter.GetGenericParameterConstraints();
       IEnumerable<Type> constraintTypesExceptValueType = constraintTypes;
 
-      referencingNns?.UnionWith(constraintTypes.Where(ct => ct != typeof(ValueType)).SelectMany(CSharpFormatter.ToNamespaceList));
+      referencingNns?.UnionWith(constraintTypes.Where(IsNotValueType).SelectMany(CSharpFormatter.ToNamespaceList));
 
       if (
         constraintAttrs == GenericParameterAttributes.None &&
@@ -187,11 +190,11 @@ public static partial class Generator {
       if (
         constraintAttrs.HasFlag(GenericParameterAttributes.NotNullableValueTypeConstraint) &&
         constraintAttrs.HasFlag(GenericParameterAttributes.DefaultConstructorConstraint) &&
-        constraintTypes.Any(ct => ct == typeof(ValueType))
+        constraintTypes.Any(IsValueType)
       ) {
         constraintAttrs &= ~GenericParameterAttributes.NotNullableValueTypeConstraint;
         constraintAttrs &= ~GenericParameterAttributes.DefaultConstructorConstraint;
-        constraintTypesExceptValueType = constraintTypes.Where(ct => ct != typeof(ValueType));
+        constraintTypesExceptValueType = constraintTypes.Where(IsNotValueType);
 
         if (HasUnmanagedConstraint(genericParameter))
           yield return "unmanaged";
