@@ -499,7 +499,10 @@ public static partial class Generator {
     GeneratorOptions options
   )
   {
-    var explicitInterfaceMethod = m.FindExplicitInterfaceMethod(findOnlyPublicInterfaces: options.IgnorePrivateOrAssembly);
+    m.TryFindExplicitInterfaceMethod(
+      out var explicitInterfaceMethod,
+      findOnlyPublicInterfaces: options.IgnorePrivateOrAssembly
+    );
 
     if (explicitInterfaceMethod == null && options.IgnorePrivateOrAssembly && m.IsPrivateOrAssembly())
       return null;
