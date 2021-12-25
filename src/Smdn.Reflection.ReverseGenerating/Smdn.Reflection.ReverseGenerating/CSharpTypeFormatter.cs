@@ -231,7 +231,7 @@ public static class CSharpFormatter /* ITypeFormatter */ {
 
     if (p.HasDefaultValue) {
       var defaultValueDeclaration = FormatValueDeclaration(
-        p.DefaultValue,
+        p.GetDefaultValue(),
         p.ParameterType,
         typeWithNamespace: typeWithNamespace,
         findConstantField: true,
