@@ -62,6 +62,16 @@ public class RootCommandImplementation {
     description: "Path to output directory.",
     getDefaultValue: () => new DirectoryInfo(Environment.CurrentDirectory)
   );
+  private static readonly Option<bool> optionLoadAssemblyIntoReflectionOnlyContext = new(
+    aliases: new[] { "--load-reflection-only" },
+    description: "Loads and processes input assemblies in the reflection-only context.",
+    getDefaultValue: () =>
+#if NETFRAMEWORK
+      true
+#else
+      false
+#endif
+  );
   private static readonly Option<bool> optionGenerateFullTypeName = new(
     aliases: new[] { "--generate-fulltypename" },
     description: "Generates declarations with full type name.",
@@ -99,6 +109,7 @@ public class RootCommandImplementation {
 #endif
       optionOutputDirectory,
       VerbosityOption.Option,
+      optionLoadAssemblyIntoReflectionOnlyContext,
       optionGenerateFullTypeName,
       optionGenerateMethodBody,
       optionGenerateStaticMembersFirst,
@@ -151,6 +162,7 @@ public class RootCommandImplementation {
 
     var options = GetApiListWriterOptions(parseResult);
     var outputDirectory = GetOutputDirectory(parseResult);
+    var loadAssemblyIntoReflectionOnlyContext = parseResult.ValueForOption(optionLoadAssemblyIntoReflectionOnlyContext);
 
     foreach (var inputAssemblyFile in GetInputAssemblyFiles(parseResult)) {
       AssemblyLoader.UsingAssembly(
@@ -158,6 +170,7 @@ public class RootCommandImplementation {
         arg: (outputDirectory, options, logger),
         logger: logger,
         context: out var context,
+        loadIntoReflectionOnlyContext: loadAssemblyIntoReflectionOnlyContext,
         actionWithLoadedAssembly: static (assm, arg) => {
           var outputFilePath = GetOutputFilePathOf(assm, arg.outputDirectory);
 
@@ -179,6 +192,9 @@ public class RootCommandImplementation {
       );
 
       // wait for the context to be collected
+      if (context is null)
+        continue;
+
       while (context.IsAlive) {
         GC.Collect();
         GC.WaitForPendingFinalizers();
@@ -195,6 +211,7 @@ public class RootCommandImplementation {
     foreach (var inputAssemblyFile in GetInputAssemblyFiles(parseResult)) {
       yield return AssemblyLoader.UsingAssembly(
         inputAssemblyFile,
+        loadIntoReflectionOnlyContext: true,
         arg: outputDirectory,
         logger: logger,
         context: out var context,
@@ -202,6 +219,9 @@ public class RootCommandImplementation {
       );
 
       // wait for the context to be collected
+      if (context is null)
+        continue;
+
       while (context.IsAlive) {
         GC.Collect();
         GC.WaitForPendingFinalizers();
