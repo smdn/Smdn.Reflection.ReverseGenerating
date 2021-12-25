@@ -26,14 +26,24 @@ internal class ApiListWriter {
 
   public void WriteAssemblyInfoHeader()
   {
-    BaseWriter.WriteLine($"// {Path.GetFileName(assembly.Location)} ({assembly.GetCustomAttribute<AssemblyProductAttribute>()?.Product})");
+    BaseWriter.WriteLine($"// {Path.GetFileName(assembly.Location)} ({GetAssemblyMetadataAttributeValue<AssemblyProductAttribute>(assembly)})");
     BaseWriter.WriteLine($"//   Name: {assembly.GetName().Name}");
     BaseWriter.WriteLine($"//   AssemblyVersion: {assembly.GetName().Version}");
-    BaseWriter.WriteLine($"//   InformationalVersion: {assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion}");
-    BaseWriter.WriteLine($"//   TargetFramework: {assembly.GetCustomAttribute<TargetFrameworkAttribute>()?.FrameworkName}");
-    BaseWriter.WriteLine($"//   Configuration: {assembly.GetCustomAttribute<AssemblyConfigurationAttribute>()?.Configuration}");
+    BaseWriter.WriteLine($"//   InformationalVersion: {GetAssemblyMetadataAttributeValue<AssemblyInformationalVersionAttribute>(assembly)}");
+    BaseWriter.WriteLine($"//   TargetFramework: {GetAssemblyMetadataAttributeValue<TargetFrameworkAttribute>(assembly)}");
+    BaseWriter.WriteLine($"//   Configuration: {GetAssemblyMetadataAttributeValue<AssemblyConfigurationAttribute>(assembly)}");
     BaseWriter.WriteLine();
   }
+
+  private static string GetAssemblyMetadataAttributeValue<TAssemblyMetadataAttribute>(Assembly assm)
+    where TAssemblyMetadataAttribute : Attribute
+    => assm
+      .GetCustomAttributesData()
+      .FirstOrDefault(static d => ROCType.FullNameEquals(typeof(TAssemblyMetadataAttribute), d.AttributeType))
+      ?.ConstructorArguments
+      ?.FirstOrDefault()
+      .Value
+      as string;
 
   public void WriteExportedTypes()
   {
@@ -150,7 +160,7 @@ internal class ApiListWriter {
     var ret = new StringBuilder(1024);
     var indent = string.Concat(Enumerable.Repeat(options.Indent, nestLevel));
 
-    if (t.GetCustomAttribute<TypeForwardedFromAttribute>() is not null) {
+    if (t.GetCustomAttributesData().Any(static d => ROCType.FullNameEquals(typeof(TypeForwardedFromAttribute), d.AttributeType))) {
       ret.Append(indent)
          .AppendLine($"// Forwarded to \"{t.Assembly.GetName().FullName}\"");
     }
@@ -285,38 +295,40 @@ internal class ApiListWriter {
 
   internal static bool DefaultAttributeFilter(Type attrType, ICustomAttributeProvider attrProvider)
   {
-    if (attrType == typeof(System.CLSCompliantAttribute))
+    if (ROCType.FullNameEquals(typeof(System.CLSCompliantAttribute), attrType))
       return false;
-    if (attrType == typeof(System.Reflection.DefaultMemberAttribute))
+    if (ROCType.FullNameEquals(typeof(System.Reflection.DefaultMemberAttribute), attrType))
       return false;
 
     switch (attrProvider) {
       case Type t:
-        if (string.Equals("System.Runtime.CompilerServices.IsReadOnlyAttribute", attrType.FullName, StringComparison.Ordinal))
+        if (ROCType.FullNameEquals(typeof(System.Runtime.CompilerServices.IsReadOnlyAttribute), attrType))
           return false;
-        if (string.Equals("System.Runtime.CompilerServices.ExtensionAttribute", attrType.FullName, StringComparison.Ordinal))
+        if (ROCType.FullNameEquals(typeof(System.Runtime.CompilerServices.ExtensionAttribute), attrType))
           return false;
         break;
 
       case MethodBase m:
-        if (string.Equals("System.Runtime.CompilerServices.ExtensionAttribute", attrType.FullName, StringComparison.Ordinal))
+        if (ROCType.FullNameEquals(typeof(System.Runtime.CompilerServices.ExtensionAttribute), attrType))
           return false;
-        if (string.Equals("System.Runtime.CompilerServices.IteratorStateMachineAttribute", attrType.FullName, StringComparison.Ordinal))
+        if (ROCType.FullNameEquals(typeof(System.Runtime.CompilerServices.IteratorStateMachineAttribute), attrType))
           return false;
         break;
 
       case ParameterInfo para:
-        if (attrType == typeof(System.Runtime.InteropServices.OptionalAttribute))
+        if (ROCType.FullNameEquals(typeof(System.Runtime.InteropServices.OptionalAttribute), attrType))
           return false;
-        if (attrType == typeof(System.Runtime.InteropServices.InAttribute))
+        if (ROCType.FullNameEquals(typeof(System.Runtime.InteropServices.InAttribute), attrType))
           return false;
-        if (attrType == typeof(System.Runtime.InteropServices.OutAttribute))
+        if (ROCType.FullNameEquals(typeof(System.Runtime.InteropServices.OutAttribute), attrType))
           return false;
-        if (attrType == typeof(System.ParamArrayAttribute))
+        if (ROCType.FullNameEquals(typeof(System.ParamArrayAttribute), attrType))
           return false;
-        if (string.Equals("System.Runtime.CompilerServices.TupleElementNamesAttribute", attrType.FullName, StringComparison.Ordinal))
+        if (ROCType.FullNameEquals(typeof(System.Runtime.CompilerServices.TupleElementNamesAttribute), attrType))
+          // TupleElementNamesAttribute from System.Runtime/mscorlib
+          // TupleElementNamesAttribute from System.ValueTuple
           return false;
-        if (string.Equals("System.Runtime.CompilerServices.IsReadOnlyAttribute", attrType.FullName, StringComparison.Ordinal))
+        if (ROCType.FullNameEquals(typeof(System.Runtime.CompilerServices.IsReadOnlyAttribute), attrType))
           return false;
         break;
     }

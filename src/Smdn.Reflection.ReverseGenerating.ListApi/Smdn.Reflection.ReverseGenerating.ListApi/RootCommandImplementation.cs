@@ -261,21 +261,13 @@ public class RootCommandImplementation {
     }
 
     static string GetTargetFramework(Assembly assm)
-    {
-      var frameworkName = assm.GetCustomAttribute<TargetFrameworkAttribute>()?.FrameworkName;
-
-      if (frameworkName is not null)
-        return frameworkName;
-
-      // for in case of executable assembly
-      return assm
+      => assm
         .GetCustomAttributesData()
-        ?.FirstOrDefault(d => d.AttributeType == typeof(TargetFrameworkAttribute))
+        .FirstOrDefault(static d => ROCType.FullNameEquals(typeof(TargetFrameworkAttribute), d.AttributeType))
         ?.ConstructorArguments
         ?.FirstOrDefault()
         .Value
         as string;
-    }
 
     static bool TryParseFrameworkName(string name, out FrameworkName frameworkName)
     {
