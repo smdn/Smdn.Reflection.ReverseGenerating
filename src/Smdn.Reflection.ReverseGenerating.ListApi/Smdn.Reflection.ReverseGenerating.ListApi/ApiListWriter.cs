@@ -65,6 +65,7 @@ internal class ApiListWriter {
       typeDeclarations.Append(
         GenerateTypeAndMemberDeclarations(
           nestLevel: 1,
+          assembly,
           types
             .Where(type => type.Namespace.Equals(ns, StringComparison.Ordinal))
             .Where(type => !type.IsNested),
@@ -97,6 +98,7 @@ internal class ApiListWriter {
 
   private static string GenerateTypeAndMemberDeclarations(
     int nestLevel,
+    Assembly assm,
     IEnumerable<Type> types,
     ISet<string> referencingNamespaces,
     ApiListWriterOptions options
@@ -130,6 +132,7 @@ internal class ApiListWriter {
         ret.Append(
           GenerateTypeAndMemberDeclarations(
             nestLevel,
+            assm,
             type,
             referencingNamespaces,
             options
@@ -149,6 +152,7 @@ internal class ApiListWriter {
   // TODO: unsafe types
   private static string GenerateTypeAndMemberDeclarations(
     int nestLevel,
+    Assembly assm,
     Type t,
     ISet<string> referencingNamespaces,
     ApiListWriterOptions options
@@ -160,9 +164,20 @@ internal class ApiListWriter {
     var ret = new StringBuilder(1024);
     var indent = string.Concat(Enumerable.Repeat(options.Indent, nestLevel));
 
-    if (t.GetCustomAttributesData().Any(static d => ROCType.FullNameEquals(typeof(TypeForwardedFromAttribute), d.AttributeType))) {
+    var assemblyNameOfTypeForwardedFrom = t
+      .GetCustomAttributesData()
+      .FirstOrDefault(static d => ROCType.FullNameEquals(typeof(TypeForwardedFromAttribute), d.AttributeType))
+      ?.ConstructorArguments
+      ?.FirstOrDefault()
+      .Value
+      as string;
+
+    if (
+      assemblyNameOfTypeForwardedFrom is not null &&
+      string.Equals(assm.FullName, assemblyNameOfTypeForwardedFrom, StringComparison.Ordinal)
+    ) {
       ret.Append(indent)
-         .AppendLine($"// Forwarded to \"{t.Assembly.GetName().FullName}\"");
+         .AppendLine($"// Forwarded to \"{t.Assembly.FullName}\"");
     }
 
     // TODO: AttributeTargets.GenericParameter
@@ -188,7 +203,15 @@ internal class ApiListWriter {
       else
         ret.AppendLine(" {");
 
-      ret.Append(GenerateTypeContentDeclarations(nestLevel + 1, t, referencingNamespaces, options));
+      ret.Append(
+        GenerateTypeContentDeclarations(
+          nestLevel + 1,
+          assm,
+          t,
+          referencingNamespaces,
+          options
+        )
+      );
 
       ret.Append(indent).AppendLine("}");
     }
@@ -201,6 +224,7 @@ internal class ApiListWriter {
 
   private static string GenerateTypeContentDeclarations(
     int nestLevel,
+    Assembly assm,
     Type t,
     ISet<string> referencingNamespaces,
     ApiListWriterOptions options
@@ -237,6 +261,7 @@ internal class ApiListWriter {
       ret.Append(
         GenerateTypeAndMemberDeclarations(
           nestLevel,
+          assm,
           nestedTypes.Where(nestedType => !(options.IgnorePrivateOrAssembly && (nestedType.IsNestedPrivate || nestedType.IsNestedAssembly))),
           referencingNamespaces,
           options
