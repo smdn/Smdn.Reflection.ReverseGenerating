@@ -38,6 +38,7 @@ class RootCommandImplementationGetOutputFilePathsTests {
   [Test]
   public void GetOutputFilePaths()
   {
+#if FEATURE_BUILD_PROJ
     var impl = new RootCommandImplementation(serviceProvider);
     var outputFilePath = impl.GetOutputFilePaths(new[] {
       PathJoiner.Join(TestAssemblyInfo.RootDirectory.FullName, "Exe", "Exe.csproj")
@@ -51,12 +52,16 @@ class RootCommandImplementationGetOutputFilePathsTests {
       GetCurrentDirectory(),
       Path.GetDirectoryName(outputFilePath)
     );
+#else
+    Assert.Ignore("disabled feature: FEATURE_BUILD_PROJ");
+#endif
   }
 
   [TestCase("-o", "output")]
   [TestCase("--output-directory", "output")]
   public void GetOutputFilePaths_WithOutputDirectoryOption(string optionName, string outputDirectory)
   {
+#if FEATURE_BUILD_PROJ
     var impl = new RootCommandImplementation(serviceProvider);
     var outputFilePath = impl.GetOutputFilePaths(new[] {
       "-o", outputDirectory,
@@ -71,6 +76,9 @@ class RootCommandImplementationGetOutputFilePathsTests {
       Path.GetFullPath(outputDirectory),
       Path.GetDirectoryName(outputFilePath)
     );
+#else
+    Assert.Ignore("disabled feature: FEATURE_BUILD_PROJ");
+#endif
   }
 
   [TestCase("-c", "Debug")]
@@ -79,6 +87,7 @@ class RootCommandImplementationGetOutputFilePathsTests {
   [TestCase("--configuration", "Release")]
   public void GetOutputFilePaths_WithConfigurationOption(string optionName, string configuration)
   {
+#if FEATURE_BUILD_PROJ
     var impl = new RootCommandImplementation(serviceProvider);
     var outputFilePaths = impl.GetOutputFilePaths(new[] {
       optionName, configuration,
@@ -92,6 +101,9 @@ class RootCommandImplementationGetOutputFilePathsTests {
       },
       outputFilePaths.Select(f => Path.GetFileName(f))
     );
+#else
+    Assert.Ignore("disabled feature: FEATURE_BUILD_PROJ");
+#endif
   }
 
   [TestCase("-f", "net5.0")]
@@ -100,6 +112,7 @@ class RootCommandImplementationGetOutputFilePathsTests {
   [TestCase("--framework", "netstandard2.1")]
   public void GetOutputFilePaths_WithTargetFrameworkOption(string optionName, string targetFramework)
   {
+#if FEATURE_BUILD_PROJ
     var impl = new RootCommandImplementation(serviceProvider);
     var outputFilePaths = impl.GetOutputFilePaths(new[] {
       optionName, targetFramework,
@@ -112,6 +125,9 @@ class RootCommandImplementationGetOutputFilePathsTests {
       },
       outputFilePaths.Select(f => Path.GetFileName(f))
     );
+#else
+    Assert.Ignore("disabled feature: FEATURE_BUILD_PROJ");
+#endif
   }
 
   [TestCase("-r", "win-x64")]
@@ -120,6 +136,7 @@ class RootCommandImplementationGetOutputFilePathsTests {
   [TestCase("--runtime", "linux-x64")]
   public void GetOutputFilePaths_WithRuntimeOption(string optionName, string runtime)
   {
+#if FEATURE_BUILD_PROJ
     var impl = new RootCommandImplementation(serviceProvider);
     var outputFilePaths = impl.GetOutputFilePaths(new[] {
       optionName, runtime,
@@ -133,5 +150,8 @@ class RootCommandImplementationGetOutputFilePathsTests {
       },
       outputFilePaths.Select(f => Path.GetFileName(f))
     );
+#else
+    Assert.Ignore("disabled feature: FEATURE_BUILD_PROJ");
+#endif
   }
 }

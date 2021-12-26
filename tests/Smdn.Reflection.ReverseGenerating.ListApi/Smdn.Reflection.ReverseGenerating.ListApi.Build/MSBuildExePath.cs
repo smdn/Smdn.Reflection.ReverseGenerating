@@ -1,5 +1,6 @@
 // SPDX-FileCopyrightText: 2021 smdn <smdn@smdn.jp>
 // SPDX-License-Identifier: MIT
+#if FEATURE_BUILD_PROJ
 using System;
 using System.Linq;
 using System.Reflection;
@@ -39,3 +40,4 @@ class MSBuildExePathTests {
     Assert.AreEqual(initialValue, Environment.GetEnvironmentVariable(MSBUILD_EXE_PATH));
   }
 }
+#endif

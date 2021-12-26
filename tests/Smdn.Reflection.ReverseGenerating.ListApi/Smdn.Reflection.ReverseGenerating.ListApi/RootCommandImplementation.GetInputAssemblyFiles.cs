@@ -38,6 +38,7 @@ class RootCommandImplementationGetInputAssemblyFilesTests {
 
   private FileInfo Build(string pathToProjectFile)
   {
+#if FEATURE_BUILD_PROJ
     var logger = serviceProvider?.GetService<ILoggerFactory>()?.CreateLogger("builder");
 
     Environment.SetEnvironmentVariable("MSBUILD_EXE_PATH", null);
@@ -48,11 +49,15 @@ class RootCommandImplementationGetInputAssemblyFilesTests {
       new(pathToProjectFile),
       logger: logger
     ).First();
+#else
+    throw new NotSupportedException("disabled feature: FEATURE_BUILD_PROJ");
+#endif
   }
 
   [Test]
-  public void GetInputAssemblyFiles_File_Dll()
+  public void GetInputAssemblyFiles_File_Proj_Dll()
   {
+#if FEATURE_BUILD_PROJ
     var dll = Build(PathJoiner.Join(TestAssemblyInfo.RootDirectory.FullName, "Lib", "Lib.csproj"));
 
     var impl = new RootCommandImplementation(serviceProvider);
@@ -61,11 +66,15 @@ class RootCommandImplementationGetInputAssemblyFilesTests {
       new[] { dll.FullName },
       impl.GetInputAssemblyFiles(new[] { dll.FullName }).Select(f => f.FullName)
     );
+#else
+    Assert.Ignore("disabled feature: FEATURE_BUILD_PROJ");
+#endif
   }
 
   [Test]
-  public void GetInputAssemblyFiles_File_Exe()
+  public void GetInputAssemblyFiles_File_Proj_Exe()
   {
+#if FEATURE_BUILD_PROJ
     var exe = Build(PathJoiner.Join(TestAssemblyInfo.RootDirectory.FullName, "Exe", "Exe.csproj"));
 
     var impl = new RootCommandImplementation(serviceProvider);
@@ -74,6 +83,9 @@ class RootCommandImplementationGetInputAssemblyFilesTests {
       new[] { exe.FullName },
       impl.GetInputAssemblyFiles(new[] { exe.FullName }).Select(f => f.FullName)
     );
+#else
+    Assert.Ignore("disabled feature: FEATURE_BUILD_PROJ");
+#endif
   }
 
   [Test]
@@ -92,6 +104,7 @@ class RootCommandImplementationGetInputAssemblyFilesTests {
   [TestCase("--configuration", "Release")]
   public void GetInputAssemblyFiles_File_Proj_WithConfigurationOption(string optionName, string configuration)
   {
+#if FEATURE_BUILD_PROJ
     var proj = PathJoiner.Join(TestAssemblyInfo.RootDirectory.FullName, "LibA", "LibA.csproj");
 
     var impl = new RootCommandImplementation(serviceProvider);
@@ -103,12 +116,16 @@ class RootCommandImplementationGetInputAssemblyFilesTests {
       },
       impl.GetInputAssemblyFiles(new[] { optionName, configuration, proj }).Select(f => f.FullName)
     );
+#else
+    Assert.Ignore("disabled feature: FEATURE_BUILD_PROJ");
+#endif
   }
 
   [TestCase("-f", "netstandard2.1")]
   [TestCase("--framework", "netstandard2.1")]
   public void GetInputAssemblyFiles_File_Proj_WithTargetFrameworkOption(string optionName, string targetFramework)
   {
+#if FEATURE_BUILD_PROJ
     var proj = PathJoiner.Join(TestAssemblyInfo.RootDirectory.FullName, "LibA", "LibA.csproj");
 
     var impl = new RootCommandImplementation(serviceProvider);
@@ -119,6 +136,9 @@ class RootCommandImplementationGetInputAssemblyFilesTests {
       },
       impl.GetInputAssemblyFiles(new[] { optionName, targetFramework, proj }).Select(f => f.FullName)
     );
+#else
+    Assert.Ignore("disabled feature: FEATURE_BUILD_PROJ");
+#endif
   }
 
   [TestCase("-r", "win-x64")]
@@ -127,6 +147,7 @@ class RootCommandImplementationGetInputAssemblyFilesTests {
   [TestCase("--runtime", "linux-x64")]
   public void GetInputAssemblyFiles_File_Proj_WithRuntimeOption(string optionName, string runtime)
   {
+#if FEATURE_BUILD_PROJ
     var proj = PathJoiner.Join(TestAssemblyInfo.RootDirectory.FullName, "Exe", "Exe.csproj");
     var expectedBuildOutputFileName = "Exe." + (RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? "exe" : "dll");
 
@@ -138,11 +159,15 @@ class RootCommandImplementationGetInputAssemblyFilesTests {
       },
       impl.GetInputAssemblyFiles(new[] { optionName, runtime, proj }).Select(f => f.FullName)
     );
+#else
+    Assert.Ignore("disabled feature: FEATURE_BUILD_PROJ");
+#endif
   }
 
   [Test]
   public void GetInputAssemblyFiles_Directory_ProjLib()
   {
+#if FEATURE_BUILD_PROJ
     var dirProj = PathJoiner.Join(TestAssemblyInfo.RootDirectory.FullName, "Lib");
 
     var impl = new RootCommandImplementation(serviceProvider);
@@ -153,11 +178,15 @@ class RootCommandImplementationGetInputAssemblyFilesTests {
       },
       impl.GetInputAssemblyFiles(new[] { dirProj }).Select(f => f.FullName)
     );
+#else
+    Assert.Ignore("disabled feature: FEATURE_BUILD_PROJ");
+#endif
   }
 
   [Test]
   public void GetInputAssemblyFiles_Directory_ProjExe()
   {
+#if FEATURE_BUILD_PROJ
     var dirProj = PathJoiner.Join(TestAssemblyInfo.RootDirectory.FullName, "Exe");
     var expectedBuildOutputFileName = "Exe." + (RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? "exe" : "dll");
 
@@ -169,6 +198,9 @@ class RootCommandImplementationGetInputAssemblyFilesTests {
       },
       impl.GetInputAssemblyFiles(new[] { dirProj }).Select(f => f.FullName)
     );
+#else
+    Assert.Ignore("disabled feature: FEATURE_BUILD_PROJ");
+#endif
   }
 
   [Test]
