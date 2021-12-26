@@ -12,7 +12,9 @@ using Microsoft.Extensions.Logging;
 
 namespace Smdn.Reflection.ReverseGenerating.ListApi;
 
+#pragma warning disable IDE0040
 partial class AssemblyLoader {
+#pragma warning restore IDE0040
   private static TResult UsingAssemblyCore<TArg, TResult>(
     FileInfo assemblyFile,
     bool loadIntoReflectionOnlyContext,

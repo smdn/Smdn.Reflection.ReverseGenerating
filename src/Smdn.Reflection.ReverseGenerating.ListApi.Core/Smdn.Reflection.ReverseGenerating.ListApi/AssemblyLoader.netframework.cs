@@ -9,7 +9,9 @@ using Microsoft.Extensions.Logging;
 
 namespace Smdn.Reflection.ReverseGenerating.ListApi;
 
+#pragma warning disable IDE0040
 partial class AssemblyLoader {
+#pragma warning restore IDE0040
   private abstract class LoadAssemblyAppDomainProxyBase : MarshalByRefObject {
     public abstract Assembly LoadAssembly(FileInfo assemblyFile);
   }

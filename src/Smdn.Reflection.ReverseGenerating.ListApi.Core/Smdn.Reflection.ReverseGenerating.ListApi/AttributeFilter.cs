@@ -2,9 +2,6 @@
 // SPDX-License-Identifier: MIT
 using System;
 using System.Reflection;
-using System.Runtime.CompilerServices;
-
-using Smdn.Reflection.ReverseGenerating;
 
 namespace Smdn.Reflection.ReverseGenerating.ListApi;
 
@@ -19,21 +16,21 @@ public static class AttributeFilter {
       return false;
 
     switch (attrProvider) {
-      case Type t:
+      case Type:
         if (ROCType.FullNameEquals(typeof(System.Runtime.CompilerServices.IsReadOnlyAttribute), attrType))
           return false;
         if (ROCType.FullNameEquals(typeof(System.Runtime.CompilerServices.ExtensionAttribute), attrType))
           return false;
         break;
 
-      case MethodBase m:
+      case MethodBase:
         if (ROCType.FullNameEquals(typeof(System.Runtime.CompilerServices.ExtensionAttribute), attrType))
           return false;
         if (ROCType.FullNameEquals(typeof(System.Runtime.CompilerServices.IteratorStateMachineAttribute), attrType))
           return false;
         break;
 
-      case ParameterInfo para:
+      case ParameterInfo:
         if (ROCType.FullNameEquals(typeof(System.Runtime.InteropServices.OptionalAttribute), attrType))
           return false;
         if (ROCType.FullNameEquals(typeof(System.Runtime.InteropServices.InAttribute), attrType))
