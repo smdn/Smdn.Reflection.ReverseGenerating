@@ -37,3 +37,6 @@ dotnet_diagnostic.CA1805.severity     = suggestion    # Do not initialize unnece
 
 csharp_style_namespace_declarations   = file_scoped:warning
 dotnet_diagnostic.IDE0161.severity    = warning       # Convert to file-scoped namespace
+
+dotnet_diagnostic.CA2254.severity     = suggestion    # The logging message template should not vary between calls to 'LoggerExtensions.LogDebug(ILogger, string?, params object?[])'
+dotnet_diagnostic.CA1848.severity     = suggestion    # For improved performance, use the LoggerMessage delegates instead
