@@ -11,7 +11,7 @@ using System.Text;
 
 namespace Smdn.Reflection.ReverseGenerating.ListApi;
 
-internal class ApiListWriter {
+public class ApiListWriter {
   public TextWriter BaseWriter { get; }
 
   private readonly Assembly assembly;
