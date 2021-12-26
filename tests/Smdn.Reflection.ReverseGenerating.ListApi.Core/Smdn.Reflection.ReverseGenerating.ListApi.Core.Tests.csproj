@@ -6,10 +6,58 @@ SPDX-License-Identifier: MIT
   <PropertyGroup>
     <TargetFrameworks>net6.0;net5.0;netcoreapp3.1</TargetFrameworks>
     <RootNamespace>Smdn.Reflection.ReverseGenerating.ListApi.Core</RootNamespace>
+    <NoWarn>CS2002;$(NoWarn)</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="6.0.0" />
     <ProjectReference Include="..\..\src\Smdn.Reflection.ReverseGenerating.ListApi.Core\Smdn.Reflection.ReverseGenerating.ListApi.Core.csproj" />
   </ItemGroup>
+
+  <Target Name="WriteTestAssemblyInfo" BeforeTargets="BeforeBuild">
+    <ItemGroup>
+      <TestProjects Include="$(TestAssemblyRootDirectory)\LibA\LibA.csproj" />
+      <TestProjects Include="$(TestAssemblyRootDirectory)\LibB\LibB.csproj" />
+    </ItemGroup>
+
+    <MSBuild Projects="@(TestProjects)" Targets="Build" Properties="Configuration=Release;TargetFramework=netstandard2.1">
+      <Output TaskParameter="TargetOutputs" ItemName="TestAssembliesNetStandard21" />
+    </MSBuild>
+    <MSBuild Projects="@(TestProjects)" Targets="Build" Properties="Configuration=Release;TargetFramework=net5.0">
+      <Output TaskParameter="TargetOutputs" ItemName="TestAssembliesNet50" />
+    </MSBuild>
+    <MSBuild Projects="@(TestProjects)" Targets="Build" Properties="Configuration=Release;TargetFramework=net6.0">
+      <Output TaskParameter="TargetOutputs" ItemName="TestAssembliesNet60" />
+    </MSBuild>
+
+    <ItemGroup>
+      <TestAssemblies Include="@(TestAssembliesNetStandard21)" />
+      <TestAssemblies Include="@(TestAssembliesNet50)" />
+      <TestAssemblies Include="@(TestAssembliesNet60)" />
+    </ItemGroup>
+
+    <PropertyGroup>
+      <TestAssemblyPaths>@(TestAssemblies, '&quot;,%0D%0A&quot;')</TestAssemblyPaths>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <SourceLines Include="namespace $(RootNamespace)$([MSBuild]::Escape(';'))" />
+      <SourceLines Include="public static class TestAssemblyInfo {" />
+      <SourceLines Include="public static readonly System.IO.DirectoryInfo RootDirectory = new(@&quot;$(TestAssemblyRootDirectory)&quot;)$([MSBuild]::Escape(';'))" />
+      <SourceLines Include="public static readonly string[] TestAssemblyPaths = new[] {%0D%0A&quot;$(TestAssemblyPaths)&quot;%0D%0A}$([MSBuild]::Escape(';'))" />
+      <SourceLines Include="}" />
+    </ItemGroup>
+    <PropertyGroup>
+      <TestAssemblyInfoFilePath>$(MSBuildThisFileDirectory)TestAssemblyInfo.cs</TestAssemblyInfoFilePath>
+    </PropertyGroup>
+    <WriteLinesToFile
+      File="$(TestAssemblyInfoFilePath)"
+      Overwrite="true"
+      Lines="@(SourceLines)"
+    />
+    <ItemGroup>
+      <!-- XXX: This causes compiler warning CS2002. -->
+      <Compile Include="$(TestAssemblyInfoFilePath)" />
+    </ItemGroup>
+  </Target>
 </Project>

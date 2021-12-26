@@ -7,7 +7,9 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Console;
 using NUnit.Framework;
-using Smdn.Reflection.ReverseGenerating.ListApi.Build;
+
+using Smdn.Reflection.ReverseGenerating.ListApi.Core; // TestAssemblyInfo
+
 
 #if NETCOREAPP3_1_OR_GREATER || NET5_0_OR_GREATER
 using PathJoiner = System.IO.Path;
@@ -36,38 +38,31 @@ class AssemblyLoaderTests {
 
     logger = services.BuildServiceProvider().GetService<ILoggerFactory>()?.CreateLogger("test");
 
-    Environment.SetEnvironmentVariable("MSBUILD_EXE_PATH", null);
-
-    MSBuildExePath.EnsureSetEnvVar(logger);
-
-    var options = new ProjectBuilder.Options() {
-      TargetFramework = "net5.0",
-    };
-
-    assemblyFileLibA = ProjectBuilder.Build(
-      new(PathJoiner.Join(TestAssemblyInfo.RootDirectory.FullName, "LibA", "LibA.csproj")),
-      options: options,
-      logger: logger
-    ).First();
-
-    assemblyFileLibB = ProjectBuilder.Build(
-      new(PathJoiner.Join(TestAssemblyInfo.RootDirectory.FullName, "LibB", "LibB.csproj")),
-      options: options,
-      logger: logger
-    ).First();
+    assemblyFileLibA = new FileInfo(TestAssemblyInfo.TestAssemblyPaths.First(static f => f.Contains("LibA.dll")));
+    assemblyFileLibB = new FileInfo(TestAssemblyInfo.TestAssemblyPaths.First(static f => f.Contains("LibB.dll")));
   }
 
-  [Test]
-  public void UsingAssembly()
+  [TestCase(true, "netstandard2.1")]
+  [TestCase(false, "netstandard2.1")]
+  [TestCase(true, "net5.0")]
+  [TestCase(false, "net5.0")]
+  public void UsingAssembly(bool loadIntoReflectionOnlyContext, string targetFrameworkMoniker)
   {
+    var assemblyFile = new FileInfo(
+      TestAssemblyInfo.TestAssemblyPaths.First(f => f.Contains(targetFrameworkMoniker) && f.Contains("LibA.dll"))
+    );
+
     var result = AssemblyLoader.UsingAssembly(
-      assemblyFileLibA,
-      arg: assemblyFileLibA,
+      assemblyFile,
+      loadIntoReflectionOnlyContext: loadIntoReflectionOnlyContext,
+      arg: assemblyFile,
       (assm, arg) => {
-        Assert.AreSame(arg, assemblyFileLibA, nameof(arg));
+        Assert.AreSame(arg, assemblyFile, nameof(arg));
 
         Assert.IsNotNull(assm, nameof(assm));
         Assert.AreEqual(assm.Location, arg.FullName, nameof(assm.Location));
+
+        Assert.DoesNotThrow(() => assm.GetExportedTypes(), nameof(assm.GetExportedTypes));
 
         return assm.GetType("Lib.LibA.CBase")?.FullName;
       },
@@ -77,6 +72,13 @@ class AssemblyLoaderTests {
 
     Assert.IsNotNull(result, nameof(result));
     Assert.AreEqual(result, "Lib.LibA.CBase", nameof(result));
+
+    if (loadIntoReflectionOnlyContext) {
+      Assert.IsNull(context, nameof(context));
+      return;
+    }
+
+    Assert.IsNotNull(context, nameof(context));
 
     var unloaded = false;
 
@@ -93,17 +95,27 @@ class AssemblyLoaderTests {
     Assert.IsTrue(unloaded, nameof(unloaded));
   }
 
-  [Test]
-  public void UsingAssembly_ResolveDependency()
+  [TestCase(true, "netstandard2.1")]
+  [TestCase(false, "netstandard2.1")]
+  [TestCase(true, "net5.0")]
+  [TestCase(false, "net5.0")]
+  public void UsingAssembly_ResolveDependency(bool loadIntoReflectionOnlyContext, string targetFrameworkMoniker)
   {
+    var assemblyFile = new FileInfo(
+      TestAssemblyInfo.TestAssemblyPaths.First(f => f.Contains(targetFrameworkMoniker) && f.Contains("LibB.dll"))
+    );
+
     var result = AssemblyLoader.UsingAssembly(
-      assemblyFileLibB,
-      arg: assemblyFileLibB,
+      assemblyFile,
+      loadIntoReflectionOnlyContext: loadIntoReflectionOnlyContext,
+      arg: assemblyFile,
       (assm, arg) => {
-        Assert.AreSame(arg, assemblyFileLibB, nameof(arg));
+        Assert.AreSame(arg, assemblyFile, nameof(arg));
 
         Assert.IsNotNull(assm, nameof(assm));
         Assert.AreEqual(assm.Location, arg.FullName, nameof(assm.Location));
+
+        Assert.DoesNotThrow(() => assm.GetExportedTypes(), nameof(assm.GetExportedTypes));
 
         return assm.GetType("Lib.LibB.CEx")?.FullName;
       },
@@ -113,6 +125,13 @@ class AssemblyLoaderTests {
 
     Assert.IsNotNull(result, nameof(result));
     Assert.AreEqual(result, "Lib.LibB.CEx", nameof(result));
+
+    if (loadIntoReflectionOnlyContext) {
+      Assert.IsNull(context, nameof(context));
+      return;
+    }
+
+    Assert.IsNotNull(context, nameof(context));
 
     var unloaded = false;
 
