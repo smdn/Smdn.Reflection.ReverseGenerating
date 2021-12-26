@@ -50,7 +50,11 @@ public class ApiListWriter {
       if (0 < typeDeclarations.Length)
         typeDeclarations.AppendLine();
 
-      typeDeclarations.AppendLine($"namespace {ns} {{");
+      typeDeclarations
+        .Append("namespace ")
+        .Append(ns)
+        .Append(" {")
+        .AppendLine();
 
       typeDeclarations.Append(
         GenerateTypeAndMemberDeclarations(
@@ -166,8 +170,12 @@ public class ApiListWriter {
       assemblyNameOfTypeForwardedFrom is not null &&
       string.Equals(assm.FullName, assemblyNameOfTypeForwardedFrom, StringComparison.Ordinal)
     ) {
-      ret.Append(indent)
-         .AppendLine($"// Forwarded to \"{t.Assembly.FullName}\"");
+      ret
+        .Append(indent)
+        .Append("// Forwarded to \"")
+        .Append(t.Assembly.FullName)
+        .Append('"')
+        .AppendLine();
     }
 
     // TODO: AttributeTargets.GenericParameter
