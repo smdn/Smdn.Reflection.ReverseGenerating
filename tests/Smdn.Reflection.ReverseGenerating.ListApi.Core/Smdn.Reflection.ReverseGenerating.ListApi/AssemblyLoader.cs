@@ -22,8 +22,6 @@ namespace Smdn.Reflection.ReverseGenerating.ListApi;
 [TestFixture]
 class AssemblyLoaderTests {
   private ILogger logger = null;
-  private FileInfo assemblyFileLibA = null;
-  private FileInfo assemblyFileLibB = null;
 
   [OneTimeSetUp]
   public void Init()
@@ -37,9 +35,6 @@ class AssemblyLoaderTests {
     );
 
     logger = services.BuildServiceProvider().GetService<ILoggerFactory>()?.CreateLogger("test");
-
-    assemblyFileLibA = new FileInfo(TestAssemblyInfo.TestAssemblyPaths.First(static f => f.Contains("LibA.dll")));
-    assemblyFileLibB = new FileInfo(TestAssemblyInfo.TestAssemblyPaths.First(static f => f.Contains("LibB.dll")));
   }
 
   [TestCase(true, "netstandard2.1")]
