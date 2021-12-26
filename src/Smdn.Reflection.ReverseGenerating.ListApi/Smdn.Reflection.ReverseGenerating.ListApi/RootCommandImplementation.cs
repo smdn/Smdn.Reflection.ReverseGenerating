@@ -140,7 +140,7 @@ public class RootCommandImplementation {
 
     options.Writer.OrderStaticMembersFirst      = parseResult.ValueForOption(optionGenerateStaticMembersFirst);
 
-    options.AttributeDeclaration.TypeFilter     = ApiListWriter.DefaultAttributeFilter;
+    options.AttributeDeclaration.TypeFilter     = AttributeFilter.Default;
 
     options.ValueDeclaration.UseDefaultLiteral  = true;
 #pragma warning restore IDE0055
