@@ -26,24 +26,14 @@ public class ApiListWriter {
 
   public void WriteAssemblyInfoHeader()
   {
-    BaseWriter.WriteLine($"// {Path.GetFileName(assembly.Location)} ({GetAssemblyMetadataAttributeValue<AssemblyProductAttribute>(assembly)})");
+    BaseWriter.WriteLine($"// {Path.GetFileName(assembly.Location)} ({assembly.GetAssemblyMetadataAttributeValue<AssemblyProductAttribute, string>()})");
     BaseWriter.WriteLine($"//   Name: {assembly.GetName().Name}");
     BaseWriter.WriteLine($"//   AssemblyVersion: {assembly.GetName().Version}");
-    BaseWriter.WriteLine($"//   InformationalVersion: {GetAssemblyMetadataAttributeValue<AssemblyInformationalVersionAttribute>(assembly)}");
-    BaseWriter.WriteLine($"//   TargetFramework: {GetAssemblyMetadataAttributeValue<TargetFrameworkAttribute>(assembly)}");
-    BaseWriter.WriteLine($"//   Configuration: {GetAssemblyMetadataAttributeValue<AssemblyConfigurationAttribute>(assembly)}");
+    BaseWriter.WriteLine($"//   InformationalVersion: {assembly.GetAssemblyMetadataAttributeValue<AssemblyInformationalVersionAttribute, string>()}");
+    BaseWriter.WriteLine($"//   TargetFramework: {assembly.GetAssemblyMetadataAttributeValue<TargetFrameworkAttribute, string>()}");
+    BaseWriter.WriteLine($"//   Configuration: {assembly.GetAssemblyMetadataAttributeValue<AssemblyConfigurationAttribute, string>()}");
     BaseWriter.WriteLine();
   }
-
-  private static string GetAssemblyMetadataAttributeValue<TAssemblyMetadataAttribute>(Assembly assm)
-    where TAssemblyMetadataAttribute : Attribute
-    => assm
-      .GetCustomAttributesData()
-      .FirstOrDefault(static d => ROCType.FullNameEquals(typeof(TAssemblyMetadataAttribute), d.AttributeType))
-      ?.ConstructorArguments
-      ?.FirstOrDefault()
-      .Value
-      as string;
 
   public void WriteExportedTypes()
   {

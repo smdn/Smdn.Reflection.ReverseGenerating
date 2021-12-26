@@ -244,7 +244,7 @@ public class RootCommandImplementation {
     static string GetOutputFileName(Assembly a)
     {
       var prefix = a.GetName().Name;
-      var targetFramework = GetTargetFramework(a);
+      var targetFramework = a.GetAssemblyMetadataAttributeValue<TargetFrameworkAttribute, string>();
 
       if (targetFramework is null)
         return prefix;
@@ -259,15 +259,6 @@ public class RootCommandImplementation {
 
       return $"{prefix}-{targetFramework}";
     }
-
-    static string GetTargetFramework(Assembly assm)
-      => assm
-        .GetCustomAttributesData()
-        .FirstOrDefault(static d => ROCType.FullNameEquals(typeof(TargetFrameworkAttribute), d.AttributeType))
-        ?.ConstructorArguments
-        ?.FirstOrDefault()
-        .Value
-        as string;
 
     static bool TryParseFrameworkName(string name, out FrameworkName frameworkName)
     {
