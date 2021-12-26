@@ -36,6 +36,25 @@ class RootCommandImplementationGetInputAssemblyFilesTests {
     serviceProvider = services.BuildServiceProvider();
   }
 
+  [TestCase("Lib.dll", "net5.0")]
+  [TestCase("Exe.dll", "net5.0")]
+  [TestCase("LibA.dll", "netstandard2.1")]
+  [TestCase("LibA.dll", "net5.0")]
+  [TestCase("LibA.dll", "net6.0")]
+  public void GetInputAssemblyFiles_File_Assembly(string filename, string targetFrameworkMoniker)
+  {
+    var assemblyFile = new FileInfo(
+      TestAssemblyInfo.TestAssemblyPaths.First(f => f.Contains(targetFrameworkMoniker) && f.Contains(filename))
+    );
+
+    var impl = new RootCommandImplementation(serviceProvider);
+
+    CollectionAssert.AreEquivalent(
+      new[] { assemblyFile.FullName },
+      impl.GetInputAssemblyFiles(new[] { assemblyFile.FullName }).Select(f => f.FullName)
+    );
+  }
+
   private FileInfo Build(string pathToProjectFile)
   {
 #if FEATURE_BUILD_PROJ
