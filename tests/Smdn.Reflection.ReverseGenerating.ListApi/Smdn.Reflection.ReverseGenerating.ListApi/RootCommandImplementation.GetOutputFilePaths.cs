@@ -114,7 +114,7 @@ class RootCommandImplementationGetOutputFilePathsTests {
 #if FEATURE_BUILD_PROJ
     var impl = new RootCommandImplementation(serviceProvider);
     var outputFilePath = impl.GetOutputFilePaths(new[] {
-      "-o", outputDirectory,
+      optionName, outputDirectory,
       PathJoiner.Join(TestAssemblyInfo.RootDirectory.FullName, "Exe", "Exe.csproj")
     }).First();
 
