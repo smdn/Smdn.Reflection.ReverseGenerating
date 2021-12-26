@@ -28,7 +28,9 @@ SPDX-License-Identifier: MIT
 
   <ItemGroup>
     <PackageReference Include="System.CommandLine" Version="2.0.0-beta1.21308.1" />
-    <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="5.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="5.0.0" Condition="$(TargetFramework.StartsWith('net5.'))" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="6.0.0" Condition="$(TargetFramework.StartsWith('net6.')) Or $(TargetFramework.StartsWith('netcoreapp'))" />
+
     <ProjectReference VersionRange="[1.0.0,2.0.0)" Include="..\Smdn.Reflection.ReverseGenerating.ListApi.Core\Smdn.Reflection.ReverseGenerating.ListApi.Core.csproj" />
   </ItemGroup>
 
