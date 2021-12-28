@@ -76,7 +76,7 @@ SPDX-License-Identifier: MIT
       <Using Namespace="System.IO" />
       <Code Type="Fragment" Language="cs"><![CDATA[
         const string PropertyMSBuildThisFileDirectory = "\x24(MSBuildThisFileDirectory)";
-        var path = Path.Combine(OutputDirectory, $"{TaskName}.task.props");
+        var path = Path.Combine(OutputDirectory, $"{TaskName}.task");
         var taskFullName = string.IsNullOrEmpty(TaskNamespace)
           ? TaskName
           : $"{TaskNamespace}.{TaskName}";
