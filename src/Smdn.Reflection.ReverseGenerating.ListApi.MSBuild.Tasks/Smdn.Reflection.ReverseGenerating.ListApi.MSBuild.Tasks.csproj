@@ -13,7 +13,7 @@ SPDX-License-Identifier: MIT
   </PropertyGroup>
 
   <PropertyGroup Label="packaging">
-    <!-- <PackageValidationBaselineVersion>1.0.1</PackageValidationBaselineVersion> -->
+    <PackageValidationBaselineVersion>1.0.1</PackageValidationBaselineVersion>
     <!-- <NoPackageAnalysis>true</NoPackageAnalysis> -->
     <TargetsForTfmSpecificContentInPackage>$(TargetsForTfmSpecificContentInPackage);GenerateTaskPropsFiles</TargetsForTfmSpecificContentInPackage>
     <DevelopmentDependency>true</DevelopmentDependency>
