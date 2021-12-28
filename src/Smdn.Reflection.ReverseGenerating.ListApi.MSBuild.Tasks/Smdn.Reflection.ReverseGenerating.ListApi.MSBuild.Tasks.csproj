@@ -15,7 +15,7 @@ SPDX-License-Identifier: MIT
   <PropertyGroup Label="packaging">
     <PackageValidationBaselineVersion>1.0.1</PackageValidationBaselineVersion>
     <!-- <NoPackageAnalysis>true</NoPackageAnalysis> -->
-    <TargetsForTfmSpecificContentInPackage>$(TargetsForTfmSpecificContentInPackage);GenerateTaskPropsFiles;PopulateDependingAssembliesToPackage</TargetsForTfmSpecificContentInPackage>
+    <TargetsForTfmSpecificContentInPackage>$(TargetsForTfmSpecificContentInPackage);GenerateTaskFiles;PopulateDependingAssembliesToPackage</TargetsForTfmSpecificContentInPackage>
     <DevelopmentDependency>true</DevelopmentDependency>
     <BuildOutputTargetFolder>tasks</BuildOutputTargetFolder>
     <!--
@@ -44,23 +44,23 @@ SPDX-License-Identifier: MIT
     </ExportTaskName>
   </ItemGroup>
 
-  <Target Name="GenerateTaskPropsFiles">
-    <GenerateTaskPropsFile
+  <Target Name="GenerateTaskFiles">
+    <GenerateTaskFile
       TaskName="%(ExportTaskName.Identity)"
       TaskNamespace="%(ExportTaskName.Namespace)"
       TaskAssemblyFile="$(AssemblyName).dll"
       OutputDirectory="$(OutputPath)"
     >
-      <Output PropertyName="GeneratedTaskPropsFile" TaskParameter="GeneratedFile" />
-    </GenerateTaskPropsFile>
+      <Output PropertyName="GeneratedTaskFile" TaskParameter="GeneratedFile" />
+    </GenerateTaskFile>
 
     <ItemGroup>
-      <TfmSpecificPackageFile Include="$(GeneratedTaskPropsFile)" PackagePath="$(BuildOutputTargetFolder)\$(TargetFramework)" />
+      <TfmSpecificPackageFile Include="$(GeneratedTaskFile)" PackagePath="$(BuildOutputTargetFolder)\$(TargetFramework)" />
     </ItemGroup>
   </Target>
 
   <UsingTask
-    TaskName="GenerateTaskPropsFile"
+    TaskName="GenerateTaskFile"
     TaskFactory="RoslynCodeTaskFactory"
     AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.Core.dll"
   >
