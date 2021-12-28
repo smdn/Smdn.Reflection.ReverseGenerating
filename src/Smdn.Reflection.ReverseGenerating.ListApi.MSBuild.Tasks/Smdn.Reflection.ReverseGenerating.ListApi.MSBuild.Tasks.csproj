@@ -5,7 +5,7 @@ SPDX-License-Identifier: MIT
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFrameworks>net6.0;net5.0;netcoreapp3.1</TargetFrameworks>
-    <RootNamespace>Smdn.Reflection.ReverseGenerating.ListApi.Tasks</RootNamespace>
+    <RootNamespace>Smdn.Reflection.ReverseGenerating.ListApi.MSBuild.Tasks</RootNamespace>
     <VersionPrefix>1.0.0</VersionPrefix>
     <VersionSuffix></VersionSuffix>
     <Nullable>enable</Nullable>
