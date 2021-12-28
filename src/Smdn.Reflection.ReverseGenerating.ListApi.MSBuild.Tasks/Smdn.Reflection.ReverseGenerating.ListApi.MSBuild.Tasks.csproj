@@ -15,9 +15,14 @@ SPDX-License-Identifier: MIT
   <PropertyGroup Label="packaging">
     <PackageValidationBaselineVersion>1.0.1</PackageValidationBaselineVersion>
     <!-- <NoPackageAnalysis>true</NoPackageAnalysis> -->
-    <TargetsForTfmSpecificContentInPackage>$(TargetsForTfmSpecificContentInPackage);GenerateTaskPropsFiles</TargetsForTfmSpecificContentInPackage>
+    <TargetsForTfmSpecificContentInPackage>$(TargetsForTfmSpecificContentInPackage);GenerateTaskPropsFiles;PopulateDependingAssembliesToPackage</TargetsForTfmSpecificContentInPackage>
     <DevelopmentDependency>true</DevelopmentDependency>
     <BuildOutputTargetFolder>tasks</BuildOutputTargetFolder>
+    <!--
+      Needs alternative of nuget.exe's -IncludeReferencedProjects option: https://github.com/NuGet/Home/issues/3891
+      Here, we use workaround 'PopulateDependingAssembliesToPackage' target instead.
+    -->
+    <!-- <IncludeReferencedProjects>true</IncludeReferencedProjects> -->
     <NoWarn>$(NoWarn);NU5100;NU5128</NoWarn>
   </PropertyGroup>
 
@@ -30,7 +35,7 @@ SPDX-License-Identifier: MIT
 
   <ItemGroup>
     <PackageReference Include="Microsoft.Build.Utilities.Core" Version="17.0.0" PrivateAssets="All" />
-    <ProjectReference VersionRange="[1.0.0,2.0.0)" Include="..\Smdn.Reflection.ReverseGenerating.ListApi.Core\Smdn.Reflection.ReverseGenerating.ListApi.Core.csproj" />
+    <ProjectReference VersionRange="[1.0.0,2.0.0)" Include="..\Smdn.Reflection.ReverseGenerating.ListApi.Core\Smdn.Reflection.ReverseGenerating.ListApi.Core.csproj" PrivateAssets="All" />
   </ItemGroup>
 
   <ItemGroup>
@@ -90,4 +95,22 @@ SPDX-License-Identifier: MIT
       ]]></Code>
     </Task>
   </UsingTask>
+
+  <!--
+    alternative of nuget.exe's -IncludeReferencedProjects option
+    https://github.com/NuGet/Home/issues/3891
+
+    other workarounds:
+      https://github.com/NuGet/Home/issues/3891#issuecomment-569491001
+      https://github.com/NuGet/Home/issues/3891#issuecomment-377319939
+  -->
+  <Target Name="PopulateDependingAssembliesToPackage">
+    <ItemGroup>
+      <TfmSpecificPackageFile
+        Include="$(OutputPath)\*.dll"
+        Exclude="$(OutputPath)\$(AssemblyName).dll"
+        PackagePath="$(BuildOutputTargetFolder)\$(TargetFramework)"
+      />
+    </ItemGroup>
+  </Target>
 </Project>
