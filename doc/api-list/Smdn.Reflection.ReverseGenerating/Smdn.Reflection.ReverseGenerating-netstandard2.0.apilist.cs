@@ -1,7 +1,7 @@
-// Smdn.Reflection.ReverseGenerating.dll (Smdn.Reflection.ReverseGenerating-1.0 (netstandard2.0))
+// Smdn.Reflection.ReverseGenerating.dll (Smdn.Reflection.ReverseGenerating-1.0.1 (netstandard2.0))
 //   Name: Smdn.Reflection.ReverseGenerating
-//   AssemblyVersion: 1.0.0.0
-//   InformationalVersion: 1.0 (netstandard2.0)
+//   AssemblyVersion: 1.0.1.0
+//   InformationalVersion: 1.0.1 (netstandard2.0)
 //   TargetFramework: .NETStandard,Version=v2.0
 //   Configuration: Release
 
