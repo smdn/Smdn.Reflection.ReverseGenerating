@@ -1,7 +1,7 @@
-// Smdn.Reflection.ReverseGenerating.ListApi.MSBuild.Tasks.dll (Smdn.Reflection.ReverseGenerating.ListApi.MSBuild.Tasks-1.0.0 (net5.0))
+// Smdn.Reflection.ReverseGenerating.ListApi.MSBuild.Tasks.dll (Smdn.Reflection.ReverseGenerating.ListApi.MSBuild.Tasks-1.0.1 (net5.0))
 //   Name: Smdn.Reflection.ReverseGenerating.ListApi.MSBuild.Tasks
-//   AssemblyVersion: 1.0.0.0
-//   InformationalVersion: 1.0.0 (net5.0)
+//   AssemblyVersion: 1.0.1.0
+//   InformationalVersion: 1.0.1 (net5.0)
 //   TargetFramework: .NETCoreApp,Version=v5.0
 //   Configuration: Release
 
