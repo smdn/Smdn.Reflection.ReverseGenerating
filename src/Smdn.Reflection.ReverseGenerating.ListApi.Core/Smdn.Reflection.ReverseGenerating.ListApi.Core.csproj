@@ -11,6 +11,10 @@ SPDX-License-Identifier: MIT
     <PackageValidationBaselineVersion>1.0.0</PackageValidationBaselineVersion>
   </PropertyGroup>
 
+  <PropertyGroup Condition=" '$(Configuration)' == 'Release' " Label="Required properties to generate API list">
+    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+  </PropertyGroup>
+
   <PropertyGroup Label="metadata">
     <CopyrightYear>2021</CopyrightYear>
 

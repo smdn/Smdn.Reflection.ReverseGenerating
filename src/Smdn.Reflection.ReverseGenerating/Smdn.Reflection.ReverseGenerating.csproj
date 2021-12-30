@@ -19,6 +19,10 @@ SPDX-License-Identifier: MIT
     ">$(DefineConstants);CAN_OVERRIDE_CUSTOMATTRIBUTEDATA_ATTRIBUTETYPE</DefineConstants>
   </PropertyGroup>
 
+  <PropertyGroup Condition=" '$(Configuration)' == 'Release' " Label="Required properties to generate API list">
+    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+  </PropertyGroup>
+
   <PropertyGroup Label="metadata">
     <Description>The reflection library for reverse generating type definitions.</Description>
     <CopyrightYear>2020</CopyrightYear>
