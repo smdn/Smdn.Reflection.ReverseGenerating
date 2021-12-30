@@ -1,7 +1,7 @@
-// Smdn.Reflection.ReverseGenerating.dll (Smdn.Reflection.ReverseGenerating-1.0.1 (net5.0))
+// Smdn.Reflection.ReverseGenerating.dll (Smdn.Reflection.ReverseGenerating-1.0.2 (net5.0))
 //   Name: Smdn.Reflection.ReverseGenerating
-//   AssemblyVersion: 1.0.1.0
-//   InformationalVersion: 1.0.1 (net5.0)
+//   AssemblyVersion: 1.0.2.0
+//   InformationalVersion: 1.0.2 (net5.0)
 //   TargetFramework: .NETCoreApp,Version=v5.0
 //   Configuration: Release
 
