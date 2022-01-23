@@ -44,7 +44,7 @@ SPDX-License-Identifier: MIT
     </ExportTaskName>
   </ItemGroup>
 
-  <Target Name="GenerateTaskFiles">
+  <Target Name="GenerateTaskFiles" Condition=" '$(TargetFramework)' != '' ">
     <GenerateTaskFile
       TaskName="%(ExportTaskName.Identity)"
       TaskNamespace="%(ExportTaskName.Namespace)"
