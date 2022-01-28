@@ -126,7 +126,7 @@ SPDX-License-Identifier: MIT
         TargetFramework="%(TaskTargetFrameworks.Identity)"
       />
       <TaskFiles
-        ImportLine="&lt;Import Project=&quot;$(BuildOutputTargetFolder)\%(TargetFramework)\%(Identity).task&quot; /&gt;"
+        ImportLine="&lt;Import Project=&quot;..\$(BuildOutputTargetFolder)\%(TargetFramework)\%(Identity).task&quot; /&gt;"
       />
     </ItemGroup>
 
