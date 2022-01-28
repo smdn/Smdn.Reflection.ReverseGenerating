@@ -159,7 +159,7 @@ SPDX-License-Identifier: MIT
     />
 
     <ItemGroup>
-      <None Pack="true" Include="$(GenerateMSBuildTargetsFileOutputPath)" PackagePath="build" />
+      <None Pack="true" Include="$(GenerateMSBuildTargetsFileOutputPath)" PackagePath="buildMultitargeting" />
     </ItemGroup>
   </Target>
 </Project>
