@@ -40,15 +40,15 @@ SPDX-License-Identifier: MIT
   </ItemGroup>
 
   <ItemGroup>
-    <ExportTaskName Include="GenerateApiList">
+    <ExportTaskNames Include="GenerateApiList">
       <Namespace>Smdn.Reflection.ReverseGenerating.ListApi.MSBuild.Tasks</Namespace>
-    </ExportTaskName>
+    </ExportTaskNames>
   </ItemGroup>
 
   <Target Name="GenerateTaskFiles" Condition=" '$(TargetFramework)' != '' ">
     <GenerateTaskFile
-      TaskName="%(ExportTaskName.Identity)"
-      TaskNamespace="%(ExportTaskName.Namespace)"
+      TaskName="%(ExportTaskNames.Identity)"
+      TaskNamespace="%(ExportTaskNames.Namespace)"
       TaskAssemblyFile="$(AssemblyName).dll"
       OutputDirectory="$(OutputPath)"
     >
@@ -122,7 +122,7 @@ SPDX-License-Identifier: MIT
     <ItemGroup>
       <TaskTargetFrameworks Include="$(TargetFrameworks.Split(';'))" />
       <TaskFiles
-        Include="@(ExportTaskName)"
+        Include="@(ExportTaskNames)"
         TargetFramework="%(TaskTargetFrameworks.Identity)"
       />
       <TaskFiles
