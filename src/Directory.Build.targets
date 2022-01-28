@@ -70,7 +70,7 @@ SPDX-License-Identifier: MIT
   </Target>
 
   <Import Project="$(NuGetPackageRoot)\smdn.reflection.reversegenerating.listapi.msbuild.tasks\1.0.2\tasks\net6.0\GenerateApiList.task" Condition=" '$(Configuration)' == 'Release' and '$(AssemblyName)' != 'Smdn.Reflection.ReverseGenerating.ListApi.MSBuild.Tasks' " />
-  <Import Project="$(MSBuildThisFileDirectory)Smdn.Reflection.ReverseGenerating.ListApi.MSBuild.Tasks\bin\Debug\net6.0\GenerateApiList.task" Condition=" '$(Configuration)' == 'Release' and '$(AssemblyName)' == 'Smdn.Reflection.ReverseGenerating.ListApi.MSBuild.Tasks' " />
+  <Import Project="$(MSBuildThisFileDirectory)Smdn.Reflection.ReverseGenerating.ListApi.MSBuild.Tasks\bin\Release\net6.0\GenerateApiList.task" Condition=" '$(Configuration)' == 'Release' and '$(AssemblyName)' == 'Smdn.Reflection.ReverseGenerating.ListApi.MSBuild.Tasks' " />
 
   <Target Name="GenerateAPIListOfPackage" AfterTargets="Pack" Condition=" '$(Configuration)' == 'Release' " Label="API list generator">
     <ItemGroup>
