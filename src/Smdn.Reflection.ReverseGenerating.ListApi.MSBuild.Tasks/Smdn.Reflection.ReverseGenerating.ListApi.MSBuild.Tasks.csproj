@@ -110,7 +110,7 @@ SPDX-License-Identifier: MIT
       <TfmSpecificPackageFile
         Include="$(OutputPath)\*.dll"
         Exclude="$(OutputPath)\$(AssemblyName).dll"
-        PackagePath="$(BuildOutputTargetFolder)\$(TargetFramework)"
+        PackagePath="$(BuildOutputTargetFolder)\$(TargetFramework)\"
       />
     </ItemGroup>
   </Target>
