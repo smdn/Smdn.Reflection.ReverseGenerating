@@ -69,8 +69,16 @@ SPDX-License-Identifier: MIT
     <Warning Text="generated nupkg with configuration '$(Configuration)'" />
   </Target>
 
-  <Import Project="$(NuGetPackageRoot)\smdn.reflection.reversegenerating.listapi.msbuild.tasks\1.0.2\tasks\net6.0\GenerateApiList.task" Condition=" '$(Configuration)' == 'Release' and '$(AssemblyName)' != 'Smdn.Reflection.ReverseGenerating.ListApi.MSBuild.Tasks' " />
-  <Import Project="$(MSBuildThisFileDirectory)Smdn.Reflection.ReverseGenerating.ListApi.MSBuild.Tasks\bin\Release\net6.0\GenerateApiList.task" Condition=" '$(Configuration)' == 'Release' and '$(AssemblyName)' == 'Smdn.Reflection.ReverseGenerating.ListApi.MSBuild.Tasks' " />
+  <Import
+    Condition=" '$(Configuration)' == 'Release' and '$(AssemblyName)' != 'Smdn.Reflection.ReverseGenerating.ListApi.MSBuild.Tasks' "
+    Project="$(NuGetPackageRoot)\smdn.reflection.reversegenerating.listapi.msbuild.tasks\1.0.2\tasks\net6.0\GenerateApiList.task"
+  />
+  <!-- load task from the debug assembly instead of the package's one -->
+  <UsingTask
+    Condition=" '$(Configuration)' == 'Release' and '$(AssemblyName)' == 'Smdn.Reflection.ReverseGenerating.ListApi.MSBuild.Tasks' "
+    TaskName="Smdn.Reflection.ReverseGenerating.ListApi.MSBuild.Tasks.GenerateApiList"
+    AssemblyFile="Smdn.Reflection.ReverseGenerating.ListApi.MSBuild.Tasks\bin\Debug\net6.0\Smdn.Reflection.ReverseGenerating.ListApi.MSBuild.Tasks.dll"
+  />
 
   <Target Name="GenerateAPIListOfPackage" AfterTargets="Pack" Condition=" '$(Configuration)' == 'Release' " Label="API list generator">
     <ItemGroup>
