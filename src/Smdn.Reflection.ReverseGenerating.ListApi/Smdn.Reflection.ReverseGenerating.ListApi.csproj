@@ -12,6 +12,7 @@ SPDX-License-Identifier: MIT
     <VersionPrefix>1.0.1</VersionPrefix>
     <VersionSuffix></VersionSuffix>
     <EnableFeatureBuildProjectFile Condition=" '$(Configuration)' != 'Release' ">true</EnableFeatureBuildProjectFile>
+    <GeneratePackageReadmeFile>false</GeneratePackageReadmeFile>
   </PropertyGroup>
 
   <PropertyGroup Label="metadata">

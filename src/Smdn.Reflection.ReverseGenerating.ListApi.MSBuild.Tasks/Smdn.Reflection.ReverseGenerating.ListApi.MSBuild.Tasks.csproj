@@ -10,6 +10,7 @@ SPDX-License-Identifier: MIT
     <VersionSuffix></VersionSuffix>
     <Nullable>enable</Nullable>
     <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+    <GeneratePackageReadmeFile>false</GeneratePackageReadmeFile>
   </PropertyGroup>
 
   <PropertyGroup Label="packaging">
