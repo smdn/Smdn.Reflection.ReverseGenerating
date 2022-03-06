@@ -8,11 +8,31 @@ SPDX-License-Identifier: MIT
     <Deterministic>true</Deterministic>
     <IsPackable>false</IsPackable>
     <TestAssemblyRootDirectory>$(MSBuildThisFileDirectory)\test-assm</TestAssemblyRootDirectory>
+
+    <!-- configure code analysis mode -->
+    <!-- ref: https://docs.microsoft.com/ja-jp/dotnet/core/project-sdk/msbuild-props#code-analysis-properties -->
+    <AnalysisMode>None</AnalysisMode>
+    <AnalysisModeInteroperability>Recommended</AnalysisModeInteroperability>
+    <AnalysisModeReliability>Recommended</AnalysisModeReliability>
+    <AnalysisModeSecurity>Recommended</AnalysisModeSecurity>
+    <AnalysisModeUsage>Recommended</AnalysisModeUsage>
+
+    <!-- determines the test target project name from the test project name (Smdn.Fundamentals.*.Tests -> Smdn.Fundamentals.*) -->
+    <TestTargetProjectName
+      Condition="$(MSBuildProjectFile.EndsWith('.Tests.csproj'))"
+    >$(MSBuildProjectFile.Replace('.Tests.csproj', ''))</TestTargetProjectName>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="NUnit" Version="3.13.2" />
-    <PackageReference Include="NUnit3TestAdapter" Version="4.0.0" />
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.10.0"/>
+    <PackageReference Include="NUnit3TestAdapter" Version="4.2.1" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.1.0"/>
+  </ItemGroup>
+
+  <ItemGroup Label="add test target project reference">
+    <ProjectReference
+      Condition="'$(TestTargetProjectName)' != ''"
+      Include="$(MSBuildThisFileDirectory)..\src\$(TestTargetProjectName)\$(TestTargetProjectName).csproj"
+    />
   </ItemGroup>
 </Project>
