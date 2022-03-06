@@ -155,6 +155,7 @@ namespace Smdn.Reflection.ReverseGenerating {
         }
 #pragma warning restore CS0067, CS0169
 
+#pragma warning disable CA2211
         public class Modifiers {
           [MemberDeclarationTestCase("public int F4;")] public int F4;
           [MemberDeclarationTestCase("public readonly int F5;")] public readonly int F5;
@@ -164,8 +165,10 @@ namespace Smdn.Reflection.ReverseGenerating {
           [MemberDeclarationTestCase("public static readonly int F9 = 0;")]  static readonly public int F9;
           [MemberDeclarationTestCase("public static readonly int F10 = 0;")] readonly public static int F10;
         }
+#pragma warning restore CA2211
 
         namespace StaticValues {
+#pragma warning disable CA2211
           public class ValueTypes {
             [MemberDeclarationTestCase("public int F1;")] public int F1 = 1;
             [MemberDeclarationTestCase("public readonly int F2;")] public readonly int F2 = 2;
@@ -179,6 +182,7 @@ namespace Smdn.Reflection.ReverseGenerating {
             [MemberDeclarationTestCase("public static readonly int F6 = int.MaxValue;")] public static readonly int F6 = int.MaxValue;
             [MemberDeclarationTestCase("public static readonly int F7 = int.MinValue;")] public static readonly int F7 = int.MinValue;
           }
+#pragma warning restore CA2211
 
           public class Enums {
             [MemberDeclarationTestCase("public const System.DateTimeKind F1 = System.DateTimeKind.Unspecified;")] public const DateTimeKind F1 = DateTimeKind.Unspecified;
