@@ -363,7 +363,9 @@ namespace Smdn.Reflection.ReverseGenerating {
     namespace TypeDeclarationWithExplicitBaseTypeAndInterfaces {
       [TypeDeclarationTestCase("public class C1 : System.IDisposable")]
       public class C1 : IDisposable {
+#pragma warning disable CA1816
         public void Dispose() => throw new NotImplementedException();
+#pragma warning restore CA1816
       }
 
       [TypeDeclarationTestCase(@"public class C2 :
@@ -371,7 +373,9 @@ namespace Smdn.Reflection.ReverseGenerating {
   System.IDisposable")]
       public class C2 : IDisposable, ICloneable {
         public object Clone() => throw new NotImplementedException();
+#pragma warning disable CA1816
         public void Dispose() => throw new NotImplementedException();
+#pragma warning restore CA1816
       }
 
       [TypeDeclarationTestCase("public struct S1 : System.IDisposable")]

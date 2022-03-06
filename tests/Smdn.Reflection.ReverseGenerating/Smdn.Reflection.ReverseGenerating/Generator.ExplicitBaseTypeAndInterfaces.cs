@@ -64,7 +64,9 @@ namespace Smdn.Reflection.ReverseGenerating {
         // TODO: reimplemented interface? [BaseTypeTest("C0, ICloneable, IDisposable")]
         public abstract class C3 : C0, IDisposable, ICloneable {
           public abstract object Clone();
+#pragma warning disable CA1816
           void IDisposable.Dispose() { }
+#pragma warning restore CA1816
         }
 
         [ExplicitBaseTypeAndInterfacesTestCase("C0, ICloneable, IEquatable<C0>", TypeWithNamespace = false)]
