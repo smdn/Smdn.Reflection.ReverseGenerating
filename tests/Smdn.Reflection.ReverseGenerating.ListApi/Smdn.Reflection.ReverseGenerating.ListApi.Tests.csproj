@@ -32,13 +32,13 @@ SPDX-License-Identifier: MIT
       <TestProjects Include="$(TestAssemblyRootDirectory)\LibA\LibA.csproj" />
     </ItemGroup>
 
-    <MSBuild Projects="@(TestProjects)" Targets="Build" Properties="Configuration=Release;TargetFramework=netstandard2.1">
+    <MSBuild Projects="@(TestProjects)" Targets="$(_TestProjectBuildTargets)" Properties="Configuration=Release;TargetFramework=netstandard2.1">
       <Output TaskParameter="TargetOutputs" ItemName="TestAssembliesNetStandard21" />
     </MSBuild>
-    <MSBuild Projects="@(TestProjects)" Targets="Build" Properties="Configuration=Release;TargetFramework=net5.0">
+    <MSBuild Projects="@(TestProjects)" Targets="$(_TestProjectBuildTargets)" Properties="Configuration=Release;TargetFramework=net5.0">
       <Output TaskParameter="TargetOutputs" ItemName="TestAssembliesNet50" />
     </MSBuild>
-    <MSBuild Projects="@(TestProjects)" Targets="Build" Properties="Configuration=Release;TargetFramework=net6.0">
+    <MSBuild Projects="@(TestProjects)" Targets="$(_TestProjectBuildTargets)" Properties="Configuration=Release;TargetFramework=net6.0">
       <Output TaskParameter="TargetOutputs" ItemName="TestAssembliesNet60" />
     </MSBuild>
 
