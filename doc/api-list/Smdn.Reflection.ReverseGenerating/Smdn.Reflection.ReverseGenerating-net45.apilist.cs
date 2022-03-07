@@ -1,7 +1,7 @@
-// Smdn.Reflection.ReverseGenerating.dll (Smdn.Reflection.ReverseGenerating-1.0.4 (net45))
+// Smdn.Reflection.ReverseGenerating.dll (Smdn.Reflection.ReverseGenerating-1.0.5)
 //   Name: Smdn.Reflection.ReverseGenerating
-//   AssemblyVersion: 1.0.4.0
-//   InformationalVersion: 1.0.4 (net45)
+//   AssemblyVersion: 1.0.5.0
+//   InformationalVersion: 1.0.5+dd9591cbed8623f61349f46c833f14f1578db406
 //   TargetFramework: .NETFramework,Version=v4.5
 //   Configuration: Release
 
