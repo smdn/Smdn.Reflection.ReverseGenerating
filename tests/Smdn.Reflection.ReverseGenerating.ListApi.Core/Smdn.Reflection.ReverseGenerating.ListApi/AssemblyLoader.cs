@@ -45,6 +45,10 @@ class AssemblyLoaderTests {
   [TestCase(true, "net5.0")]
   [TestCase(false, "net5.0")]
 #endif
+#if NET6_0_OR_GREATER
+  [TestCase(true, "net6.0")]
+  [TestCase(false, "net6.0")]
+#endif
   public void UsingAssembly(bool loadIntoReflectionOnlyContext, string targetFrameworkMoniker)
   {
     var assemblyFile = new FileInfo(
@@ -101,6 +105,10 @@ class AssemblyLoaderTests {
 #if NET5_0_OR_GREATER
   [TestCase(true, "net5.0")]
   [TestCase(false, "net5.0")]
+#endif
+#if NET6_0_OR_GREATER
+  [TestCase(true, "net6.0")]
+  [TestCase(false, "net6.0")]
 #endif
   public void UsingAssembly_ResolveDependency(bool loadIntoReflectionOnlyContext, string targetFrameworkMoniker)
   {
