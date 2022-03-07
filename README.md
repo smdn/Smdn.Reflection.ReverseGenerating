@@ -1,4 +1,5 @@
 [![GitHub license](https://img.shields.io/github/license/smdn/Smdn.Reflection.ReverseGenerating)](https://github.com/smdn/Smdn.Reflection.ReverseGenerating/blob/main/LICENSE.txt)
+![tests/main](https://img.shields.io/github/workflow/status/smdn/Smdn.Reflection.ReverseGenerating/Run%20tests/main?label=tests%2Fmain)
 
 # Smdn.Reflection.ReverseGenerating.ListApi.MSBuild.Tasks
 [![NuGet Smdn.Reflection.ReverseGenerating.ListApi.MSBuild.Tasks](https://img.shields.io/nuget/v/Smdn.Reflection.ReverseGenerating.ListApi.MSBuild.Tasks.svg)](https://www.nuget.org/packages/Smdn.Reflection.ReverseGenerating.ListApi.MSBuild.Tasks/)
