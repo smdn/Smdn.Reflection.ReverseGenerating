@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: MIT
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
@@ -339,9 +340,21 @@ public static partial class Generator {
           );
 
           if (valueDeclaration == null) {
+            var stringifiedValue = val switch {
+              string s => s,
+              DateTime dt => dt.ToString("o"),
+              DateTimeOffset dto => dto.ToString("o"),
+              IFormattable formattable => formattable.ToString(
+                format: null,
+                formatProvider: CultureInfo.InvariantCulture // TODO: specific culture
+              ),
+              null => "null",
+              _ => val.ToString(),
+            };
+
             sb
               .Append("; // = \"")
-              .Append(CSharpFormatter.EscapeString((val ?? "null").ToString(), escapeDoubleQuote: true))
+              .Append(CSharpFormatter.EscapeString(stringifiedValue, escapeDoubleQuote: true))
               .Append('"');
           }
           else {

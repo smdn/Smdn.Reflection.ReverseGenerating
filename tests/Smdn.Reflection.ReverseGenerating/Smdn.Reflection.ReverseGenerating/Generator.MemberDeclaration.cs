@@ -242,12 +242,23 @@ namespace Smdn.Reflection.ReverseGenerating {
             [MemberDeclarationTestCase("public static readonly System.DateTimeOffset F3 = System.DateTimeOffset.MinValue;")] public static readonly DateTimeOffset F3 = default(DateTimeOffset);
             [MemberDeclarationTestCase("public static readonly System.DateTimeOffset F4 = System.DateTimeOffset.MinValue;")] public static readonly DateTimeOffset F4 = DateTimeOffset.MinValue;
             [MemberDeclarationTestCase("public static readonly System.DateTimeOffset F5 = System.DateTimeOffset.MaxValue;")] public static readonly DateTimeOffset F5 = DateTimeOffset.MaxValue;
-            [MemberDeclarationTestCase("public static readonly System.DateTimeOffset F6; // = \"2018/10/31 21:00:00 +09:00\"")] public static readonly DateTimeOffset F6 = new DateTimeOffset(2018, 10, 31, 21, 0, 0, 0, TimeSpan.FromHours(+9.0));
+            [MemberDeclarationTestCase("public static readonly System.DateTimeOffset F6; // = \"2018-10-31T21:00:00.0000000+09:00\"")] public static readonly DateTimeOffset F6 = new DateTimeOffset(2018, 10, 31, 21, 0, 0, 0, TimeSpan.FromHours(+9.0));
 
             // XXX: System.Threading.CancellationToken.None is a property
             [MemberDeclarationTestCase("public static readonly System.Threading.CancellationToken F7 = default(System.Threading.CancellationToken);")] public static readonly CancellationToken F7 = CancellationToken.None;
             [MemberDeclarationTestCase("public static readonly System.Threading.CancellationToken F8 = default(System.Threading.CancellationToken);")] public static readonly CancellationToken F8 = default(CancellationToken);
             [MemberDeclarationTestCase("public static readonly System.Threading.CancellationToken F9 = default;", UseDefaultLiteral = true)] public static readonly CancellationToken F9 = default(CancellationToken);
+          }
+
+          public class NonPrimitiveValueTypes_Stringification {
+            // DateTimeOffset
+            [MemberDeclarationTestCase("public static readonly System.DateTimeOffset F_DateTimeOffset; // = \"2018-10-31T21:00:00.0000000+09:00\"")] public static readonly DateTimeOffset F_DateTimeOffset = new DateTimeOffset(2018, 10, 31, 21, 0, 0, 0, TimeSpan.FromHours(+9.0));
+
+            // DateTime
+            [MemberDeclarationTestCase("public static readonly System.DateTime F_DateTime; // = \"2018-10-31T21:00:00.0000000Z\"")] public static readonly DateTime F_DateTime = new DateTime(2018, 10, 31, 21, 0, 0, 0, DateTimeKind.Utc);
+
+            // IFormattable
+            [MemberDeclarationTestCase("public static readonly System.TimeSpan F_TimeSpan; // = \"1.23:45:06.7890000\"")] public static readonly TimeSpan F_TimeSpan = new TimeSpan(1, 23, 45, 6, 789);
           }
 
           namespace NonPrimitiveValueTypes_FieldOfDeclaringType {
