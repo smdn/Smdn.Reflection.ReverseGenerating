@@ -20,8 +20,7 @@ SPDX-License-Identifier: MIT
     </ItemGroup>
 
     <PropertyGroup>
-      <_TestProjectBuildTargets>Build</_TestProjectBuildTargets>
-      <_TestProjectBuildTargets Condition="'$(GITHUB_ACTIONS)' == 'true'">Restore;Build</_TestProjectBuildTargets>
+      <_TestProjectBuildTargets>Restore;Build</_TestProjectBuildTargets>
     </PropertyGroup>
 
     <MSBuild Projects="@(TestProjects)" Targets="$(_TestProjectBuildTargets)" Properties="Configuration=Release;TargetFramework=netstandard2.1">

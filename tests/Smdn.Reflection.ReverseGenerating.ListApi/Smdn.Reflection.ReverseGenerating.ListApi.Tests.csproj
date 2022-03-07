@@ -17,8 +17,7 @@ SPDX-License-Identifier: MIT
 
   <Target Name="WriteTestAssemblyInfo" BeforeTargets="BeforeBuild">
     <PropertyGroup>
-      <_TestProjectBuildTargets>Build</_TestProjectBuildTargets>
-      <_TestProjectBuildTargets Condition="'$(GITHUB_ACTIONS)' == 'true'">Restore;Build</_TestProjectBuildTargets>
+      <_TestProjectBuildTargets>Restore;Build</_TestProjectBuildTargets>
     </PropertyGroup>
 
     <MSBuild Projects="$(TestAssemblyRootDirectory)\Exe\Exe.csproj" Targets="$(_TestProjectBuildTargets)" Properties="Configuration=Release;TargetFramework=net5.0">
