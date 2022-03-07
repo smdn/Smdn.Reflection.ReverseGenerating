@@ -16,10 +16,15 @@ SPDX-License-Identifier: MIT
   </ItemGroup>
 
   <Target Name="WriteTestAssemblyInfo" BeforeTargets="BeforeBuild">
-    <MSBuild Projects="$(TestAssemblyRootDirectory)\Exe\Exe.csproj" Targets="Build" Properties="Configuration=Release;TargetFramework=net5.0">
+    <PropertyGroup>
+      <_TestProjectBuildTargets>Build</_TestProjectBuildTargets>
+      <_TestProjectBuildTargets Condition="'$(GITHUB_ACTIONS)' == 'true'">Restore;Build</_TestProjectBuildTargets>
+    </PropertyGroup>
+
+    <MSBuild Projects="$(TestAssemblyRootDirectory)\Exe\Exe.csproj" Targets="$(_TestProjectBuildTargets)" Properties="Configuration=Release;TargetFramework=net5.0">
       <Output TaskParameter="TargetOutputs" ItemName="TestAssembliesExeNet50" />
     </MSBuild>
-    <MSBuild Projects="$(TestAssemblyRootDirectory)\Lib\Lib.csproj" Targets="Build" Properties="Configuration=Release;TargetFramework=net5.0">
+    <MSBuild Projects="$(TestAssemblyRootDirectory)\Lib\Lib.csproj" Targets="$(_TestProjectBuildTargets)" Properties="Configuration=Release;TargetFramework=net5.0">
       <Output TaskParameter="TargetOutputs" ItemName="TestAssembliesLibNet50" />
     </MSBuild>
 
