@@ -50,14 +50,14 @@ SPDX-License-Identifier: MIT
     </ItemGroup>
 
     <PropertyGroup>
-      <TestAssemblyPaths>@(TestAssemblies, '&quot;,%0D%0A&quot;')</TestAssemblyPaths>
+      <TestAssemblyPaths>@(TestAssemblies, '&quot;,%0D%0A@&quot;')</TestAssemblyPaths>
     </PropertyGroup>
 
     <ItemGroup>
       <SourceLines Include="namespace $(RootNamespace)$([MSBuild]::Escape(';'))" />
       <SourceLines Include="public static class TestAssemblyInfo {" />
       <SourceLines Include="public static readonly System.IO.DirectoryInfo RootDirectory = new(@&quot;$(TestAssemblyRootDirectory)&quot;)$([MSBuild]::Escape(';'))" />
-      <SourceLines Include="public static readonly string[] TestAssemblyPaths = new[] {%0D%0A&quot;$(TestAssemblyPaths)&quot;%0D%0A}$([MSBuild]::Escape(';'))" />
+      <SourceLines Include="public static readonly string[] TestAssemblyPaths = new[] {%0D%0A@&quot;$(TestAssemblyPaths)&quot;%0D%0A}$([MSBuild]::Escape(';'))" />
       <SourceLines Include="}" />
     </ItemGroup>
     <PropertyGroup>
