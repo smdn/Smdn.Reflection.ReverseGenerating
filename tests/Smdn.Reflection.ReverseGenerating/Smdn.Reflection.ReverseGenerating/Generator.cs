@@ -10,7 +10,9 @@ using NUnit.Framework;
 namespace Smdn.Reflection.ReverseGenerating;
 
 public abstract class GeneratorTestCaseAttribute : Attribute {
-  public string Expected { get; private set; }
+  private readonly string expectedValue;
+  public Type ExpectedValueGeneratorType { get; set; } = null;
+  public string ExpectedValueGeneratorMemberName { get; set; } = null;
   public bool TranslateLanguagePrimitiveTypeDeclaration { get; set; } = true;
   public bool MemberWithNamespace { get; set; } = true;
   public bool MemberWithDeclaringTypeName { get; set; } = false;
@@ -29,13 +31,34 @@ public abstract class GeneratorTestCaseAttribute : Attribute {
   public MethodBodyOption MethodBody { get; set; } = MethodBodyOption.EmptyImplementation;
   public string SourceLocation { get; }
 
+  public string Expected {
+    get {
+      if (ExpectedValueGeneratorType is null && ExpectedValueGeneratorMemberName is null)
+        return expectedValue;
+
+      var expectedValueGeneratorMember = ExpectedValueGeneratorType.GetMember(
+        ExpectedValueGeneratorMemberName,
+        MemberTypes.Field | MemberTypes.Method | MemberTypes.Property,
+        BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic
+      ).FirstOrDefault();
+
+      return expectedValueGeneratorMember switch {
+        FieldInfo f => (string)f.GetValue(obj: null),
+        MethodInfo m => (string)m.Invoke(obj: null, parameters: null),
+        PropertyInfo p => (string)p.GetGetMethod(nonPublic: true)?.Invoke(obj: null, parameters: null),
+        null => throw new InvalidOperationException($"member not found: {ExpectedValueGeneratorType.FullName}.{ExpectedValueGeneratorMemberName}"),
+        _ => throw new InvalidOperationException($"invalid member type: {ExpectedValueGeneratorType.FullName}.{ExpectedValueGeneratorMemberName}"),
+      };
+    }
+  }
+
   public GeneratorTestCaseAttribute(
     string expected,
     string sourceFilePath,
     int lineNumber
   )
   {
-    this.Expected = expected;
+    this.expectedValue = expected;
     this.SourceLocation = $"{Path.GetFileName(sourceFilePath)}:{lineNumber}";
   }
 }

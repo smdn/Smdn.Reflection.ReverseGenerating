@@ -46,7 +46,25 @@ namespace Smdn.Reflection.ReverseGenerating {
 
         class AttributeTargetsReturnValue {
 #if NETFRAMEWORK
-          [return: AttributeTestCase("[return: System.Runtime.InteropServices.MarshalAs(System.Runtime.InteropServices.UnmanagedType.Bool)]")]
+          static string M0_ExpectedResult =>
+            RuntimeInformation.FrameworkDescription.StartsWith(".NET Framework", StringComparison.Ordinal)
+              ? "[return: System.Runtime.InteropServices.MarshalAs(" +
+                "System.Runtime.InteropServices.UnmanagedType.Bool, "+
+                "ArraySubType = default(System.Runtime.InteropServices.UnmanagedType), " +
+                "SizeParamIndex = 0, " +
+                "SizeConst = 0, " +
+                "IidParameterIndex = 0, " +
+                "SafeArraySubType = System.Runtime.InteropServices.VarEnum.VT_EMPTY" +
+                ")]"
+              : "[return: System.Runtime.InteropServices.MarshalAs(" +
+                "System.Runtime.InteropServices.UnmanagedType.Bool)" +
+                "]";
+
+          [return: AttributeTestCase(
+            expected: null,
+            ExpectedValueGeneratorType = typeof(AttributeTargetsReturnValue),
+            ExpectedValueGeneratorMemberName = nameof(M0_ExpectedResult)
+          )]
           [return: MarshalAs(UnmanagedType.Bool)]
           public bool M0() => throw new NotImplementedException();
 #endif
