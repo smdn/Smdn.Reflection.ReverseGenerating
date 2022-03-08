@@ -34,6 +34,7 @@ SPDX-License-Identifier: MIT
   </PropertyGroup>
 
   <PropertyGroup Label="package properties">
+    <PackageTags>reflection;reverse-generating;reverse-generation;generator;api-list;msbuild-task</PackageTags>
   </PropertyGroup>
 
   <ItemGroup>

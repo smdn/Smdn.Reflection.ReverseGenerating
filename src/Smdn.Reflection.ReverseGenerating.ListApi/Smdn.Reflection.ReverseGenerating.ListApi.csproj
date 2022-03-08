@@ -22,6 +22,7 @@ SPDX-License-Identifier: MIT
   </PropertyGroup>
 
   <PropertyGroup Label="package properties">
+    <PackageTags>reflection;reverse-generating;reverse-generation;generator;api-list;dotnet-tool</PackageTags>
   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(EnableFeatureBuildProjectFile)' == 'True' ">
