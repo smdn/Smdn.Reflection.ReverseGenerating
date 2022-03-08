@@ -28,11 +28,12 @@ SPDX-License-Identifier: MIT
     <NoWarn>$(NoWarn);NU5100;NU5128</NoWarn>
   </PropertyGroup>
 
-  <PropertyGroup Label="metadata">
+  <PropertyGroup Label="assembly attributes">
     <Description>MSBuild tasks for reverse generation of API lists from assemblies.</Description>
     <CopyrightYear>2021</CopyrightYear>
+  </PropertyGroup>
 
-    <!-- NuGet -->
+  <PropertyGroup Label="package properties">
   </PropertyGroup>
 
   <ItemGroup>
