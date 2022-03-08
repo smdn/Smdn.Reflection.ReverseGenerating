@@ -11,7 +11,7 @@ SPDX-License-Identifier: MIT
     <ToolCommandName>list-api</ToolCommandName>
     <VersionPrefix>1.0.1</VersionPrefix>
     <VersionSuffix></VersionSuffix>
-    <EnableFeatureBuildProjectFile Condition=" '$(Configuration)' != 'Release' ">true</EnableFeatureBuildProjectFile>
+    <EnableFeature_BuildProjectFile Condition=" '$(Configuration)' != 'Release' ">true</EnableFeature_BuildProjectFile>
     <GeneratePackageReadmeFile>false</GeneratePackageReadmeFile>
   </PropertyGroup>
 
@@ -25,7 +25,7 @@ SPDX-License-Identifier: MIT
     <PackageTags>reflection;reverse-generating;reverse-generation;generator;api-list;dotnet-tool</PackageTags>
   </PropertyGroup>
 
-  <PropertyGroup Condition=" '$(EnableFeatureBuildProjectFile)' == 'True' ">
+  <PropertyGroup Condition=" '$(EnableFeature_BuildProjectFile)' == 'True' ">
     <DefineConstants>$(DefineConstants);FEATURE_BUILD_PROJ</DefineConstants>
   </PropertyGroup>
 
@@ -37,7 +37,7 @@ SPDX-License-Identifier: MIT
     <ProjectReference VersionRange="[1.0.0,2.0.0)" Include="..\Smdn.Reflection.ReverseGenerating.ListApi.Core\Smdn.Reflection.ReverseGenerating.ListApi.Core.csproj" />
   </ItemGroup>
 
-  <ItemGroup Condition=" '$(EnableFeatureBuildProjectFile)' == 'True' ">
+  <ItemGroup Condition=" '$(EnableFeature_BuildProjectFile)' == 'True' ">
     <!-- Overrides the package version of Newtonsoft.Json which NuGet.Packaging refers to -->
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
 
