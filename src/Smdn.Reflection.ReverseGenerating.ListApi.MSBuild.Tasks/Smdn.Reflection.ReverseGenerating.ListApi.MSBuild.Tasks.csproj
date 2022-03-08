@@ -29,7 +29,7 @@ SPDX-License-Identifier: MIT
   </PropertyGroup>
 
   <PropertyGroup Label="assembly attributes">
-    <Description>MSBuild tasks for reverse generation of API lists from assemblies.</Description>
+    <Description>MSBuild tasks for reverse generating API lists from assemblies.</Description>
     <CopyrightYear>2021</CopyrightYear>
   </PropertyGroup>
 

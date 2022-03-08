@@ -24,7 +24,7 @@ SPDX-License-Identifier: MIT
   </PropertyGroup>
 
   <PropertyGroup Label="assembly attributes">
-    <Description>The reflection library for reverse generating type definitions.</Description>
+    <Description>The reflection library for reverse generating type and member declarations.</Description>
     <CopyrightYear>2020</CopyrightYear>
   </PropertyGroup>
 

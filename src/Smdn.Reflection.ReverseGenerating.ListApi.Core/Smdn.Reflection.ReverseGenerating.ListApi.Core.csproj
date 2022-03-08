@@ -16,6 +16,7 @@ SPDX-License-Identifier: MIT
   </PropertyGroup>
 
   <PropertyGroup Label="assembly attributes">
+    <Description>A common library for the tools of reverse generating API lists.</Description>
     <CopyrightYear>2021</CopyrightYear>
   </PropertyGroup>
 
