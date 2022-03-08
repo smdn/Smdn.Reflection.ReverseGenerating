@@ -13,6 +13,9 @@ SPDX-License-Identifier: MIT
     <VersionSuffix></VersionSuffix>
     <EnableFeature_BuildProjectFile Condition=" '$(Configuration)' != 'Release' ">true</EnableFeature_BuildProjectFile>
     <GeneratePackageReadmeFile>false</GeneratePackageReadmeFile>
+    <DefineConstants
+      Condition=" '$(EnableFeature_BuildProjectFile)' == 'True' "
+    >$(DefineConstants);FEATURE_BUILD_PROJ</DefineConstants>
   </PropertyGroup>
 
   <PropertyGroup Label="assembly attributes">
@@ -23,10 +26,6 @@ SPDX-License-Identifier: MIT
 
   <PropertyGroup Label="package properties">
     <PackageTags>reflection;reverse-generating;reverse-generation;generator;api-list;dotnet-tool</PackageTags>
-  </PropertyGroup>
-
-  <PropertyGroup Condition=" '$(EnableFeature_BuildProjectFile)' == 'True' ">
-    <DefineConstants>$(DefineConstants);FEATURE_BUILD_PROJ</DefineConstants>
   </PropertyGroup>
 
   <ItemGroup>
