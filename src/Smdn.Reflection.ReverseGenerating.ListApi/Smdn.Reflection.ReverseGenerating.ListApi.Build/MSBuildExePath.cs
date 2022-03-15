@@ -16,7 +16,7 @@ public static class MSBuildExePath {
   private static string JoinPath(string path1, string path2)
   {
 #pragma warning disable SA1114
-#if NETCOREAPP3_1_OR_GREATER || NET5_0_OR_GREATER
+#if SYSTEM_IO_PATH_JOIN
     return Path.Join(
 #else
     return Path.Combine(

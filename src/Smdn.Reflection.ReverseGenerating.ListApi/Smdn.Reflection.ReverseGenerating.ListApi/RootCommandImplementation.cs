@@ -232,7 +232,7 @@ public class RootCommandImplementation {
   private static string GetOutputFilePathOf(Assembly assm, DirectoryInfo outputDirectory)
   {
 #pragma warning restore SA1114
-#if NETCOREAPP3_1_OR_GREATER || NET5_0_OR_GREATER
+#if SYSTEM_IO_PATH_JOIN
     return Path.Join(
 #else
     return Path.Combine(

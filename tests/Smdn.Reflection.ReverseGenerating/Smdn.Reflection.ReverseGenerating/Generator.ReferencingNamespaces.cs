@@ -29,7 +29,7 @@ namespace Smdn.Reflection.ReverseGenerating {
 
     public IReadOnlyList<string> GetExpectedSet()
     {
-#if NET5_0_OR_GREATER
+#if SYSTEM_STRINGSPLITOPTIONS_TRIMENTRIES
       return Expected.Split(",", StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
 #else
       return Expected.Split(new[] {','}, StringSplitOptions.RemoveEmptyEntries).Select(s => s.Trim()).ToList();

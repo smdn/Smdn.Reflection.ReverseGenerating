@@ -11,7 +11,7 @@ using NUnit.Framework;
 using Smdn.Reflection.ReverseGenerating.ListApi.Core; // TestAssemblyInfo
 
 
-#if NETCOREAPP3_1_OR_GREATER || NET5_0_OR_GREATER
+#if SYSTEM_IO_PATH_JOIN
 using PathJoiner = System.IO.Path;
 #else
 using PathJoiner = Smdn.Reflection.ReverseGenerating.ListApi.Shim.Path;

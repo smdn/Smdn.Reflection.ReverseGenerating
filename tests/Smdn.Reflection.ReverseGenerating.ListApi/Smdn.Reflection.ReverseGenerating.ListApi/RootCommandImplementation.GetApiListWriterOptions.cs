@@ -14,7 +14,7 @@ class RootCommandImplementationGetApiListWriterOptionsTests {
 
     return impl.GetApiListWriterOptions(
       args.Split(
-#if NET5_0_OR_GREATER
+#if SYSTEM_STRING_SPLIT_STRING && SYSTEM_STRINGSPLITOPTIONS_TRIMENTRIES
         " ",
         StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries
 #else
