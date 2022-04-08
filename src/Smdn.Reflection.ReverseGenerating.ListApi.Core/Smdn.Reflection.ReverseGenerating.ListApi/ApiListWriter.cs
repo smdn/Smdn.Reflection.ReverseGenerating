@@ -38,7 +38,7 @@ public class ApiListWriter {
   public void WriteExportedTypes()
   {
     var types = assembly.GetExportedTypes()
-#if NETCOREAPP2_1_OR_GREATER || NET5_0_OR_GREATER
+#if SYSTEM_ASSEMBLY_GETFORWARDEDTYPES
       .Union(assembly.GetForwardedTypes())
 #endif
     ;

@@ -4,7 +4,7 @@ using System;
 
 namespace Smdn.Reflection.ReverseGenerating.ListApi.Shim;
 
-#if !(NETCOREAPP3_1_OR_GREATER || NET5_0_OR_GREATER)
+#if !SYSTEM_IO_PATH_JOIN
 internal class Path {
   public static string Join(params string[] paths)
     => System.IO.Path.Combine(paths);
