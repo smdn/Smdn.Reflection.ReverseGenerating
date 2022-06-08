@@ -28,7 +28,7 @@ internal class StructLayoutCustomAttributeData : CustomAttributeData {
     if (attr.CharSet is not (CharSet.Auto or CharSet.Ansi)) {
       namedArgs.Add(
         new(
-          typeof(StructLayoutAttribute).GetField(nameof(attr.CharSet), attributeFieldBindingFlags),
+          GetStructLayoutAttributeField(nameof(StructLayoutAttribute.CharSet)),
           new(attr.CharSet.GetType(), attr.CharSet)
         )
       );
@@ -37,7 +37,7 @@ internal class StructLayoutCustomAttributeData : CustomAttributeData {
     if (!(attr.Pack == 0 || attr.Pack == DefaultStructLayoutAttribute.Pack)) {
       namedArgs.Add(
         new(
-          typeof(StructLayoutAttribute).GetField(nameof(attr.Pack), attributeFieldBindingFlags),
+          GetStructLayoutAttributeField(nameof(StructLayoutAttribute.Pack)),
           new(attr.Pack.GetType(), attr.Pack)
         )
       );
@@ -46,13 +46,17 @@ internal class StructLayoutCustomAttributeData : CustomAttributeData {
     if (attr.Size != 0) {
       namedArgs.Add(
         new(
-          typeof(StructLayoutAttribute).GetField(nameof(attr.Size), attributeFieldBindingFlags),
+          GetStructLayoutAttributeField(nameof(StructLayoutAttribute.Size)),
           new(attr.Size.GetType(), attr.Size)
         )
       );
     }
 
     NamedArguments = namedArgs.AsReadOnly();
+
+    static FieldInfo GetStructLayoutAttributeField(string name)
+      => typeof(StructLayoutAttribute).GetField(name, attributeFieldBindingFlags)
+        ?? throw new InvalidOperationException($"can not get field '{name}' of {nameof(StructLayoutAttribute)}");
   }
 
 #if CAN_OVERRIDE_CUSTOMATTRIBUTEDATA_ATTRIBUTETYPE

@@ -68,7 +68,7 @@ public static partial class Generator {
     }
 
     if (t.IsConcreteDelegate()) {
-      var signatureInfo = t.GetDelegateSignatureMethod();
+      var signatureInfo = t.GetDelegateSignatureMethod() ?? throw new InvalidOperationException("can not get signature of the delegate");
 
       referencingNamespaces?.UnionWith(
         signatureInfo
@@ -173,12 +173,14 @@ public static partial class Generator {
         genericParameter.DeclaringMethod?.CustomAttributes?.FirstOrDefault(IsNullableContextAttribute) ??
         genericParameter.DeclaringType.CustomAttributes.FirstOrDefault(IsNullableContextAttribute);
 
-      if (attrNullableContext is not null && (byte)attrNullableContext.ConstructorArguments[0].Value == 1)
+      const byte notAnnotated = 1;
+
+      if (attrNullableContext is not null && notAnnotated.Equals(attrNullableContext.ConstructorArguments[0].Value))
         // `#nullable enable` context
         return attrNullable is null;
       else
         // `#nullable disable` context
-        return attrNullable is not null && (byte)attrNullable.ConstructorArguments[0].Value == 1;
+        return attrNullable is not null && notAnnotated.Equals(attrNullable.ConstructorArguments[0].Value);
     }
 
     static bool IsValueType(Type t) => string.Equals(t.FullName, typeof(ValueType).FullName, StringComparison.Ordinal);
@@ -306,19 +308,20 @@ public static partial class Generator {
     if (options.IgnorePrivateOrAssembly && field.IsPrivateOrAssembly())
       return null;
 
+    var declaringType = field.GetDeclaringTypeOrThrow();
     var sb = new StringBuilder();
     var memberOptions = options.MemberDeclaration;
 
-    if (field.DeclaringType.IsEnum) {
+    if (declaringType.IsEnum) {
       if (field.IsStatic) {
         sb.Append(GenerateMemberName(field, options));
 
         if (field.TryGetValue(null, out var fieldValue)) {
           sb.Append(" = ");
 
-          var val = Convert.ChangeType(fieldValue, field.DeclaringType.GetEnumUnderlyingType(), provider: null);
+          var val = Convert.ChangeType(fieldValue, declaringType.GetEnumUnderlyingType(), provider: null);
 
-          if (field.DeclaringType.IsEnumFlags())
+          if (val is not null && declaringType.IsEnumFlags())
             sb.Append("0x").AppendFormat(null, "{0:x" + (Marshal.SizeOf(val) * 2).ToString("D", null) + "}", val);
           else
             sb.Append(val);
@@ -426,9 +429,9 @@ public static partial class Generator {
     sb.Append(property.PropertyType.FormatTypeName(attributeProvider: property, typeWithNamespace: memberOptions.WithNamespace)).Append(' ');
 
     var defaultMemberName = property
-      .DeclaringType
+      .GetDeclaringTypeOrThrow()
       .GetCustomAttributesData()
-      .FirstOrDefault(static d => typeof(DefaultMemberAttribute).FullName.Equals(d.AttributeType.FullName, StringComparison.Ordinal))
+      .FirstOrDefault(static d => string.Equals(typeof(DefaultMemberAttribute).FullName, d.AttributeType.FullName, StringComparison.Ordinal))
       ?.ConstructorArguments
       ?.FirstOrDefault()
       .Value
@@ -546,12 +549,14 @@ public static partial class Generator {
     var valueOptions = options.ValueDeclaration;
     var method = m as MethodInfo;
     var methodModifiers = GetMemberModifierOf(m, options);
-    var isByRefReturnType = method != null && method.ReturnType.IsByRef;
+    var isByRefReturnType = method is not null && method.ReturnType.IsByRef;
     var methodReturnType = isByRefReturnType
-      ? "ref " + method.ReturnType.GetElementType().FormatTypeName(
-          attributeProvider: method.ReturnTypeCustomAttributes,
-          typeWithNamespace: memberOptions.WithNamespace
-        )
+      ? "ref " +
+        (method!.ReturnType.GetElementType() ?? throw new InvalidOperationException("can not get element type of the return type"))
+          .FormatTypeName(
+            attributeProvider: method.ReturnTypeCustomAttributes,
+            typeWithNamespace: memberOptions.WithNamespace
+          )
       : method?.ReturnType?.FormatTypeName(
           attributeProvider: method?.ReturnTypeCustomAttributes,
           typeWithNamespace: memberOptions.WithNamespace
@@ -615,11 +620,17 @@ public static partial class Generator {
         default: methodName += " "; break;
       }
     }
-    else if (method.IsFamily && string.Equals(method.Name, "Finalize", StringComparison.Ordinal)) {
+    else if (
+      method is not null &&
+      method.IsFamily &&
+      string.Equals(method.Name, "Finalize", StringComparison.Ordinal)
+    ) {
       // destructors
+      var declaringType = m.GetDeclaringTypeOrThrow();
+
       methodName = GenerateMemberName(
         m,
-        "~" + (m.DeclaringType.IsGenericType ? m.DeclaringType.GetGenericTypeName() : m.DeclaringType.Name),
+        "~" + (declaringType.IsGenericType ? declaringType.GetGenericTypeName() : declaringType.Name),
         options
       );
       methodModifiers = null;
@@ -632,7 +643,13 @@ public static partial class Generator {
       methodModifiers = null;
       methodName = GenerateMemberName(
         m,
-        explicitInterfaceMethod.DeclaringType.FormatTypeName(typeWithNamespace: memberOptions.WithNamespace) + "." + explicitInterfaceMethod.Name,
+        string.Concat(
+          explicitInterfaceMethod
+            .GetDeclaringTypeOrThrow()
+            .FormatTypeName(typeWithNamespace: memberOptions.WithNamespace),
+          ".",
+          explicitInterfaceMethod.Name
+        ),
         options
       );
     }
@@ -778,7 +795,7 @@ public static partial class Generator {
   )
   {
     if (options.MemberDeclaration.WithDeclaringTypeName) {
-      return member.DeclaringType.FormatTypeName(
+      return member.GetDeclaringTypeOrThrow().FormatTypeName(
         typeWithNamespace: options.MemberDeclaration.WithNamespace,
         translateLanguagePrimitiveType: options.TranslateLanguagePrimitiveTypeDeclaration
       ) + "." + memberName;
@@ -801,7 +818,7 @@ public static partial class Generator {
     setMethodAccessibility = string.Empty;
     getMethodAccessibility = string.Empty;
 
-    if (member.DeclaringType.IsInterface)
+    if (member.GetDeclaringTypeOrThrow().IsInterface)
       return string.Empty;
 
     var modifiers = new List<string>();
@@ -886,7 +903,7 @@ public static partial class Generator {
         break;
     }
 
-    if (member == member.DeclaringType.TypeInitializer)
+    if (member == member.DeclaringType?.TypeInitializer)
       accessibility = null;
 
     if (accessibility == null) {

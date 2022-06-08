@@ -188,8 +188,11 @@ public static class CSharpFormatter /* ITypeFormatter */ {
     if (specialMethodNames.TryGetValue(nameType, out var name))
       return name;
 
-    if (nameType == MethodSpecialName.Constructor)
-      return methodOrConstructor.DeclaringType.IsGenericType ? methodOrConstructor.DeclaringType.GetGenericTypeName() : methodOrConstructor.DeclaringType.Name;
+    if (nameType == MethodSpecialName.Constructor) {
+      var declaringType = methodOrConstructor.GetDeclaringTypeOrThrow();
+
+      return declaringType.IsGenericType ? declaringType.GetGenericTypeName() : declaringType.Name;
+    }
 
     return methodOrConstructor.Name; // as default
   }
@@ -219,11 +222,11 @@ public static class CSharpFormatter /* ITypeFormatter */ {
 
       if (
         p.Position == 0 &&
-        p.Member.GetCustomAttributesData().Any(static d => typeof(ExtensionAttribute).FullName.Equals(d.AttributeType.FullName, StringComparison.Ordinal))
+        p.Member.GetCustomAttributesData().Any(static d => string.Equals(typeof(ExtensionAttribute).FullName, d.AttributeType.FullName, StringComparison.Ordinal))
       ) {
         ret.Append("this ").Append(typeAndName);
       }
-      else if (p.GetCustomAttributesData().Any(static d => typeof(ParamArrayAttribute).FullName.Equals(d.AttributeType.FullName, StringComparison.Ordinal))) {
+      else if (p.GetCustomAttributesData().Any(static d => string.Equals(typeof(ParamArrayAttribute).FullName, d.AttributeType.FullName, StringComparison.Ordinal))) {
         ret.Append("params ").Append(typeAndName);
       }
       else {
@@ -335,7 +338,7 @@ public static class CSharpFormatter /* ITypeFormatter */ {
         var tupleItemNames = options
           .AttributeProvider
           ?.GetCustomAttributeDataList()
-          ?.FirstOrDefault(static d => typeof(TupleElementNamesAttribute).FullName.Equals(d.AttributeType.FullName, StringComparison.Ordinal))
+          ?.FirstOrDefault(static d => string.Equals(typeof(TupleElementNamesAttribute).FullName, d.AttributeType.FullName, StringComparison.Ordinal))
           ?.ConstructorArguments
           ?.FirstOrDefault()
           .Value
@@ -363,12 +366,12 @@ public static class CSharpFormatter /* ITypeFormatter */ {
         IEnumerable<Type> genericArgs = t.GetGenericArguments();
 
         if (t.IsNested) {
-          var genericArgsOfDeclaringType = t.DeclaringType.GetGenericArguments();
+          var declaringType = t.GetDeclaringTypeOrThrow();
+          var genericArgsOfDeclaringType = declaringType.GetGenericArguments();
 
           if (options.WithDeclaringTypeName) {
-            var declaringType = t.DeclaringType.IsGenericTypeDefinition
-              ? t.DeclaringType.MakeGenericType(genericArgs.Take(genericArgsOfDeclaringType.Length).ToArray())
-              : t.DeclaringType;
+            if (declaringType.IsGenericTypeDefinition)
+              declaringType = declaringType.MakeGenericType(genericArgs.Take(genericArgsOfDeclaringType.Length).ToArray());
 
             sb.Append(FormatTypeName(declaringType, showVariance: true, options)).Append('.');
           }
