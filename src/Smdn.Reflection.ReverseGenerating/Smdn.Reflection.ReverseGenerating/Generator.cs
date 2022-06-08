@@ -46,7 +46,9 @@ public static partial class Generator {
     GeneratorOptions options
   )
   {
-    var accessibilities = options.TypeDeclaration.WithAccessibility ? CSharpFormatter.FormatAccessibility(t.GetAccessibility()) + " " : string.Empty;
+    var accessibilities = options.TypeDeclaration.WithAccessibility
+      ? CSharpFormatter.FormatAccessibility(t.GetAccessibility()) + " "
+      : string.Empty;
     var typeName = t.FormatTypeName(
       typeWithNamespace: false,
       withDeclaringTypeName: options.TypeDeclaration.WithDeclaringTypeName,
@@ -55,7 +57,9 @@ public static partial class Generator {
 
     var genericArgumentConstraints = t
       .GetGenericArguments()
-      .Select(arg => GenerateGenericArgumentConstraintDeclaration(arg, referencingNamespaces, options))
+      .Select(
+        arg => GenerateGenericArgumentConstraintDeclaration(arg, referencingNamespaces, options)
+      )
       .Where(static d => d != null)
       .ToList();
 
@@ -68,7 +72,8 @@ public static partial class Generator {
     }
 
     if (t.IsConcreteDelegate()) {
-      var signatureInfo = t.GetDelegateSignatureMethod() ?? throw new InvalidOperationException("can not get signature of the delegate");
+      var signatureInfo = t.GetDelegateSignatureMethod()
+        ?? throw new InvalidOperationException("can not get signature of the delegate");
 
       referencingNamespaces?.UnionWith(
         signatureInfo
@@ -77,7 +82,9 @@ public static partial class Generator {
           .SelectMany(CSharpFormatter.ToNamespaceList)
       );
 
-      var genericArgumentConstraintDeclaration = genericArgumentConstraints.Count == 0 ? string.Empty : " " + string.Join(" ", genericArgumentConstraints);
+      var genericArgumentConstraintDeclaration = genericArgumentConstraints.Count == 0
+        ? string.Empty
+        : " " + string.Join(" ", genericArgumentConstraints);
       var returnType = signatureInfo.ReturnType.FormatTypeName(
         attributeProvider: signatureInfo.ReturnTypeCustomAttributes,
         typeWithNamespace: options.TypeDeclaration.WithNamespace
@@ -127,7 +134,9 @@ public static partial class Generator {
     var baseTypeList = GenerateExplicitBaseTypeAndInterfaces(t, referencingNamespaces, options).ToList();
 
     if (baseTypeList.Count <= 1) {
-      var baseTypeDeclaration = baseTypeList.Count == 0 ? string.Empty : " : " + baseTypeList[0];
+      var baseTypeDeclaration = baseTypeList.Count == 0
+        ? string.Empty
+        : " : " + baseTypeList[0];
       var genericArgumentConstraintDeclaration = GetSingleLineGenericArgumentConstraintsDeclaration();
 
       yield return typeDeclaration + baseTypeDeclaration + genericArgumentConstraintDeclaration;
@@ -186,7 +195,11 @@ public static partial class Generator {
     static bool IsValueType(Type t) => string.Equals(t.FullName, typeof(ValueType).FullName, StringComparison.Ordinal);
     static bool IsNotValueType(Type t) => !string.Equals(t.FullName, typeof(ValueType).FullName, StringComparison.Ordinal);
 
-    static IEnumerable<string> GetGenericArgumentConstraintsOf(Type genericParameter, ISet<string> referencingNns, bool typeWithNamespace)
+    static IEnumerable<string> GetGenericArgumentConstraintsOf(
+      Type genericParameter,
+      ISet<string> referencingNns,
+      bool typeWithNamespace
+    )
     {
       var constraintAttrs = genericParameter.GenericParameterAttributes & GenericParameterAttributes.SpecialConstraintMask;
       IEnumerable<Type> constraintTypes = genericParameter.GetGenericParameterConstraints();
@@ -225,7 +238,11 @@ public static partial class Generator {
           yield return "struct";
       }
 
-      foreach (var ctn in constraintTypesExceptValueType.Select(i => i.FormatTypeName(typeWithNamespace: typeWithNamespace)).OrderBy(static name => name, StringComparer.Ordinal))
+      var orderedConstraintTypeNames = constraintTypesExceptValueType
+        .Select(i => i.FormatTypeName(typeWithNamespace: typeWithNamespace))
+        .OrderBy(static name => name, StringComparer.Ordinal);
+
+      foreach (var ctn in orderedConstraintTypeNames)
         yield return ctn;
 
       if (constraintAttrs.HasFlag(GenericParameterAttributes.DefaultConstructorConstraint))
@@ -237,7 +254,9 @@ public static partial class Generator {
       GetGenericArgumentConstraintsOf(
         genericArgument,
         referencingNamespaces,
-        genericArgument.DeclaringMethod == null ? options.TypeDeclaration.WithNamespace : options.MemberDeclaration.WithNamespace
+        genericArgument.DeclaringMethod == null
+          ? options.TypeDeclaration.WithNamespace
+          : options.MemberDeclaration.WithNamespace
       )
     );
 
@@ -339,7 +358,12 @@ public static partial class Generator {
 
       sb
         .Append(GetMemberModifierOf(field, options))
-        .Append(field.FieldType.FormatTypeName(attributeProvider: field, typeWithNamespace: memberOptions.WithNamespace))
+        .Append(
+          field.FieldType.FormatTypeName(
+            attributeProvider: field,
+            typeWithNamespace: memberOptions.WithNamespace
+          )
+        )
         .Append(' ')
         .Append(GenerateMemberName(field, options));
 
@@ -400,7 +424,11 @@ public static partial class Generator {
   {
     var explicitInterface = property
       .GetAccessors(true)
-      .Select(a => a.FindExplicitInterfaceMethod(findOnlyPublicInterfaces: options.IgnorePrivateOrAssembly)?.DeclaringType)
+      .Select(
+        a => a.FindExplicitInterfaceMethod(
+          findOnlyPublicInterfaces: options.IgnorePrivateOrAssembly
+        )?.DeclaringType
+      )
       .FirstOrDefault();
 
     if (
@@ -411,27 +439,47 @@ public static partial class Generator {
       return null;
     }
 
-    var emitGetAccessor = property.GetMethod != null && !(explicitInterface == null && options.IgnorePrivateOrAssembly && property.GetMethod.IsPrivateOrAssembly());
-    var emitSetAccessor = property.SetMethod != null && !(explicitInterface == null && options.IgnorePrivateOrAssembly && property.SetMethod.IsPrivateOrAssembly());
+    var emitGetAccessor =
+      property.GetMethod != null &&
+      !(explicitInterface == null && options.IgnorePrivateOrAssembly && property.GetMethod.IsPrivateOrAssembly());
+    var emitSetAccessor =
+      property.SetMethod != null &&
+      !(explicitInterface == null && options.IgnorePrivateOrAssembly && property.SetMethod.IsPrivateOrAssembly());
 
     var indexParameters = property.GetIndexParameters();
 
-    referencingNamespaces?.UnionWith(CSharpFormatter.ToNamespaceList(property.PropertyType));
-    referencingNamespaces?.UnionWith(indexParameters.SelectMany(static ip => CSharpFormatter.ToNamespaceList(ip.ParameterType)));
+    referencingNamespaces?.UnionWith(
+      CSharpFormatter.ToNamespaceList(property.PropertyType)
+    );
+    referencingNamespaces?.UnionWith(
+      indexParameters.SelectMany(static ip => CSharpFormatter.ToNamespaceList(ip.ParameterType))
+    );
 
     var sb = new StringBuilder();
     var memberOptions = options.MemberDeclaration;
-    var modifier = GetMemberModifierOf(property, memberOptions, out string setAccessibility, out string getAccessibility);
+    var modifier = GetMemberModifierOf(
+      property,
+      memberOptions,
+      out string setAccessibility,
+      out string getAccessibility
+    );
 
     if (explicitInterface == null)
       sb.Append(modifier);
 
-    sb.Append(property.PropertyType.FormatTypeName(attributeProvider: property, typeWithNamespace: memberOptions.WithNamespace)).Append(' ');
+    sb.Append(
+      property.PropertyType.FormatTypeName(
+        attributeProvider: property,
+        typeWithNamespace: memberOptions.WithNamespace
+      )
+    ).Append(' ');
 
     var defaultMemberName = property
       .GetDeclaringTypeOrThrow()
       .GetCustomAttributesData()
-      .FirstOrDefault(static d => string.Equals(typeof(DefaultMemberAttribute).FullName, d.AttributeType.FullName, StringComparison.Ordinal))
+      .FirstOrDefault(
+        static d => string.Equals(typeof(DefaultMemberAttribute).FullName, d.AttributeType.FullName, StringComparison.Ordinal)
+      )
       ?.ConstructorArguments
       ?.FirstOrDefault()
       .Value
@@ -459,15 +507,15 @@ public static partial class Generator {
       sb.Append(
         GenerateMemberName(
           property,
-#if SYSTEM_STRING_CONCAT_READONLYSPAN_OF_CHAR
           string.Concat(
             explicitInterface.FormatTypeName(typeWithNamespace: memberOptions.WithNamespace),
             ".",
+#if SYSTEM_STRING_CONCAT_READONLYSPAN_OF_CHAR
             property.Name.AsSpan(property.Name.LastIndexOf('.') + 1)
-          ),
 #else
-          explicitInterface.FormatTypeName(typeWithNamespace: memberOptions.WithNamespace) + "." + property.Name.Substring(property.Name.LastIndexOf('.') + 1),
+            property.Name.Substring(property.Name.LastIndexOf('.') + 1)
 #endif
+          ),
           options
         )
       );
@@ -569,14 +617,18 @@ public static partial class Generator {
           "<",
           string.Join(
             ", ",
-            m.GetGenericArguments().Select(t => t.FormatTypeName(typeWithNamespace: memberOptions.WithNamespace))
+            m.GetGenericArguments().Select(
+              t => t.FormatTypeName(typeWithNamespace: memberOptions.WithNamespace)
+            )
           ),
           ">"
         )
       : null;
     var methodParameterList = string.Join(
       ", ",
-      m.GetParameters().Select(p => GenerateParameterDeclaration(p, referencingNamespaces, options))
+      m.GetParameters().Select(
+        p => GenerateParameterDeclaration(p, referencingNamespaces, options)
+      )
     );
     var methodConstraints = method == null
       ? null
@@ -584,7 +636,9 @@ public static partial class Generator {
           " ",
           method
             .GetGenericArguments()
-            .Select(arg => Generator.GenerateGenericArgumentConstraintDeclaration(arg, referencingNamespaces, options))
+            .Select(
+              arg => Generator.GenerateGenericArgumentConstraintDeclaration(arg, referencingNamespaces, options)
+            )
             .Where(static d => d != null)
         );
     string methodName = null;
@@ -731,10 +785,22 @@ public static partial class Generator {
     GeneratorOptions options
   )
   {
-    var explicitInterface = ev.GetMethods(true).Select(evm => evm.FindExplicitInterfaceMethod(findOnlyPublicInterfaces: options.IgnorePrivateOrAssembly)?.DeclaringType).FirstOrDefault();
+    var explicitInterface = ev
+      .GetMethods(true)
+      .Select(evm =>
+        evm.FindExplicitInterfaceMethod(
+          findOnlyPublicInterfaces: options.IgnorePrivateOrAssembly
+        )?.DeclaringType
+      )
+      .FirstOrDefault();
 
-    if (explicitInterface == null && options.IgnorePrivateOrAssembly && ev.GetMethods(true).All(static m => m.IsPrivateOrAssembly()))
+    if (
+      explicitInterface == null &&
+      options.IgnorePrivateOrAssembly &&
+      ev.GetMethods(true).All(static m => m.IsPrivateOrAssembly())
+    ) {
       return null;
+    }
 
     referencingNamespaces?.UnionWith(CSharpFormatter.ToNamespaceList(ev.EventHandlerType));
 
@@ -744,7 +810,14 @@ public static partial class Generator {
     if (explicitInterface == null)
       sb.Append(GetMemberModifierOf(ev.GetMethods(true).First(), options));
 
-    sb.Append("event ").Append(ev.EventHandlerType.FormatTypeName(attributeProvider: ev, typeWithNamespace: memberOptions.WithNamespace)).Append(' ');
+    sb
+      .Append("event ")
+      .Append(
+        ev.EventHandlerType.FormatTypeName(
+          attributeProvider: ev,
+          typeWithNamespace: memberOptions.WithNamespace
+        )
+      ).Append(' ');
 
     if (explicitInterface == null) {
       sb.Append(
@@ -758,15 +831,15 @@ public static partial class Generator {
       sb.Append(
         GenerateMemberName(
           ev,
-#if SYSTEM_STRING_CONCAT_READONLYSPAN_OF_CHAR
           string.Concat(
             explicitInterface.FormatTypeName(typeWithNamespace: memberOptions.WithNamespace),
             ".",
+#if SYSTEM_STRING_CONCAT_READONLYSPAN_OF_CHAR
             ev.Name.AsSpan(ev.Name.LastIndexOf('.') + 1)
-          ),
 #else
-          explicitInterface.FormatTypeName(typeWithNamespace: memberOptions.WithNamespace) + "." + ev.Name.Substring(ev.Name.LastIndexOf('.') + 1),
+            ev.Name.Substring(ev.Name.LastIndexOf('.') + 1)
 #endif
+          ),
           options
         )
       );

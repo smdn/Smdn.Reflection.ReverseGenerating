@@ -60,7 +60,9 @@ partial class Generator {
     {
       referencingNamespaces?.Add(attr.GetAttributeType().Namespace);
 
-      var nameOfAttr = attr.GetAttributeType().FormatTypeName(typeWithNamespace: options.AttributeDeclaration.WithNamespace);
+      var nameOfAttr = attr
+        .GetAttributeType()
+        .FormatTypeName(typeWithNamespace: options.AttributeDeclaration.WithNamespace);
 
       if (nameOfAttr.EndsWith("Attribute", StringComparison.Ordinal))
         nameOfAttr = nameOfAttr.Substring(0, nameOfAttr.Length - 9);

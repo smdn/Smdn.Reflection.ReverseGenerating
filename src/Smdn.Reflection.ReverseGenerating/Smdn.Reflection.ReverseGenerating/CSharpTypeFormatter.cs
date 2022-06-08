@@ -181,7 +181,10 @@ public static class CSharpFormatter /* ITypeFormatter */ {
   public static IEnumerable<string> ToNamespaceList(Type t)
     => t.GetNamespaces(static type => IsLanguagePrimitiveType(type, out _));
 
-  public static string FormatSpecialNameMethod(MethodBase methodOrConstructor, out MethodSpecialName nameType)
+  public static string FormatSpecialNameMethod(
+    MethodBase methodOrConstructor,
+    out MethodSpecialName nameType
+  )
   {
     nameType = methodOrConstructor.GetNameType();
 
@@ -191,24 +194,52 @@ public static class CSharpFormatter /* ITypeFormatter */ {
     if (nameType == MethodSpecialName.Constructor) {
       var declaringType = methodOrConstructor.GetDeclaringTypeOrThrow();
 
-      return declaringType.IsGenericType ? declaringType.GetGenericTypeName() : declaringType.Name;
+      return declaringType.IsGenericType
+        ? declaringType.GetGenericTypeName()
+        : declaringType.Name;
     }
 
     return methodOrConstructor.Name; // as default
   }
 
-  public static string FormatParameterList(MethodBase m, bool typeWithNamespace = true, bool useDefaultLiteral = false)
-    => FormatParameterList(m.GetParameters(), typeWithNamespace, useDefaultLiteral);
+  public static string FormatParameterList(
+    MethodBase m,
+    bool typeWithNamespace = true,
+    bool useDefaultLiteral = false
+  )
+    => FormatParameterList(
+      m.GetParameters(),
+      typeWithNamespace,
+      useDefaultLiteral
+    );
 
-  public static string FormatParameterList(ParameterInfo[] parameterList, bool typeWithNamespace = true, bool useDefaultLiteral = false)
-    => string.Join(", ", parameterList.Select(p => FormatParameter(p, typeWithNamespace, useDefaultLiteral)));
+  public static string FormatParameterList(
+    ParameterInfo[] parameterList,
+    bool typeWithNamespace = true,
+    bool useDefaultLiteral = false
+  )
+    => string.Join(
+      ", ",
+      parameterList.Select(p => FormatParameter(p, typeWithNamespace, useDefaultLiteral))
+    );
 
-  public static string FormatParameter(ParameterInfo p, bool typeWithNamespace = true, bool useDefaultLiteral = false)
+  public static string FormatParameter(
+    ParameterInfo p,
+    bool typeWithNamespace = true,
+    bool useDefaultLiteral = false
+  )
   {
     var ret = new StringBuilder(capacity: 64);
 
     if (p.ParameterType.IsByRef) {
-      var typeAndName = p.ParameterType.GetElementType().FormatTypeName(attributeProvider: p, typeWithNamespace: typeWithNamespace) + " " + ToVerbatim(p.Name);
+      var typeAndName = string.Concat(
+        p
+          .ParameterType
+          .GetElementType()
+          .FormatTypeName(attributeProvider: p, typeWithNamespace: typeWithNamespace),
+        " ",
+        ToVerbatim(p.Name)
+      );
 
       if (p.IsIn)
         ret.Append("in ").Append(typeAndName);
@@ -218,15 +249,25 @@ public static class CSharpFormatter /* ITypeFormatter */ {
         ret.Append("ref ").Append(typeAndName);
     }
     else {
-      var typeAndName = p.ParameterType.FormatTypeName(attributeProvider: p, typeWithNamespace: typeWithNamespace) + " " + ToVerbatim(p.Name);
+      var typeAndName = string.Concat(
+        p.ParameterType.FormatTypeName(attributeProvider: p, typeWithNamespace: typeWithNamespace),
+        " ",
+        ToVerbatim(p.Name)
+      );
 
       if (
         p.Position == 0 &&
-        p.Member.GetCustomAttributesData().Any(static d => string.Equals(typeof(ExtensionAttribute).FullName, d.AttributeType.FullName, StringComparison.Ordinal))
+        p.Member.GetCustomAttributesData().Any(
+          static d => string.Equals(typeof(ExtensionAttribute).FullName, d.AttributeType.FullName, StringComparison.Ordinal)
+        )
       ) {
         ret.Append("this ").Append(typeAndName);
       }
-      else if (p.GetCustomAttributesData().Any(static d => string.Equals(typeof(ParamArrayAttribute).FullName, d.AttributeType.FullName, StringComparison.Ordinal))) {
+      else if (
+        p.GetCustomAttributesData().Any(
+          static d => string.Equals(typeof(ParamArrayAttribute).FullName, d.AttributeType.FullName, StringComparison.Ordinal)
+        )
+      ) {
         ret.Append("params ").Append(typeAndName);
       }
       else {
@@ -302,8 +343,14 @@ public static class CSharpFormatter /* ITypeFormatter */ {
     FormatTypeNameOptions options
   )
   {
-    if (t.IsArray)
-      return FormatTypeName(t.GetElementType(), showVariance: false, options) + "[" + new string(',', t.GetArrayRank() - 1) + "]";
+    if (t.IsArray) {
+      return string.Concat(
+        FormatTypeName(t.GetElementType(), showVariance: false, options),
+        "[",
+        new string(',', t.GetArrayRank() - 1),
+        "]"
+      );
+    }
 
     if (t.IsByRef)
       return FormatTypeName(t.GetElementType(), showVariance: false, options) + "&";
@@ -333,12 +380,22 @@ public static class CSharpFormatter /* ITypeFormatter */ {
 
     if (t.IsGenericTypeDefinition || t.IsConstructedGenericType || (t.IsGenericType && t.ContainsGenericParameters)) {
       var sb = new StringBuilder();
+      var isValueTuple =
+        t.IsConstructedGenericType &&
+        "System".Equals(t.Namespace, StringComparison.Ordinal) &&
+        t.GetGenericTypeName().Equals("ValueTuple", StringComparison.Ordinal);
 
-      if (t.IsConstructedGenericType && "System".Equals(t.Namespace, StringComparison.Ordinal) && t.GetGenericTypeName().Equals("ValueTuple", StringComparison.Ordinal)) {
+      if (isValueTuple) {
         var tupleItemNames = options
           .AttributeProvider
           ?.GetCustomAttributeDataList()
-          ?.FirstOrDefault(static d => string.Equals(typeof(TupleElementNamesAttribute).FullName, d.AttributeType.FullName, StringComparison.Ordinal))
+          ?.FirstOrDefault(static d =>
+            string.Equals(
+              typeof(TupleElementNamesAttribute).FullName,
+              d.AttributeType.FullName,
+              StringComparison.Ordinal
+            )
+          )
           ?.ConstructorArguments
           ?.FirstOrDefault()
           .Value
@@ -464,7 +521,9 @@ public static class CSharpFormatter /* ITypeFormatter */ {
       if (typeOfValue.IsValueType && findConstantField) {
         // try to find constant field
         foreach (var f in typeOfValue.GetFields(BindingFlags.Static | BindingFlags.Public)) {
-          if ((f.IsLiteral || f.IsInitOnly) && f.TryGetValue(null, out var constantFieldValue) && val.Equals(constantFieldValue))
+          var isConstantField = f.IsLiteral || f.IsInitOnly;
+
+          if (isConstantField && f.TryGetValue(null, out var constantFieldValue) && val.Equals(constantFieldValue))
             return FormatTypeName(typeOfValue, typeWithNamespace: typeWithNamespace) + "." + f.Name;
         }
 
