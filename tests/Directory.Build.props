@@ -21,12 +21,19 @@ SPDX-License-Identifier: MIT
     <TestTargetProjectName
       Condition="$(MSBuildProjectFile.EndsWith('.Tests.csproj'))"
     >$(MSBuildProjectFile.Replace('.Tests.csproj', ''))</TestTargetProjectName>
+    <TestTargetProjectDirectory
+      Condition="'$(TestTargetProjectName)' != ''"
+    >$(MSBuildThisFileDirectory)..\src\$(TestTargetProjectName)\</TestTargetProjectDirectory>
+    <CanTestReleasedPackage Label="set default value">true</CanTestReleasedPackage>
   </PropertyGroup>
 
-  <ItemGroup>
+  <ItemGroup Condition=" '$(TestTargetProjectName)' != '' ">
     <PackageReference Include="NUnit" Version="3.13.2" />
     <PackageReference Include="NUnit3TestAdapter" Version="4.2.1" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.1.0"/>
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference
       Include="Smdn.MSBuild.DefineConstants.NETSdkApi"
       Version="[1.2.2]"
@@ -35,10 +42,31 @@ SPDX-License-Identifier: MIT
     />
   </ItemGroup>
 
-  <ItemGroup Label="add test target project reference">
-    <ProjectReference
-      Condition="'$(TestTargetProjectName)' != ''"
-      Include="$(MSBuildThisFileDirectory)..\src\$(TestTargetProjectName)\$(TestTargetProjectName).csproj"
-    />
-  </ItemGroup>
+  <Choose>
+    <When Condition=" '$(TestReleasedPackage)' == 'true' and '$(CanTestReleasedPackage)' == 'true' ">
+      <ItemGroup Label="add test target package reference">
+        <PackageReference
+          Condition=" '$(TestTargetProjectName)' != '' "
+          Include="$(TestTargetProjectName)"
+          Version="*-*"
+        />
+      </ItemGroup>
+    </When>
+    <Otherwise>
+      <ItemGroup Label="add test target project reference">
+        <ProjectReference
+          Condition=" '$(TestTargetProjectName)' != '' and Exists('$(TestTargetProjectDirectory)') "
+          Include="$(TestTargetProjectDirectory)$(TestTargetProjectName).csproj"
+        />
+      </ItemGroup>
+    </Otherwise>
+  </Choose>
+
+  <Target
+    Name="WarnCannotTestReleasedPackage"
+    BeforeTargets="Test"
+    Condition=" '$(TestReleasedPackage)' == 'true' and '$(CanTestReleasedPackage)' != 'true' "
+  >
+    <Warning Text="cannot test with released package"/>
+  </Target>
 </Project>
