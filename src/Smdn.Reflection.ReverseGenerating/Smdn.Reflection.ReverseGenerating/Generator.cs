@@ -548,16 +548,40 @@ public static partial class Generator {
     var methodModifiers = GetMemberModifierOf(m, options);
     var isByRefReturnType = method != null && method.ReturnType.IsByRef;
     var methodReturnType = isByRefReturnType
-      ? "ref " + method.ReturnType.GetElementType().FormatTypeName(attributeProvider: method.ReturnTypeCustomAttributes, typeWithNamespace: memberOptions.WithNamespace)
-      : method?.ReturnType?.FormatTypeName(attributeProvider: method?.ReturnTypeCustomAttributes, typeWithNamespace: memberOptions.WithNamespace);
-    var methodReturnTypeAttributes = method is null ? null : GenerateParameterAttributeList(method.ReturnParameter, referencingNamespaces, options);
+      ? "ref " + method.ReturnType.GetElementType().FormatTypeName(
+          attributeProvider: method.ReturnTypeCustomAttributes,
+          typeWithNamespace: memberOptions.WithNamespace
+        )
+      : method?.ReturnType?.FormatTypeName(
+          attributeProvider: method?.ReturnTypeCustomAttributes,
+          typeWithNamespace: memberOptions.WithNamespace
+        );
+    var methodReturnTypeAttributes = method is null
+      ? null
+      : GenerateParameterAttributeList(method.ReturnParameter, referencingNamespaces, options);
     var methodGenericParameters = m.IsGenericMethod
-      ? string.Concat("<", string.Join(", ", m.GetGenericArguments().Select(t => t.FormatTypeName(typeWithNamespace: memberOptions.WithNamespace))), ">")
+      ? string.Concat(
+          "<",
+          string.Join(
+            ", ",
+            m.GetGenericArguments().Select(t => t.FormatTypeName(typeWithNamespace: memberOptions.WithNamespace))
+          ),
+          ">"
+        )
       : null;
-    var methodParameterList = string.Join(", ", m.GetParameters().Select(p => GenerateParameterDeclaration(p, referencingNamespaces, options)));
+    var methodParameterList = string.Join(
+      ", ",
+      m.GetParameters().Select(p => GenerateParameterDeclaration(p, referencingNamespaces, options))
+    );
     var methodConstraints = method == null
       ? null
-      : string.Join(" ", method.GetGenericArguments().Select(arg => Generator.GenerateGenericArgumentConstraintDeclaration(arg, referencingNamespaces, options)).Where(static d => d != null));
+      : string.Join(
+          " ",
+          method
+            .GetGenericArguments()
+            .Select(arg => Generator.GenerateGenericArgumentConstraintDeclaration(arg, referencingNamespaces, options))
+            .Where(static d => d != null)
+        );
     string methodName = null;
 
     var endOfStatement = memberOptions.OmitEndOfStatement
