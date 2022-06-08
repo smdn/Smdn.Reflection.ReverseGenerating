@@ -1,5 +1,9 @@
 // SPDX-FileCopyrightText: 2020 smdn <smdn@smdn.jp>
 // SPDX-License-Identifier: MIT
+#if NETCOREAPP3_0_OR_GREATER || NET5_0_OR_GREATER
+#define SYSTEM_STRING_CONCAT_READONLYSPAN_OF_CHAR
+#endif
+
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -445,7 +449,15 @@ public static partial class Generator {
       sb.Append(
         GenerateMemberName(
           property,
+#if SYSTEM_STRING_CONCAT_READONLYSPAN_OF_CHAR
+          string.Concat(
+            explicitInterface.FormatTypeName(typeWithNamespace: memberOptions.WithNamespace),
+            ".",
+            property.Name.AsSpan(property.Name.LastIndexOf('.') + 1)
+          ),
+#else
           explicitInterface.FormatTypeName(typeWithNamespace: memberOptions.WithNamespace) + "." + property.Name.Substring(property.Name.LastIndexOf('.') + 1),
+#endif
           options
         )
       );
@@ -693,7 +705,15 @@ public static partial class Generator {
       sb.Append(
         GenerateMemberName(
           ev,
+#if SYSTEM_STRING_CONCAT_READONLYSPAN_OF_CHAR
+          string.Concat(
+            explicitInterface.FormatTypeName(typeWithNamespace: memberOptions.WithNamespace),
+            ".",
+            ev.Name.AsSpan(ev.Name.LastIndexOf('.') + 1)
+          ),
+#else
           explicitInterface.FormatTypeName(typeWithNamespace: memberOptions.WithNamespace) + "." + ev.Name.Substring(ev.Name.LastIndexOf('.') + 1),
+#endif
           options
         )
       );
