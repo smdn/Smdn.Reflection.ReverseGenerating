@@ -56,7 +56,7 @@ public static partial class Generator {
     var genericArgumentConstraints = t
       .GetGenericArguments()
       .Select(arg => GenerateGenericArgumentConstraintDeclaration(arg, referencingNamespaces, options))
-      .Where(d => d != null)
+      .Where(static d => d != null)
       .ToList();
 
     string GetSingleLineGenericArgumentConstraintsDeclaration()
@@ -70,7 +70,12 @@ public static partial class Generator {
     if (t.IsConcreteDelegate()) {
       var signatureInfo = t.GetDelegateSignatureMethod();
 
-      referencingNamespaces?.UnionWith(signatureInfo.GetSignatureTypes().Where(mpt => !mpt.ContainsGenericParameters).SelectMany(CSharpFormatter.ToNamespaceList));
+      referencingNamespaces?.UnionWith(
+        signatureInfo
+          .GetSignatureTypes()
+          .Where(static mpt => !mpt.ContainsGenericParameters)
+          .SelectMany(CSharpFormatter.ToNamespaceList)
+      );
 
       var genericArgumentConstraintDeclaration = genericArgumentConstraints.Count == 0 ? string.Empty : " " + string.Join(" ", genericArgumentConstraints);
       var returnType = signatureInfo.ReturnType.FormatTypeName(
@@ -150,7 +155,9 @@ public static partial class Generator {
   )
   {
     static bool HasUnmanagedConstraint(Type genericParameter)
-      => genericParameter.CustomAttributes.Any(attr => attr.AttributeType.FullName.Equals("System.Runtime.CompilerServices.IsUnmanagedAttribute", StringComparison.Ordinal));
+      => genericParameter.CustomAttributes.Any(
+        static attr => attr.AttributeType.FullName.Equals("System.Runtime.CompilerServices.IsUnmanagedAttribute", StringComparison.Ordinal)
+      );
 
     static bool IsNullableAttribute(CustomAttributeData attr)
       => attr.AttributeType.FullName.Equals("System.Runtime.CompilerServices.NullableAttribute", StringComparison.Ordinal);
@@ -216,7 +223,7 @@ public static partial class Generator {
           yield return "struct";
       }
 
-      foreach (var ctn in constraintTypesExceptValueType.Select(i => i.FormatTypeName(typeWithNamespace: typeWithNamespace)).OrderBy(name => name, StringComparer.Ordinal))
+      foreach (var ctn in constraintTypesExceptValueType.Select(i => i.FormatTypeName(typeWithNamespace: typeWithNamespace)).OrderBy(static name => name, StringComparer.Ordinal))
         yield return ctn;
 
       if (constraintAttrs.HasFlag(GenericParameterAttributes.DefaultConstructorConstraint))
@@ -260,9 +267,9 @@ public static partial class Generator {
           ),
         };
       })
-      .OrderBy(type => type.IsInterface)
-      .ThenBy(type => type.Name, StringComparer.Ordinal)
-      .Select(type => type.Name);
+      .OrderBy(static type => type.IsInterface)
+      .ThenBy(static type => type.Name, StringComparer.Ordinal)
+      .Select(static type => type.Name);
   }
 
   public static string GenerateMemberDeclaration(
@@ -396,7 +403,7 @@ public static partial class Generator {
     if (
       explicitInterface == null &&
       options.IgnorePrivateOrAssembly &&
-      property.GetAccessors(true).All(a => a.IsPrivateOrAssembly())
+      property.GetAccessors(true).All(static a => a.IsPrivateOrAssembly())
     ) {
       return null;
     }
@@ -407,7 +414,7 @@ public static partial class Generator {
     var indexParameters = property.GetIndexParameters();
 
     referencingNamespaces?.UnionWith(CSharpFormatter.ToNamespaceList(property.PropertyType));
-    referencingNamespaces?.UnionWith(indexParameters.SelectMany(ip => CSharpFormatter.ToNamespaceList(ip.ParameterType)));
+    referencingNamespaces?.UnionWith(indexParameters.SelectMany(static ip => CSharpFormatter.ToNamespaceList(ip.ParameterType)));
 
     var sb = new StringBuilder();
     var memberOptions = options.MemberDeclaration;
@@ -550,7 +557,7 @@ public static partial class Generator {
     var methodParameterList = string.Join(", ", m.GetParameters().Select(p => GenerateParameterDeclaration(p, referencingNamespaces, options)));
     var methodConstraints = method == null
       ? null
-      : string.Join(" ", method.GetGenericArguments().Select(arg => Generator.GenerateGenericArgumentConstraintDeclaration(arg, referencingNamespaces, options)).Where(d => d != null));
+      : string.Join(" ", method.GetGenericArguments().Select(arg => Generator.GenerateGenericArgumentConstraintDeclaration(arg, referencingNamespaces, options)).Where(static d => d != null));
     string methodName = null;
 
     var endOfStatement = memberOptions.OmitEndOfStatement
@@ -564,7 +571,12 @@ public static partial class Generator {
       _ => throw new InvalidOperationException($"invalid value of {nameof(MethodBodyOption)} ({memberOptions.MethodBody})"),
     };
 
-    referencingNamespaces?.UnionWith(m.GetSignatureTypes().Where(mpt => !mpt.ContainsGenericParameters).SelectMany(CSharpFormatter.ToNamespaceList));
+    referencingNamespaces?.UnionWith(
+      m
+        .GetSignatureTypes()
+        .Where(static mpt => !mpt.ContainsGenericParameters)
+        .SelectMany(CSharpFormatter.ToNamespaceList)
+    );
 
     if (m.IsSpecialName) {
       // constructors, operator overloads, etc
@@ -680,7 +692,7 @@ public static partial class Generator {
   {
     var explicitInterface = ev.GetMethods(true).Select(evm => evm.FindExplicitInterfaceMethod(findOnlyPublicInterfaces: options.IgnorePrivateOrAssembly)?.DeclaringType).FirstOrDefault();
 
-    if (explicitInterface == null && options.IgnorePrivateOrAssembly && ev.GetMethods(true).All(m => m.IsPrivateOrAssembly()))
+    if (explicitInterface == null && options.IgnorePrivateOrAssembly && ev.GetMethods(true).All(static m => m.IsPrivateOrAssembly()))
       return null;
 
     referencingNamespaces?.UnionWith(CSharpFormatter.ToNamespaceList(ev.EventHandlerType));
@@ -796,7 +808,7 @@ public static partial class Generator {
         yield return "virtual";
       }
 
-      if (mm != null && mm.GetParameters().Any(p => p.ParameterType.IsPointer))
+      if (mm != null && mm.GetParameters().Any(static p => p.ParameterType.IsPointer))
         yield return "unsafe";
 
       // cannot detect 'new' modifier

@@ -24,7 +24,7 @@ partial class Generator {
     var prefix = (attributeProvider is ParameterInfo p && p.IsReturnParameter()) ? "[return: " : "[";
 
     return GetAttributes(attributeProvider, options.AttributeDeclaration.TypeFilter)
-      .OrderBy(attr => attr.GetAttributeType().FullName)
+      .OrderBy(static attr => attr.GetAttributeType().FullName)
       .Select(attr =>
         (
           name: ConvertAttributeName(attr),

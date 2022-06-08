@@ -179,7 +179,7 @@ public static class CSharpFormatter /* ITypeFormatter */ {
     => primitiveTypes.TryGetValue(t.FullName, out primitiveTypeName);
 
   public static IEnumerable<string> ToNamespaceList(Type t)
-    => t.GetNamespaces(type => IsLanguagePrimitiveType(type, out _));
+    => t.GetNamespaces(static type => IsLanguagePrimitiveType(type, out _));
 
   public static string FormatSpecialNameMethod(MethodBase methodOrConstructor, out MethodSpecialName nameType)
   {
