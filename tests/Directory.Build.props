@@ -24,7 +24,6 @@ SPDX-License-Identifier: MIT
     <TestTargetProjectDirectory
       Condition="'$(TestTargetProjectName)' != ''"
     >$(MSBuildThisFileDirectory)..\src\$(TestTargetProjectName)\</TestTargetProjectDirectory>
-    <CanTestReleasedPackage Label="set default value">true</CanTestReleasedPackage>
   </PropertyGroup>
 
   <ItemGroup Condition=" '$(TestTargetProjectName)' != '' ">
@@ -41,32 +40,4 @@ SPDX-License-Identifier: MIT
       IncludeAssets="build"
     />
   </ItemGroup>
-
-  <Choose>
-    <When Condition=" '$(TestReleasedPackage)' == 'true' and '$(CanTestReleasedPackage)' == 'true' ">
-      <ItemGroup Label="add test target package reference">
-        <PackageReference
-          Condition=" '$(TestTargetProjectName)' != '' "
-          Include="$(TestTargetProjectName)"
-          Version="*-*"
-        />
-      </ItemGroup>
-    </When>
-    <Otherwise>
-      <ItemGroup Label="add test target project reference">
-        <ProjectReference
-          Condition=" '$(TestTargetProjectName)' != '' and Exists('$(TestTargetProjectDirectory)') "
-          Include="$(TestTargetProjectDirectory)$(TestTargetProjectName).csproj"
-        />
-      </ItemGroup>
-    </Otherwise>
-  </Choose>
-
-  <Target
-    Name="WarnCannotTestReleasedPackage"
-    BeforeTargets="Test"
-    Condition=" '$(TestReleasedPackage)' == 'true' and '$(CanTestReleasedPackage)' != 'true' "
-  >
-    <Warning Text="cannot test with released package"/>
-  </Target>
 </Project>

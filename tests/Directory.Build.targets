@@ -1,0 +1,37 @@
+<!--
+SPDX-FileCopyrightText: 2022 smdn <smdn@smdn.jp>
+SPDX-License-Identifier: MIT
+-->
+<Project>
+  <PropertyGroup>
+    <CanTestReleasedPackage Condition=" '$(CanTestReleasedPackage)' == '' ">true</CanTestReleasedPackage>
+  </PropertyGroup>
+
+  <Choose>
+    <When Condition=" '$(TestReleasedPackage)' == 'true' and '$(CanTestReleasedPackage)' == 'true' ">
+      <ItemGroup Label="add test target package reference">
+        <PackageReference
+          Condition=" '$(TestTargetProjectName)' != '' "
+          Include="$(TestTargetProjectName)"
+          Version="*-*"
+        />
+      </ItemGroup>
+    </When>
+    <Otherwise>
+      <ItemGroup Label="add test target project reference">
+        <ProjectReference
+          Condition=" '$(TestTargetProjectName)' != '' and Exists('$(TestTargetProjectDirectory)') "
+          Include="$(TestTargetProjectDirectory)$(TestTargetProjectName).csproj"
+        />
+      </ItemGroup>
+    </Otherwise>
+  </Choose>
+
+  <Target
+    Name="WarnCannotTestReleasedPackage"
+    BeforeTargets="BeforeBuild"
+    Condition=" '$(TestReleasedPackage)' == 'true' and '$(CanTestReleasedPackage)' != 'true' "
+  >
+    <Warning Text="cannot test with released package"/>
+  </Target>
+</Project>
