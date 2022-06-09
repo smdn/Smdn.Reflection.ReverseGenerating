@@ -469,7 +469,11 @@ public static class CSharpFormatter /* ITypeFormatter */ {
     return t.Name;
   }
 
-  public static string EscapeString(string s, bool escapeSingleQuote = false, bool escapeDoubleQuote = false)
+  public static string EscapeString(
+    string s,
+    bool escapeSingleQuote = false,
+    bool escapeDoubleQuote = false
+  )
   {
     if (s == null)
       throw new ArgumentNullException(nameof(s));
