@@ -93,6 +93,11 @@ namespace Smdn.Reflection.ReverseGenerating {
           [MemberDeclarationTestCase("public System.Guid F4;")] public Guid F4;
         }
 
+        public unsafe struct PointerTypes {
+          [MemberDeclarationTestCase("public int* F1;")] public int* F1;
+          [MemberDeclarationTestCase("public float* F2;")] public float* F2;
+        }
+
         namespace EnumFields {
           public enum Ints : int {
             [MemberDeclarationTestCase("A = 0,")]
@@ -514,6 +519,10 @@ namespace Smdn.Reflection.ReverseGenerating {
 
           public abstract class NewVirtual : Virtual {
             [MemberDeclarationTestCase("public virtual void M() {}")] public new virtual void M() { }
+          }
+
+          public class Unsafe {
+            [MemberDeclarationTestCase("public unsafe void M(int* x) {}")] public unsafe void M(int* x) { }
           }
         }
 
