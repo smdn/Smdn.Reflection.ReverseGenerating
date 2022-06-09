@@ -204,7 +204,7 @@ namespace Smdn.Reflection.ReverseGenerating {
 
   partial class GeneratorTests {
     private static System.Collections.IEnumerable YieldAttributeListTestCase()
-      => FindTypes(t => t.FullName.Contains(".TestCases.Attributes."))
+      => FindTypes(t => t.FullName!.Contains(".TestCases.Attributes."))
         .SelectMany(t => t
           .GetMembers(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static | BindingFlags.DeclaredOnly)
           .Prepend((MemberInfo)t) // prepend type itself as a test target
@@ -223,7 +223,7 @@ namespace Smdn.Reflection.ReverseGenerating {
     {
       var options = GetGeneratorOptions(attrTestCase);
 
-      options.AttributeDeclaration.TypeFilter = static (type, _) => type.Namespace.StartsWith("System", StringComparison.Ordinal);
+      options.AttributeDeclaration.TypeFilter = static (type, _) => type.Namespace!.StartsWith("System", StringComparison.Ordinal);
 
       var typeOrMemberName = typeOrMember is Type t
         ? t.FullName
@@ -237,7 +237,7 @@ namespace Smdn.Reflection.ReverseGenerating {
     }
 
     private static System.Collections.IEnumerable YieldAttributeListOfParameterInfoTestCase()
-      => FindTypes(t => t.FullName.Contains(".TestCases.Attributes."))
+      => FindTypes(t => t.FullName!.Contains(".TestCases.Attributes."))
         .SelectMany(t =>
           t.GetMethods(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static | BindingFlags.DeclaredOnly)
         )
@@ -258,12 +258,12 @@ namespace Smdn.Reflection.ReverseGenerating {
     {
       var options = GetGeneratorOptions(attrTestCase);
 
-      options.AttributeDeclaration.TypeFilter = static (type, _) => type.Namespace.StartsWith("System", StringComparison.Ordinal);
+      options.AttributeDeclaration.TypeFilter = static (type, _) => type.Namespace!.StartsWith("System", StringComparison.Ordinal);
 
       Assert.AreEqual(
         attrTestCase.Expected,
         string.Join(", ", Generator.GenerateAttributeList(param, null, options)),
-        message: $"{attrTestCase.SourceLocation} ({param.Member.DeclaringType.FullName}.{param.Member.Name} {(param.Name ?? "return value")})"
+        message: $"{attrTestCase.SourceLocation} ({param.Member.DeclaringType!.FullName}.{param.Member.Name} {(param.Name ?? "return value")})"
       );
     }
   }

@@ -162,7 +162,7 @@ namespace Smdn.Reflection.ReverseGenerating {
 
   partial class GeneratorTests {
     private static System.Collections.IEnumerable YieldExplicitBaseTypeAndInterfacesTestCases()
-      => FindTypes(t => t.FullName.Contains(".TestCases.ExplicitBaseTypeAndInterfaces."))
+      => FindTypes(t => t.FullName!.Contains(".TestCases.ExplicitBaseTypeAndInterfaces."))
         .SelectMany(
           t => t.GetCustomAttributes<ExplicitBaseTypeAndInterfacesTestCaseAttribute>().Select(
             a => new object[] { a, t }

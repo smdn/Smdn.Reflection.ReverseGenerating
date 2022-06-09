@@ -1229,7 +1229,7 @@ namespace Smdn.Reflection.ReverseGenerating {
 
   partial class GeneratorTests {
     private static System.Collections.IEnumerable YieldMemberDeclarationTestCase()
-      => FindTypes(t => t.FullName.Contains(".TestCases.MemberDeclaration."))
+      => FindTypes(t => t.FullName!.Contains(".TestCases.MemberDeclaration."))
         .SelectMany(t => t.GetMembers(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static | BindingFlags.DeclaredOnly))
         .Where(m => m is not Type) // except nested type
         .SelectMany(
@@ -1253,7 +1253,7 @@ namespace Smdn.Reflection.ReverseGenerating {
       Assert.AreEqual(
         attrTestCase.Expected,
         Generator.GenerateMemberDeclaration(member, null, options),
-        message: $"{attrTestCase.SourceLocation} ({member.DeclaringType.FullName}.{member.Name})"
+        message: $"{attrTestCase.SourceLocation} ({member.DeclaringType!.FullName}.{member.Name})"
       );
     }
   }

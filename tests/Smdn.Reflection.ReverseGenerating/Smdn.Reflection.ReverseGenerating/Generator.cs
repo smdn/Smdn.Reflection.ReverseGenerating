@@ -1,5 +1,7 @@
 // SPDX-FileCopyrightText: 2020 smdn <smdn@smdn.jp>
 // SPDX-License-Identifier: MIT
+#nullable enable
+
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -11,8 +13,8 @@ namespace Smdn.Reflection.ReverseGenerating;
 
 public abstract class GeneratorTestCaseAttribute : Attribute {
   private readonly string expectedValue;
-  public Type ExpectedValueGeneratorType { get; set; } = null;
-  public string ExpectedValueGeneratorMemberName { get; set; } = null;
+  public Type? ExpectedValueGeneratorType { get; set; } = null;
+  public string? ExpectedValueGeneratorMemberName { get; set; } = null;
   public bool TranslateLanguagePrimitiveTypeDeclaration { get; set; } = true;
   public bool MemberWithNamespace { get; set; } = true;
   public bool MemberWithDeclaringTypeName { get; set; } = false;
@@ -24,8 +26,8 @@ public abstract class GeneratorTestCaseAttribute : Attribute {
   public bool TypeOmitEndOfStatement { get; set; } = false;
   public bool AttributeWithNamespace { get; set; } = true;
   public bool AttributeWithNamedArguments { get; set; } = false;
-  public Type TypeOfAttributeTypeFilterFunc { get; set; } = null;
-  public string NameOfAttributeTypeFilterFunc { get; set; } = null;
+  public Type? TypeOfAttributeTypeFilterFunc { get; set; } = null;
+  public string? NameOfAttributeTypeFilterFunc { get; set; } = null;
   public bool UseDefaultLiteral { get; set; } = false;
   public bool IgnorePrivateOrAssembly { get; set; } = false;
   public MethodBodyOption MethodBody { get; set; } = MethodBodyOption.EmptyImplementation;
@@ -33,7 +35,7 @@ public abstract class GeneratorTestCaseAttribute : Attribute {
 
   public string Expected {
     get {
-      if (ExpectedValueGeneratorType is null && ExpectedValueGeneratorMemberName is null)
+      if (ExpectedValueGeneratorType is null || ExpectedValueGeneratorMemberName is null)
         return expectedValue;
 
       var expectedValueGeneratorMember = ExpectedValueGeneratorType.GetMember(
@@ -43,9 +45,9 @@ public abstract class GeneratorTestCaseAttribute : Attribute {
       ).FirstOrDefault();
 
       return expectedValueGeneratorMember switch {
-        FieldInfo f => (string)f.GetValue(obj: null),
-        MethodInfo m => (string)m.Invoke(obj: null, parameters: null),
-        PropertyInfo p => (string)p.GetGetMethod(nonPublic: true)?.Invoke(obj: null, parameters: null),
+        FieldInfo f => (string)(f.GetValue(obj: null) ?? throw new InvalidOperationException("expected value must not be null")),
+        MethodInfo m => (string)(m.Invoke(obj: null, parameters: null) ?? throw new InvalidOperationException("expected value must not be null")),
+        PropertyInfo p => (string)(p.GetGetMethod(nonPublic: true)?.Invoke(obj: null, parameters: null) ?? throw new InvalidOperationException("expected value must not be null")),
         null => throw new InvalidOperationException($"member not found: {ExpectedValueGeneratorType.FullName}.{ExpectedValueGeneratorMemberName}"),
         _ => throw new InvalidOperationException($"invalid member type: {ExpectedValueGeneratorType.FullName}.{ExpectedValueGeneratorMemberName}"),
       };
@@ -109,7 +111,7 @@ public partial class GeneratorTests {
     attributeDeclarationOptions.WithNamedArguments = testCaseAttribute.AttributeWithNamedArguments;
 
     if (testCaseAttribute.TypeOfAttributeTypeFilterFunc is not null && !string.IsNullOrEmpty(testCaseAttribute.NameOfAttributeTypeFilterFunc)) {
-      var methodSignatureOfAttributeTypeFilter = typeof(AttributeTypeFilter).GetDelegateSignatureMethod();
+      var methodSignatureOfAttributeTypeFilter = typeof(AttributeTypeFilter).GetDelegateSignatureMethod() ?? throw new InvalidOperationException("cannot get delegate signature method");
       var filterFunc = testCaseAttribute.TypeOfAttributeTypeFilterFunc.GetMethod(
         name: testCaseAttribute.NameOfAttributeTypeFilterFunc,
         bindingAttr: BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic,

@@ -443,7 +443,7 @@ namespace Smdn.Reflection.ReverseGenerating {
     private static System.Collections.IEnumerable YieldTypeDeclarationTestCase(
       string namespaceOfTestCase
     )
-      => FindTypes(t => t.FullName.Contains(namespaceOfTestCase))
+      => FindTypes(t => t.FullName!.Contains(namespaceOfTestCase))
         .SelectMany(
           t => t.GetCustomAttributes<TypeDeclarationTestCaseAttribute>().Select(
             a => new object[] { a, t }

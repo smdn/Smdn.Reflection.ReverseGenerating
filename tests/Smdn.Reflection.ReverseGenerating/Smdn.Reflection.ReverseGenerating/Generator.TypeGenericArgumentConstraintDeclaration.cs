@@ -82,7 +82,7 @@ namespace Smdn.Reflection.ReverseGenerating {
 
   partial class GeneratorTests {
     private static System.Collections.IEnumerable YieldGenericArgumentConstraintDeclarationOfTypeTestCase()
-      => FindTypes(t => t.FullName.Contains(".TestCases.TypeGenericArgumentConstraints."))
+      => FindTypes(t => t.FullName!.Contains(".TestCases.TypeGenericArgumentConstraints."))
         .SelectMany(
           t => t.GetCustomAttributes<TypeGenericArgumentConstraintTestCaseAttribute>().Select(
             a => new object[] { a, t }

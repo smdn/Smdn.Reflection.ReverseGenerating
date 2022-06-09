@@ -114,7 +114,7 @@ namespace Smdn.Reflection.ReverseGenerating {
       string namespaceOfTestCase,
       Func<MemberInfo, bool> predicate
     )
-      => FindTypes(t => t.FullName.Contains(namespaceOfTestCase))
+      => FindTypes(t => t.FullName!.Contains(namespaceOfTestCase))
         .SelectMany(t => t
           .GetMembers(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static | BindingFlags.DeclaredOnly)
           .Prepend((MemberInfo)t) // prepend type itself as a test target
