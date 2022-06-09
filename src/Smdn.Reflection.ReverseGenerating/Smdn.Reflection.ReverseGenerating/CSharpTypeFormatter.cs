@@ -2,6 +2,9 @@
 // SPDX-License-Identifier: MIT
 using System;
 using System.Collections.Generic;
+#if NULL_STATE_STATIC_ANALYSIS_ATTRIBUTES
+using System.Diagnostics.CodeAnalysis;
+#endif
 using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
@@ -22,22 +25,22 @@ public static class CSharpFormatter /* ITypeFormatter */ {
   };
 
   private static readonly Dictionary<string, string> primitiveTypes = new(StringComparer.Ordinal) {
-    { typeof(void).FullName, "void" },
-    { typeof(sbyte).FullName, "sbyte" },
-    { typeof(short).FullName, "short" },
-    { typeof(int).FullName, "int" },
-    { typeof(long).FullName, "long" },
-    { typeof(byte).FullName, "byte" },
-    { typeof(ushort).FullName, "ushort" },
-    { typeof(uint).FullName, "uint" },
-    { typeof(ulong).FullName, "ulong" },
-    { typeof(float).FullName, "float" },
-    { typeof(double).FullName, "double" },
-    { typeof(decimal).FullName, "decimal" },
-    { typeof(char).FullName, "char" },
-    { typeof(string).FullName, "string" },
-    { typeof(object).FullName, "object" },
-    { typeof(bool).FullName, "bool" },
+    { typeof(void).FullName!, "void" },
+    { typeof(sbyte).FullName!, "sbyte" },
+    { typeof(short).FullName!, "short" },
+    { typeof(int).FullName!, "int" },
+    { typeof(long).FullName!, "long" },
+    { typeof(byte).FullName!, "byte" },
+    { typeof(ushort).FullName!, "ushort" },
+    { typeof(uint).FullName!, "uint" },
+    { typeof(ulong).FullName!, "ulong" },
+    { typeof(float).FullName!, "float" },
+    { typeof(double).FullName!, "double" },
+    { typeof(decimal).FullName!, "decimal" },
+    { typeof(char).FullName!, "char" },
+    { typeof(string).FullName!, "string" },
+    { typeof(object).FullName!, "object" },
+    { typeof(bool).FullName!, "bool" },
   };
 
   private static readonly HashSet<string> keywords = new(StringComparer.Ordinal) {
@@ -173,10 +176,16 @@ public static class CSharpFormatter /* ITypeFormatter */ {
   };
 
   public static string FormatAccessibility(Accessibility accessibility)
-    => accessibilities.TryGetValue(accessibility, out var ret) ? ret : null;
+    => accessibilities.TryGetValue(accessibility, out var ret) ? ret : string.Empty;
 
-  public static bool IsLanguagePrimitiveType(Type t, out string primitiveTypeName)
-    => primitiveTypes.TryGetValue(t.FullName, out primitiveTypeName);
+  public static bool IsLanguagePrimitiveType(
+    Type t,
+#if NULL_STATE_STATIC_ANALYSIS_ATTRIBUTES
+    [MaybeNullWhen(false)]
+#endif
+    out string primitiveTypeName
+  )
+    => primitiveTypes.TryGetValue(t.FullName ?? string.Empty, out primitiveTypeName);
 
   public static IEnumerable<string> ToNamespaceList(Type t)
     => t.GetNamespaces(static type => IsLanguagePrimitiveType(type, out _));
@@ -235,7 +244,7 @@ public static class CSharpFormatter /* ITypeFormatter */ {
       var typeAndName = string.Concat(
         p
           .ParameterType
-          .GetElementType()
+          .GetElementTypeOrThrow()
           .FormatTypeName(attributeProvider: p, typeWithNamespace: typeWithNamespace),
         " ",
         ToVerbatim(p.Name)
@@ -290,18 +299,20 @@ public static class CSharpFormatter /* ITypeFormatter */ {
 
     return ret.ToString();
 
-    static string ToVerbatim(string name)
+    static string? ToVerbatim(string? name)
     {
+      if (name is null)
+        return null;
       if (keywords.Contains(name))
         return "@" + name;
-      else
-        return name;
+
+      return name;
     }
   }
 
   public static string FormatTypeName(
     this Type t,
-    ICustomAttributeProvider attributeProvider = null,
+    ICustomAttributeProvider? attributeProvider = null,
     bool typeWithNamespace = true,
     bool withDeclaringTypeName = true,
     bool translateLanguagePrimitiveType = true
@@ -345,7 +356,7 @@ public static class CSharpFormatter /* ITypeFormatter */ {
   {
     if (t.IsArray) {
       return string.Concat(
-        FormatTypeName(t.GetElementType(), showVariance: false, options),
+        FormatTypeName(t.GetElementTypeOrThrow(), showVariance: false, options),
         "[",
         new string(',', t.GetArrayRank() - 1),
         "]"
@@ -353,10 +364,10 @@ public static class CSharpFormatter /* ITypeFormatter */ {
     }
 
     if (t.IsByRef)
-      return FormatTypeName(t.GetElementType(), showVariance: false, options) + "&";
+      return FormatTypeName(t.GetElementTypeOrThrow(), showVariance: false, options) + "&";
 
     if (t.IsPointer)
-      return FormatTypeName(t.GetElementType(), showVariance: false, options) + "*";
+      return FormatTypeName(t.GetElementTypeOrThrow(), showVariance: false, options) + "*";
 
     var nullableUnderlyingType = Nullable.GetUnderlyingType(t);
 
@@ -451,7 +462,7 @@ public static class CSharpFormatter /* ITypeFormatter */ {
       return n;
 
     if (options.WithDeclaringTypeName && t.IsNested)
-      return FormatTypeName(t.DeclaringType, showVariance, options) + "." + t.Name;
+      return FormatTypeName(t.GetDeclaringTypeOrThrow(), showVariance, options) + "." + t.Name;
     if (options.TypeWithNamespace)
       return t.Namespace + "." + t.Name;
 
@@ -481,7 +492,7 @@ public static class CSharpFormatter /* ITypeFormatter */ {
   }
 
   public static string FormatValueDeclaration(
-    object val,
+    object? val,
     Type typeOfValue,
     bool typeWithNamespace = true,
     bool findConstantField = false,
@@ -539,9 +550,9 @@ public static class CSharpFormatter /* ITypeFormatter */ {
         return $"({typeOfValue.FormatTypeName(typeWithNamespace: typeWithNamespace)}){Convert.ChangeType(val, typeOfValue.GetEnumUnderlyingType(), provider: null)}";
 
       if (typeOfValue.IsPrimitive && typeOfValue.IsValueType)
-        return val.ToString();
-      else
-        return null;
+        return val.ToString() ?? string.Empty;
+
+      return string.Empty;
     }
   }
 }

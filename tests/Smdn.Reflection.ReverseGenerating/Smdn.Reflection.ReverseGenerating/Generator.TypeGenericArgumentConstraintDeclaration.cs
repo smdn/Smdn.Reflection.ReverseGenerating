@@ -24,7 +24,7 @@ namespace Smdn.Reflection.ReverseGenerating {
 
   namespace TestCases {
     namespace TypeGenericArgumentConstraints {
-      [TypeGenericArgumentConstraintTestCase(null)]
+      [TypeGenericArgumentConstraintTestCase("")]
       public class C_TNone<T> { }
 
       [TypeGenericArgumentConstraintTestCase("where T : new()")]

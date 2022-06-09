@@ -3,7 +3,7 @@
 namespace Smdn.Reflection.ReverseGenerating;
 
 public class GeneratorOptions {
-  public string Indent { get; set; } = new string(' ', 2);
+  public string? Indent { get; set; } = new string(' ', 2);
 
   public bool IgnorePrivateOrAssembly { get; set; } = true;
 
@@ -33,7 +33,7 @@ public class GeneratorOptions {
   public class AttributeDeclarationOptions {
     public bool WithNamespace { get; set; } = false;
     public bool WithNamedArguments { get; set; } = false;
-    public AttributeTypeFilter TypeFilter { get; set; } = null;
+    public AttributeTypeFilter? TypeFilter { get; set; } = null;
   }
 
   public ValueDeclarationOptions ValueDeclaration { get; } = new();

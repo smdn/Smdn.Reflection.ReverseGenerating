@@ -9,7 +9,7 @@ SPDX-License-Identifier: MIT
     <VersionPrefix>1.0.5</VersionPrefix>
     <VersionSuffix></VersionSuffix>
     <PackageValidationBaselineVersion>1.0.0</PackageValidationBaselineVersion>
-    <Nullable>warnings</Nullable>
+    <Nullable>enable</Nullable>
     <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
     <DefineConstants Condition="
       !(

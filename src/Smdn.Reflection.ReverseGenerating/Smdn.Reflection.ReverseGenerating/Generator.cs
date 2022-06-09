@@ -17,7 +17,7 @@ namespace Smdn.Reflection.ReverseGenerating;
 public static partial class Generator {
   public static string GenerateTypeDeclaration(
     Type t,
-    ISet<string> referencingNamespaces,
+    ISet<string>? referencingNamespaces,
     GeneratorOptions options
   ) =>
     GenerateTypeDeclaration(
@@ -29,7 +29,7 @@ public static partial class Generator {
 
   public static IEnumerable<string> GenerateTypeDeclarationWithExplicitBaseTypeAndInterfaces(
     Type t,
-    ISet<string> referencingNamespaces,
+    ISet<string>? referencingNamespaces,
     GeneratorOptions options
   ) =>
     GenerateTypeDeclaration(
@@ -42,7 +42,7 @@ public static partial class Generator {
   private static IEnumerable<string> GenerateTypeDeclaration(
     Type t,
     bool generateExplicitBaseTypeAndInterfaces,
-    ISet<string> referencingNamespaces,
+    ISet<string>? referencingNamespaces,
     GeneratorOptions options
   )
   {
@@ -60,7 +60,7 @@ public static partial class Generator {
       .Select(
         arg => GenerateGenericArgumentConstraintDeclaration(arg, referencingNamespaces, options)
       )
-      .Where(static d => d != null)
+      .Where(static d => !string.IsNullOrEmpty(d))
       .ToList();
 
     string GetSingleLineGenericArgumentConstraintsDeclaration()
@@ -102,7 +102,7 @@ public static partial class Generator {
       yield break;
     }
 
-    string typeDeclaration = null;
+    string typeDeclaration;
 
     if (t.IsInterface) {
       typeDeclaration = $"{accessibilities}interface {typeName}";
@@ -114,7 +114,7 @@ public static partial class Generator {
       typeDeclaration = $"{accessibilities}{isReadOnly}{isByRefLike}struct {typeName}";
     }
     else {
-      string modifier = null;
+      string? modifier = null;
 
       if (t.IsAbstract && t.IsSealed)
         modifier = "static ";
@@ -159,7 +159,7 @@ public static partial class Generator {
 
   public static string GenerateGenericArgumentConstraintDeclaration(
     Type genericArgument,
-    ISet<string> referencingNamespaces,
+    ISet<string>? referencingNamespaces,
     GeneratorOptions options
   )
   {
@@ -197,7 +197,7 @@ public static partial class Generator {
 
     static IEnumerable<string> GetGenericArgumentConstraintsOf(
       Type genericParameter,
-      ISet<string> referencingNns,
+      ISet<string>? referencingNns,
       bool typeWithNamespace
     )
     {
@@ -262,13 +262,13 @@ public static partial class Generator {
 
     if (0 < constraints.Length)
       return $"where {genericArgument.FormatTypeName(typeWithNamespace: false)} : {constraints}";
-    else
-      return null;
+
+    return string.Empty;
   }
 
   public static IEnumerable<string> GenerateExplicitBaseTypeAndInterfaces(
     Type t,
-    ISet<string> referencingNamespaces,
+    ISet<string>? referencingNamespaces,
     GeneratorOptions options
   )
   {
@@ -293,9 +293,9 @@ public static partial class Generator {
       .Select(static type => type.Name);
   }
 
-  public static string GenerateMemberDeclaration(
+  public static string? GenerateMemberDeclaration(
     MemberInfo member,
-    ISet<string> referencingNamespaces,
+    ISet<string>? referencingNamespaces,
     GeneratorOptions options
   )
   {
@@ -318,9 +318,9 @@ public static partial class Generator {
     }
   }
 
-  private static string GenerateFieldDeclaration(
+  private static string? GenerateFieldDeclaration(
     FieldInfo field,
-    ISet<string> referencingNamespaces,
+    ISet<string>? referencingNamespaces,
     GeneratorOptions options
   )
   {
@@ -377,7 +377,7 @@ public static partial class Generator {
             useDefaultLiteral: options.ValueDeclaration.UseDefaultLiteral
           );
 
-          if (valueDeclaration == null) {
+          if (string.IsNullOrEmpty(valueDeclaration)) {
             var stringifiedValue = val switch {
               string s => s,
               DateTime dt => dt.ToString("o"),
@@ -387,7 +387,7 @@ public static partial class Generator {
                 formatProvider: CultureInfo.InvariantCulture // TODO: specific culture
               ),
               null => "null",
-              _ => val.ToString(),
+              _ => val.ToString() ?? string.Empty,
             };
 
             sb
@@ -416,9 +416,9 @@ public static partial class Generator {
     return sb.ToString();
   }
 
-  private static string GeneratePropertyDeclaration(
+  private static string? GeneratePropertyDeclaration(
     PropertyInfo property,
-    ISet<string> referencingNamespaces,
+    ISet<string>? referencingNamespaces,
     GeneratorOptions options
   )
   {
@@ -490,7 +490,7 @@ public static partial class Generator {
       sb.Append(
         GenerateMemberName(
           property,
-          memberOptions.WithDeclaringTypeName ? defaultMemberName : "this",
+          memberOptions.WithDeclaringTypeName ? defaultMemberName! : "this",
           options
         )
       );
@@ -543,7 +543,7 @@ public static partial class Generator {
       if (explicitInterface == null && 0 < getAccessibility.Length)
         sb.Append(getAccessibility).Append(' ');
 
-      sb.Append("get").Append(GenerateAccessorBody(property.GetMethod, options));
+      sb.Append("get").Append(GenerateAccessorBody(property.GetMethod!, options));
     }
 
     if (emitSetAccessor) {
@@ -555,7 +555,7 @@ public static partial class Generator {
       else
         sb.Append("set");
 
-      sb.Append(GenerateAccessorBody(property.SetMethod, options));
+      sb.Append(GenerateAccessorBody(property.SetMethod!, options));
     }
 
     sb.Append('}');
@@ -579,9 +579,9 @@ public static partial class Generator {
     }
   }
 
-  private static string GenerateMethodBaseDeclaration(
+  private static string? GenerateMethodBaseDeclaration(
     MethodBase m,
-    ISet<string> referencingNamespaces,
+    ISet<string>? referencingNamespaces,
     GeneratorOptions options
   )
   {
@@ -639,9 +639,9 @@ public static partial class Generator {
             .Select(
               arg => Generator.GenerateGenericArgumentConstraintDeclaration(arg, referencingNamespaces, options)
             )
-            .Where(static d => d != null)
+            .Where(static d => !string.IsNullOrEmpty(d))
         );
-    string methodName = null;
+    string? methodName = null;
 
     var endOfStatement = memberOptions.OmitEndOfStatement
       ? string.Empty
@@ -744,7 +744,7 @@ public static partial class Generator {
 
   private static string GenerateParameterDeclaration(
     ParameterInfo p,
-    ISet<string> referencingNamespaces,
+    ISet<string>? referencingNamespaces,
     GeneratorOptions options
   )
   {
@@ -767,7 +767,7 @@ public static partial class Generator {
 
   private static string GenerateParameterAttributeList(
     ParameterInfo p,
-    ISet<string> referencingNamespaces,
+    ISet<string>? referencingNamespaces,
     GeneratorOptions options
   )
     => string.Join(
@@ -779,9 +779,9 @@ public static partial class Generator {
       )
     );
 
-  private static string GenerateEventDeclaration(
+  private static string? GenerateEventDeclaration(
     EventInfo ev,
-    ISet<string> referencingNamespaces,
+    ISet<string>? referencingNamespaces,
     GeneratorOptions options
   )
   {
@@ -802,7 +802,7 @@ public static partial class Generator {
       return null;
     }
 
-    referencingNamespaces?.UnionWith(CSharpFormatter.ToNamespaceList(ev.EventHandlerType));
+    referencingNamespaces?.UnionWith(CSharpFormatter.ToNamespaceList(ev.GetEventHandlerTypeOrThrow()));
 
     var sb = new StringBuilder();
     var memberOptions = options.MemberDeclaration;
@@ -813,7 +813,7 @@ public static partial class Generator {
     sb
       .Append("event ")
       .Append(
-        ev.EventHandlerType.FormatTypeName(
+        ev.GetEventHandlerTypeOrThrow().FormatTypeName(
           attributeProvider: ev,
           typeWithNamespace: memberOptions.WithNamespace
         )
@@ -894,12 +894,12 @@ public static partial class Generator {
     if (member.GetDeclaringTypeOrThrow().IsInterface)
       return string.Empty;
 
-    var modifiers = new List<string>();
-    string accessibility = null;
+    var modifiers = new List<string?>();
+    string? accessibility = null;
 
     modifiers.Add(null); // placeholder for accessibility
 
-    static IEnumerable<string> GetModifiersOfMethod(MethodBase m)
+    static IEnumerable<string> GetModifiersOfMethod(MethodBase? m)
     {
       if (m == null)
         yield break;

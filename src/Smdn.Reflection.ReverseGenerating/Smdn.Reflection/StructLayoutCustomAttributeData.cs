@@ -9,7 +9,7 @@ namespace Smdn.Reflection;
 
 internal class StructLayoutCustomAttributeData : CustomAttributeData {
   private struct DefaultLayoutStruct { }
-  private static readonly StructLayoutAttribute DefaultStructLayoutAttribute = typeof(DefaultLayoutStruct).StructLayoutAttribute;
+  private static readonly StructLayoutAttribute DefaultStructLayoutAttribute = typeof(DefaultLayoutStruct).StructLayoutAttribute!;
 
   public StructLayoutCustomAttributeData(StructLayoutAttribute attr)
   {
@@ -60,14 +60,14 @@ internal class StructLayoutCustomAttributeData : CustomAttributeData {
   }
 
 #if CAN_OVERRIDE_CUSTOMATTRIBUTEDATA_ATTRIBUTETYPE
-  public override Type AttributeType => Constructor.DeclaringType;
+  public override Type AttributeType => Constructor.DeclaringType!;
 #endif
   public override ConstructorInfo Constructor { get; } = typeof(StructLayoutAttribute).GetConstructor(
     bindingAttr: BindingFlags.Public | BindingFlags.Instance,
     binder: null,
     types: new[] { typeof(LayoutKind) },
     modifiers: null
-  );
+  )!;
   public override IList<CustomAttributeTypedArgument> ConstructorArguments { get; }
   public override IList<CustomAttributeNamedArgument> NamedArguments { get; }
 }

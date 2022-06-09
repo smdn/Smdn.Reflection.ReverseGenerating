@@ -14,7 +14,7 @@ partial class Generator {
 #pragma warning restore IDE0040
   public static IEnumerable<string> GenerateAttributeList(
     ICustomAttributeProvider attributeProvider,
-    ISet<string> referencingNamespaces,
+    ISet<string>? referencingNamespaces,
     GeneratorOptions options
   )
   {
@@ -35,7 +35,7 @@ partial class Generator {
 
     static IEnumerable<CustomAttributeData> GetAttributes(
       ICustomAttributeProvider attributeProvider,
-      AttributeTypeFilter filter
+      AttributeTypeFilter? filter
     )
     {
       foreach (var attr in attributeProvider.GetCustomAttributeDataList()) {
@@ -52,13 +52,20 @@ partial class Generator {
         !t.IsStructLayoutDefault()
       ) {
         // yield pseudo CustomAttributeData for StructLayoutAttribute
-        yield return new StructLayoutCustomAttributeData(t.StructLayoutAttribute);
+        yield return new StructLayoutCustomAttributeData(
+          t.StructLayoutAttribute ?? throw new InvalidOperationException($"can not get {nameof(Type.StructLayoutAttribute)} of {t}")
+        );
       }
     }
 
     string ConvertAttributeName(CustomAttributeData attr)
     {
-      referencingNamespaces?.Add(attr.GetAttributeType().Namespace);
+      if (referencingNamespaces is not null) {
+        var attributeTypeNamespace = attr.GetAttributeType().Namespace;
+
+        if (attributeTypeNamespace is not null)
+          referencingNamespaces.Add(attributeTypeNamespace);
+      }
 
       var nameOfAttr = attr
         .GetAttributeType()
