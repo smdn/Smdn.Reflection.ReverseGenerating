@@ -6,6 +6,7 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Threading;
+using System.Threading.Tasks;
 using NUnit.Framework;
 
 namespace Smdn.Reflection.ReverseGenerating {
@@ -523,6 +524,31 @@ namespace Smdn.Reflection.ReverseGenerating {
 
           public class Unsafe {
             [MemberDeclarationTestCase("public unsafe void M(int* x) {}")] public unsafe void M(int* x) { }
+          }
+
+          public class Async {
+            [MemberDeclarationTestCase("public async void M0() {}")]
+            public async void M0() { await Task.Delay(0); }
+
+            [MemberDeclarationTestCase("public async System.Threading.Tasks.Task MTask1() {}")]
+            public async Task MTask1() { await Task.Delay(0); }
+
+            [MemberDeclarationTestCase("public async System.Threading.Tasks.Task<int> MTask2() {}")]
+            public async Task<int> MTask2() { await Task.Delay(0); return 0; }
+
+            [MemberDeclarationTestCase("public System.Threading.Tasks.Task MTask3() {}")]
+            public Task MTask3() => Task.Delay(0);
+
+#if SYSTEM_THREADING_TASKS_VALUETASK
+            [MemberDeclarationTestCase("public async System.Threading.Tasks.ValueTask MValueTask1() {}")]
+            public async ValueTask MValueTask1() { await Task.Delay(0); }
+
+            [MemberDeclarationTestCase("public async System.Threading.Tasks.ValueTask<int> MValueTask2() {}")]
+            public async ValueTask<int> MValueTask2() { await Task.Delay(0); return 0; }
+
+            [MemberDeclarationTestCase("public System.Threading.Tasks.ValueTask MValueTask3() {}")]
+            public ValueTask MValueTask3() => new ValueTask();
+#endif
           }
         }
 

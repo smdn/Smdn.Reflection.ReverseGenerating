@@ -880,7 +880,7 @@ public static partial class Generator {
   private static string GetMemberModifierOf(MemberInfo member, GeneratorOptions options)
     => GetMemberModifierOf(member, options.MemberDeclaration, out _, out _);
 
-  // TODO: async, extern, volatile
+  // TODO: extern, volatile
   private static string GetMemberModifierOf(
     MemberInfo member,
     GeneratorOptions.MemberDeclarationOptions memberOptions,
@@ -921,6 +921,13 @@ public static partial class Generator {
       else if (m.IsVirtual && !m.IsFinal) {
         yield return "virtual";
       }
+
+      var isAsyncStateMachine = m.GetCustomAttributesData().Any(
+        static d => string.Equals(d.AttributeType.FullName, "System.Runtime.CompilerServices.AsyncStateMachineAttribute", StringComparison.Ordinal)
+      );
+
+      if (isAsyncStateMachine)
+        yield return "async";
 
       if (mm != null && mm.GetParameters().Any(static p => p.ParameterType.IsPointer))
         yield return "unsafe";
