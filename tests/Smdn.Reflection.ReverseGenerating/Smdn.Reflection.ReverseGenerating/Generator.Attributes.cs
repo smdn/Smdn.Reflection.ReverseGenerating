@@ -72,6 +72,10 @@ namespace Smdn.Reflection.ReverseGenerating {
           [return: AttributeTestCase("[return: System.Xml.Serialization.XmlIgnore]")]
           [return: System.Xml.Serialization.XmlIgnore]
           public bool M1() => throw new NotImplementedException();
+
+          [return: AttributeTestCase("[return: System.Xml.Serialization.XmlIgnore]")]
+          [return: System.Xml.Serialization.XmlIgnore]
+          public delegate bool D0();
         }
 
         class AttributeTargetsParameter {
@@ -98,6 +102,26 @@ namespace Smdn.Reflection.ReverseGenerating {
             [CallerLineNumber]
             int sourceLineNumber = default
           ) => throw new NotImplementedException();
+
+          [MemberDeclarationTestCase(
+            "public delegate bool D([CallerMemberName, Optional] string memberName = \"\")",
+            AttributeWithNamespace = false,
+            MethodBody = MethodBodyOption.None
+          )]
+          public delegate bool D(
+#if false
+            [AttributeTestCase(
+              "[System.Runtime.CompilerServices.CallerMemberName], [System.Runtime.InteropServices.Optional]",
+              AttributeWithNamespace = true
+            )]
+            [AttributeTestCase(
+              "[CallerMemberName], [Optional]",
+              AttributeWithNamespace = false
+            )]
+#endif
+            [CallerMemberNameAttribute]
+            string memberName = ""
+          );
         }
 
         public class AttributeTargetsReturnParameter {
@@ -113,6 +137,19 @@ namespace Smdn.Reflection.ReverseGenerating {
           )]
           [return: System.Xml.Serialization.XmlIgnore]
           public string M() => throw new NotImplementedException();
+
+          [MemberDeclarationTestCase(
+            "[return: System.Xml.Serialization.XmlIgnore] public delegate bool D()",
+            AttributeWithNamespace = true,
+            MethodBody = MethodBodyOption.None
+          )]
+          [MemberDeclarationTestCase(
+            "[return: XmlIgnore] public delegate bool D()",
+            AttributeWithNamespace = false,
+            MethodBody = MethodBodyOption.None
+          )]
+          [return: System.Xml.Serialization.XmlIgnore]
+          public delegate bool D();
         }
 
 #pragma warning restore CS0414
