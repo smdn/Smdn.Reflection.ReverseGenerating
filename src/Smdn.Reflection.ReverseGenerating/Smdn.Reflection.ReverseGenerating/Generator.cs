@@ -569,7 +569,11 @@ public static partial class Generator {
 
     static string GenerateAccessorBody(MethodInfo accessor, GeneratorOptions opts)
     {
-      return (accessor.IsAbstract ? MethodBodyOption.EmptyImplementation : opts.MemberDeclaration.MethodBody) switch {
+      var bodyOption = accessor.IsAbstract
+        ? MethodBodyOption.EmptyImplementation
+        : opts.MemberDeclaration.MethodBody;
+
+      return bodyOption switch {
         MethodBodyOption.ThrowNotImplementedException => " => throw new NotImplementedException(); ",
         MethodBodyOption.ThrowNull => " => throw null; ",
 
@@ -643,18 +647,6 @@ public static partial class Generator {
             .Where(static d => !string.IsNullOrEmpty(d))
         );
     string? methodName = null;
-
-    var endOfStatement = memberOptions.OmitEndOfStatement
-      ? string.Empty
-      : ";";
-
-    var methodBody = memberOptions.MethodBody switch {
-      MethodBodyOption.None => null,
-      MethodBodyOption.EmptyImplementation => m.IsAbstract ? endOfStatement : " {}",
-      MethodBodyOption.ThrowNotImplementedException => m.IsAbstract ? endOfStatement : " => throw new NotImplementedException()" + endOfStatement,
-      MethodBodyOption.ThrowNull => m.IsAbstract ? endOfStatement : " => throw null" + endOfStatement,
-      _ => throw new InvalidOperationException($"invalid value of {nameof(MethodBodyOption)} ({memberOptions.MethodBody})"),
-    };
 
     referencingNamespaces?.UnionWith(
       m
@@ -739,7 +731,26 @@ public static partial class Generator {
     if (!string.IsNullOrEmpty(methodConstraints))
       sb.Append(' ').Append(methodConstraints);
 
-    sb.Append(methodBody);
+    var endOfStatement = memberOptions.OmitEndOfStatement
+      ? null
+      : ";";
+    var (methodBody, endOfMethodBody) = m.IsAbstract
+      ? memberOptions.MethodBody switch {
+          MethodBodyOption.None => (null, null),
+          MethodBodyOption.EmptyImplementation or
+          MethodBodyOption.ThrowNotImplementedException or
+          MethodBodyOption.ThrowNull => (null, endOfStatement),
+          _ => throw new InvalidOperationException($"invalid value of {nameof(MethodBodyOption)} ({memberOptions.MethodBody})"),
+        }
+      : memberOptions.MethodBody switch {
+          MethodBodyOption.None => (null, null),
+          MethodBodyOption.EmptyImplementation => (" {}", null),
+          MethodBodyOption.ThrowNotImplementedException => (" => throw new NotImplementedException()", endOfStatement),
+          MethodBodyOption.ThrowNull => (" => throw null", endOfStatement),
+          _ => throw new InvalidOperationException($"invalid value of {nameof(MethodBodyOption)} ({memberOptions.MethodBody})"),
+        };
+
+    sb.Append(methodBody).Append(endOfMethodBody);
 
     return sb.ToString();
   }
