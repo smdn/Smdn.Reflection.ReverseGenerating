@@ -305,6 +305,7 @@ namespace Smdn.Reflection.ReverseGenerating {
             [MemberDeclarationTestCase("public abstract int P { get; set; }", MethodBody = MethodBodyOption.None)]
             [MemberDeclarationTestCase("public abstract int P { get; set; }", MethodBody = MethodBodyOption.EmptyImplementation)]
             [MemberDeclarationTestCase("public abstract int P { get; set; }", MethodBody = MethodBodyOption.ThrowNotImplementedException)]
+            [MemberDeclarationTestCase("public abstract int P { get; set; }", MethodBody = MethodBodyOption.ThrowNull)]
             [MemberDeclarationTestCase("public abstract int Abstract.P { get; set; }", MemberWithDeclaringTypeName = true, MemberWithNamespace = false, MethodBody = MethodBodyOption.None)]
             [MemberDeclarationTestCase("public abstract int Smdn.Reflection.ReverseGenerating.TestCases.MemberDeclaration.Properties.Options.Abstract.P { get; set; }", MemberWithDeclaringTypeName = true, MemberWithNamespace = true, MethodBody = MethodBodyOption.None)]
             public abstract int P { get; set; }
@@ -314,6 +315,7 @@ namespace Smdn.Reflection.ReverseGenerating {
             [MemberDeclarationTestCase("public int P { get; set; }", MethodBody = MethodBodyOption.None)]
             [MemberDeclarationTestCase("public int P { get; set; }", MethodBody = MethodBodyOption.EmptyImplementation)]
             [MemberDeclarationTestCase("public int P { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }", MethodBody = MethodBodyOption.ThrowNotImplementedException)]
+            [MemberDeclarationTestCase("public int P { get => throw null; set => throw null; }", MethodBody = MethodBodyOption.ThrowNull)]
             [MemberDeclarationTestCase("public int NonAbstract.P { get; set; }", MemberWithDeclaringTypeName = true, MemberWithNamespace = false, MethodBody = MethodBodyOption.None)]
             [MemberDeclarationTestCase("public int Smdn.Reflection.ReverseGenerating.TestCases.MemberDeclaration.Properties.Options.NonAbstract.P { get; set; }", MemberWithDeclaringTypeName = true, MemberWithNamespace = true, MethodBody = MethodBodyOption.None)]
             public int P { get; set; }
@@ -472,6 +474,8 @@ namespace Smdn.Reflection.ReverseGenerating {
             [MemberDeclarationTestCase("public abstract void M()", MethodBody = MethodBodyOption.EmptyImplementation, MemberOmitEndOfStatement = true)]
             [MemberDeclarationTestCase("public abstract void M();", MethodBody = MethodBodyOption.ThrowNotImplementedException)]
             [MemberDeclarationTestCase("public abstract void M()", MethodBody = MethodBodyOption.ThrowNotImplementedException, MemberOmitEndOfStatement = true)]
+            [MemberDeclarationTestCase("public abstract void M();", MethodBody = MethodBodyOption.ThrowNull)]
+            [MemberDeclarationTestCase("public abstract void M()", MethodBody = MethodBodyOption.ThrowNull, MemberOmitEndOfStatement = true)]
             [MemberDeclarationTestCase("public abstract void Abstract.M()", MemberWithDeclaringTypeName = true, MemberWithNamespace = false, MethodBody = MethodBodyOption.None)]
             [MemberDeclarationTestCase("public abstract void Smdn.Reflection.ReverseGenerating.TestCases.MemberDeclaration.Methods.Options.Abstract.M()", MemberWithDeclaringTypeName = true, MemberWithNamespace = true, MethodBody = MethodBodyOption.None)]
             public abstract void M();
@@ -483,6 +487,8 @@ namespace Smdn.Reflection.ReverseGenerating {
             [MemberDeclarationTestCase("public void M() {}", MethodBody = MethodBodyOption.EmptyImplementation, MemberOmitEndOfStatement = true)]
             [MemberDeclarationTestCase("public void M() => throw new NotImplementedException();", MethodBody = MethodBodyOption.ThrowNotImplementedException)]
             [MemberDeclarationTestCase("public void M() => throw new NotImplementedException()", MethodBody = MethodBodyOption.ThrowNotImplementedException, MemberOmitEndOfStatement = true)]
+            [MemberDeclarationTestCase("public void M() => throw null;", MethodBody = MethodBodyOption.ThrowNull)]
+            [MemberDeclarationTestCase("public void M() => throw null", MethodBody = MethodBodyOption.ThrowNull, MemberOmitEndOfStatement = true)]
             [MemberDeclarationTestCase("public void NonAbstract.M()", MemberWithDeclaringTypeName = true, MemberWithNamespace = false, MethodBody = MethodBodyOption.None)]
             [MemberDeclarationTestCase("public void Smdn.Reflection.ReverseGenerating.TestCases.MemberDeclaration.Methods.Options.NonAbstract.M()", MemberWithDeclaringTypeName = true, MemberWithNamespace = true, MethodBody = MethodBodyOption.None)]
             public void M() => throw new NotImplementedException();

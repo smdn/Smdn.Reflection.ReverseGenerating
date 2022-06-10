@@ -571,6 +571,7 @@ public static partial class Generator {
     {
       return (accessor.IsAbstract ? MethodBodyOption.EmptyImplementation : opts.MemberDeclaration.MethodBody) switch {
         MethodBodyOption.ThrowNotImplementedException => " => throw new NotImplementedException(); ",
+        MethodBodyOption.ThrowNull => " => throw null; ",
 
         // MethodBodyOption.None or
         // MethodBodyOption.EmptyImplementation or
@@ -651,6 +652,7 @@ public static partial class Generator {
       MethodBodyOption.None => null,
       MethodBodyOption.EmptyImplementation => m.IsAbstract ? endOfStatement : " {}",
       MethodBodyOption.ThrowNotImplementedException => m.IsAbstract ? endOfStatement : " => throw new NotImplementedException()" + endOfStatement,
+      MethodBodyOption.ThrowNull => m.IsAbstract ? endOfStatement : " => throw null" + endOfStatement,
       _ => throw new InvalidOperationException($"invalid value of {nameof(MethodBodyOption)} ({memberOptions.MethodBody})"),
     };
 

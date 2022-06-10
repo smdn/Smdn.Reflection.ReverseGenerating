@@ -6,5 +6,5 @@ public enum MethodBodyOption {
   None,
   EmptyImplementation,
   ThrowNotImplementedException,
-  // TODO: throw null
+  ThrowNull,
 }
