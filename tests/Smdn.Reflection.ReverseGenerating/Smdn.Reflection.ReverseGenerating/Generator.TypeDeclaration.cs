@@ -227,10 +227,10 @@ namespace Smdn.Reflection.ReverseGenerating {
         [TypeDeclarationTestCase("public delegate void D3<T1, T2, T3>(T1 x, T2 y, T3 z);")] public delegate void D3<T1, T2, T3>(T1 x, T2 y, T3 z);
 
         namespace Constraints1 {
-#nullable enable
+#nullable enable annotations
           [TypeDeclarationTestCase("public class C0_NullableEnableContext<T>")] public class C0_NullableEnableContext<T> { }
 #nullable restore
-#nullable disable
+#nullable disable annotations
           [TypeDeclarationTestCase("public class C0_NullableDisableContext<T>")] public class C0_NullableDisableContext<T> { }
 #nullable restore
 
@@ -257,7 +257,7 @@ namespace Smdn.Reflection.ReverseGenerating {
           [TypeDeclarationTestCase("public class C14_0<T> where T : unmanaged")] public class C14_0<T> where T : unmanaged { }
           [TypeDeclarationTestCase("public class C14_1<T> where T : unmanaged, System.IDisposable")] public class C14_1<T> where T : unmanaged, IDisposable { }
 
-#nullable enable
+#nullable enable annotations
           [TypeDeclarationTestCase("public class C15_0_NullableEnableContext<T> where T : notnull")]
           public class C15_0_NullableEnableContext<T> where T : notnull { }
 
@@ -270,7 +270,7 @@ namespace Smdn.Reflection.ReverseGenerating {
           [TypeDeclarationTestCase("public class C15_3_NullableEnableContext<T> where T : notnull, System.IDisposable")]
           public class C15_3_NullableEnableContext<T> where T : notnull, IDisposable { }
 #nullable restore
-#nullable disable
+#nullable disable annotations
           [TypeDeclarationTestCase("public class C15_0_NullableDisableContext<T> where T : notnull")]
           public class C15_0_NullableDisableContext<T> where T : notnull { }
 

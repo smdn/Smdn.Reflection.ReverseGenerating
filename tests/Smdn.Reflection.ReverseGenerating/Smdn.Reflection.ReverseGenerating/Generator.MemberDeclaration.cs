@@ -852,10 +852,10 @@ namespace Smdn.Reflection.ReverseGenerating {
           }
 
           public class Constraints1 {
-#nullable enable
+#nullable enable annotations
             [MemberDeclarationTestCase("public T M0_NullableEnableContext<T>(T x) {}")] public T M0_NullableEnableContext<T>(T x) => throw new NotImplementedException();
 #nullable restore
-#nullable disable
+#nullable disable annotations
             [MemberDeclarationTestCase("public T M0_NullableDisableContext<T>(T x) {}")] public T M0_NullableDisableContext<T>(T x) => throw new NotImplementedException();
 #nullable restore
             [MemberDeclarationTestCase("public T M1<T>(T x) where T : new() {}")] public T M1<T>(T x) where T : new() => throw new NotImplementedException();
@@ -878,7 +878,7 @@ namespace Smdn.Reflection.ReverseGenerating {
             [MemberDeclarationTestCase("public T M12<T>(T x) where T : System.Delegate {}")] public T M12<T>(T x) where T : System.Delegate => throw new NotImplementedException();
             [MemberDeclarationTestCase("public T M13<T>(T x) where T : System.MulticastDelegate {}")] public T M13<T>(T x) where T : System.MulticastDelegate => throw new NotImplementedException();
 
-#nullable enable
+#nullable enable annotations
             [MemberDeclarationTestCase("public void M14_0_NullableEnableContext<T0, T1>(T0 t0, T1 t1) where T0 : notnull {}")]
             public void M14_0_NullableEnableContext<T0, T1>(T0 t0, T1 t1) where T0 : notnull => throw new NotImplementedException();
 
@@ -891,7 +891,7 @@ namespace Smdn.Reflection.ReverseGenerating {
             [MemberDeclarationTestCase("public void M14_3_NullableEnableContext<T>(T t) where T : notnull, System.IDisposable {}")]
             public void M14_3_NullableEnableContext<T>(T t) where T : notnull, IDisposable => throw new NotImplementedException();
 #nullable restore
-#nullable disable
+#nullable disable annotations
             [MemberDeclarationTestCase("public void M14_0_NullableDisableContext<T0, T1>(T0 t0, T1 t1) where T0 : notnull {}")]
             public void M14_0_NullableDisableContext<T0, T1>(T0 t0, T1 t1) where T0 : notnull => throw new NotImplementedException();
 
