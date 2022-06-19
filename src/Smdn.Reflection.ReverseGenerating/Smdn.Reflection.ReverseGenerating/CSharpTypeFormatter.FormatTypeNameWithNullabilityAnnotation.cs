@@ -47,13 +47,13 @@ static partial class CSharpFormatter {
 
     if (targetType.IsByRef) {
       return builder
-        .Append(FormatTypeName(targetType.GetElementTypeOrThrow(), showVariance: false, options))
+        .Append(FormatTypeNameCore(targetType.GetElementTypeOrThrow(), showVariance: false, options))
         .Append('&');
     }
 
     if (targetType.IsPointer) {
       return builder
-        .Append(FormatTypeName(targetType.GetElementTypeOrThrow(), showVariance: false, options))
+        .Append(FormatTypeNameCore(targetType.GetElementTypeOrThrow(), showVariance: false, options))
         .Append('*');
     }
 
@@ -86,7 +86,7 @@ static partial class CSharpFormatter {
       builder.Append(targetType.Namespace).Append('.');
 
     if (options.WithDeclaringTypeName && targetType.IsNested)
-      builder.Append(FormatTypeName(targetType.GetDeclaringTypeOrThrow(), showVariance: false, options)).Append('.');
+      builder.Append(FormatTypeNameCore(targetType.GetDeclaringTypeOrThrow(), showVariance: false, options)).Append('.');
 
     return builder.Append(targetType.Name).Append(GetNullabilityAnnotation(target));
   }
@@ -113,7 +113,7 @@ static partial class CSharpFormatter {
           );
         }
 
-        builder.Append(FormatTypeName(declaringType, showVariance: true, options)).Append('.');
+        builder.Append(FormatTypeNameCore(declaringType, showVariance: true, options)).Append('.');
       }
 
       genericTypeArguments = genericTypeArguments.Skip(genericArgsOfDeclaringType.Length);
