@@ -14,7 +14,7 @@ namespace Smdn.Reflection.ReverseGenerating;
 #pragma warning disable IDE0040
 static partial class CSharpFormatter {
 #pragma warning restore IDE0040
-  private readonly /*ref*/ struct FormatTypeNameOptions {
+  private readonly struct FormatTypeNameOptions {
     public readonly ICustomAttributeProvider AttributeProvider;
     public readonly bool TypeWithNamespace;
     public readonly bool WithDeclaringTypeName;
