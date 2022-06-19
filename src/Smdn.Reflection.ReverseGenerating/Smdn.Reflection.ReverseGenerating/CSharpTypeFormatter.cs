@@ -14,7 +14,7 @@ using Smdn.Reflection.Attributes;
 
 namespace Smdn.Reflection.ReverseGenerating;
 
-public static class CSharpFormatter /* ITypeFormatter */ {
+public static partial class CSharpFormatter /* ITypeFormatter */ {
   private static readonly Dictionary<Accessibility, string> accessibilities = new() {
     { Accessibility.Public,            "public" },
     { Accessibility.Assembly,          "internal" },
@@ -468,6 +468,38 @@ public static class CSharpFormatter /* ITypeFormatter */ {
 
     return t.Name;
   }
+
+  public static string FormatTypeName(
+    this FieldInfo f,
+#if SYSTEM_REFLECTION_NULLABILITYINFOCONTEXT
+    NullabilityInfoContext context,
+#endif
+    bool typeWithNamespace = true,
+    bool withDeclaringTypeName = true,
+    bool translateLanguagePrimitiveType = true
+  )
+    =>
+#if SYSTEM_REFLECTION_NULLABILITYINFOCONTEXT
+      context is not null
+        ? FormatTypeNameWithNullabilityAnnotation(
+            context.Create(f ?? throw new ArgumentNullException(nameof(f))),
+            builder: new(capacity: 32),
+            options: new FormatTypeNameOptions(
+              attributeProvider: f,
+              typeWithNamespace: typeWithNamespace,
+              withDeclaringTypeName: withDeclaringTypeName,
+              translateLanguagePrimitiveType: translateLanguagePrimitiveType
+            )
+          ).ToString()
+        :
+#endif
+      FormatTypeName(
+        (f ?? throw new ArgumentNullException(nameof(f))).FieldType,
+        attributeProvider: null,
+        typeWithNamespace: typeWithNamespace,
+        withDeclaringTypeName: withDeclaringTypeName,
+        translateLanguagePrimitiveType: translateLanguagePrimitiveType
+      );
 
   public static string EscapeString(
     string s,

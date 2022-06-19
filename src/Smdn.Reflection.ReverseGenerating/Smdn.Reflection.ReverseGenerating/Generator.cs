@@ -359,9 +359,13 @@ public static partial class Generator {
       sb
         .Append(GetMemberModifierOf(field, options))
         .Append(
-          field.FieldType.FormatTypeName(
-            attributeProvider: field,
+          field.FormatTypeName(
+#pragma warning disable SA1114
+#if SYSTEM_REFLECTION_NULLABILITYINFOCONTEXT
+            context: new NullabilityInfoContext(),
+#endif
             typeWithNamespace: memberOptions.WithNamespace
+#pragma warning restore SA1114
           )
         )
         .Append(' ')
