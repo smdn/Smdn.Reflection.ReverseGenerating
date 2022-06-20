@@ -45,17 +45,8 @@ static partial class CSharpFormatter {
 
     var targetType = target.Type;
 
-    if (targetType.IsByRef) {
-      return builder
-        .Append(FormatTypeNameCore(targetType.GetElementTypeOrThrow(), showVariance: false, options))
-        .Append('&');
-    }
-
-    if (targetType.IsPointer) {
-      return builder
-        .Append(FormatTypeNameCore(targetType.GetElementTypeOrThrow(), showVariance: false, options))
-        .Append('*');
-    }
+    if (targetType.IsByRef || targetType.IsPointer)
+      return builder.Append(FormatTypeNameCore(targetType, showVariance: false, options));
 
     if (IsValueTupleType(targetType) && 0 < target.GenericTypeArguments.Length)
       return FormatValueTuple(target, builder, options);

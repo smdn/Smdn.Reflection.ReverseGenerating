@@ -49,8 +49,21 @@ static partial class CSharpFormatter {
       );
     }
 
-    if (t.IsByRef)
-      return FormatTypeNameCore(t.GetElementTypeOrThrow(), showVariance: false, options) + "&";
+    if (t.IsByRef) {
+      var typeName = FormatTypeNameCore(t.GetElementTypeOrThrow(), showVariance: false, options);
+
+      if (options.AttributeProvider is ParameterInfo p) {
+        if (p.IsIn)
+          return "in " + typeName;
+        else if (p.IsOut)
+          return "out " + typeName;
+        else
+          return "ref " + typeName;
+      }
+      else {
+        return typeName + "&";
+      }
+    }
 
     if (t.IsPointer)
       return FormatTypeNameCore(t.GetElementTypeOrThrow(), showVariance: false, options) + "*";

@@ -240,24 +240,7 @@ public static partial class CSharpFormatter /* ITypeFormatter */ {
   {
     var ret = new StringBuilder(capacity: 64);
 
-    if (p.ParameterType.IsByRef) {
-      if (p.IsIn)
-        ret.Append("in ");
-      else if (p.IsOut)
-        ret.Append("out ");
-      else
-        ret.Append("ref ");
-
-      ret.Append(
-        p
-          .ParameterType
-          .GetElementTypeOrThrow()
-          .FormatTypeName(attributeProvider: p, typeWithNamespace: typeWithNamespace)
-      );
-
-      AppendName(ret, p);
-    }
-    else if (
+    if (
       p.Position == 0 &&
       p.Member.GetCustomAttributesData().Any(
         static d => string.Equals(typeof(ExtensionAttribute).FullName, d.AttributeType.FullName, StringComparison.Ordinal)
