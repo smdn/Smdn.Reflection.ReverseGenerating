@@ -241,48 +241,45 @@ public static partial class CSharpFormatter /* ITypeFormatter */ {
     var ret = new StringBuilder(capacity: 64);
 
     if (p.ParameterType.IsByRef) {
-      var typeAndName = string.Concat(
+      if (p.IsIn)
+        ret.Append("in ");
+      else if (p.IsOut)
+        ret.Append("out ");
+      else
+        ret.Append("ref ");
+
+      ret.Append(
         p
           .ParameterType
           .GetElementTypeOrThrow()
-          .FormatTypeName(attributeProvider: p, typeWithNamespace: typeWithNamespace),
-        " ",
-        ToVerbatim(p.Name)
+          .FormatTypeName(attributeProvider: p, typeWithNamespace: typeWithNamespace)
       );
 
-      if (p.IsIn)
-        ret.Append("in ").Append(typeAndName);
-      else if (p.IsOut)
-        ret.Append("out ").Append(typeAndName);
-      else
-        ret.Append("ref ").Append(typeAndName);
+      AppendName(ret, p);
     }
-    else {
-      var typeAndName = string.Concat(
-        p.ParameterType.FormatTypeName(attributeProvider: p, typeWithNamespace: typeWithNamespace),
-        " ",
-        ToVerbatim(p.Name)
-      );
+    else if (
+      p.Position == 0 &&
+      p.Member.GetCustomAttributesData().Any(
+        static d => string.Equals(typeof(ExtensionAttribute).FullName, d.AttributeType.FullName, StringComparison.Ordinal)
+      )
+    ) {
+      ret.Append("this ");
+    }
+    else if (
+      p.GetCustomAttributesData().Any(
+        static d => string.Equals(typeof(ParamArrayAttribute).FullName, d.AttributeType.FullName, StringComparison.Ordinal)
+      )
+    ) {
+      ret.Append("params ");
+    }
 
-      if (
-        p.Position == 0 &&
-        p.Member.GetCustomAttributesData().Any(
-          static d => string.Equals(typeof(ExtensionAttribute).FullName, d.AttributeType.FullName, StringComparison.Ordinal)
-        )
-      ) {
-        ret.Append("this ").Append(typeAndName);
-      }
-      else if (
-        p.GetCustomAttributesData().Any(
-          static d => string.Equals(typeof(ParamArrayAttribute).FullName, d.AttributeType.FullName, StringComparison.Ordinal)
-        )
-      ) {
-        ret.Append("params ").Append(typeAndName);
-      }
-      else {
-        ret.Append(typeAndName);
-      }
-    }
+    ret.Append(
+      p
+        .ParameterType
+        .FormatTypeName(attributeProvider: p, typeWithNamespace: typeWithNamespace)
+    );
+
+    AppendName(ret, p);
 
     if (p.HasDefaultValue) {
       var defaultValueDeclaration = FormatValueDeclaration(
@@ -299,14 +296,17 @@ public static partial class CSharpFormatter /* ITypeFormatter */ {
 
     return ret.ToString();
 
-    static string? ToVerbatim(string? name)
+    static StringBuilder AppendName(StringBuilder sb, ParameterInfo p)
     {
-      if (name is null)
-        return null;
-      if (keywords.Contains(name))
-        return "@" + name;
+      if (p.Name is null)
+        return sb;
 
-      return name;
+      sb.Append(' ');
+
+      if (keywords.Contains(p.Name))
+        sb.Append('@'); // to verbatim
+
+      return sb.Append(p.Name);
     }
   }
 
