@@ -82,11 +82,13 @@ static partial class CSharpFormatter {
       // language primitive types
       return builder.Append(n).Append(GetNullabilityAnnotation(target));
 
-    if (options.TypeWithNamespace)
-      builder.Append(targetType.Namespace).Append('.');
+    if (!targetType.IsGenericParameter) {
+      if (options.TypeWithNamespace)
+        builder.Append(targetType.Namespace).Append('.');
 
-    if (options.WithDeclaringTypeName && targetType.IsNested)
-      builder.Append(FormatTypeNameCore(targetType.GetDeclaringTypeOrThrow(), showVariance: false, options)).Append('.');
+      if (options.WithDeclaringTypeName && targetType.IsNested)
+        builder.Append(FormatTypeNameCore(targetType.GetDeclaringTypeOrThrow(), showVariance: false, options)).Append('.');
+    }
 
     return builder.Append(targetType.Name).Append(GetNullabilityAnnotation(target));
   }
@@ -124,19 +126,11 @@ static partial class CSharpFormatter {
     if (genericTypeArguments.Any()) {
       builder.Append('<');
 
-      // omit declaring type name of generic type arguments
-      var optionsForGenericTypeArguments = new FormatTypeNameOptions(
-        attributeProvider: options.AttributeProvider,
-        typeWithNamespace: options.TypeWithNamespace,
-        withDeclaringTypeName: false,
-        translateLanguagePrimitiveType: options.TranslateLanguagePrimitiveType
-      );
-
       foreach (var (arg, i) in genericTypeArguments.Select(static (arg, i) => (arg, i))) {
         if (0 < i)
           builder.Append(", ");
 
-        FormatTypeNameWithNullabilityAnnotation(arg, builder, optionsForGenericTypeArguments);
+        FormatTypeNameWithNullabilityAnnotation(arg, builder, options);
       }
 
       builder.Append('>');
