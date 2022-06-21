@@ -257,9 +257,15 @@ public static partial class CSharpFormatter /* ITypeFormatter */ {
     }
 
     ret.Append(
-      p
-        .ParameterType
-        .FormatTypeName(attributeProvider: p, typeWithNamespace: typeWithNamespace)
+      p.FormatTypeName(
+#pragma warning disable SA1114
+#if SYSTEM_REFLECTION_NULLABILITYINFOCONTEXT
+        context: new NullabilityInfoContext(),
+#endif
+        typeWithNamespace: typeWithNamespace,
+        withDeclaringTypeName: false
+#pragma warning restore SA1114
+      )
     );
 
     AppendName(ret, p);

@@ -57,4 +57,36 @@ static partial class CSharpFormatter {
         withDeclaringTypeName: withDeclaringTypeName,
         translateLanguagePrimitiveType: translateLanguagePrimitiveType
       );
+
+  public static string FormatTypeName(
+    this ParameterInfo p,
+#if SYSTEM_REFLECTION_NULLABILITYINFOCONTEXT
+    NullabilityInfoContext context,
+#endif
+    bool typeWithNamespace = true,
+    bool withDeclaringTypeName = true,
+    bool translateLanguagePrimitiveType = true
+  )
+    =>
+#if SYSTEM_REFLECTION_NULLABILITYINFOCONTEXT
+      context is not null
+        ? FormatTypeNameWithNullabilityAnnotation(
+            context.Create(p ?? throw new ArgumentNullException(nameof(p))),
+            builder: new(capacity: 32),
+            options: new FormatTypeNameOptions(
+              attributeProvider: p,
+              typeWithNamespace: typeWithNamespace,
+              withDeclaringTypeName: withDeclaringTypeName,
+              translateLanguagePrimitiveType: translateLanguagePrimitiveType
+            )
+          ).ToString()
+        :
+#endif
+      FormatTypeName(
+        (p ?? throw new ArgumentNullException(nameof(p))).ParameterType,
+        attributeProvider: p,
+        typeWithNamespace: typeWithNamespace,
+        withDeclaringTypeName: withDeclaringTypeName,
+        translateLanguagePrimitiveType: translateLanguagePrimitiveType
+      );
 }

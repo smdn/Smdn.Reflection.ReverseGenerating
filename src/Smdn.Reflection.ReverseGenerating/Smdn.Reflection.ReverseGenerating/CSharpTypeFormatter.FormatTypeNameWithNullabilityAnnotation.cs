@@ -34,6 +34,20 @@ static partial class CSharpFormatter {
         "System".Equals(t.Namespace, StringComparison.Ordinal) &&
         t.GetGenericTypeName().Equals("ValueTuple", StringComparison.Ordinal);
 
+    Type? byRefParameterType = null;
+
+    if (target.Type.IsByRef && options.AttributeProvider is ParameterInfo p) {
+      // retval/parameter modifiers
+      if (p.IsIn)
+        builder.Append("in ");
+      else if (p.IsOut)
+        builder.Append("out ");
+      else /*if (p.IsRetval)*/
+        builder.Append("ref ");
+
+      byRefParameterType = target.Type.GetElementTypeOrThrow();
+    }
+
     if (target.ElementType is not null) {
       // arrays
       return FormatTypeNameWithNullabilityAnnotation(target.ElementType, builder, options)
@@ -43,35 +57,54 @@ static partial class CSharpFormatter {
         .Append(GetNullabilityAnnotation(target));
     }
 
-    var targetType = target.Type;
+    if (target.Type.IsPointer || (target.Type.IsByRef && options.AttributeProvider is not ParameterInfo))
+      return builder.Append(FormatTypeNameCore(target.Type, showVariance: false, options));
 
-    if (targetType.IsByRef || targetType.IsPointer)
-      return builder.Append(FormatTypeNameCore(targetType, showVariance: false, options));
+    var targetType = byRefParameterType ?? target.Type;
 
-    if (IsValueTupleType(targetType) && 0 < target.GenericTypeArguments.Length)
+    if (IsValueTupleType(targetType)) {
+      if (byRefParameterType is not null)
+        // TODO: cannot get NullabilityInfo of generic type arguments from by-ref parameter type
+        return builder.Append(FormatTypeNameCore(targetType, showVariance: false, options));
+
+      // special case for value tuples (ValueTuple<>)
       return FormatValueTuple(target, builder, options);
+    }
 
     var isGenericTypeClosedOrDefinition =
       targetType.IsGenericTypeDefinition ||
       targetType.IsConstructedGenericType ||
       (targetType.IsGenericType && targetType.ContainsGenericParameters);
+    string? nullabilityAnnotationForByRefParameter = null;
 
     if (Nullable.GetUnderlyingType(targetType) is Type nullableUnderlyingType) {
+      if (byRefParameterType is not null)
+        // note: if the by-ref parameter is Nullable<>, NullabilityState will not be Nullable
+        nullabilityAnnotationForByRefParameter = NullableAnnotationSyntaxString;
+
       // nullable value types (Nullable<>)
-      if (IsValueTupleType(nullableUnderlyingType) && 0 < target.GenericTypeArguments.Length)
+      if (IsValueTupleType(nullableUnderlyingType))
         // special case for nullable value tuples (Nullable<ValueTuple<>>)
-        return FormatValueTuple(target, builder, options);
+        return FormatValueTuple(target, builder, options).Append(nullabilityAnnotationForByRefParameter);
 
       targetType = nullableUnderlyingType;
     }
     else if (isGenericTypeClosedOrDefinition) {
       // other generic types
-      return FormatGenericTypeClosedOrDefinition(target, builder, options);
+      if (targetType == byRefParameterType)
+        // TODO: cannot get NullabilityInfo of generic type arguments from by-ref parameter type
+        return builder.Append(FormatTypeNameCore(targetType, showVariance: false, options));
+      else
+        return FormatGenericTypeClosedOrDefinition(target, builder, options);
     }
 
-    if (options.TranslateLanguagePrimitiveType && IsLanguagePrimitiveType(targetType, out var n))
+    if (options.TranslateLanguagePrimitiveType && IsLanguagePrimitiveType(targetType, out var n)) {
       // language primitive types
-      return builder.Append(n).Append(GetNullabilityAnnotation(target));
+      return builder
+        .Append(n)
+        .Append(GetNullabilityAnnotation(target))
+        .Append(nullabilityAnnotationForByRefParameter);
+    }
 
     if (!targetType.IsGenericParameter) {
       if (options.TypeWithNamespace)
@@ -81,7 +114,10 @@ static partial class CSharpFormatter {
         builder.Append(FormatTypeNameCore(targetType.GetDeclaringTypeOrThrow(), showVariance: false, options)).Append('.');
     }
 
-    return builder.Append(targetType.Name).Append(GetNullabilityAnnotation(target));
+    return builder
+      .Append(targetType.Name)
+      .Append(GetNullabilityAnnotation(target))
+      .Append(nullabilityAnnotationForByRefParameter);
   }
 
   private static StringBuilder FormatGenericTypeClosedOrDefinition(

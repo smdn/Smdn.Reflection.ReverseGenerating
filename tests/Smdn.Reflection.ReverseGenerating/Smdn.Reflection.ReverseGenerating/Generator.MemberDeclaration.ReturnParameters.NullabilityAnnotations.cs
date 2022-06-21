@@ -1,0 +1,62 @@
+// SPDX-FileCopyrightText: 2022 smdn <smdn@smdn.jp>
+// SPDX-License-Identifier: MIT
+#if SYSTEM_REFLECTION_NULLABILITYINFOCONTEXT
+
+#nullable enable annotations
+#pragma warning disable CS8618, CS8597
+
+using System;
+using System.Collections.Generic;
+using NUnit.Framework;
+
+namespace Smdn.Reflection.ReverseGenerating.TestCases.MemberDeclaration.Methods.ReturnParameters;
+
+public class NullabilityAnnotations {
+  [MemberDeclarationTestCase($"public int {nameof(ValueType)}() {{}}")] public int ValueType() => throw null;
+  [MemberDeclarationTestCase($"public int? {nameof(NullableValueType)}() {{}}")] public int? NullableValueType() => throw null;
+
+  [MemberDeclarationTestCase($"public string {nameof(RefType)}() {{}}")] public string RefType() => throw null;
+  [MemberDeclarationTestCase($"public string? {nameof(NullableRefType)}() {{}}")] public string? NullableRefType() => throw null;
+
+  [MemberDeclarationTestCase($"public System.Guid {nameof(NonLanguagePrimitiveValueType)}() {{}}")]
+  public Guid NonLanguagePrimitiveValueType() => throw null;
+  [MemberDeclarationTestCase($"public System.Guid? {nameof(NullableNonLanguagePrimitiveValueType)}() {{}}")]
+  public Guid? NullableNonLanguagePrimitiveValueType() => throw null;
+
+  [MemberDeclarationTestCase($"public System.Uri {nameof(NonLanguagePrimitiveRefType)}() {{}}")]
+  public Uri NonLanguagePrimitiveRefType() => throw null;
+  [MemberDeclarationTestCase($"public System.Uri? {nameof(NullableNonLanguagePrimitiveRefType)}() {{}}")]
+  public Uri? NullableNonLanguagePrimitiveRefType() => throw null;
+
+  [MemberDeclarationTestCase($"public List<int> {nameof(ListOfValueType)}() {{}}", MemberWithNamespace = false)] public List<int> ListOfValueType() => throw null;
+  [MemberDeclarationTestCase($"public List<int?> {nameof(ListOfNullableValueType)}() {{}}", MemberWithNamespace = false)] public List<int?> ListOfNullableValueType() => throw null;
+  [MemberDeclarationTestCase($"public List<int>? {nameof(NullableListOfValueType)}() {{}}", MemberWithNamespace = false)] public List<int>? NullableListOfValueType() => throw null;
+  [MemberDeclarationTestCase($"public List<int?>? {nameof(NullableListOfNullableValueType)}() {{}}", MemberWithNamespace = false)] public List<int?>? NullableListOfNullableValueType() => throw null;
+
+  [MemberDeclarationTestCase($"public List<string> {nameof(ListOfRefType)}() {{}}", MemberWithNamespace = false)] public List<string> ListOfRefType() => throw null;
+  [MemberDeclarationTestCase($"public List<string?> {nameof(ListOfNullableRefType)}() {{}}", MemberWithNamespace = false)] public List<string?> ListOfNullableRefType() => throw null;
+  [MemberDeclarationTestCase($"public List<string>? {nameof(NullableListOfRefType)}() {{}}", MemberWithNamespace = false)] public List<string>? NullableListOfRefType() => throw null;
+  [MemberDeclarationTestCase($"public List<string?>? {nameof(NullableListOfNullableRefType)}() {{}}", MemberWithNamespace = false)] public List<string?>? NullableListOfNullableRefType() => throw null;
+
+  class Modifiers {
+    class Ref {
+      [MemberDeclarationTestCase($"public ref int {nameof(ValueType)}() {{}}")] public ref int ValueType() => throw null;
+      [MemberDeclarationTestCase($"public ref int? {nameof(NullableValueType)}() {{}}")] public ref int? NullableValueType() => throw null;
+
+      [MemberDeclarationTestCase($"public ref string {nameof(RefType)}() {{}}")] public ref string RefType() => throw null;
+      [MemberDeclarationTestCase($"public ref string? {nameof(NullableRefType)}() {{}}")] public ref string? NullableRefType() => throw null;
+
+      class GenericTypes {
+        [MemberDeclarationTestCase($"public ref (int X, string Y) {nameof(ValueTupleOfValueTypeAndRefType)}() {{}}")] public ref (int X, string Y) ValueTupleOfValueTypeAndRefType() => throw null;
+        [MemberDeclarationTestCase($"public ref (int? X, string Y) {nameof(ValueTupleOfNullableValueTypeAndRefType)}() {{}}")] public ref (int? X, string Y) ValueTupleOfNullableValueTypeAndRefType() => throw null;
+        [SkipTestCase("cannot get NullabilityInfo of generic type arguments from by-ref parameter type")][MemberDeclarationTestCase($"public ref (int X, string? Y) {nameof(ValueTupleOfValueTypeAndNullableRefType)}() {{}}")] public ref (int X, string? Y) ValueTupleOfValueTypeAndNullableRefType() => throw null;
+
+        [MemberDeclarationTestCase($"public ref IEnumerable<int> {nameof(IEnumerableOfValueType)}() {{}}", MemberWithNamespace = false)] public ref IEnumerable<int> IEnumerableOfValueType() => throw null;
+        [MemberDeclarationTestCase($"public ref IEnumerable<int?> {nameof(IEnumerableOfNullableValueType)}() {{}}", MemberWithNamespace = false)] public ref IEnumerable<int?> IEnumerableOfNullableValueType() => throw null;
+        [MemberDeclarationTestCase($"public ref IEnumerable<string> {nameof(IEnumerableOfRefType)}() {{}}", MemberWithNamespace = false)] public ref IEnumerable<string> IEnumerableOfRefType() => throw null;
+        [SkipTestCase("cannot get NullabilityInfo of generic type arguments from by-ref parameter type")][MemberDeclarationTestCase($"public ref IEnumerable<string?> {nameof(IEnumerableOfNullableRefType)}() {{}}", MemberWithNamespace = false)] public ref IEnumerable<string?> IEnumerableOfNullableRefType() => throw null;
+      }
+    }
+  }
+}
+#endif

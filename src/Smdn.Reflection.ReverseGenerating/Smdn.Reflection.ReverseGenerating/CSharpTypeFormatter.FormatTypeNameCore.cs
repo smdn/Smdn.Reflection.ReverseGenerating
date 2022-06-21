@@ -53,6 +53,8 @@ static partial class CSharpFormatter {
       var typeName = FormatTypeNameCore(t.GetElementTypeOrThrow(), showVariance: false, options);
 
       if (options.AttributeProvider is ParameterInfo p) {
+        // if (p.IsRetval)
+        //  return "ref " + typeName;
         if (p.IsIn)
           return "in " + typeName;
         else if (p.IsOut)

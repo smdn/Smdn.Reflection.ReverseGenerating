@@ -606,18 +606,14 @@ public static partial class Generator {
     var valueOptions = options.ValueDeclaration;
     var method = m as MethodInfo;
     var methodModifiers = GetMemberModifierOf(m, options);
-    var isByRefReturnType = method is not null && method.ReturnType.IsByRef;
-    var methodReturnType = isByRefReturnType
-      ? "ref " +
-        (method!.ReturnType.GetElementType() ?? throw new InvalidOperationException("can not get element type of the return type"))
-          .FormatTypeName(
-            attributeProvider: method.ReturnTypeCustomAttributes,
-            typeWithNamespace: memberOptions.WithNamespace
-          )
-      : method?.ReturnType?.FormatTypeName(
-          attributeProvider: method?.ReturnTypeCustomAttributes,
-          typeWithNamespace: memberOptions.WithNamespace
-        );
+    var methodReturnType = method?.ReturnParameter?.FormatTypeName(
+#pragma warning disable SA1114
+#if SYSTEM_REFLECTION_NULLABILITYINFOCONTEXT
+      context: new NullabilityInfoContext(),
+#endif
+      typeWithNamespace: memberOptions.WithNamespace
+#pragma warning restore SA1114
+    );
     var methodReturnTypeAttributes = method is null
       ? null
       : GenerateParameterAttributeList(method.ReturnParameter, referencingNamespaces, options);
