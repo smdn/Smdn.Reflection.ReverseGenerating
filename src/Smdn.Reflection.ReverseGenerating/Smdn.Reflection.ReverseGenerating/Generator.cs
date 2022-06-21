@@ -826,11 +826,16 @@ public static partial class Generator {
     sb
       .Append("event ")
       .Append(
-        ev.GetEventHandlerTypeOrThrow().FormatTypeName(
-          attributeProvider: ev,
+        ev.FormatTypeName(
+#pragma warning disable SA1114
+#if SYSTEM_REFLECTION_NULLABILITYINFOCONTEXT
+          context: new NullabilityInfoContext(),
+#endif
           typeWithNamespace: memberOptions.WithNamespace
+#pragma warning restore SA1114
         )
-      ).Append(' ');
+      )
+      .Append(' ');
 
     if (explicitInterface == null) {
       sb.Append(
