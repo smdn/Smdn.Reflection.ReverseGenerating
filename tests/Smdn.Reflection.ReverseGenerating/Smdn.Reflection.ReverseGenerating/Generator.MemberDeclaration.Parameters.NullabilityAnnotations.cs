@@ -40,9 +40,13 @@ public class NullabilityAnnotations {
 
   [MemberDeclarationTestCase($"public void {nameof(ValueTupleOfValueType)}((int, int) p) {{}}")] public void ValueTupleOfValueType((int, int) p) { }
   [MemberDeclarationTestCase($"public void {nameof(ValueTupleOfNullableValueType)}((int, int?) p) {{}}")] public void ValueTupleOfNullableValueType((int, int?) p) { }
+  [MemberDeclarationTestCase($"public void {nameof(NullableValueTupleOfValueType)}((int, int)? p) {{}}")] public void NullableValueTupleOfValueType((int, int)? p) { }
+  [MemberDeclarationTestCase($"public void {nameof(NullableValueTupleOfNullableValueType)}((int, int?)? p) {{}}")] public void NullableValueTupleOfNullableValueType((int, int?)? p) { }
 
   [MemberDeclarationTestCase($"public void {nameof(ValueTupleOfRefType)}((int, string) p) {{}}")] public void ValueTupleOfRefType((int, string) p) { }
   [MemberDeclarationTestCase($"public void {nameof(ValueTupleOfNullableRefType)}((int, string?) p) {{}}")] public void ValueTupleOfNullableRefType((int, string?) p) { }
+  [MemberDeclarationTestCase($"public void {nameof(NullableValueTupleOfRefType)}((int, string)? p) {{}}")] public void NullableValueTupleOfRefType((int, string)? p) { }
+  [MemberDeclarationTestCase($"public void {nameof(NullableValueTupleOfNullableRefType)}((int, string?)? p) {{}}")] public void NullableValueTupleOfNullableRefType((int, string?)? p) { }
 
   [MemberDeclarationTestCase($"public void {nameof(ListOfValueType)}(List<int> p) {{}}", MemberWithNamespace = false)] public void ListOfValueType(List<int> p) { }
   [MemberDeclarationTestCase($"public void {nameof(ListOfNullableValueType)}(List<int?> p) {{}}", MemberWithNamespace = false)] public void ListOfNullableValueType(List<int?> p) { }

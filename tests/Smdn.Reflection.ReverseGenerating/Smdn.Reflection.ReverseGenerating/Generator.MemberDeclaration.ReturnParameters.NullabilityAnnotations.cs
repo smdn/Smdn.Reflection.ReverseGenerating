@@ -28,6 +28,16 @@ public class NullabilityAnnotations {
   [MemberDeclarationTestCase($"public System.Uri? {nameof(NullableNonLanguagePrimitiveRefType)}() {{}}")]
   public Uri? NullableNonLanguagePrimitiveRefType() => throw null;
 
+  [MemberDeclarationTestCase($"public (int, int) {nameof(ValueTupleOfValueType)}() {{}}")] public (int, int) ValueTupleOfValueType() => throw null;
+  [MemberDeclarationTestCase($"public (int, int?) {nameof(ValueTupleOfNullableValueType)}() {{}}")] public (int, int?) ValueTupleOfNullableValueType() => throw null;
+  [MemberDeclarationTestCase($"public (int, int)? {nameof(NullableValueTupleOfValueType)}() {{}}")] public (int, int)? NullableValueTupleOfValueType() => throw null;
+  [MemberDeclarationTestCase($"public (int, int?)? {nameof(NullableValueTupleOfNullableValueType)}() {{}}")] public (int, int?)? NullableValueTupleOfNullableValueType() => throw null;
+
+  [MemberDeclarationTestCase($"public (int, string) {nameof(ValueTupleOfRefType)}() {{}}")] public (int, string) ValueTupleOfRefType() => throw null;
+  [MemberDeclarationTestCase($"public (int, string?) {nameof(ValueTupleOfNullableRefType)}() {{}}")] public (int, string?) ValueTupleOfNullableRefType() => throw null;
+  [MemberDeclarationTestCase($"public (int, string)? {nameof(NullableValueTupleOfRefType)}() {{}}")] public (int, string)? NullableValueTupleOfRefType() => throw null;
+  [MemberDeclarationTestCase($"public (int, string?)? {nameof(NullableValueTupleOfNullableRefType)}() {{}}")] public (int, string?)? NullableValueTupleOfNullableRefType() => throw null;
+
   [MemberDeclarationTestCase($"public List<int> {nameof(ListOfValueType)}() {{}}", MemberWithNamespace = false)] public List<int> ListOfValueType() => throw null;
   [MemberDeclarationTestCase($"public List<int?> {nameof(ListOfNullableValueType)}() {{}}", MemberWithNamespace = false)] public List<int?> ListOfNullableValueType() => throw null;
   [MemberDeclarationTestCase($"public List<int>? {nameof(NullableListOfValueType)}() {{}}", MemberWithNamespace = false)] public List<int>? NullableListOfValueType() => throw null;
