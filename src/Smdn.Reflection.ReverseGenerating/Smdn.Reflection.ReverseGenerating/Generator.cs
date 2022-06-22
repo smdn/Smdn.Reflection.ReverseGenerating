@@ -362,7 +362,7 @@ public static partial class Generator {
           field.FormatTypeName(
 #pragma warning disable SA1114
 #if SYSTEM_REFLECTION_NULLABILITYINFOCONTEXT
-            context: new NullabilityInfoContext(),
+            nullabilityInfoContext: new NullabilityInfoContext(),
 #endif
             typeWithNamespace: memberOptions.WithNamespace
 #pragma warning restore SA1114
@@ -475,7 +475,7 @@ public static partial class Generator {
       property.FormatTypeName(
 #pragma warning disable SA1114
 #if SYSTEM_REFLECTION_NULLABILITYINFOCONTEXT
-        context: new NullabilityInfoContext(),
+        nullabilityInfoContext: new NullabilityInfoContext(),
 #endif
         typeWithNamespace: memberOptions.WithNamespace
 #pragma warning restore SA1114
@@ -613,7 +613,7 @@ public static partial class Generator {
     var methodReturnType = method?.ReturnParameter?.FormatTypeName(
 #pragma warning disable SA1114
 #if SYSTEM_REFLECTION_NULLABILITYINFOCONTEXT
-      context: new NullabilityInfoContext(),
+      nullabilityInfoContext: new NullabilityInfoContext(),
 #endif
       typeWithNamespace: memberOptions.WithNamespace
 #pragma warning restore SA1114
@@ -833,7 +833,7 @@ public static partial class Generator {
         ev.FormatTypeName(
 #pragma warning disable SA1114
 #if SYSTEM_REFLECTION_NULLABILITYINFOCONTEXT
-          context: new NullabilityInfoContext(),
+          nullabilityInfoContext: new NullabilityInfoContext(),
 #endif
           typeWithNamespace: memberOptions.WithNamespace
 #pragma warning restore SA1114
