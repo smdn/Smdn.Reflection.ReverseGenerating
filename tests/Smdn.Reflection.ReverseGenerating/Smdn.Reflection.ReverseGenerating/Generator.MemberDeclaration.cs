@@ -589,11 +589,13 @@ namespace Smdn.Reflection.ReverseGenerating {
           [MemberDeclarationTestCase("public static ref int M() {}")] public static ref int M() => throw new NotImplementedException();
         }
 
-        public static class TupleReturnValues {
+        public static class ValueTupleReturnValues {
           [MemberDeclarationTestCase("public static (int, int) M1() {}")] public static (int, int) M1() => throw new NotImplementedException();
           [MemberDeclarationTestCase("public static (int x, int y) M2() {}")] public static (int x, int y) M2() => throw new NotImplementedException();
           [MemberDeclarationTestCase("public static (int, int, int) M3() {}")] public static (int, int, int) M3() => throw new NotImplementedException();
-          [MemberDeclarationTestCase("public static (string, string) M4() {}")] public static (string, string) M4() => throw new NotImplementedException();
+          [MemberDeclarationTestCase("public static (string x, string y) M4() {}")] public static (string x, string y) M4() => throw new NotImplementedException();
+          [MemberDeclarationTestCase("public static System.ValueTuple<string> M5() {}")] public static ValueTuple<string> M5() => throw new NotImplementedException();
+          [MemberDeclarationTestCase("public static (string, string) M6() {}")] public static ValueTuple<string, string> M6() => throw new NotImplementedException();
         }
 
         namespace Constructors {
@@ -1206,11 +1208,13 @@ namespace Smdn.Reflection.ReverseGenerating {
           }
         }
 
-        public class Tuples {
+        public class ValueTuples {
           [MemberDeclarationTestCase("public void M1((int, int) arg) {}")] public void M1((int, int) arg) { }
           [MemberDeclarationTestCase("public void M2((int x, int y) arg) {}")] public void M2((int x, int y) arg) { }
           [MemberDeclarationTestCase("public void M3((int, int, int) arg) {}")] public void M3((int, int, int) arg) { }
-          [MemberDeclarationTestCase("public void M4((string, string) arg) {}")] public void M4((string, string) arg) { }
+          [MemberDeclarationTestCase("public void M4((string x, string y) arg) {}")] public void M4((string x, string y) arg) { }
+          [MemberDeclarationTestCase("public void M5(System.ValueTuple<string> arg) {}")] public void M5(ValueTuple<string> arg) { }
+          [MemberDeclarationTestCase("public void M6((string, string) arg) {}")] public void M6(ValueTuple<string, string> arg) { }
         }
 
         namespace Optionals {
