@@ -362,7 +362,7 @@ public static partial class Generator {
           field.FormatTypeName(
 #pragma warning disable SA1114
 #if SYSTEM_REFLECTION_NULLABILITYINFOCONTEXT
-            nullabilityInfoContext: new NullabilityInfoContext(),
+            nullabilityInfoContext: memberOptions.NullabilityInfoContext,
 #endif
             typeWithNamespace: memberOptions.WithNamespace
 #pragma warning restore SA1114
@@ -475,7 +475,7 @@ public static partial class Generator {
       property.FormatTypeName(
 #pragma warning disable SA1114
 #if SYSTEM_REFLECTION_NULLABILITYINFOCONTEXT
-        nullabilityInfoContext: new NullabilityInfoContext(),
+        nullabilityInfoContext: memberOptions.NullabilityInfoContext,
 #endif
         typeWithNamespace: memberOptions.WithNamespace
 #pragma warning restore SA1114
@@ -535,6 +535,9 @@ public static partial class Generator {
         .Append(
           CSharpFormatter.FormatParameterList(
             indexParameters,
+#if SYSTEM_REFLECTION_NULLABILITYINFOCONTEXT
+            nullabilityInfoContext: memberOptions.NullabilityInfoContext,
+#endif
             typeWithNamespace: memberOptions.WithNamespace,
             useDefaultLiteral: options.ValueDeclaration.UseDefaultLiteral
           )
@@ -613,7 +616,7 @@ public static partial class Generator {
     var methodReturnType = method?.ReturnParameter?.FormatTypeName(
 #pragma warning disable SA1114
 #if SYSTEM_REFLECTION_NULLABILITYINFOCONTEXT
-      nullabilityInfoContext: new NullabilityInfoContext(),
+      nullabilityInfoContext: memberOptions.NullabilityInfoContext,
 #endif
       typeWithNamespace: memberOptions.WithNamespace
 #pragma warning restore SA1114
@@ -767,6 +770,9 @@ public static partial class Generator {
   {
     var param = CSharpFormatter.FormatParameter(
       p,
+#if SYSTEM_REFLECTION_NULLABILITYINFOCONTEXT
+      nullabilityInfoContext: options.MemberDeclaration.NullabilityInfoContext,
+#endif
       typeWithNamespace: options.MemberDeclaration.WithNamespace,
       useDefaultLiteral: options.ValueDeclaration.UseDefaultLiteral
     );
@@ -833,7 +839,7 @@ public static partial class Generator {
         ev.FormatTypeName(
 #pragma warning disable SA1114
 #if SYSTEM_REFLECTION_NULLABILITYINFOCONTEXT
-          nullabilityInfoContext: new NullabilityInfoContext(),
+          nullabilityInfoContext: memberOptions.NullabilityInfoContext,
 #endif
           typeWithNamespace: memberOptions.WithNamespace
 #pragma warning restore SA1114

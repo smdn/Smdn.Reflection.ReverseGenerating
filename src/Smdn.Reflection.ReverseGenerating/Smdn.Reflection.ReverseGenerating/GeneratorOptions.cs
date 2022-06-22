@@ -1,5 +1,9 @@
 // SPDX-FileCopyrightText: 2020 smdn <smdn@smdn.jp>
 // SPDX-License-Identifier: MIT
+#if SYSTEM_REFLECTION_NULLABILITYINFOCONTEXT
+using System.Reflection;
+#endif
+
 namespace Smdn.Reflection.ReverseGenerating;
 
 public class GeneratorOptions {
@@ -26,6 +30,9 @@ public class GeneratorOptions {
     public bool WithAccessibility { get; set; } = true;
     public bool OmitEndOfStatement { get; set; } = false;
     public MethodBodyOption MethodBody { get; set; } = MethodBodyOption.EmptyImplementation;
+#if SYSTEM_REFLECTION_NULLABILITYINFOCONTEXT
+    public NullabilityInfoContext? NullabilityInfoContext { get; set; } = new();
+#endif
   }
 
   public AttributeDeclarationOptions AttributeDeclaration { get; } = new();
