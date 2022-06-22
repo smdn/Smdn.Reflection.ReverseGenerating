@@ -147,5 +147,23 @@ public class NullabilityAnnotations {
       }
     }
   }
+
+  class NullabilityAnnotationOptions {
+    [MemberDeclarationTestCase($"public int {nameof(ValueType)} {{ get; }}", MemberEnableNullabilityAnnotations = false)]
+    [MemberDeclarationTestCase($"public int {nameof(ValueType)} {{ get; }}", MemberEnableNullabilityAnnotations = true)]
+    public int ValueType => throw null;
+
+    [MemberDeclarationTestCase($"public int? {nameof(NullableValueType)} {{ get; }}", MemberEnableNullabilityAnnotations = false)]
+    [MemberDeclarationTestCase($"public int? {nameof(NullableValueType)} {{ get; }}", MemberEnableNullabilityAnnotations = true)]
+    public int? NullableValueType => throw null;
+
+    [MemberDeclarationTestCase($"public string {nameof(RefType)} {{ get; }}", MemberEnableNullabilityAnnotations = false)]
+    [MemberDeclarationTestCase($"public string {nameof(RefType)} {{ get; }}", MemberEnableNullabilityAnnotations = true)]
+    public string RefType => throw null;
+
+    [MemberDeclarationTestCase($"public string {nameof(NullableRefType)} {{ get; }}", MemberEnableNullabilityAnnotations = false)]
+    [MemberDeclarationTestCase($"public string? {nameof(NullableRefType)} {{ get; }}", MemberEnableNullabilityAnnotations = true)]
+    public string? NullableRefType => throw null;
+  }
 }
 #endif

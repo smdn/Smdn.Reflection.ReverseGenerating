@@ -20,10 +20,12 @@ public abstract class GeneratorTestCaseAttribute : Attribute {
   public bool MemberWithDeclaringTypeName { get; set; } = false;
   public bool MemberWithAccessibility { get; set; } = true;
   public bool MemberOmitEndOfStatement { get; set; } = false;
+  public bool MemberEnableNullabilityAnnotations { get; set; } = true;
   public bool TypeWithNamespace { get; set; } = true;
   public bool TypeWithDeclaringTypeName { get; set; } = false;
   public bool TypeWithAccessibility { get; set; } = true;
   public bool TypeOmitEndOfStatement { get; set; } = false;
+  public bool TypeEnableNullabilityAnnotations { get; set; } = true;
   public bool AttributeWithNamespace { get; set; } = true;
   public bool AttributeWithNamedArguments { get; set; } = false;
   public Type? TypeOfAttributeTypeFilterFunc { get; set; } = null;
@@ -96,6 +98,11 @@ public partial class GeneratorTests {
     typeDeclarationOptions.WithDeclaringTypeName = testCaseAttribute.TypeWithDeclaringTypeName;
     typeDeclarationOptions.WithAccessibility = testCaseAttribute.TypeWithAccessibility;
     typeDeclarationOptions.OmitEndOfStatement = testCaseAttribute.TypeOmitEndOfStatement;
+#if SYSTEM_REFLECTION_NULLABILITYINFOCONTEXT
+    typeDeclarationOptions.NullabilityInfoContext = testCaseAttribute.TypeEnableNullabilityAnnotations
+      ? typeDeclarationOptions.NullabilityInfoContext ?? new()
+      : null;
+#endif
 
     var memberDeclarationOptions = options.MemberDeclaration;
 
@@ -104,6 +111,11 @@ public partial class GeneratorTests {
     memberDeclarationOptions.WithAccessibility = testCaseAttribute.MemberWithAccessibility;
     memberDeclarationOptions.MethodBody = testCaseAttribute.MethodBody;
     memberDeclarationOptions.OmitEndOfStatement = testCaseAttribute.MemberOmitEndOfStatement;
+#if SYSTEM_REFLECTION_NULLABILITYINFOCONTEXT
+    memberDeclarationOptions.NullabilityInfoContext = testCaseAttribute.MemberEnableNullabilityAnnotations
+      ? memberDeclarationOptions.NullabilityInfoContext ?? new()
+      : null;
+#endif
 
     var attributeDeclarationOptions = options.AttributeDeclaration;
 

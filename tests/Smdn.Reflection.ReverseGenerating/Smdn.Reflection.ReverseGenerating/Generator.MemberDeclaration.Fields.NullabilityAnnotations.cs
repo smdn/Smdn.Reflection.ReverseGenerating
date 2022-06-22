@@ -3,7 +3,7 @@
 #if SYSTEM_REFLECTION_NULLABILITYINFOCONTEXT
 
 #nullable enable annotations
-#pragma warning disable CS8618
+#pragma warning disable CS8618, CS0649
 
 using System;
 using System.Collections.Generic;
@@ -107,5 +107,23 @@ public class NullabilityAnnotations {
   [MemberDeclarationTestCase($"public Dictionary<string, string?> {nameof(DictionaryOfNullableRefTypeValue)};", MemberWithNamespace = false)] public Dictionary<string, string?> DictionaryOfNullableRefTypeValue;
   [MemberDeclarationTestCase($"public Dictionary<string, string>? {nameof(DictionaryOfRefTypeValueNullable)};", MemberWithNamespace = false)] public Dictionary<string, string>? DictionaryOfRefTypeValueNullable;
   [MemberDeclarationTestCase($"public Dictionary<string, string?>? {nameof(NullableDictionaryOfNullableRefTypeValue)};", MemberWithNamespace = false)] public Dictionary<string, string?>? NullableDictionaryOfNullableRefTypeValue;
+
+  class NullabilityAnnotationOptions {
+    [MemberDeclarationTestCase($"public int {nameof(ValueType)};", MemberEnableNullabilityAnnotations = false)]
+    [MemberDeclarationTestCase($"public int {nameof(ValueType)};", MemberEnableNullabilityAnnotations = true)]
+    public int ValueType;
+
+    [MemberDeclarationTestCase($"public int? {nameof(NullableValueType)};", MemberEnableNullabilityAnnotations = false)]
+    [MemberDeclarationTestCase($"public int? {nameof(NullableValueType)};", MemberEnableNullabilityAnnotations = true)]
+    public int? NullableValueType;
+
+    [MemberDeclarationTestCase($"public string {nameof(RefType)};", MemberEnableNullabilityAnnotations = false)]
+    [MemberDeclarationTestCase($"public string {nameof(RefType)};", MemberEnableNullabilityAnnotations = true)]
+    public string RefType;
+
+    [MemberDeclarationTestCase($"public string {nameof(NullableRefType)};", MemberEnableNullabilityAnnotations = false)]
+    [MemberDeclarationTestCase($"public string? {nameof(NullableRefType)};", MemberEnableNullabilityAnnotations = true)]
+    public string? NullableRefType;
+  }
 }
 #endif

@@ -108,5 +108,23 @@ public class NullabilityAnnotations {
       [SkipTestCase("cannot get NullabilityInfo of generic type arguments from by-ref parameter type")][MemberDeclarationTestCase($"public void {nameof(IEnumerableOfNullableRefType)}(out IEnumerable<string?> p) {{}}", MemberWithNamespace = false)] public void IEnumerableOfNullableRefType(out IEnumerable<string?> p) => throw null;
     }
   }
+
+  class NullabilityAnnotationOptions {
+    [MemberDeclarationTestCase($"public void {nameof(ValueType)}(int p) {{}}", MemberEnableNullabilityAnnotations = false)]
+    [MemberDeclarationTestCase($"public void {nameof(ValueType)}(int p) {{}}", MemberEnableNullabilityAnnotations = true)]
+    public void ValueType(int p) { }
+
+    [MemberDeclarationTestCase($"public void {nameof(NullableValueType)}(int? p) {{}}", MemberEnableNullabilityAnnotations = false)]
+    [MemberDeclarationTestCase($"public void {nameof(NullableValueType)}(int? p) {{}}", MemberEnableNullabilityAnnotations = true)]
+    public void NullableValueType(int? p) { }
+
+    [MemberDeclarationTestCase($"public void {nameof(RefType)}(string p) {{}}", MemberEnableNullabilityAnnotations = false)]
+    [MemberDeclarationTestCase($"public void {nameof(RefType)}(string p) {{}}", MemberEnableNullabilityAnnotations = true)]
+    public void RefType(string p) { }
+
+    [MemberDeclarationTestCase($"public void {nameof(NullableRefType)}(string p) {{}}", MemberEnableNullabilityAnnotations = false)]
+    [MemberDeclarationTestCase($"public void {nameof(NullableRefType)}(string? p) {{}}", MemberEnableNullabilityAnnotations = true)]
+    public void NullableRefType(string? p) { }
+  }
 }
 #endif

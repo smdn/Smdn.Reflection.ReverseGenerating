@@ -68,5 +68,23 @@ public class NullabilityAnnotations {
       }
     }
   }
+
+  class NullabilityAnnotationOptions {
+    [MemberDeclarationTestCase($"public int {nameof(ValueType)}() {{}}", MemberEnableNullabilityAnnotations = false)]
+    [MemberDeclarationTestCase($"public int {nameof(ValueType)}() {{}}", MemberEnableNullabilityAnnotations = true)]
+    public int ValueType() => throw null;
+
+    [MemberDeclarationTestCase($"public int? {nameof(NullableValueType)}() {{}}", MemberEnableNullabilityAnnotations = false)]
+    [MemberDeclarationTestCase($"public int? {nameof(NullableValueType)}() {{}}", MemberEnableNullabilityAnnotations = true)]
+    public int? NullableValueType() => throw null;
+
+    [MemberDeclarationTestCase($"public string {nameof(RefType)}() {{}}", MemberEnableNullabilityAnnotations = false)]
+    [MemberDeclarationTestCase($"public string {nameof(RefType)}() {{}}", MemberEnableNullabilityAnnotations = true)]
+    public string RefType() => throw null;
+
+    [MemberDeclarationTestCase($"public string {nameof(NullableRefType)}() {{}}", MemberEnableNullabilityAnnotations = false)]
+    [MemberDeclarationTestCase($"public string? {nameof(NullableRefType)}() {{}}", MemberEnableNullabilityAnnotations = true)]
+    public string? NullableRefType() => throw null;
+  }
 }
 #endif

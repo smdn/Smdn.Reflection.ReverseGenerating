@@ -44,5 +44,39 @@ public class NullabilityAnnotations {
   [MemberDeclarationTestCase($"public event EventHandler<List<string>?>? {nameof(NullableListOfRefTypeArgNullableEventHandler)};", MemberWithNamespace = false)] public event EventHandler<List<string>?>? NullableListOfRefTypeArgNullableEventHandler;
   [MemberDeclarationTestCase($"public event EventHandler<List<string?>?> {nameof(NullableListOfNullableRefTypeArgEventHandler)};", MemberWithNamespace = false)] public event EventHandler<List<string?>?> NullableListOfNullableRefTypeArgEventHandler;
   [MemberDeclarationTestCase($"public event EventHandler<List<string?>?>? {nameof(NullableListOfNullableRefTypeArgNullableEventHandler)};", MemberWithNamespace = false)] public event EventHandler<List<string?>?>? NullableListOfNullableRefTypeArgNullableEventHandler;
+
+  class NullabilityAnnotationOptions {
+    [MemberDeclarationTestCase($"public event System.EventHandler {nameof(EventHandler)};", MemberEnableNullabilityAnnotations = false)]
+    [MemberDeclarationTestCase($"public event System.EventHandler {nameof(EventHandler)};", MemberEnableNullabilityAnnotations = true)]
+    public event EventHandler EventHandler;
+
+    [MemberDeclarationTestCase($"public event System.EventHandler {nameof(NullableEventHandler)};", MemberEnableNullabilityAnnotations = false)]
+    [MemberDeclarationTestCase($"public event System.EventHandler? {nameof(NullableEventHandler)};", MemberEnableNullabilityAnnotations = true)]
+    public event EventHandler? NullableEventHandler;
+
+    [MemberDeclarationTestCase($"public event System.EventHandler<int> {nameof(ValTypeArgNullableEventHandler)};", MemberEnableNullabilityAnnotations = false)]
+    [MemberDeclarationTestCase($"public event System.EventHandler<int>? {nameof(ValTypeArgNullableEventHandler)};", MemberEnableNullabilityAnnotations = true)]
+    public event EventHandler<int>? ValTypeArgNullableEventHandler;
+
+    [MemberDeclarationTestCase($"public event System.EventHandler<int?> {nameof(NullableValTypeArgEventHandler)};", MemberEnableNullabilityAnnotations = false)]
+    [MemberDeclarationTestCase($"public event System.EventHandler<int?> {nameof(NullableValTypeArgEventHandler)};", MemberEnableNullabilityAnnotations = true)]
+    public event EventHandler<int?> NullableValTypeArgEventHandler;
+
+    [MemberDeclarationTestCase($"public event System.EventHandler<int?> {nameof(NullableValTypeArgNullableEventHandler)};", MemberEnableNullabilityAnnotations = false)]
+    [MemberDeclarationTestCase($"public event System.EventHandler<int?>? {nameof(NullableValTypeArgNullableEventHandler)};", MemberEnableNullabilityAnnotations = true)]
+    public event EventHandler<int?>? NullableValTypeArgNullableEventHandler;
+
+    [MemberDeclarationTestCase($"public event System.EventHandler<string> {nameof(RefTypeArgNullableEventHandler)};", MemberEnableNullabilityAnnotations = false)]
+    [MemberDeclarationTestCase($"public event System.EventHandler<string>? {nameof(RefTypeArgNullableEventHandler)};", MemberEnableNullabilityAnnotations = true)]
+    public event EventHandler<string>? RefTypeArgNullableEventHandler;
+
+    [MemberDeclarationTestCase($"public event System.EventHandler<string> {nameof(NullableRefTypeArgEventHandler)};", MemberEnableNullabilityAnnotations = false)]
+    [MemberDeclarationTestCase($"public event System.EventHandler<string?> {nameof(NullableRefTypeArgEventHandler)};", MemberEnableNullabilityAnnotations = true)]
+    public event EventHandler<string?> NullableRefTypeArgEventHandler;
+
+    [MemberDeclarationTestCase($"public event System.EventHandler<string> {nameof(NullableRefTypeArgNullableEventHandler)};", MemberEnableNullabilityAnnotations = false)]
+    [MemberDeclarationTestCase($"public event System.EventHandler<string?>? {nameof(NullableRefTypeArgNullableEventHandler)};", MemberEnableNullabilityAnnotations = true)]
+    public event EventHandler<string?>? NullableRefTypeArgNullableEventHandler;
+  }
 }
 #endif
