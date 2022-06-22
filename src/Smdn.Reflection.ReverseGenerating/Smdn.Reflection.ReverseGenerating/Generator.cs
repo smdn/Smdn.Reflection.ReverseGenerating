@@ -472,9 +472,13 @@ public static partial class Generator {
       sb.Append(modifier);
 
     sb.Append(
-      property.PropertyType.FormatTypeName(
-        attributeProvider: property,
+      property.FormatTypeName(
+#pragma warning disable SA1114
+#if SYSTEM_REFLECTION_NULLABILITYINFOCONTEXT
+        context: new NullabilityInfoContext(),
+#endif
         typeWithNamespace: memberOptions.WithNamespace
+#pragma warning restore SA1114
       )
     ).Append(' ');
 
