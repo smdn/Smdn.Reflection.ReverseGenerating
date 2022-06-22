@@ -216,24 +216,115 @@ public static partial class CSharpFormatter /* ITypeFormatter */ {
     bool typeWithNamespace = true,
     bool useDefaultLiteral = false
   )
-    => FormatParameterList(
-      m.GetParameters(),
-      typeWithNamespace,
-      useDefaultLiteral
+    => FormatParameterListCore(
+      parameterList: (m ?? throw new ArgumentNullException(nameof(m))).GetParameters(),
+#if SYSTEM_REFLECTION_NULLABILITYINFOCONTEXT
+      nullabilityInfoContext: null,
+#endif
+      typeWithNamespace: typeWithNamespace,
+      useDefaultLiteral: useDefaultLiteral
     );
+
+#if SYSTEM_REFLECTION_NULLABILITYINFOCONTEXT
+  public static string FormatParameterList(
+    MethodBase m,
+    NullabilityInfoContext? nullabilityInfoContext,
+    bool typeWithNamespace = true,
+    bool useDefaultLiteral = false
+  )
+    => FormatParameterListCore(
+      parameterList: (m ?? throw new ArgumentNullException(nameof(m))).GetParameters(),
+      nullabilityInfoContext: nullabilityInfoContext,
+      typeWithNamespace: typeWithNamespace,
+      useDefaultLiteral: useDefaultLiteral
+    );
+#endif
 
   public static string FormatParameterList(
     ParameterInfo[] parameterList,
     bool typeWithNamespace = true,
     bool useDefaultLiteral = false
   )
+    => FormatParameterListCore(
+      parameterList: parameterList ?? throw new ArgumentNullException(nameof(parameterList)),
+#if SYSTEM_REFLECTION_NULLABILITYINFOCONTEXT
+      nullabilityInfoContext: null,
+#endif
+      typeWithNamespace: typeWithNamespace,
+      useDefaultLiteral: useDefaultLiteral
+    );
+
+#if SYSTEM_REFLECTION_NULLABILITYINFOCONTEXT
+  public static string FormatParameterList(
+    ParameterInfo[] parameterList,
+    NullabilityInfoContext? nullabilityInfoContext,
+    bool typeWithNamespace = true,
+    bool useDefaultLiteral = false
+  )
+    => FormatParameterListCore(
+      parameterList: parameterList ?? throw new ArgumentNullException(nameof(parameterList)),
+      nullabilityInfoContext: nullabilityInfoContext,
+      typeWithNamespace: typeWithNamespace,
+      useDefaultLiteral: useDefaultLiteral
+    );
+#endif
+
+  private static string FormatParameterListCore(
+    ParameterInfo[] parameterList,
+#if SYSTEM_REFLECTION_NULLABILITYINFOCONTEXT
+    NullabilityInfoContext? nullabilityInfoContext,
+#endif
+    bool typeWithNamespace = true,
+    bool useDefaultLiteral = false
+  )
     => string.Join(
       ", ",
-      parameterList.Select(p => FormatParameter(p, typeWithNamespace, useDefaultLiteral))
+      parameterList.Select(
+        p => FormatParameter(
+          p,
+#if SYSTEM_REFLECTION_NULLABILITYINFOCONTEXT
+          nullabilityInfoContext: nullabilityInfoContext,
+#endif
+          typeWithNamespace: typeWithNamespace,
+          useDefaultLiteral: useDefaultLiteral
+        )
+      )
     );
 
   public static string FormatParameter(
     ParameterInfo p,
+    bool typeWithNamespace = true,
+    bool useDefaultLiteral = false
+  )
+    => FormatParameterCore(
+      p: p ?? throw new ArgumentNullException(nameof(p)),
+#if SYSTEM_REFLECTION_NULLABILITYINFOCONTEXT
+      nullabilityInfoContext: null,
+#endif
+      typeWithNamespace: typeWithNamespace,
+      useDefaultLiteral: useDefaultLiteral
+    );
+
+#if SYSTEM_REFLECTION_NULLABILITYINFOCONTEXT
+  public static string FormatParameter(
+    ParameterInfo p,
+    NullabilityInfoContext? nullabilityInfoContext,
+    bool typeWithNamespace = true,
+    bool useDefaultLiteral = false
+  )
+    => FormatParameterCore(
+      p: p ?? throw new ArgumentNullException(nameof(p)),
+      nullabilityInfoContext: nullabilityInfoContext,
+      typeWithNamespace: typeWithNamespace,
+      useDefaultLiteral: useDefaultLiteral
+    );
+#endif
+
+  private static string FormatParameterCore(
+    ParameterInfo p,
+#if SYSTEM_REFLECTION_NULLABILITYINFOCONTEXT
+    NullabilityInfoContext? nullabilityInfoContext,
+#endif
     bool typeWithNamespace = true,
     bool useDefaultLiteral = false
   )
@@ -260,7 +351,7 @@ public static partial class CSharpFormatter /* ITypeFormatter */ {
       p.FormatTypeName(
 #pragma warning disable SA1114
 #if SYSTEM_REFLECTION_NULLABILITYINFOCONTEXT
-        nullabilityInfoContext: new NullabilityInfoContext(),
+        nullabilityInfoContext: nullabilityInfoContext,
 #endif
         typeWithNamespace: typeWithNamespace,
         withDeclaringTypeName: false
