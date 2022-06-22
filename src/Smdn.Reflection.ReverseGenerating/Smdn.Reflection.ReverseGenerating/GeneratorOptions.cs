@@ -20,6 +20,9 @@ public class GeneratorOptions {
     public bool WithDeclaringTypeName { get; set; } = false;
     public bool WithAccessibility { get; set; } = true;
     public bool OmitEndOfStatement { get; set; } = false;
+#if SYSTEM_REFLECTION_NULLABILITYINFOCONTEXT
+    public NullabilityInfoContext? NullabilityInfoContext { get; set; } = new();
+#endif
   }
 
   public MemberDeclarationOptions MemberDeclaration { get; } = new();
