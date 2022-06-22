@@ -26,131 +26,179 @@ static partial class CSharpFormatter {
       )
     );
 
+#if SYSTEM_REFLECTION_NULLABILITYINFOCONTEXT
   public static string FormatTypeName(
     this FieldInfo f,
-#if SYSTEM_REFLECTION_NULLABILITYINFOCONTEXT
     NullabilityInfoContext context,
-#endif
     bool typeWithNamespace = true,
     bool withDeclaringTypeName = true,
     bool translateLanguagePrimitiveType = true
   )
-    =>
-#if SYSTEM_REFLECTION_NULLABILITYINFOCONTEXT
-      context is not null
-        ? FormatTypeNameWithNullabilityAnnotation(
-            context.Create(f ?? throw new ArgumentNullException(nameof(f))),
-            builder: new(capacity: 32),
-            options: new FormatTypeNameOptions(
-              attributeProvider: f,
-              typeWithNamespace: typeWithNamespace,
-              withDeclaringTypeName: withDeclaringTypeName,
-              translateLanguagePrimitiveType: translateLanguagePrimitiveType
-            )
-          ).ToString()
-        :
+    => context is null
+      ? FormatTypeName(
+        f: f,
+        typeWithNamespace: typeWithNamespace,
+        withDeclaringTypeName: withDeclaringTypeName,
+        translateLanguagePrimitiveType: translateLanguagePrimitiveType
+      )
+      : FormatTypeNameWithNullabilityAnnotation(
+        context.Create(f ?? throw new ArgumentNullException(nameof(f))),
+        builder: new(capacity: 32),
+        options: new(
+          attributeProvider: f,
+          typeWithNamespace: typeWithNamespace,
+          withDeclaringTypeName: withDeclaringTypeName,
+          translateLanguagePrimitiveType: translateLanguagePrimitiveType
+        )
+      ).ToString();
 #endif
-      FormatTypeName(
-        (f ?? throw new ArgumentNullException(nameof(f))).FieldType,
+
+  public static string FormatTypeName(
+    this FieldInfo f,
+    bool typeWithNamespace = true,
+    bool withDeclaringTypeName = true,
+    bool translateLanguagePrimitiveType = true
+  )
+    => FormatTypeNameCore(
+      (f ?? throw new ArgumentNullException(nameof(f))).FieldType,
+      showVariance: false,
+      options: new(
         attributeProvider: f,
         typeWithNamespace: typeWithNamespace,
         withDeclaringTypeName: withDeclaringTypeName,
         translateLanguagePrimitiveType: translateLanguagePrimitiveType
-      );
+      )
+    );
+
+#if SYSTEM_REFLECTION_NULLABILITYINFOCONTEXT
+  public static string FormatTypeName(
+    this PropertyInfo p,
+    NullabilityInfoContext context,
+    bool typeWithNamespace = true,
+    bool withDeclaringTypeName = true,
+    bool translateLanguagePrimitiveType = true
+  )
+    => context is null
+      ? FormatTypeName(
+        p: p,
+        typeWithNamespace: typeWithNamespace,
+        withDeclaringTypeName: withDeclaringTypeName,
+        translateLanguagePrimitiveType: translateLanguagePrimitiveType
+      )
+      : FormatTypeNameWithNullabilityAnnotation(
+        context.Create(p ?? throw new ArgumentNullException(nameof(p))),
+        builder: new(capacity: 32),
+        options: new(
+          attributeProvider: p,
+          typeWithNamespace: typeWithNamespace,
+          withDeclaringTypeName: withDeclaringTypeName,
+          translateLanguagePrimitiveType: translateLanguagePrimitiveType
+        )
+      ).ToString();
+#endif
 
   public static string FormatTypeName(
     this PropertyInfo p,
-#if SYSTEM_REFLECTION_NULLABILITYINFOCONTEXT
-    NullabilityInfoContext context,
-#endif
     bool typeWithNamespace = true,
     bool withDeclaringTypeName = true,
     bool translateLanguagePrimitiveType = true
   )
-    =>
-#if SYSTEM_REFLECTION_NULLABILITYINFOCONTEXT
-      context is not null
-        ? FormatTypeNameWithNullabilityAnnotation(
-            context.Create(p ?? throw new ArgumentNullException(nameof(p))),
-            builder: new(capacity: 32),
-            options: new FormatTypeNameOptions(
-              attributeProvider: p,
-              typeWithNamespace: typeWithNamespace,
-              withDeclaringTypeName: withDeclaringTypeName,
-              translateLanguagePrimitiveType: translateLanguagePrimitiveType
-            )
-          ).ToString()
-        :
-#endif
-      FormatTypeName(
-        (p ?? throw new ArgumentNullException(nameof(p))).PropertyType,
+    => FormatTypeNameCore(
+      (p ?? throw new ArgumentNullException(nameof(p))).PropertyType,
+      showVariance: false,
+      options: new(
         attributeProvider: p,
         typeWithNamespace: typeWithNamespace,
         withDeclaringTypeName: withDeclaringTypeName,
         translateLanguagePrimitiveType: translateLanguagePrimitiveType
-      );
+      )
+    );
+
+#if SYSTEM_REFLECTION_NULLABILITYINFOCONTEXT
+  public static string FormatTypeName(
+    this ParameterInfo p,
+    NullabilityInfoContext context,
+    bool typeWithNamespace = true,
+    bool withDeclaringTypeName = true,
+    bool translateLanguagePrimitiveType = true
+  )
+    => context is null
+      ? FormatTypeName(
+        p: p,
+        typeWithNamespace: typeWithNamespace,
+        withDeclaringTypeName: withDeclaringTypeName,
+        translateLanguagePrimitiveType: translateLanguagePrimitiveType
+      )
+      : FormatTypeNameWithNullabilityAnnotation(
+        context.Create(p ?? throw new ArgumentNullException(nameof(p))),
+        builder: new(capacity: 32),
+        options: new(
+          attributeProvider: p,
+          typeWithNamespace: typeWithNamespace,
+          withDeclaringTypeName: withDeclaringTypeName,
+          translateLanguagePrimitiveType: translateLanguagePrimitiveType
+        )
+      ).ToString();
+#endif
 
   public static string FormatTypeName(
     this ParameterInfo p,
-#if SYSTEM_REFLECTION_NULLABILITYINFOCONTEXT
-    NullabilityInfoContext context,
-#endif
     bool typeWithNamespace = true,
     bool withDeclaringTypeName = true,
     bool translateLanguagePrimitiveType = true
   )
-    =>
-#if SYSTEM_REFLECTION_NULLABILITYINFOCONTEXT
-      context is not null
-        ? FormatTypeNameWithNullabilityAnnotation(
-            context.Create(p ?? throw new ArgumentNullException(nameof(p))),
-            builder: new(capacity: 32),
-            options: new FormatTypeNameOptions(
-              attributeProvider: p,
-              typeWithNamespace: typeWithNamespace,
-              withDeclaringTypeName: withDeclaringTypeName,
-              translateLanguagePrimitiveType: translateLanguagePrimitiveType
-            )
-          ).ToString()
-        :
-#endif
-      FormatTypeName(
-        (p ?? throw new ArgumentNullException(nameof(p))).ParameterType,
+    => FormatTypeNameCore(
+      (p ?? throw new ArgumentNullException(nameof(p))).ParameterType,
+      showVariance: false,
+      options: new(
         attributeProvider: p,
         typeWithNamespace: typeWithNamespace,
         withDeclaringTypeName: withDeclaringTypeName,
         translateLanguagePrimitiveType: translateLanguagePrimitiveType
-      );
+      )
+    );
 
+#if SYSTEM_REFLECTION_NULLABILITYINFOCONTEXT
   public static string FormatTypeName(
     this EventInfo ev,
-#if SYSTEM_REFLECTION_NULLABILITYINFOCONTEXT
     NullabilityInfoContext context,
-#endif
     bool typeWithNamespace = true,
     bool withDeclaringTypeName = true,
     bool translateLanguagePrimitiveType = true
   )
-    =>
-#if SYSTEM_REFLECTION_NULLABILITYINFOCONTEXT
-      context is not null
-        ? FormatTypeNameWithNullabilityAnnotation(
-            context.Create(ev ?? throw new ArgumentNullException(nameof(ev))),
-            builder: new(capacity: 32),
-            options: new FormatTypeNameOptions(
-              attributeProvider: ev,
-              typeWithNamespace: typeWithNamespace,
-              withDeclaringTypeName: withDeclaringTypeName,
-              translateLanguagePrimitiveType: translateLanguagePrimitiveType
-            )
-          ).ToString()
-        :
+    => context is null
+      ? FormatTypeName(
+        ev: ev,
+        typeWithNamespace: typeWithNamespace,
+        withDeclaringTypeName: withDeclaringTypeName,
+        translateLanguagePrimitiveType: translateLanguagePrimitiveType
+      )
+      : FormatTypeNameWithNullabilityAnnotation(
+        context.Create(ev ?? throw new ArgumentNullException(nameof(ev))),
+        builder: new(capacity: 32),
+        options: new(
+          attributeProvider: ev,
+          typeWithNamespace: typeWithNamespace,
+          withDeclaringTypeName: withDeclaringTypeName,
+          translateLanguagePrimitiveType: translateLanguagePrimitiveType
+        )
+      ).ToString();
 #endif
-      FormatTypeName(
-        (ev ?? throw new ArgumentNullException(nameof(ev))).GetEventHandlerTypeOrThrow(),
+
+  public static string FormatTypeName(
+    this EventInfo ev,
+    bool typeWithNamespace = true,
+    bool withDeclaringTypeName = true,
+    bool translateLanguagePrimitiveType = true
+  )
+    => FormatTypeNameCore(
+      (ev ?? throw new ArgumentNullException(nameof(ev))).GetEventHandlerTypeOrThrow(),
+      showVariance: false,
+      options: new(
         attributeProvider: ev,
         typeWithNamespace: typeWithNamespace,
         withDeclaringTypeName: withDeclaringTypeName,
         translateLanguagePrimitiveType: translateLanguagePrimitiveType
-      );
+      )
+    );
 }
