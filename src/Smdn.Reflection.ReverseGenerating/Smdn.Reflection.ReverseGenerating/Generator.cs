@@ -85,14 +85,23 @@ public static partial class Generator {
       var genericArgumentConstraintDeclaration = genericArgumentConstraints.Count == 0
         ? string.Empty
         : " " + string.Join(" ", genericArgumentConstraints);
-      var returnType = signatureInfo.ReturnType.FormatTypeName(
-        attributeProvider: signatureInfo.ReturnTypeCustomAttributes,
+      var returnType = signatureInfo.ReturnParameter.FormatTypeName(
+#pragma warning disable SA1114
+#if SYSTEM_REFLECTION_NULLABILITYINFOCONTEXT
+        nullabilityInfoContext: options.TypeDeclaration.NullabilityInfoContext,
+#endif
         typeWithNamespace: options.TypeDeclaration.WithNamespace
+#pragma warning restore SA1114
       );
       var parameterList = CSharpFormatter.FormatParameterList(
+#pragma warning disable SA1114
         signatureInfo,
+#if SYSTEM_REFLECTION_NULLABILITYINFOCONTEXT
+        nullabilityInfoContext: options.TypeDeclaration.NullabilityInfoContext,
+#endif
         typeWithNamespace: options.TypeDeclaration.WithNamespace,
         useDefaultLiteral: options.ValueDeclaration.UseDefaultLiteral
+#pragma warning restore SA1114
       );
       var endOfStatement = options.TypeDeclaration.OmitEndOfStatement
         ? string.Empty
