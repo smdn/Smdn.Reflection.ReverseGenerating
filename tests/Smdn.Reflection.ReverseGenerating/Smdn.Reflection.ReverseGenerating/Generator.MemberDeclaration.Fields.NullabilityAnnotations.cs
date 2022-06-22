@@ -16,7 +16,7 @@ public class NullabilityAnnotations {
   [MemberDeclarationTestCase($"public int? {nameof(NullableValueType)};")] public int? NullableValueType;
 
   [MemberDeclarationTestCase($"public string {nameof(RefType)};")] public string RefType;
-  [MemberDeclarationTestCase($"public string? {nameof(NullableRefType1)};")] public string? NullableRefType1;
+  [MemberDeclarationTestCase($"public string? {nameof(NullableRefType)};")] public string? NullableRefType;
 
   [MemberDeclarationTestCase($"public System.Guid {nameof(NonLanguagePrimitiveValueType)};")]
   public Guid NonLanguagePrimitiveValueType;
