@@ -52,7 +52,7 @@ static partial class CSharpFormatter {
 #endif
       FormatTypeName(
         (f ?? throw new ArgumentNullException(nameof(f))).FieldType,
-        attributeProvider: null,
+        attributeProvider: f,
         typeWithNamespace: typeWithNamespace,
         withDeclaringTypeName: withDeclaringTypeName,
         translateLanguagePrimitiveType: translateLanguagePrimitiveType
@@ -84,7 +84,7 @@ static partial class CSharpFormatter {
 #endif
       FormatTypeName(
         (p ?? throw new ArgumentNullException(nameof(p))).PropertyType,
-        attributeProvider: null,
+        attributeProvider: p,
         typeWithNamespace: typeWithNamespace,
         withDeclaringTypeName: withDeclaringTypeName,
         translateLanguagePrimitiveType: translateLanguagePrimitiveType
