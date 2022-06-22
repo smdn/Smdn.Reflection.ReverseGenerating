@@ -34,6 +34,13 @@ static partial class CSharpFormatter {
     }
   }
 
+  private static bool IsValueTupleType(Type t)
+    =>
+      t.IsConstructedGenericType &&
+      1 < t.GetGenericArguments().Length && // except single element tuples
+      "System".Equals(t.Namespace, StringComparison.Ordinal) &&
+      t.GetGenericTypeName().Equals("ValueTuple", StringComparison.Ordinal);
+
   private static string FormatTypeNameCore(
     Type t,
     bool showVariance,
@@ -92,12 +99,8 @@ static partial class CSharpFormatter {
 
     if (t.IsGenericTypeDefinition || t.IsConstructedGenericType || (t.IsGenericType && t.ContainsGenericParameters)) {
       var sb = new StringBuilder();
-      var isValueTuple =
-        t.IsConstructedGenericType &&
-        "System".Equals(t.Namespace, StringComparison.Ordinal) &&
-        t.GetGenericTypeName().Equals("ValueTuple", StringComparison.Ordinal);
 
-      if (isValueTuple) {
+      if (IsValueTupleType(t)) {
         var tupleItemNames = options
           .AttributeProvider
           ?.GetCustomAttributeDataList()

@@ -28,12 +28,6 @@ static partial class CSharpFormatter {
     FormatTypeNameOptions options
   )
   {
-    static bool IsValueTupleType(Type t)
-      =>
-        t.IsConstructedGenericType &&
-        "System".Equals(t.Namespace, StringComparison.Ordinal) &&
-        t.GetGenericTypeName().Equals("ValueTuple", StringComparison.Ordinal);
-
     Type? byRefParameterType = null;
 
     if (target.Type.IsByRef && options.AttributeProvider is ParameterInfo p) {

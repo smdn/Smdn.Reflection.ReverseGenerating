@@ -55,7 +55,7 @@ public class CSharpTypeFormatterTests {
   [TestCase(typeof((int x, int y)), "(int, int)")]
   [TestCase(typeof((int, int, int)), "(int, int, int)")]
   [TestCase(typeof((int, (int, int))), "(int, (int, int))")]
-  [TestCase(typeof(ValueTuple<int>), "(int)")]
+  [TestCase(typeof(ValueTuple<int>), "ValueTuple<int>")]
   [TestCase(typeof(ValueTuple<int, int>), "(int, int)")]
   [TestCase(typeof(ValueTuple<int, int, int>), "(int, int, int)")]
   [TestCase(typeof(ValueTuple<int, ValueTuple<int, int>>), "(int, (int, int))")]
