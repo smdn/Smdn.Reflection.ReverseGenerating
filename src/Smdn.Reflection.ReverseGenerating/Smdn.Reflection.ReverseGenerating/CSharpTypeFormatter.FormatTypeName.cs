@@ -29,7 +29,7 @@ static partial class CSharpFormatter {
 #if SYSTEM_REFLECTION_NULLABILITYINFOCONTEXT
   public static string FormatTypeName(
     this FieldInfo f,
-    NullabilityInfoContext context,
+    NullabilityInfoContext? context,
     bool typeWithNamespace = true,
     bool withDeclaringTypeName = true,
     bool translateLanguagePrimitiveType = true
@@ -73,7 +73,7 @@ static partial class CSharpFormatter {
 #if SYSTEM_REFLECTION_NULLABILITYINFOCONTEXT
   public static string FormatTypeName(
     this PropertyInfo p,
-    NullabilityInfoContext context,
+    NullabilityInfoContext? context,
     bool typeWithNamespace = true,
     bool withDeclaringTypeName = true,
     bool translateLanguagePrimitiveType = true
@@ -117,7 +117,7 @@ static partial class CSharpFormatter {
 #if SYSTEM_REFLECTION_NULLABILITYINFOCONTEXT
   public static string FormatTypeName(
     this ParameterInfo p,
-    NullabilityInfoContext context,
+    NullabilityInfoContext? context,
     bool typeWithNamespace = true,
     bool withDeclaringTypeName = true,
     bool translateLanguagePrimitiveType = true
@@ -161,7 +161,7 @@ static partial class CSharpFormatter {
 #if SYSTEM_REFLECTION_NULLABILITYINFOCONTEXT
   public static string FormatTypeName(
     this EventInfo ev,
-    NullabilityInfoContext context,
+    NullabilityInfoContext? context,
     bool typeWithNamespace = true,
     bool withDeclaringTypeName = true,
     bool translateLanguagePrimitiveType = true
