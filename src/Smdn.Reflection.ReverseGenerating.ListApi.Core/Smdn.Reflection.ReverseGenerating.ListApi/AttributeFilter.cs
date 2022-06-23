@@ -14,6 +14,13 @@ public static class AttributeFilter {
     if (ROCType.FullNameEquals(typeof(System.CLSCompliantAttribute), attrType))
       return false;
 
+    if ("System.Runtime.CompilerServices".Equals(attrType.Namespace, StringComparison.Ordinal)) {
+      if ("NullableAttribute".Equals(attrType.Name, StringComparison.Ordinal))
+        return false;
+      if ("NullableContextAttribute".Equals(attrType.Name, StringComparison.Ordinal))
+        return false;
+    }
+
     switch (attrProvider) {
       case Type:
         if (ROCType.FullNameEquals(typeof(System.Reflection.DefaultMemberAttribute), attrType))
