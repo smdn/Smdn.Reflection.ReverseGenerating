@@ -12,11 +12,11 @@ public static class AttributeFilter {
   {
     if (ROCType.FullNameEquals(typeof(System.CLSCompliantAttribute), attrType))
       return false;
-    if (ROCType.FullNameEquals(typeof(System.Reflection.DefaultMemberAttribute), attrType))
-      return false;
 
     switch (attrProvider) {
       case Type:
+        if (ROCType.FullNameEquals(typeof(System.Reflection.DefaultMemberAttribute), attrType))
+          return false;
         if (ROCType.FullNameEquals(typeof(System.Runtime.CompilerServices.IsReadOnlyAttribute), attrType))
           return false;
         if (ROCType.FullNameEquals(typeof(System.Runtime.CompilerServices.ExtensionAttribute), attrType))
