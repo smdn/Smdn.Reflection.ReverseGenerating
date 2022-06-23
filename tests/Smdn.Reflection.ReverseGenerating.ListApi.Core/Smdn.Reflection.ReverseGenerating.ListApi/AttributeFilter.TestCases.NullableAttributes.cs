@@ -57,6 +57,14 @@ public class NotNullGenericParam<T> where T : notnull {
   ) => throw null;
 }
 
+[TypeAttributeFilterTestCaseAttribute("[Extension]")]
+[TypeAttributeFilterTestCaseAttribute("", FilterType = typeof(AttributeFilter), FilterMemberName = nameof(AttributeFilter.Default))]
+public static class ExtensionClass {
+  [MemberAttributeFilterTestCaseAttribute("[Extension], [NullableContext(1)]")]
+  [MemberAttributeFilterTestCaseAttribute("", FilterType = typeof(AttributeFilter), FilterMemberName = nameof(AttributeFilter.Default))]
+  public static void ExtensionMethod(this string x) => throw null;
+}
+
 [TypeAttributeFilterTestCaseAttribute("")]
 [TypeAttributeFilterTestCaseAttribute("", FilterType = typeof(AttributeFilter), FilterMemberName = nameof(AttributeFilter.Default))]
 public class Members {
