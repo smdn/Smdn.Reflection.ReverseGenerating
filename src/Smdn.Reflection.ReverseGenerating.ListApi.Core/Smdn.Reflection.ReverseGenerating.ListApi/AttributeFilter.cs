@@ -30,6 +30,18 @@ public static class AttributeFilter {
           return false;
         break;
 
+      case FieldInfo:
+        if (ROCType.FullNameEquals(typeof(System.Runtime.CompilerServices.TupleElementNamesAttribute), attrType))
+          // TupleElementNamesAttribute from System.Runtime/mscorlib
+          // TupleElementNamesAttribute from System.ValueTuple
+          return false;
+        break;
+
+      case PropertyInfo:
+        if (ROCType.FullNameEquals(typeof(System.Runtime.CompilerServices.TupleElementNamesAttribute), attrType))
+          return false;
+        break;
+
       case ParameterInfo:
         if (ROCType.FullNameEquals(typeof(System.Runtime.InteropServices.OptionalAttribute), attrType))
           return false;
@@ -40,8 +52,6 @@ public static class AttributeFilter {
         if (ROCType.FullNameEquals(typeof(System.ParamArrayAttribute), attrType))
           return false;
         if (ROCType.FullNameEquals(typeof(System.Runtime.CompilerServices.TupleElementNamesAttribute), attrType))
-          // TupleElementNamesAttribute from System.Runtime/mscorlib
-          // TupleElementNamesAttribute from System.ValueTuple
           return false;
         if (ROCType.FullNameEquals(typeof(System.Runtime.CompilerServices.IsReadOnlyAttribute), attrType))
           return false;
