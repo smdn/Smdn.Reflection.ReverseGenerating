@@ -1,5 +1,7 @@
 // SPDX-FileCopyrightText: 2020 smdn <smdn@smdn.jp>
 // SPDX-License-Identifier: MIT
+#pragma warning disable CS8597
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -97,6 +99,13 @@ namespace Smdn.Reflection.ReverseGenerating {
         public unsafe struct PointerTypes {
           [MemberDeclarationTestCase("public int* F1;")] public int* F1;
           [MemberDeclarationTestCase("public float* F2;")] public float* F2;
+        }
+
+        public class ValueTupleTypes {
+          [MemberDeclarationTestCase("public (int X, int Y) F1;")] public (int X, int Y) F1;
+          [MemberDeclarationTestCase("public (int, int) F2;")] public (int, int) F2;
+          [MemberDeclarationTestCase("public (int, int) F3;")] public ValueTuple<int, int> F3;
+          [MemberDeclarationTestCase("public System.ValueTuple<int> F4;")] public ValueTuple<int> F4;
         }
 
         namespace EnumFields {
@@ -320,6 +329,13 @@ namespace Smdn.Reflection.ReverseGenerating {
             [MemberDeclarationTestCase("public int Smdn.Reflection.ReverseGenerating.TestCases.MemberDeclaration.Properties.Options.NonAbstract.P { get; set; }", MemberWithDeclaringTypeName = true, MemberWithNamespace = true, MethodBody = MethodBodyOption.None)]
             public int P { get; set; }
           }
+        }
+
+        public class ValueTupleTypes {
+          [MemberDeclarationTestCase("public (int X, int Y) P1 { get; }")] public (int X, int Y) P1 => throw null;
+          [MemberDeclarationTestCase("public (int, int) P2 { get; }")] public (int, int) P2 => throw null;
+          [MemberDeclarationTestCase("public (int, int) P3 { get; }")] public ValueTuple<int, int> P3 => throw null;
+          [MemberDeclarationTestCase("public System.ValueTuple<int> P4 { get; }")] public ValueTuple<int> P4 => throw null;
         }
 
         public class Accessors {
