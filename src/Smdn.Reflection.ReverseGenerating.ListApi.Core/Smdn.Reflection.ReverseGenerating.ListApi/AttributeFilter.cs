@@ -1,6 +1,7 @@
 // SPDX-FileCopyrightText: 2021 smdn <smdn@smdn.jp>
 // SPDX-License-Identifier: MIT
 using System;
+using System.Linq;
 using System.Reflection;
 
 namespace Smdn.Reflection.ReverseGenerating.ListApi;
@@ -23,11 +24,16 @@ public static class AttributeFilter {
           return false;
         break;
 
-      case MethodBase:
+      case MethodBase m:
         if (ROCType.FullNameEquals(typeof(System.Runtime.CompilerServices.ExtensionAttribute), attrType))
           return false;
         if (ROCType.FullNameEquals(typeof(System.Runtime.CompilerServices.IteratorStateMachineAttribute), attrType))
           return false;
+        if (ROCType.FullNameEquals(typeof(System.Runtime.CompilerServices.AsyncStateMachineAttribute), attrType))
+          return false;
+        if (ROCType.FullNameEquals(typeof(System.Diagnostics.DebuggerStepThroughAttribute), attrType))
+          // exclude DebuggerStepThroughAttribute of async methods
+          return !m.GetCustomAttributesData().Any(static d => ROCType.FullNameEquals(typeof(System.Runtime.CompilerServices.AsyncStateMachineAttribute), d.AttributeType));
         break;
 
       case FieldInfo:

@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: MIT
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using System.Runtime.CompilerServices;
 using NUnit.Framework;
 
@@ -81,6 +82,28 @@ public class MethodAttributes {
     {
       yield break;
     }
+  }
+
+  public class AsyncStateMachineAttr {
+    [MemberAttributeFilterTestCaseAttribute("")]
+    [MemberAttributeFilterTestCaseAttribute("", FilterType = typeof(AttributeFilter), FilterMemberName = nameof(AttributeFilter.Default))]
+    public Task TaskMethod() => throw null;
+
+    [MemberAttributeFilterTestCaseAttribute("")]
+    [MemberAttributeFilterTestCaseAttribute("", FilterType = typeof(AttributeFilter), FilterMemberName = nameof(AttributeFilter.Default))]
+    public ValueTask ValueTaskMethod() => throw null;
+
+    [MemberAttributeFilterTestCaseAttribute("[DebuggerStepThrough], [AsyncStateMachine]")]
+    [MemberAttributeFilterTestCaseAttribute("", FilterType = typeof(AttributeFilter), FilterMemberName = nameof(AttributeFilter.Default))]
+    public async void VoidAsyncStateMachineMethod() => await Task.Delay(0);
+
+    [MemberAttributeFilterTestCaseAttribute("[DebuggerStepThrough], [AsyncStateMachine]")]
+    [MemberAttributeFilterTestCaseAttribute("", FilterType = typeof(AttributeFilter), FilterMemberName = nameof(AttributeFilter.Default))]
+    public async Task TaskAsyncStateMachineMethod() => await Task.Delay(0);
+
+    [MemberAttributeFilterTestCaseAttribute("[DebuggerStepThrough], [AsyncStateMachine]")]
+    [MemberAttributeFilterTestCaseAttribute("", FilterType = typeof(AttributeFilter), FilterMemberName = nameof(AttributeFilter.Default))]
+    public async ValueTask ValueTaskAsyncStateMachineMethod() => await Task.Delay(0);
   }
 }
 
