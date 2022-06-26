@@ -1,5 +1,7 @@
 // SPDX-FileCopyrightText: 2020 smdn <smdn@smdn.jp>
 // SPDX-License-Identifier: MIT
+#pragma warning disable CS8597
+
 using System;
 using System.Linq;
 using System.Reflection;
@@ -42,6 +44,34 @@ namespace Smdn.Reflection.ReverseGenerating {
           [AttributeTestCase("[System.Obsolete]")][Obsolete] public int P { get; set; }
           [AttributeTestCase("[System.Obsolete]")][Obsolete] public event EventHandler E = null;
           [AttributeTestCase("[System.Obsolete]")][Obsolete] public int F = default;
+        }
+
+        class AttributeTargetsPropertyAccessor {
+          [MemberDeclarationTestCase(
+            "public int P0 { get; set; }",
+            // "public int P0 { [Obsolete] get; [Obsolete] set; }", // TODO: generate accessor attributes
+            AttributeWithNamespace = false
+          )]
+          public int P0 {
+            [AttributeTestCase("[System.Obsolete]")]
+            [Obsolete]
+            get => throw null;
+
+            [AttributeTestCase("[System.Obsolete]")]
+            [Obsolete]
+            set => throw null;
+          }
+        }
+
+        class AttributeTargetsPropertyBackingField {
+          [MemberDeclarationTestCase(
+            "public int P0 { get; set; }",
+            // "[field: DebuggerBrowsable(DebuggerBrowsableState.Never), Obsolete, CompilerGenerated] public int P0 { get; set; }", // TODO: generate backing field attributes
+            AttributeWithNamespace = false
+          )]
+          [field: AttributeTestCase("[System.Diagnostics.DebuggerBrowsable(System.Diagnostics.DebuggerBrowsableState.Never)], [System.Obsolete], [System.Runtime.CompilerServices.CompilerGenerated]")]
+          [field: Obsolete]
+          public int P0 { get; set; }
         }
 
         class AttributeTargetsReturnValue {
