@@ -55,6 +55,11 @@ public static partial class Generator {
       translateLanguagePrimitiveType: options.TranslateLanguagePrimitiveTypeDeclaration
     );
 
+    if (t.IsConcreteDelegate()) {
+      yield return GenerateDelegateDeclaration(t, referencingNamespaces, options)!;
+      yield break;
+    }
+
     var genericArgumentConstraints = t
       .GetGenericArguments()
       .Select(
@@ -68,46 +73,6 @@ public static partial class Generator {
 
     if (t.IsEnum) {
       yield return $"{accessibilities}enum {typeName} : {t.GetEnumUnderlyingType().FormatTypeName()}";
-      yield break;
-    }
-
-    if (t.IsConcreteDelegate()) {
-      var signatureInfo = t.GetDelegateSignatureMethod()
-        ?? throw new InvalidOperationException("can not get signature of the delegate");
-
-      referencingNamespaces?.UnionWith(
-        signatureInfo
-          .GetSignatureTypes()
-          .Where(static mpt => !mpt.ContainsGenericParameters)
-          .SelectMany(CSharpFormatter.ToNamespaceList)
-      );
-
-      var genericArgumentConstraintDeclaration = genericArgumentConstraints.Count == 0
-        ? string.Empty
-        : " " + string.Join(" ", genericArgumentConstraints);
-      var returnType = signatureInfo.ReturnParameter.FormatTypeName(
-#pragma warning disable SA1114
-#if SYSTEM_REFLECTION_NULLABILITYINFOCONTEXT
-        nullabilityInfoContext: options.TypeDeclaration.NullabilityInfoContext,
-#endif
-        typeWithNamespace: options.TypeDeclaration.WithNamespace
-#pragma warning restore SA1114
-      );
-      var parameterList = CSharpFormatter.FormatParameterList(
-#pragma warning disable SA1114
-        signatureInfo,
-#if SYSTEM_REFLECTION_NULLABILITYINFOCONTEXT
-        nullabilityInfoContext: options.TypeDeclaration.NullabilityInfoContext,
-#endif
-        typeWithNamespace: options.TypeDeclaration.WithNamespace,
-        useDefaultLiteral: options.ValueDeclaration.UseDefaultLiteral
-#pragma warning restore SA1114
-      );
-      var endOfStatement = options.TypeDeclaration.OmitEndOfStatement
-        ? string.Empty
-        : ";";
-
-      yield return $"{accessibilities}delegate {returnType} {typeName}({parameterList}){genericArgumentConstraintDeclaration}{endOfStatement}";
       yield break;
     }
 
@@ -472,7 +437,7 @@ public static partial class Generator {
     var memberOptions = options.MemberDeclaration;
     var modifier = GetMemberModifierOf(
       property,
-      memberOptions,
+      options,
       out string setAccessibility,
       out string getAccessibility
     );
@@ -604,30 +569,74 @@ public static partial class Generator {
     }
   }
 
+  private static string? GenerateDelegateDeclaration(
+    Type d,
+    ISet<string>? referencingNamespaces,
+    GeneratorOptions options
+  )
+    => GenerateMethodOrDelegateDeclaration(
+      m: d.GetDelegateSignatureMethod() ?? throw new InvalidOperationException("can not get signature of the delegate"),
+      asDelegateDeclaration: true,
+      referencingNamespaces: referencingNamespaces,
+      options: options
+    );
+
   private static string? GenerateMethodBaseDeclaration(
     MethodBase m,
     ISet<string>? referencingNamespaces,
     GeneratorOptions options
   )
-  {
-    m.TryFindExplicitInterfaceMethod(
-      out var explicitInterfaceMethod,
-      findOnlyPublicInterfaces: options.IgnorePrivateOrAssembly
+    => GenerateMethodOrDelegateDeclaration(
+      m: m,
+      asDelegateDeclaration: false,
+      referencingNamespaces: referencingNamespaces,
+      options: options
     );
 
-    if (explicitInterfaceMethod == null && options.IgnorePrivateOrAssembly && m.IsPrivateOrAssembly())
-      return null;
+  private static string? GenerateMethodOrDelegateDeclaration(
+    MethodBase m,
+    bool asDelegateDeclaration,
+    ISet<string>? referencingNamespaces,
+    GeneratorOptions options
+  )
+  {
+    MethodInfo? explicitInterfaceMethod = null;
 
-    var memberOptions = options.MemberDeclaration;
-    var valueOptions = options.ValueDeclaration;
+    if (!asDelegateDeclaration) {
+      m.TryFindExplicitInterfaceMethod(
+        out explicitInterfaceMethod,
+        findOnlyPublicInterfaces: options.IgnorePrivateOrAssembly
+      );
+
+      if (explicitInterfaceMethod == null && options.IgnorePrivateOrAssembly && m.IsPrivateOrAssembly())
+        return null;
+    }
+
+    var formattingOptions = new {
+#if SYSTEM_REFLECTION_NULLABILITYINFOCONTEXT
+      NullabilityInfoContext = asDelegateDeclaration
+        ? options.TypeDeclaration.NullabilityInfoContext
+        : options.MemberDeclaration.NullabilityInfoContext,
+#endif
+      FormatTypeWithNamespace = asDelegateDeclaration
+        ? options.TypeDeclaration.WithNamespace
+        : options.MemberDeclaration.WithNamespace,
+      FormatTypeWithDeclaringTypeName = asDelegateDeclaration
+        ? options.TypeDeclaration.WithDeclaringTypeName
+        : options.MemberDeclaration.WithDeclaringTypeName,
+      OmitEndOfStatement = asDelegateDeclaration
+        ? options.TypeDeclaration.OmitEndOfStatement
+        : options.MemberDeclaration.OmitEndOfStatement,
+      TranslateLanguagePrimitiveType = options.TranslateLanguagePrimitiveTypeDeclaration,
+    };
     var method = m as MethodInfo;
     var methodModifiers = GetMemberModifierOf(m, options);
     var methodReturnType = method?.ReturnParameter?.FormatTypeName(
 #pragma warning disable SA1114
 #if SYSTEM_REFLECTION_NULLABILITYINFOCONTEXT
-      nullabilityInfoContext: memberOptions.NullabilityInfoContext,
+      nullabilityInfoContext: formattingOptions.NullabilityInfoContext,
 #endif
-      typeWithNamespace: memberOptions.WithNamespace
+      typeWithNamespace: formattingOptions.FormatTypeWithNamespace
 #pragma warning restore SA1114
     );
     var methodReturnTypeAttributes = method is null
@@ -639,7 +648,7 @@ public static partial class Generator {
           string.Join(
             ", ",
             m.GetGenericArguments().Select(
-              t => t.FormatTypeName(typeWithNamespace: memberOptions.WithNamespace)
+              t => t.FormatTypeName(typeWithNamespace: formattingOptions.FormatTypeWithNamespace)
             )
           ),
           ">"
@@ -651,12 +660,16 @@ public static partial class Generator {
         p => GenerateParameterDeclaration(p, referencingNamespaces, options)
       )
     );
-    var methodConstraints = method == null
+    var genericArguments = method is null
+      ? null
+      : asDelegateDeclaration
+        ? m.GetDeclaringTypeOrThrow().GetGenericArguments()
+        : method.GetGenericArguments();
+    var methodConstraints = genericArguments is null
       ? null
       : string.Join(
           " ",
-          method
-            .GetGenericArguments()
+          genericArguments
             .Select(
               arg => Generator.GenerateGenericArgumentConstraintDeclaration(arg, referencingNamespaces, options)
             )
@@ -671,7 +684,15 @@ public static partial class Generator {
         .SelectMany(CSharpFormatter.ToNamespaceList)
     );
 
-    if (m.IsSpecialName) {
+    if (asDelegateDeclaration) {
+      methodName = m.GetDeclaringTypeOrThrow().FormatTypeName(
+        attributeProvider: null,
+        typeWithNamespace: false,
+        withDeclaringTypeName: formattingOptions.FormatTypeWithDeclaringTypeName,
+        translateLanguagePrimitiveType: formattingOptions.TranslateLanguagePrimitiveType
+      );
+    }
+    else if (m.IsSpecialName) {
       // constructors, operator overloads, etc
       methodName = CSharpFormatter.FormatSpecialNameMethod(m, out var nameType);
 
@@ -710,7 +731,7 @@ public static partial class Generator {
         string.Concat(
           explicitInterfaceMethod
             .GetDeclaringTypeOrThrow()
-            .FormatTypeName(typeWithNamespace: memberOptions.WithNamespace),
+            .FormatTypeName(typeWithNamespace: formattingOptions.FormatTypeWithNamespace),
           ".",
           explicitInterfaceMethod.Name
         ),
@@ -728,6 +749,9 @@ public static partial class Generator {
       sb.Append(methodReturnTypeAttributes).Append(' ');
 
     sb.Append(methodModifiers);
+
+    if (asDelegateDeclaration)
+      sb.Append("delegate ");
 
     if (!string.IsNullOrEmpty(methodReturnType))
       sb.Append(methodReturnType).Append(' ');
@@ -747,28 +771,30 @@ public static partial class Generator {
     if (!string.IsNullOrEmpty(methodConstraints))
       sb.Append(' ').Append(methodConstraints);
 
-    var endOfStatement = memberOptions.OmitEndOfStatement
+    var endOfStatement = formattingOptions.OmitEndOfStatement
       ? null
       : ";";
+
+    if (asDelegateDeclaration)
+      return sb.Append(endOfStatement).ToString();
+
     var (methodBody, endOfMethodBody) = m.IsAbstract
-      ? memberOptions.MethodBody switch {
+      ? options.MemberDeclaration.MethodBody switch {
           MethodBodyOption.None => (null, null),
           MethodBodyOption.EmptyImplementation or
           MethodBodyOption.ThrowNotImplementedException or
           MethodBodyOption.ThrowNull => (null, endOfStatement),
-          _ => throw new InvalidOperationException($"invalid value of {nameof(MethodBodyOption)} ({memberOptions.MethodBody})"),
+          _ => throw new InvalidOperationException($"invalid value of {nameof(MethodBodyOption)} ({options.MemberDeclaration.MethodBody})"),
         }
-      : memberOptions.MethodBody switch {
+      : options.MemberDeclaration.MethodBody switch {
           MethodBodyOption.None => (null, null),
           MethodBodyOption.EmptyImplementation => (" {}", null),
           MethodBodyOption.ThrowNotImplementedException => (" => throw new NotImplementedException()", endOfStatement),
           MethodBodyOption.ThrowNull => (" => throw null", endOfStatement),
-          _ => throw new InvalidOperationException($"invalid value of {nameof(MethodBodyOption)} ({memberOptions.MethodBody})"),
+          _ => throw new InvalidOperationException($"invalid value of {nameof(MethodBodyOption)} ({options.MemberDeclaration.MethodBody})"),
         };
 
-    sb.Append(methodBody).Append(endOfMethodBody);
-
-    return sb.ToString();
+    return sb.Append(methodBody).Append(endOfMethodBody).ToString();
   }
 
   private static string GenerateParameterDeclaration(
@@ -777,10 +803,15 @@ public static partial class Generator {
     GeneratorOptions options
   )
   {
+#if SYSTEM_REFLECTION_NULLABILITYINFOCONTEXT
+    var isDelegate = p.Member == p.Member.DeclaringType?.GetDelegateSignatureMethod();
+#endif
     var param = CSharpFormatter.FormatParameter(
       p,
 #if SYSTEM_REFLECTION_NULLABILITYINFOCONTEXT
-      nullabilityInfoContext: options.MemberDeclaration.NullabilityInfoContext,
+      nullabilityInfoContext: isDelegate
+        ? options.TypeDeclaration.NullabilityInfoContext
+        : options.MemberDeclaration.NullabilityInfoContext,
 #endif
       typeWithNamespace: options.MemberDeclaration.WithNamespace,
       useDefaultLiteral: options.ValueDeclaration.UseDefaultLiteral
@@ -915,12 +946,12 @@ public static partial class Generator {
   }
 
   private static string GetMemberModifierOf(MemberInfo member, GeneratorOptions options)
-    => GetMemberModifierOf(member, options.MemberDeclaration, out _, out _);
+    => GetMemberModifierOf(member, options, out _, out _);
 
   // TODO: extern, volatile
   private static string GetMemberModifierOf(
     MemberInfo member,
-    GeneratorOptions.MemberDeclarationOptions memberOptions,
+    GeneratorOptions options,
     out string setMethodAccessibility,
     out string getMethodAccessibility
   )
@@ -941,22 +972,22 @@ public static partial class Generator {
       if (m == null)
         yield break;
 
-      var mm = m as MethodInfo;
+      if (!m.IsDelegateSignatureMethod()) {
+        if (m.IsStatic)
+          yield return "static";
 
-      if (m.IsStatic)
-        yield return "static";
+        if (m.IsAbstract) {
+          yield return "abstract";
+        }
+        else if (m is MethodInfo mi && mi.IsOverridden()) {
+          if (m.IsFinal)
+            yield return "sealed";
 
-      if (m.IsAbstract) {
-        yield return "abstract";
-      }
-      else if (mm != null && mm.IsOverridden()) {
-        if (m.IsFinal)
-          yield return "sealed";
-
-        yield return "override";
-      }
-      else if (m.IsVirtual && !m.IsFinal) {
-        yield return "virtual";
+          yield return "override";
+        }
+        else if (m.IsVirtual && !m.IsFinal) {
+          yield return "virtual";
+        }
       }
 
       var isAsyncStateMachine = m.GetCustomAttributesData().Any(
@@ -966,7 +997,7 @@ public static partial class Generator {
       if (isAsyncStateMachine)
         yield return "async";
 
-      if (mm != null && mm.GetParameters().Any(static p => p.ParameterType.IsPointer))
+      if (m is MethodInfo method && method.GetParameters().Any(static p => p.ParameterType.IsPointer))
         yield return "unsafe";
 
       // cannot detect 'new' modifier
@@ -975,7 +1006,7 @@ public static partial class Generator {
 
     switch (member) {
       case FieldInfo f:
-        accessibility = memberOptions.WithAccessibility
+        accessibility = options.MemberDeclaration.WithAccessibility
           ? CSharpFormatter.FormatAccessibility(f.GetAccessibility())
           : null;
 
@@ -988,7 +1019,7 @@ public static partial class Generator {
       case PropertyInfo p:
         var mostOpenAccessibility = p.GetAccessors(true).Select(Smdn.Reflection.MemberInfoExtensions.GetAccessibility).Max();
 
-        accessibility = memberOptions.WithAccessibility
+        accessibility = options.MemberDeclaration.WithAccessibility
           ? CSharpFormatter.FormatAccessibility(mostOpenAccessibility)
           : null;
 
@@ -1011,9 +1042,16 @@ public static partial class Generator {
         break;
 
       case MethodBase m:
-        accessibility = memberOptions.WithAccessibility
-          ? CSharpFormatter.FormatAccessibility(m.GetAccessibility())
-          : null;
+        accessibility = null;
+
+        if (m.IsDelegateSignatureMethod()) {
+          if (options.TypeDeclaration.WithAccessibility)
+            accessibility = CSharpFormatter.FormatAccessibility(m.GetDeclaringTypeOrThrow().GetAccessibility());
+        }
+        else {
+          if (options.MemberDeclaration.WithAccessibility)
+            accessibility = CSharpFormatter.FormatAccessibility(m.GetAccessibility());
+        }
 
         modifiers.AddRange(GetModifiersOfMethod(m));
 
