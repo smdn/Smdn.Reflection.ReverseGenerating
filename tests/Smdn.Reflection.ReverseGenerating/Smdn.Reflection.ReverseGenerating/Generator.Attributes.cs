@@ -69,16 +69,34 @@ namespace Smdn.Reflection.ReverseGenerating {
           public bool M0() => throw new NotImplementedException();
 #endif
 
+          [MemberDeclarationTestCase(
+            "[return: XmlIgnore] public bool M1()",
+            AttributeWithNamespace = false,
+            MethodBody = MethodBodyOption.None
+          )]
+          [Obsolete]
           [return: AttributeTestCase("[return: System.Xml.Serialization.XmlIgnore]")]
           [return: System.Xml.Serialization.XmlIgnore]
           public bool M1() => throw new NotImplementedException();
 
+          [MemberDeclarationTestCase(
+            "[return: XmlIgnore] public bool M1()",
+            AttributeWithNamespace = false,
+            MethodBody = MethodBodyOption.None
+          )]
+          [Obsolete]
           [return: AttributeTestCase("[return: System.Xml.Serialization.XmlIgnore]")]
           [return: System.Xml.Serialization.XmlIgnore]
           public delegate bool D0();
         }
 
         class AttributeTargetsParameter {
+          [MemberDeclarationTestCase(
+            "public bool M([CallerFilePath] [Optional] string sourceFilePath = null, [CallerLineNumber] [Optional] int sourceLineNumber = 0)",
+            AttributeWithNamespace = false,
+            MethodBody = MethodBodyOption.None
+          )]
+          [Obsolete]
           public bool M(
             [AttributeTestCase(
               "[System.Runtime.CompilerServices.CallerFilePath], [System.Runtime.InteropServices.Optional]",
@@ -103,51 +121,51 @@ namespace Smdn.Reflection.ReverseGenerating {
             int sourceLineNumber = default
           ) => throw new NotImplementedException();
 
-          [MemberDeclarationTestCase(
-            "public delegate bool D([CallerMemberName, Optional] string memberName = \"\")",
-            AttributeWithNamespace = false,
-            MethodBody = MethodBodyOption.None
+          [TypeDeclarationTestCase(
+            "public delegate bool D([Optional] int arg = 0);",
+            AttributeWithNamespace = false
           )]
+          [Obsolete]
           public delegate bool D(
-#if false
             [AttributeTestCase(
-              "[System.Runtime.CompilerServices.CallerMemberName], [System.Runtime.InteropServices.Optional]",
+              "[System.Runtime.InteropServices.Optional]",
               AttributeWithNamespace = true
             )]
             [AttributeTestCase(
-              "[CallerMemberName], [Optional]",
+              "[Optional]",
               AttributeWithNamespace = false
             )]
-#endif
-            [CallerMemberNameAttribute]
-            string memberName = ""
+            int arg = 0
           );
         }
 
         public class AttributeTargetsReturnParameter {
           [MemberDeclarationTestCase(
-            "[return: System.Xml.Serialization.XmlIgnore] public string M()",
-            AttributeWithNamespace = true,
-            MethodBody = MethodBodyOption.None
-          )]
-          [MemberDeclarationTestCase(
             "[return: XmlIgnore] public string M()",
             AttributeWithNamespace = false,
             MethodBody = MethodBodyOption.None
           )]
+          [return: AttributeTestCase(
+            "[return: System.Xml.Serialization.XmlIgnore]",
+            AttributeWithNamespace = true
+          )]
+          [Obsolete]
           [return: System.Xml.Serialization.XmlIgnore]
           public string M() => throw new NotImplementedException();
 
-          [MemberDeclarationTestCase(
-            "[return: System.Xml.Serialization.XmlIgnore] public delegate bool D()",
-            AttributeWithNamespace = true,
-            MethodBody = MethodBodyOption.None
+          [TypeDeclarationTestCase(
+            "[return: XmlIgnore] public delegate bool D();",
+            AttributeWithNamespace = false
           )]
-          [MemberDeclarationTestCase(
-            "[return: XmlIgnore] public delegate bool D()",
-            AttributeWithNamespace = false,
-            MethodBody = MethodBodyOption.None
+          [AttributeTestCase(
+            "[System.Obsolete]",
+            AttributeWithNamespace = true
           )]
+          [return: AttributeTestCase(
+            "[return: System.Xml.Serialization.XmlIgnore]",
+            AttributeWithNamespace = true
+          )]
+          [Obsolete]
           [return: System.Xml.Serialization.XmlIgnore]
           public delegate bool D();
         }
@@ -274,15 +292,16 @@ namespace Smdn.Reflection.ReverseGenerating {
     }
 
     private static System.Collections.IEnumerable YieldAttributeListOfParameterInfoTestCase()
-      => FindTypes(t => t.FullName!.Contains(".TestCases.Attributes."))
-        .SelectMany(t =>
+      => FindTypes(static t => t.FullName!.Contains(".TestCases.Attributes."))
+        .SelectMany(static t =>
           t.GetMethods(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static | BindingFlags.DeclaredOnly)
         )
-        .SelectMany(method =>
+        .Where(static method => method.DeclaringType is not null && !method.DeclaringType.IsDelegate())
+        .SelectMany(static method =>
           method.GetParameters().Prepend(method.ReturnParameter)
         )
         .SelectMany(
-          p => p.GetCustomAttributes<AttributeTestCaseAttribute>().Select(
+          static p => p.GetCustomAttributes<AttributeTestCaseAttribute>().Select(
             a => new object[] { a, p }
           )
         );
@@ -301,6 +320,62 @@ namespace Smdn.Reflection.ReverseGenerating {
         attrTestCase.Expected,
         string.Join(", ", Generator.GenerateAttributeList(param, null, options)),
         message: $"{attrTestCase.SourceLocation} ({param.Member.DeclaringType!.FullName}.{param.Member.Name} {(param.Name ?? "return value")})"
+      );
+    }
+
+    private static System.Collections.IEnumerable YieldTypeWithAttributeDeclarationTestCase()
+      => FindTypes(static t => t.FullName!.Contains(".TestCases.Attributes."))
+        .SelectMany(
+          static t => t.GetCustomAttributes<TypeDeclarationTestCaseAttribute>().Select(
+            a => new object[] { a, t }
+          )
+        );
+
+    [TestCaseSource(nameof(YieldTypeWithAttributeDeclarationTestCase))]
+    public void TestGenerateTypeWithAttributeDeclaration(
+      TypeDeclarationTestCaseAttribute attrTestCase,
+      Type type
+    )
+    {
+      type.GetCustomAttribute<SkipTestCaseAttribute>()?.Throw();
+
+      var options = GetGeneratorOptions(attrTestCase);
+
+      options.AttributeDeclaration.TypeFilter = static (t, _) => t.Namespace!.StartsWith("System", StringComparison.Ordinal);
+
+      Assert.AreEqual(
+        attrTestCase.Expected,
+        Generator.GenerateTypeDeclaration(type, null, options),
+        message: $"{attrTestCase.SourceLocation} ({type.FullName})"
+      );
+    }
+
+    private static System.Collections.IEnumerable YieldMemberWithAttributeDeclarationTestCase()
+      => FindTypes(static t => t.FullName!.Contains(".TestCases.Attributes."))
+        .SelectMany(static t => t.GetMembers(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static | BindingFlags.DeclaredOnly))
+        .Where(static m => m is not Type) // except nested type
+        .SelectMany(
+          static m => m.GetCustomAttributes<MemberDeclarationTestCaseAttribute>().Select(
+            a => new object[] { a, m }
+          )
+        );
+
+    [TestCaseSource(nameof(YieldMemberWithAttributeDeclarationTestCase))]
+    public void TestGenerateMemberWithAttributeDeclaration(
+      MemberDeclarationTestCaseAttribute attrTestCase,
+      MemberInfo member
+    )
+    {
+      member.GetCustomAttribute<SkipTestCaseAttribute>()?.Throw();
+
+      var options = GetGeneratorOptions(attrTestCase);
+
+      options.AttributeDeclaration.TypeFilter = static (type, _) => type.Namespace!.StartsWith("System", StringComparison.Ordinal);
+
+      Assert.AreEqual(
+        attrTestCase.Expected,
+        Generator.GenerateMemberDeclaration(member, null, options),
+        message: $"{attrTestCase.SourceLocation} ({member.DeclaringType!.FullName}.{member.Name})"
       );
     }
   }
