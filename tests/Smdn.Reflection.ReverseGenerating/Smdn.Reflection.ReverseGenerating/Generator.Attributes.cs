@@ -284,10 +284,61 @@ namespace Smdn.Reflection.ReverseGenerating {
         [AttributeTestCase("")]
         struct NoStructLayout { }
       }
+
+      namespace AttributeArguments {
+        public class ObjectValueAttribute : Attribute {
+          public object Value { get; }
+          public ObjectValueAttribute(object value)
+          {
+            this.Value = value;
+          }
+        }
+
+        class C {
+          [AttributeTestCase("[ObjectValue(null)]", AttributeWithNamespace = false)]
+          [ObjectValue(null)]
+          public int NullValue = 0;
+
+          [AttributeTestCase("[ObjectValue(\"str\")]", AttributeWithNamespace = false)]
+          [ObjectValue("str")]
+          public int StringValue = 0;
+
+          [AttributeTestCase("[ObjectValue(0)]", AttributeWithNamespace = false)]
+          [ObjectValue((byte)0)]
+          public int ByteValue = 0;
+
+          [AttributeTestCase("[ObjectValue(0)]", AttributeWithNamespace = false)]
+          [ObjectValue((int)0)]
+          public int IntValue = 0;
+
+          [AttributeTestCase("[ObjectValue(0)]", AttributeWithNamespace = false)]
+          [ObjectValue((double)0.0)]
+          public int DoubleValue = 0;
+
+          [AttributeTestCase("[ObjectValue(DayOfWeek.Sunday)]", AttributeWithNamespace = false, TypeWithNamespace = false)]
+          [AttributeTestCase("[ObjectValue(System.DayOfWeek.Sunday)]", AttributeWithNamespace = false, TypeWithNamespace = true)]
+          [ObjectValue(DayOfWeek.Sunday)]
+          public int EnumValue = 0;
+
+          [AttributeTestCase("[ObjectValue((DayOfWeek)999)]", AttributeWithNamespace = false, TypeWithNamespace = false)]
+          [AttributeTestCase("[ObjectValue((System.DayOfWeek)999)]", AttributeWithNamespace = false, TypeWithNamespace = true)]
+          [ObjectValue((DayOfWeek)999)]
+          public int EnumValueUndefined = 0;
+        }
+      }
     }
   }
 
   partial class GeneratorTests {
+    private static bool ExceptTestCaseAttributeFilter(Type type, ICustomAttributeProvider _)
+    {
+      //type.Namespace!.StartsWith("System", StringComparison.Ordinal)
+      if (type.IsAssignableTo(typeof(ITestCaseAttribute)))
+        return false;
+
+      return true;
+    }
+
     private static System.Collections.IEnumerable YieldAttributeListTestCase()
       => FindTypes(t => t.FullName!.Contains(".TestCases.Attributes."))
         .SelectMany(t => t
@@ -308,7 +359,7 @@ namespace Smdn.Reflection.ReverseGenerating {
     {
       var options = GetGeneratorOptions(attrTestCase);
 
-      options.AttributeDeclaration.TypeFilter = static (type, _) => type.Namespace!.StartsWith("System", StringComparison.Ordinal);
+      options.AttributeDeclaration.TypeFilter = ExceptTestCaseAttributeFilter;
 
       var typeOrMemberName = typeOrMember is Type t
         ? t.FullName
@@ -344,7 +395,7 @@ namespace Smdn.Reflection.ReverseGenerating {
     {
       var options = GetGeneratorOptions(attrTestCase);
 
-      options.AttributeDeclaration.TypeFilter = static (type, _) => type.Namespace!.StartsWith("System", StringComparison.Ordinal);
+      options.AttributeDeclaration.TypeFilter = ExceptTestCaseAttributeFilter;
 
       Assert.AreEqual(
         attrTestCase.Expected,
@@ -371,7 +422,7 @@ namespace Smdn.Reflection.ReverseGenerating {
 
       var options = GetGeneratorOptions(attrTestCase);
 
-      options.AttributeDeclaration.TypeFilter = static (t, _) => t.Namespace!.StartsWith("System", StringComparison.Ordinal);
+      options.AttributeDeclaration.TypeFilter = ExceptTestCaseAttributeFilter;
 
       Assert.AreEqual(
         attrTestCase.Expected,
@@ -400,7 +451,7 @@ namespace Smdn.Reflection.ReverseGenerating {
 
       var options = GetGeneratorOptions(attrTestCase);
 
-      options.AttributeDeclaration.TypeFilter = static (type, _) => type.Namespace!.StartsWith("System", StringComparison.Ordinal);
+      options.AttributeDeclaration.TypeFilter = ExceptTestCaseAttributeFilter;
 
       Assert.AreEqual(
         attrTestCase.Expected,

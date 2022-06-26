@@ -11,7 +11,9 @@ using NUnit.Framework;
 
 namespace Smdn.Reflection.ReverseGenerating;
 
-public abstract class GeneratorTestCaseAttribute : Attribute {
+public interface ITestCaseAttribute { }
+
+public abstract class GeneratorTestCaseAttribute : Attribute, ITestCaseAttribute {
   private readonly string expectedValue;
   public Type? ExpectedValueGeneratorType { get; set; } = null;
   public string? ExpectedValueGeneratorMemberName { get; set; } = null;
@@ -68,7 +70,7 @@ public abstract class GeneratorTestCaseAttribute : Attribute {
 }
 
 [AttributeUsage(AttributeTargets.All, AllowMultiple = false, Inherited = false)]
-public class SkipTestCaseAttribute : Attribute {
+public class SkipTestCaseAttribute : Attribute, ITestCaseAttribute {
   public string Reason { get; init; }
 
   public SkipTestCaseAttribute(string reason)

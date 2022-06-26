@@ -108,7 +108,7 @@ partial class Generator {
         arg.GetTypedValue(),
         arg.ArgumentType,
         typeWithNamespace: options.TypeDeclaration.WithNamespace,
-        findConstantField: true,
+        findConstantField: false,
         useDefaultLiteral: options.ValueDeclaration.UseDefaultLiteral
       );
   }

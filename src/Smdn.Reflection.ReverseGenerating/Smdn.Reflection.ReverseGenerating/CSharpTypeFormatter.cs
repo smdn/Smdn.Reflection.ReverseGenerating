@@ -454,7 +454,7 @@ public static partial class CSharpFormatter /* ITypeFormatter */ {
         return "false";
     }
     else {
-      if (typeOfValue.IsValueType && findConstantField) {
+      if (typeOfValue.IsEnum || (typeOfValue.IsValueType && findConstantField)) {
         // try to find constant field
         foreach (var f in typeOfValue.GetFields(BindingFlags.Static | BindingFlags.Public)) {
           var isConstantField = f.IsLiteral || f.IsInitOnly;
