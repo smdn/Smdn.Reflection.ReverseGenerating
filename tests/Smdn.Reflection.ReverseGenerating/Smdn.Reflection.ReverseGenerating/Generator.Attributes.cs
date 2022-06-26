@@ -333,7 +333,7 @@ namespace Smdn.Reflection.ReverseGenerating {
     private static bool ExceptTestCaseAttributeFilter(Type type, ICustomAttributeProvider _)
     {
       //type.Namespace!.StartsWith("System", StringComparison.Ordinal)
-      if (type.IsAssignableTo(typeof(ITestCaseAttribute)))
+      if (typeof(ITestCaseAttribute).IsAssignableFrom(type))
         return false;
 
       return true;
