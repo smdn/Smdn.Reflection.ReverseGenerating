@@ -9,7 +9,7 @@ using Smdn.Reflection.ReverseGenerating;
 
 namespace Smdn.Reflection.ReverseGenerating.ListApi.AttributeFilterTestCases.NullableAttributes;
 
-[TypeAttributeFilterTestCaseAttribute("[Nullable(byte.MinValue)], [NullableContext(1)]")]
+[TypeAttributeFilterTestCaseAttribute("[Nullable(0)], [NullableContext(1)]")]
 [TypeAttributeFilterTestCaseAttribute("", FilterType = typeof(AttributeFilter), FilterMemberName = nameof(AttributeFilter.Default))]
 public class NullableGenericParam<T> where T : class {
   [MemberAttributeFilterTestCaseAttribute("")]
@@ -33,7 +33,7 @@ public class NullableGenericParam<T> where T : class {
   ) => throw null;
 }
 
-[TypeAttributeFilterTestCaseAttribute("[Nullable(byte.MinValue)], [NullableContext(1)]")]
+[TypeAttributeFilterTestCaseAttribute("[Nullable(0)], [NullableContext(1)]")]
 [TypeAttributeFilterTestCaseAttribute("", FilterType = typeof(AttributeFilter), FilterMemberName = nameof(AttributeFilter.Default))]
 public class NotNullGenericParam<T> where T : notnull {
   [MemberAttributeFilterTestCaseAttribute("")]
@@ -80,7 +80,7 @@ public class Members {
     public string? NullableRefTypeField;
   }
 
-  [TypeAttributeFilterTestCaseAttribute("[Nullable(byte.MinValue)], [NullableContext(1)]")]
+  [TypeAttributeFilterTestCaseAttribute("[Nullable(0)], [NullableContext(1)]")]
   [TypeAttributeFilterTestCaseAttribute("", FilterType = typeof(AttributeFilter), FilterMemberName = nameof(AttributeFilter.Default))]
   public class Properties {
     [MemberAttributeFilterTestCaseAttribute("")]
@@ -104,7 +104,7 @@ public class Members {
     public EventHandler? NullableEvent;
   }
 
-  [TypeAttributeFilterTestCaseAttribute("[Nullable(byte.MinValue)], [NullableContext(1)]")]
+  [TypeAttributeFilterTestCaseAttribute("[Nullable(0)], [NullableContext(1)]")]
   [TypeAttributeFilterTestCaseAttribute("", FilterType = typeof(AttributeFilter), FilterMemberName = nameof(AttributeFilter.Default))]
   public class Methods {
     [MemberAttributeFilterTestCaseAttribute("")]
