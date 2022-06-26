@@ -1,19 +1,33 @@
 // SPDX-FileCopyrightText: 2020 smdn <smdn@smdn.jp>
 // SPDX-License-Identifier: MIT
+using System;
 #if SYSTEM_REFLECTION_NULLABILITYINFOCONTEXT
 using System.Reflection;
 #endif
 
 namespace Smdn.Reflection.ReverseGenerating;
 
-public class GeneratorOptions {
+public class GeneratorOptions : ICloneable {
   public string? Indent { get; set; } = new string(' ', 2);
 
   public bool IgnorePrivateOrAssembly { get; set; } = true;
 
   public bool TranslateLanguagePrimitiveTypeDeclaration { get; set; } = false;
 
-  public TypeDeclarationOptions TypeDeclaration { get; } = new();
+  object ICloneable.Clone() => Clone();
+
+  public virtual GeneratorOptions Clone()
+    => new() {
+      Indent = (string?)this.Indent?.Clone(),
+      IgnorePrivateOrAssembly = this.IgnorePrivateOrAssembly,
+      TranslateLanguagePrimitiveTypeDeclaration = this.TranslateLanguagePrimitiveTypeDeclaration,
+      TypeDeclaration = this.TypeDeclaration.Clone(),
+      MemberDeclaration = this.MemberDeclaration.Clone(),
+      AttributeDeclaration = this.AttributeDeclaration.Clone(),
+      ValueDeclaration = this.ValueDeclaration.Clone(),
+    };
+
+  public TypeDeclarationOptions TypeDeclaration { get; init; } = new();
 
   public class TypeDeclarationOptions {
     public bool WithNamespace { get; set; } = false;
@@ -23,9 +37,12 @@ public class GeneratorOptions {
 #if SYSTEM_REFLECTION_NULLABILITYINFOCONTEXT
     public NullabilityInfoContext? NullabilityInfoContext { get; set; } = new();
 #endif
+
+    internal TypeDeclarationOptions Clone()
+      => (TypeDeclarationOptions)MemberwiseClone();
   }
 
-  public MemberDeclarationOptions MemberDeclaration { get; } = new();
+  public MemberDeclarationOptions MemberDeclaration { get; init; } = new();
 
   public class MemberDeclarationOptions {
     public bool WithNamespace { get; set; } = false;
@@ -36,19 +53,28 @@ public class GeneratorOptions {
 #if SYSTEM_REFLECTION_NULLABILITYINFOCONTEXT
     public NullabilityInfoContext? NullabilityInfoContext { get; set; } = new();
 #endif
+
+    internal MemberDeclarationOptions Clone()
+      => (MemberDeclarationOptions)MemberwiseClone();
   }
 
-  public AttributeDeclarationOptions AttributeDeclaration { get; } = new();
+  public AttributeDeclarationOptions AttributeDeclaration { get; init; } = new();
 
   public class AttributeDeclarationOptions {
     public bool WithNamespace { get; set; } = false;
     public bool WithNamedArguments { get; set; } = false;
     public AttributeTypeFilter? TypeFilter { get; set; } = null;
+
+    internal AttributeDeclarationOptions Clone()
+      => (AttributeDeclarationOptions)MemberwiseClone();
   }
 
-  public ValueDeclarationOptions ValueDeclaration { get; } = new();
+  public ValueDeclarationOptions ValueDeclaration { get; init; } = new();
 
   public class ValueDeclarationOptions {
     public bool UseDefaultLiteral { get; set; } = false;
+
+    internal ValueDeclarationOptions Clone()
+      => (ValueDeclarationOptions)MemberwiseClone();
   }
 }
