@@ -331,13 +331,7 @@ namespace Smdn.Reflection.ReverseGenerating {
 
   partial class GeneratorTests {
     private static bool ExceptTestCaseAttributeFilter(Type type, ICustomAttributeProvider _)
-    {
-      //type.Namespace!.StartsWith("System", StringComparison.Ordinal)
-      if (typeof(ITestCaseAttribute).IsAssignableFrom(type))
-        return false;
-
-      return true;
-    }
+      => !typeof(ITestCaseAttribute).IsAssignableFrom(type);
 
     private static System.Collections.IEnumerable YieldAttributeListTestCase()
       => FindTypes(t => t.FullName!.Contains(".TestCases.Attributes."))
