@@ -435,6 +435,15 @@ public static partial class Generator {
 
     var sb = new StringBuilder();
     var memberOptions = options.MemberDeclaration;
+
+    var backingField = property.GetBackingField();
+    var backingFieldAttributeList = backingField is null
+      ? Enumerable.Empty<string>()
+      : GenerateAttributeList(backingField, referencingNamespaces, options);
+
+    if (backingFieldAttributeList.Any())
+      sb.AppendJoin(" ", backingFieldAttributeList).Append(' ');
+
     var modifier = GetMemberModifierOf(
       property,
       options,
@@ -528,12 +537,48 @@ public static partial class Generator {
       if (explicitInterface == null && 0 < getAccessibility.Length)
         sb.Append(getAccessibility).Append(' ');
 
+      var returnParameterAttributeList = GenerateAttributeList(
+        property.GetMethod!.ReturnParameter,
+        referencingNamespaces,
+        options
+      );
+
+      if (returnParameterAttributeList.Any())
+        sb.AppendJoin(" ", returnParameterAttributeList).Append(' ');
+
+      var accessorMethodAttributeList = GenerateAttributeList(
+        property.GetMethod!,
+        referencingNamespaces,
+        options
+      );
+
+      if (accessorMethodAttributeList.Any())
+        sb.AppendJoin(" ", accessorMethodAttributeList).Append(' ');
+
       sb.Append("get").Append(GenerateAccessorBody(property.GetMethod!, options));
     }
 
     if (emitSetAccessor) {
       if (explicitInterface == null && 0 < setAccessibility.Length)
         sb.Append(setAccessibility).Append(' ');
+
+      var accessorParameterAttributeList = GenerateAttributeList(
+        property.SetMethod!.GetParameters().First(),
+        referencingNamespaces,
+        options
+      );
+
+      if (accessorParameterAttributeList.Any())
+        sb.AppendJoin(" ", accessorParameterAttributeList).Append(' ');
+
+      var accessorMethodAttributeList = GenerateAttributeList(
+        property.SetMethod!,
+        referencingNamespaces,
+        options
+      );
+
+      if (accessorMethodAttributeList.Any())
+        sb.AppendJoin(" ", accessorMethodAttributeList).Append(' ');
 
       if (property.IsSetMethodInitOnly())
         sb.Append("init");

@@ -21,7 +21,19 @@ partial class Generator {
     if (attributeProvider is null)
       throw new ArgumentNullException(nameof(attributeProvider));
 
-    var prefix = (attributeProvider is ParameterInfo p && p.IsReturnParameter()) ? "[return: " : "[";
+    var prefix = attributeProvider switch {
+      ParameterInfo p =>
+        p.IsReturnParameter()
+          ? "[return: "
+          : p.IsPropertySetMethodParameter()
+            ? "[param: "
+            : "[",
+      FieldInfo f =>
+        f.IsPropertyBackingField()
+          ? "[field: "
+          : "[",
+      _ => "[",
+    };
 
     return GetAttributes(attributeProvider, options.AttributeDeclaration.TypeFilter)
       .OrderBy(static attr => attr.GetAttributeType().FullName)

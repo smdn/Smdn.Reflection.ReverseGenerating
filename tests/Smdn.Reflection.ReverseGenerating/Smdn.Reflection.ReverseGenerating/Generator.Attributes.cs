@@ -1,8 +1,9 @@
 // SPDX-FileCopyrightText: 2020 smdn <smdn@smdn.jp>
 // SPDX-License-Identifier: MIT
-#pragma warning disable CS8597
+#pragma warning disable CS0067, CS8597
 
 using System;
+using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
@@ -46,35 +47,38 @@ namespace Smdn.Reflection.ReverseGenerating {
           [AttributeTestCase("[System.Obsolete]")][Obsolete] public int F = default;
         }
 
-        class AttributeTargetsPropertyAccessor {
+        class AttributeTargetsPropertyAccessorMethod {
           [MemberDeclarationTestCase(
-            "public int P0 { get; set; }",
-            // "public int P0 { [Obsolete] get; [Obsolete] set; }", // TODO: generate accessor attributes
+            "public int P0 { [Obsolete] get; [DebuggerHidden] set; }",
             AttributeWithNamespace = false
           )]
+          [Obsolete] // must not be shown in the result of MemberDeclarationTestCase
+          [AttributeTestCase("[System.Obsolete]")]
           public int P0 {
             [AttributeTestCase("[System.Obsolete]")]
             [Obsolete]
             get => throw null;
 
-            [AttributeTestCase("[System.Obsolete]")]
-            [Obsolete]
+            [AttributeTestCase("[System.Diagnostics.DebuggerHidden]")]
+            [DebuggerHidden]
             set => throw null;
           }
         }
 
         class AttributeTargetsPropertyBackingField {
           [MemberDeclarationTestCase(
-            "public int P0 { get; set; }",
-            // "[field: DebuggerBrowsable(DebuggerBrowsableState.Never), Obsolete, CompilerGenerated] public int P0 { get; set; }", // TODO: generate backing field attributes
-            AttributeWithNamespace = false
+            "[field: DebuggerBrowsable(DebuggerBrowsableState.Never)] [field: Obsolete] [field: CompilerGenerated] public int P0 { [CompilerGenerated] get; [CompilerGenerated] set; }",
+            AttributeWithNamespace = false,
+            TypeWithNamespace = false
           )]
-          [field: AttributeTestCase("[System.Diagnostics.DebuggerBrowsable(System.Diagnostics.DebuggerBrowsableState.Never)], [System.Obsolete], [System.Runtime.CompilerServices.CompilerGenerated]")]
+          [AttributeTestCase("[System.Obsolete]")]
+          [Obsolete] // must not be shown in the result of MemberDeclarationTestCase
+          [field: AttributeTestCase("[field: System.Diagnostics.DebuggerBrowsable(System.Diagnostics.DebuggerBrowsableState.Never)], [field: System.Obsolete], [field: System.Runtime.CompilerServices.CompilerGenerated]")]
           [field: Obsolete]
           public int P0 { get; set; }
         }
 
-        class AttributeTargetsReturnValue {
+        class AttributeTargetsReturnParameter {
 #if NETFRAMEWORK
           static string M0_ExpectedResult =>
             RuntimeInformation.FrameworkDescription.StartsWith(".NET Framework", StringComparison.Ordinal)
@@ -92,7 +96,7 @@ namespace Smdn.Reflection.ReverseGenerating {
 
           [return: AttributeTestCase(
             expected: null,
-            ExpectedValueGeneratorType = typeof(AttributeTargetsReturnValue),
+            ExpectedValueGeneratorType = typeof(AttributeTargetsReturnParameter),
             ExpectedValueGeneratorMemberName = nameof(M0_ExpectedResult)
           )]
           [return: MarshalAs(UnmanagedType.Bool)]
@@ -104,20 +108,33 @@ namespace Smdn.Reflection.ReverseGenerating {
             AttributeWithNamespace = false,
             MethodBody = MethodBodyOption.None
           )]
-          [Obsolete]
+          [Obsolete] // must not be shown in the result of MemberDeclarationTestCase
+          [AttributeTestCase("[System.Obsolete]")]
           [return: AttributeTestCase("[return: System.Xml.Serialization.XmlIgnore]")]
           [return: System.Xml.Serialization.XmlIgnore]
           public bool M1() => throw new NotImplementedException();
 
-          [MemberDeclarationTestCase(
-            "[return: XmlIgnore] public bool M1()",
-            AttributeWithNamespace = false,
-            MethodBody = MethodBodyOption.None
+          [TypeDeclarationTestCase(
+            "[return: XmlIgnore] public delegate bool D0();",
+            AttributeWithNamespace = false
           )]
-          [Obsolete]
+          [Obsolete] // must not be shown in the result of TypeDeclarationTestCase
+          [AttributeTestCase("[System.Obsolete]")]
           [return: AttributeTestCase("[return: System.Xml.Serialization.XmlIgnore]")]
           [return: System.Xml.Serialization.XmlIgnore]
           public delegate bool D0();
+
+          [MemberDeclarationTestCase(
+            "public int P0 { [return: XmlIgnore] get; }",
+            AttributeWithNamespace = false
+          )]
+          [Obsolete] // must not be shown in the result of MemberDeclarationTestCase
+          [AttributeTestCase("[System.Obsolete]")]
+          public int P0 {
+            [return: AttributeTestCase("[return: System.Xml.Serialization.XmlIgnore]")]
+            [return: System.Xml.Serialization.XmlIgnore]
+            get => 0;
+          }
         }
 
         class AttributeTargetsParameter {
@@ -126,7 +143,7 @@ namespace Smdn.Reflection.ReverseGenerating {
             AttributeWithNamespace = false,
             MethodBody = MethodBodyOption.None
           )]
-          [Obsolete]
+          [Obsolete] // must not be shown in the result of MemberDeclarationTestCase
           public bool M(
             [AttributeTestCase(
               "[System.Runtime.CompilerServices.CallerFilePath], [System.Runtime.InteropServices.Optional]",
@@ -155,7 +172,8 @@ namespace Smdn.Reflection.ReverseGenerating {
             "public delegate bool D([Optional] int arg = 0);",
             AttributeWithNamespace = false
           )]
-          [Obsolete]
+          [Obsolete] // must not be shown in the result of TypeDeclarationTestCase
+          [AttributeTestCase("[System.Obsolete]")]
           public delegate bool D(
             [AttributeTestCase(
               "[System.Runtime.InteropServices.Optional]",
@@ -167,39 +185,19 @@ namespace Smdn.Reflection.ReverseGenerating {
             )]
             int arg = 0
           );
-        }
 
-        public class AttributeTargetsReturnParameter {
           [MemberDeclarationTestCase(
-            "[return: XmlIgnore] public string M()",
-            AttributeWithNamespace = false,
-            MethodBody = MethodBodyOption.None
-          )]
-          [return: AttributeTestCase(
-            "[return: System.Xml.Serialization.XmlIgnore]",
-            AttributeWithNamespace = true
-          )]
-          [Obsolete]
-          [return: System.Xml.Serialization.XmlIgnore]
-          public string M() => throw new NotImplementedException();
-
-          [TypeDeclarationTestCase(
-            "[return: XmlIgnore] public delegate bool D();",
+            "public int P0 { [param: XmlIgnore] set; }",
             AttributeWithNamespace = false
           )]
-          [AttributeTestCase(
-            "[System.Obsolete]",
-            AttributeWithNamespace = true
-          )]
-          [return: AttributeTestCase(
-            "[return: System.Xml.Serialization.XmlIgnore]",
-            AttributeWithNamespace = true
-          )]
-          [Obsolete]
-          [return: System.Xml.Serialization.XmlIgnore]
-          public delegate bool D();
+          [Obsolete] // must not be shown in the result of MemberDeclarationTestCase
+          [AttributeTestCase("[System.Obsolete]")]
+          public int P0 {
+            [param: AttributeTestCase("[param: System.Xml.Serialization.XmlIgnore]")]
+            [param: System.Xml.Serialization.XmlIgnore]
+            set => throw null;
+          }
         }
-
 #pragma warning restore CS0414
       }
 
