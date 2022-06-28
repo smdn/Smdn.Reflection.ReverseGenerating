@@ -78,6 +78,10 @@ namespace Smdn.Reflection.ReverseGenerating {
           public int P0 { get; set; }
         }
 
+        class AttributeTargetsEventAccessorMethod {
+          // TODO
+        }
+
         class AttributeTargetsEventBackingField {
           [MemberDeclarationTestCase(
             "[field: DebuggerBrowsable(System.Diagnostics.DebuggerBrowsableState.Never)] [field: Obsolete] [field: CompilerGenerated] public event System.EventHandler E0;",
