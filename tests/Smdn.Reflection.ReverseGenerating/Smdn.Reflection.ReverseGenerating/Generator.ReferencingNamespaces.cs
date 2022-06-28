@@ -1,5 +1,7 @@
 // SPDX-FileCopyrightText: 2021 smdn <smdn@smdn.jp>
 // SPDX-License-Identifier: MIT
+#pragma warning disable CS8597
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -81,14 +83,29 @@ namespace Smdn.Reflection.ReverseGenerating {
           [ReferencingNamespacesTestCase("System, System.Collections.Generic, System.Collections.ObjectModel")] public System.Collections.ObjectModel.Collection<List<Action<int>>> F11;
           [ReferencingNamespacesTestCase("System, System.Collections.Generic, System.Collections.ObjectModel")] public Action<System.Collections.ObjectModel.Collection<List<int>>> F12;
 
-          [ReferencingNamespacesTestCase("System")] public event EventHandler E1;
-          [ReferencingNamespacesTestCase("System, System.Collections.Generic")] public event EventHandler<IList<int>> E2;
+          [ReferencingNamespacesTestCase(
+            // System.EventHandler
+            // System.DiagnosticsDebuggerBrowsableAttribute
+            // System.Runtime.CompilerServices.CompilerGeneratedAttribute
+            "System, System.Diagnostics, System.Runtime.CompilerServices"
+          )]
+          public event EventHandler E0;
 
-          [ReferencingNamespacesTestCase("")] public int P1 { get; set; }
-          [ReferencingNamespacesTestCase("")] public int? P2 { get; set; }
-          [ReferencingNamespacesTestCase("System")] public Guid P3 { get; set; }
-          [ReferencingNamespacesTestCase("System.Collections.Generic")] public IList<int> P4 { get; set; }
-          [ReferencingNamespacesTestCase("System, System.Collections.Generic")] public IList<Guid> P5 { get; set; }
+          [ReferencingNamespacesTestCase("System")] public event EventHandler E1 { add => throw null; remove => throw null; }
+          [ReferencingNamespacesTestCase("System, System.Collections.Generic")] public event EventHandler<IList<int>> E2 { add => throw null; remove => throw null; }
+
+          [ReferencingNamespacesTestCase(
+            // System.DiagnosticsDebuggerBrowsableAttribute
+            // System.Runtime.CompilerServices.CompilerGeneratedAttribute
+            "System.Diagnostics, System.Runtime.CompilerServices"
+          )]
+          public int P0 { get; set; }
+
+          [ReferencingNamespacesTestCase("")] public int P1 { get => throw null; set => throw null; }
+          [ReferencingNamespacesTestCase("")] public int? P2 { get => throw null; set => throw null; }
+          [ReferencingNamespacesTestCase("System")] public Guid P3 { get => throw null; set => throw null; }
+          [ReferencingNamespacesTestCase("System.Collections.Generic")] public IList<int> P4 { get => throw null; set => throw null; }
+          [ReferencingNamespacesTestCase("System, System.Collections.Generic")] public IList<Guid> P5 { get => throw null; set => throw null; }
 
           [ReferencingNamespacesTestCase("")] public void M0() {}
           [ReferencingNamespacesTestCase("")] public void M1(int x) {}
