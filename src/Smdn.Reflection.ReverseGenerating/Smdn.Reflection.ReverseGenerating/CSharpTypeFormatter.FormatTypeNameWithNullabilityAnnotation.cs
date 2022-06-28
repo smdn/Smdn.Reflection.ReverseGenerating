@@ -52,14 +52,14 @@ static partial class CSharpFormatter {
     }
 
     if (target.Type.IsPointer || (target.Type.IsByRef && options.AttributeProvider is not ParameterInfo))
-      return builder.Append(FormatTypeNameCore(target.Type, showVariance: false, options));
+      return builder.Append(FormatTypeNameCore(target.Type, options));
 
     var targetType = byRefParameterType ?? target.Type;
 
     if (IsValueTupleType(targetType)) {
       if (byRefParameterType is not null)
         // TODO: cannot get NullabilityInfo of generic type arguments from by-ref parameter type
-        return builder.Append(FormatTypeNameCore(targetType, showVariance: false, options));
+        return builder.Append(FormatTypeNameCore(targetType, options));
 
       // special case for value tuples (ValueTuple<>)
       return FormatValueTuple(target, builder, options);
@@ -87,7 +87,7 @@ static partial class CSharpFormatter {
       // other generic types
       if (targetType == byRefParameterType)
         // TODO: cannot get NullabilityInfo of generic type arguments from by-ref parameter type
-        return builder.Append(FormatTypeNameCore(targetType, showVariance: false, options));
+        return builder.Append(FormatTypeNameCore(targetType, options));
       else
         return FormatGenericTypeClosedOrDefinition(target, builder, options);
     }
@@ -105,7 +105,7 @@ static partial class CSharpFormatter {
         builder.Append(targetType.Namespace).Append('.');
 
       if (options.WithDeclaringTypeName && targetType.IsNested)
-        builder.Append(FormatTypeNameCore(targetType.GetDeclaringTypeOrThrow(), showVariance: false, options)).Append('.');
+        builder.Append(FormatTypeNameCore(targetType.GetDeclaringTypeOrThrow(), options)).Append('.');
     }
 
     return builder
@@ -136,7 +136,7 @@ static partial class CSharpFormatter {
           );
         }
 
-        builder.Append(FormatTypeNameCore(declaringType, showVariance: true, options)).Append('.');
+        builder.Append(FormatTypeNameCore(declaringType, options)).Append('.');
       }
 
       genericTypeArguments = genericTypeArguments.Skip(genericArgsOfDeclaringType.Length);

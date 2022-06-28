@@ -26,7 +26,6 @@ static partial class CSharpFormatter {
   )
     => FormatTypeNameCore(
       t,
-      showVariance: false,
       options: new(
         AttributeProvider: attributeProvider ?? t,
         TypeWithNamespace: typeWithNamespace,
@@ -70,7 +69,6 @@ static partial class CSharpFormatter {
   )
     => FormatTypeNameCore(
       (f ?? throw new ArgumentNullException(nameof(f))).FieldType,
-      showVariance: false,
       options: new(
         AttributeProvider: f,
         TypeWithNamespace: typeWithNamespace,
@@ -114,7 +112,6 @@ static partial class CSharpFormatter {
   )
     => FormatTypeNameCore(
       (p ?? throw new ArgumentNullException(nameof(p))).PropertyType,
-      showVariance: false,
       options: new(
         AttributeProvider: p,
         TypeWithNamespace: typeWithNamespace,
@@ -158,7 +155,6 @@ static partial class CSharpFormatter {
   )
     => FormatTypeNameCore(
       (p ?? throw new ArgumentNullException(nameof(p))).ParameterType,
-      showVariance: false,
       options: new(
         AttributeProvider: p,
         TypeWithNamespace: typeWithNamespace,
@@ -202,7 +198,6 @@ static partial class CSharpFormatter {
   )
     => FormatTypeNameCore(
       (ev ?? throw new ArgumentNullException(nameof(ev))).GetEventHandlerTypeOrThrow(),
-      showVariance: false,
       options: new(
         AttributeProvider: ev,
         TypeWithNamespace: typeWithNamespace,
