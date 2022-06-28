@@ -441,8 +441,15 @@ public static partial class Generator {
       ? Enumerable.Empty<string>()
       : GenerateAttributeList(backingField, referencingNamespaces, options);
 
-    if (backingFieldAttributeList.Any())
-      sb.AppendJoin(" ", backingFieldAttributeList).Append(' ');
+    if (backingFieldAttributeList.Any()) {
+      sb
+#if SYSTEM_TEXT_STRINGBUILDER_APPENDJOIN
+        .AppendJoin(' ', backingFieldAttributeList)
+#else
+        .Append(string.Join(" ", backingFieldAttributeList))
+#endif
+        .Append(' ');
+    }
 
     var modifier = GetMemberModifierOf(
       property,
@@ -543,8 +550,15 @@ public static partial class Generator {
         options
       );
 
-      if (returnParameterAttributeList.Any())
-        sb.AppendJoin(" ", returnParameterAttributeList).Append(' ');
+      if (returnParameterAttributeList.Any()) {
+        sb
+#if SYSTEM_TEXT_STRINGBUILDER_APPENDJOIN
+          .AppendJoin(' ', returnParameterAttributeList)
+#else
+          .Append(string.Join(" ", returnParameterAttributeList))
+#endif
+          .Append(' ');
+      }
 
       var accessorMethodAttributeList = GenerateAttributeList(
         property.GetMethod!,
@@ -552,8 +566,15 @@ public static partial class Generator {
         options
       );
 
-      if (accessorMethodAttributeList.Any())
-        sb.AppendJoin(" ", accessorMethodAttributeList).Append(' ');
+      if (accessorMethodAttributeList.Any()) {
+        sb
+#if SYSTEM_TEXT_STRINGBUILDER_APPENDJOIN
+          .AppendJoin(' ', accessorMethodAttributeList)
+#else
+          .Append(string.Join(" ", accessorMethodAttributeList))
+#endif
+          .Append(' ');
+      }
 
       sb.Append("get").Append(GenerateAccessorBody(property.GetMethod!, options));
     }
@@ -568,8 +589,15 @@ public static partial class Generator {
         options
       );
 
-      if (accessorParameterAttributeList.Any())
-        sb.AppendJoin(" ", accessorParameterAttributeList).Append(' ');
+      if (accessorParameterAttributeList.Any()) {
+        sb
+#if SYSTEM_TEXT_STRINGBUILDER_APPENDJOIN
+          .AppendJoin(' ', accessorParameterAttributeList)
+#else
+          .Append(string.Join(" ", accessorParameterAttributeList))
+#endif
+          .Append(' ');
+      }
 
       var accessorMethodAttributeList = GenerateAttributeList(
         property.SetMethod!,
@@ -577,8 +605,15 @@ public static partial class Generator {
         options
       );
 
-      if (accessorMethodAttributeList.Any())
-        sb.AppendJoin(" ", accessorMethodAttributeList).Append(' ');
+      if (accessorMethodAttributeList.Any()) {
+        sb
+#if SYSTEM_TEXT_STRINGBUILDER_APPENDJOIN
+          .AppendJoin(' ', accessorMethodAttributeList)
+#else
+          .Append(string.Join(" ", accessorMethodAttributeList))
+#endif
+          .Append(' ');
+      }
 
       if (property.IsSetMethodInitOnly())
         sb.Append("init");
