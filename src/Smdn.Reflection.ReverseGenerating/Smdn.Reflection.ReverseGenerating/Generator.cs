@@ -950,6 +950,21 @@ public static partial class Generator {
     var sb = new StringBuilder();
     var memberOptions = options.MemberDeclaration;
 
+    var backingField = ev.GetBackingField();
+    var backingFieldAttributeList = backingField is null
+      ? Enumerable.Empty<string>()
+      : GenerateAttributeList(backingField, referencingNamespaces, options);
+
+    if (backingFieldAttributeList.Any()) {
+      sb
+#if SYSTEM_TEXT_STRINGBUILDER_APPENDJOIN
+        .AppendJoin(' ', backingFieldAttributeList)
+#else
+        .Append(string.Join(" ", backingFieldAttributeList))
+#endif
+        .Append(' ');
+    }
+
     if (explicitInterface == null)
       sb.Append(GetMemberModifierOf(ev.GetMethods(true).First(), options));
 

@@ -78,6 +78,18 @@ namespace Smdn.Reflection.ReverseGenerating {
           public int P0 { get; set; }
         }
 
+        class AttributeTargetsEventBackingField {
+          [MemberDeclarationTestCase(
+            "[field: DebuggerBrowsable(System.Diagnostics.DebuggerBrowsableState.Never)] [field: Obsolete] [field: CompilerGenerated] public event System.EventHandler E0;",
+            AttributeWithNamespace = false
+          )]
+          [Obsolete] // must not be shown in the result of MemberDeclarationTestCase
+          [AttributeTestCase("[System.Obsolete]")]
+          [field: AttributeTestCase("[field: System.Diagnostics.DebuggerBrowsable(System.Diagnostics.DebuggerBrowsableState.Never)], [field: System.Obsolete], [field: System.Runtime.CompilerServices.CompilerGenerated]")]
+          [field: Obsolete]
+          public event EventHandler E0;
+        }
+
         class AttributeTargetsReturnParameter {
 #if NETFRAMEWORK
           static string M0_ExpectedResult =>

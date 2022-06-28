@@ -12,4 +12,10 @@ internal static class FieldInfoBackingFieldExtensions {
       ? throw new ArgumentNullException(nameof(f))
       : f.DeclaringType is not null &&
         f.DeclaringType.GetProperties().Any(p => p.GetBackingField() == f); // TODO: optimize
+
+  public static bool IsEventBackingField(this FieldInfo f)
+    => f is null
+      ? throw new ArgumentNullException(nameof(f))
+      : f.DeclaringType is not null &&
+        f.DeclaringType.GetEvents().Any(ev => ev.GetBackingField() == f); // TODO: optimize
 }

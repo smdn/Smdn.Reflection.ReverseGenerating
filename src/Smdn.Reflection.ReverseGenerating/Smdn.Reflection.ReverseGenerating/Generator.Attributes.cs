@@ -29,7 +29,7 @@ partial class Generator {
             ? "[param: "
             : "[",
       FieldInfo f =>
-        f.IsPropertyBackingField()
+        f.IsPropertyBackingField() || f.IsEventBackingField()
           ? "[field: "
           : "[",
       _ => "[",
