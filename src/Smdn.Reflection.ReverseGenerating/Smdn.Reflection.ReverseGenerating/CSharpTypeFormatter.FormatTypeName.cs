@@ -8,6 +8,15 @@ namespace Smdn.Reflection.ReverseGenerating;
 #pragma warning disable IDE0040
 static partial class CSharpFormatter {
 #pragma warning restore IDE0040
+  private readonly record struct FormatTypeNameOptions(
+#pragma warning disable SA1313
+    ICustomAttributeProvider AttributeProvider,
+    bool TypeWithNamespace,
+    bool WithDeclaringTypeName,
+    bool TranslateLanguagePrimitiveType
+#pragma warning restore SA1313
+  );
+
   public static string FormatTypeName(
     this Type t,
     ICustomAttributeProvider? attributeProvider = null,
@@ -18,11 +27,11 @@ static partial class CSharpFormatter {
     => FormatTypeNameCore(
       t,
       showVariance: false,
-      options: new FormatTypeNameOptions(
-        attributeProvider: attributeProvider ?? t,
-        typeWithNamespace: typeWithNamespace,
-        withDeclaringTypeName: withDeclaringTypeName,
-        translateLanguagePrimitiveType: translateLanguagePrimitiveType
+      options: new(
+        AttributeProvider: attributeProvider ?? t,
+        TypeWithNamespace: typeWithNamespace,
+        WithDeclaringTypeName: withDeclaringTypeName,
+        TranslateLanguagePrimitiveType: translateLanguagePrimitiveType
       )
     );
 
@@ -45,10 +54,10 @@ static partial class CSharpFormatter {
         nullabilityInfoContext.Create(f ?? throw new ArgumentNullException(nameof(f))),
         builder: new(capacity: 32),
         options: new(
-          attributeProvider: f,
-          typeWithNamespace: typeWithNamespace,
-          withDeclaringTypeName: withDeclaringTypeName,
-          translateLanguagePrimitiveType: translateLanguagePrimitiveType
+          AttributeProvider: f,
+          TypeWithNamespace: typeWithNamespace,
+          WithDeclaringTypeName: withDeclaringTypeName,
+          TranslateLanguagePrimitiveType: translateLanguagePrimitiveType
         )
       ).ToString();
 #endif
@@ -63,10 +72,10 @@ static partial class CSharpFormatter {
       (f ?? throw new ArgumentNullException(nameof(f))).FieldType,
       showVariance: false,
       options: new(
-        attributeProvider: f,
-        typeWithNamespace: typeWithNamespace,
-        withDeclaringTypeName: withDeclaringTypeName,
-        translateLanguagePrimitiveType: translateLanguagePrimitiveType
+        AttributeProvider: f,
+        TypeWithNamespace: typeWithNamespace,
+        WithDeclaringTypeName: withDeclaringTypeName,
+        TranslateLanguagePrimitiveType: translateLanguagePrimitiveType
       )
     );
 
@@ -89,10 +98,10 @@ static partial class CSharpFormatter {
         nullabilityInfoContext.Create(p ?? throw new ArgumentNullException(nameof(p))),
         builder: new(capacity: 32),
         options: new(
-          attributeProvider: p,
-          typeWithNamespace: typeWithNamespace,
-          withDeclaringTypeName: withDeclaringTypeName,
-          translateLanguagePrimitiveType: translateLanguagePrimitiveType
+          AttributeProvider: p,
+          TypeWithNamespace: typeWithNamespace,
+          WithDeclaringTypeName: withDeclaringTypeName,
+          TranslateLanguagePrimitiveType: translateLanguagePrimitiveType
         )
       ).ToString();
 #endif
@@ -107,10 +116,10 @@ static partial class CSharpFormatter {
       (p ?? throw new ArgumentNullException(nameof(p))).PropertyType,
       showVariance: false,
       options: new(
-        attributeProvider: p,
-        typeWithNamespace: typeWithNamespace,
-        withDeclaringTypeName: withDeclaringTypeName,
-        translateLanguagePrimitiveType: translateLanguagePrimitiveType
+        AttributeProvider: p,
+        TypeWithNamespace: typeWithNamespace,
+        WithDeclaringTypeName: withDeclaringTypeName,
+        TranslateLanguagePrimitiveType: translateLanguagePrimitiveType
       )
     );
 
@@ -133,10 +142,10 @@ static partial class CSharpFormatter {
         nullabilityInfoContext.Create(p ?? throw new ArgumentNullException(nameof(p))),
         builder: new(capacity: 32),
         options: new(
-          attributeProvider: p,
-          typeWithNamespace: typeWithNamespace,
-          withDeclaringTypeName: withDeclaringTypeName,
-          translateLanguagePrimitiveType: translateLanguagePrimitiveType
+          AttributeProvider: p,
+          TypeWithNamespace: typeWithNamespace,
+          WithDeclaringTypeName: withDeclaringTypeName,
+          TranslateLanguagePrimitiveType: translateLanguagePrimitiveType
         )
       ).ToString();
 #endif
@@ -151,10 +160,10 @@ static partial class CSharpFormatter {
       (p ?? throw new ArgumentNullException(nameof(p))).ParameterType,
       showVariance: false,
       options: new(
-        attributeProvider: p,
-        typeWithNamespace: typeWithNamespace,
-        withDeclaringTypeName: withDeclaringTypeName,
-        translateLanguagePrimitiveType: translateLanguagePrimitiveType
+        AttributeProvider: p,
+        TypeWithNamespace: typeWithNamespace,
+        WithDeclaringTypeName: withDeclaringTypeName,
+        TranslateLanguagePrimitiveType: translateLanguagePrimitiveType
       )
     );
 
@@ -177,10 +186,10 @@ static partial class CSharpFormatter {
         nullabilityInfoContext.Create(ev ?? throw new ArgumentNullException(nameof(ev))),
         builder: new(capacity: 32),
         options: new(
-          attributeProvider: ev,
-          typeWithNamespace: typeWithNamespace,
-          withDeclaringTypeName: withDeclaringTypeName,
-          translateLanguagePrimitiveType: translateLanguagePrimitiveType
+          AttributeProvider: ev,
+          TypeWithNamespace: typeWithNamespace,
+          WithDeclaringTypeName: withDeclaringTypeName,
+          TranslateLanguagePrimitiveType: translateLanguagePrimitiveType
         )
       ).ToString();
 #endif
@@ -195,10 +204,10 @@ static partial class CSharpFormatter {
       (ev ?? throw new ArgumentNullException(nameof(ev))).GetEventHandlerTypeOrThrow(),
       showVariance: false,
       options: new(
-        attributeProvider: ev,
-        typeWithNamespace: typeWithNamespace,
-        withDeclaringTypeName: withDeclaringTypeName,
-        translateLanguagePrimitiveType: translateLanguagePrimitiveType
+        AttributeProvider: ev,
+        TypeWithNamespace: typeWithNamespace,
+        WithDeclaringTypeName: withDeclaringTypeName,
+        TranslateLanguagePrimitiveType: translateLanguagePrimitiveType
       )
     );
 }
