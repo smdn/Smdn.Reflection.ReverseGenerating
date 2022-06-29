@@ -31,6 +31,9 @@ public abstract class GeneratorTestCaseAttribute : Attribute, ITestCaseAttribute
   public bool AttributeWithNamespace { get; set; } = true;
   public bool AttributeWithNamedArguments { get; set; } = false;
   public bool AttributeWithDeclaringTypeName { get; set; } = true;
+  public AttributeSectionFormat AttributeAccessorParameterFormat { get; set; } = AttributeSectionFormat.Discrete;
+  public AttributeSectionFormat AttributeBackingFieldFormat { get; set; } = AttributeSectionFormat.Discrete;
+  public AttributeSectionFormat AttributeGenericParameterFormat { get; set; } = AttributeSectionFormat.Discrete;
   public Type? TypeOfAttributeTypeFilterFunc { get; set; } = null;
   public string? NameOfAttributeTypeFilterFunc { get; set; } = null;
   public bool UseDefaultLiteral { get; set; } = false;
@@ -125,6 +128,9 @@ public partial class GeneratorTests {
     attributeDeclarationOptions.WithNamespace = testCaseAttribute.AttributeWithNamespace;
     attributeDeclarationOptions.WithDeclaringTypeName = testCaseAttribute.AttributeWithDeclaringTypeName;
     attributeDeclarationOptions.WithNamedArguments = testCaseAttribute.AttributeWithNamedArguments;
+    attributeDeclarationOptions.AccessorParameterFormat = testCaseAttribute.AttributeAccessorParameterFormat;
+    attributeDeclarationOptions.BackingFieldFormat = testCaseAttribute.AttributeBackingFieldFormat;
+    attributeDeclarationOptions.GenericParameterFormat = testCaseAttribute.AttributeGenericParameterFormat;
 
     if (testCaseAttribute.TypeOfAttributeTypeFilterFunc is not null && !string.IsNullOrEmpty(testCaseAttribute.NameOfAttributeTypeFilterFunc)) {
       var methodSignatureOfAttributeTypeFilter = typeof(AttributeTypeFilter).GetDelegateSignatureMethod() ?? throw new InvalidOperationException("cannot get delegate signature method");

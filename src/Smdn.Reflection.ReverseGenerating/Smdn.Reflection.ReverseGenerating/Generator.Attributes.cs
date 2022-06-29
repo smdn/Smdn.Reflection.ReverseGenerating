@@ -1,7 +1,14 @@
 // SPDX-FileCopyrightText: 2020 smdn <smdn@smdn.jp>
 // SPDX-License-Identifier: MIT
+#if NET7_0_OR_GREATER
+#define SYSTEM_DIAGNOSTICS_UNREACHABLEEXCEPTION
+#endif
+
 using System;
 using System.Collections.Generic;
+#if SYSTEM_DIAGNOSTICS_UNREACHABLEEXCEPTION
+using System.Diagnostics;
+#endif
 using System.Linq;
 using System.Reflection;
 
@@ -12,6 +19,15 @@ namespace Smdn.Reflection.ReverseGenerating;
 #pragma warning disable IDE0040
 partial class Generator {
 #pragma warning restore IDE0040
+  private enum AttributeTarget {
+    Default,
+    PropertyGetMethodReturnParameter,
+    PropertySetMethodParameter,
+    PropertyBackingField,
+    EventBackingField,
+    GenericParameter,
+  }
+
   public static IEnumerable<string> GenerateAttributeList(
     ICustomAttributeProvider attributeProvider,
     ISet<string>? referencingNamespaces,
@@ -21,29 +37,115 @@ partial class Generator {
     if (attributeProvider is null)
       throw new ArgumentNullException(nameof(attributeProvider));
 
-    var prefix = attributeProvider switch {
-      ParameterInfo p =>
-        p.IsReturnParameter()
-          ? "[return: "
-          : p.IsPropertySetMethodParameter()
-            ? "[param: "
-            : "[",
-      FieldInfo f =>
-        f.IsPropertyBackingField() || f.IsEventBackingField()
-          ? "[field: "
-          : "[",
-      _ => "[",
+    const string attributeSectionPrefixDefault = "[";
+    const string attributeSectionPrefixField = "[field: ";
+    const string attributeSectionPrefixParameter = "[param: ";
+    const string attributeSectionPrefixReturnParameter = "[return: ";
+    const string attributeSectionSuffix = "]";
+
+    var attributeTarget = AttributeTarget.Default;
+    var attributeSectionPrefix = attributeSectionPrefixDefault;
+
+    switch (attributeProvider) {
+      case Type t:
+        attributeSectionPrefix = attributeSectionPrefixDefault;
+        attributeTarget = t.IsGenericParameter
+          ? AttributeTarget.GenericParameter
+          : AttributeTarget.Default;
+        break;
+
+      case ParameterInfo para:
+        var p = para.GetDeclaringProperty();
+
+        if (p is not null) {
+          if (para.Member == p.GetMethod) {
+            attributeSectionPrefix = attributeSectionPrefixReturnParameter;
+            attributeTarget = AttributeTarget.PropertyGetMethodReturnParameter;
+          }
+          else if (para.Member == p.SetMethod) {
+            attributeSectionPrefix = attributeSectionPrefixParameter;
+            attributeTarget = AttributeTarget.PropertySetMethodParameter;
+          }
+        }
+        else if (para.IsReturnParameter()) {
+          attributeSectionPrefix = attributeSectionPrefixReturnParameter;
+          attributeTarget = AttributeTarget.Default;
+        }
+
+        break;
+
+      case FieldInfo f:
+        if (f.IsPropertyBackingField()) {
+          attributeSectionPrefix = attributeSectionPrefixField;
+          attributeTarget = AttributeTarget.PropertyBackingField;
+        }
+        else if (f.IsEventBackingField()) {
+          attributeSectionPrefix = attributeSectionPrefixField;
+          attributeTarget = AttributeTarget.EventBackingField;
+        }
+
+        break;
+    }
+
+    var attributeSectionFormat = attributeTarget switch {
+      AttributeTarget.PropertyGetMethodReturnParameter or
+      AttributeTarget.PropertySetMethodParameter => options.AttributeDeclaration.AccessorParameterFormat,
+
+      AttributeTarget.PropertyBackingField or
+      AttributeTarget.EventBackingField => options.AttributeDeclaration.BackingFieldFormat,
+
+      AttributeTarget.GenericParameter => options.AttributeDeclaration.GenericParameterFormat,
+
+      _ => AttributeSectionFormat.Discrete,
     };
 
-    return GetAttributes(attributeProvider, options.AttributeDeclaration.TypeFilter)
+    attributeSectionFormat = attributeSectionFormat switch {
+      // valid
+      AttributeSectionFormat.Discrete or
+      AttributeSectionFormat.List => attributeSectionFormat,
+
+      // invalid
+      _ => throw new InvalidOperationException($"invalid AttributeSectionFormat value ({attributeSectionFormat})"),
+    };
+
+    var attributes = GetAttributes(attributeProvider, options.AttributeDeclaration.TypeFilter)
       .OrderBy(static attr => attr.GetAttributeType().FullName)
       .Select(attr =>
         (
           name: ConvertAttributeName(attr),
           args: string.Join(", ", ConvertAttributeArguments(attr))
         )
-      )
-      .Select(a => prefix + a.name + (string.IsNullOrEmpty(a.args) ? string.Empty : "(" + a.args + ")") + "]");
+      );
+
+    if (!attributes.Any())
+      return Enumerable.Empty<string>();
+
+    return attributeSectionFormat switch {
+      AttributeSectionFormat.Discrete => attributes.Select(
+        a => attributeSectionPrefix + a.name + (string.IsNullOrEmpty(a.args) ? string.Empty : "(" + a.args + ")") + attributeSectionSuffix
+      ),
+
+      AttributeSectionFormat.List => Enumerable.Repeat(
+        string.Concat(
+          attributeSectionPrefix,
+          string.Join(
+            ", ",
+            attributes.Select(
+              static a => string.IsNullOrEmpty(a.args) ? a.name : a.name + "(" + a.args + ")"
+            )
+          ),
+          attributeSectionSuffix
+        ),
+        count: 1
+      ),
+
+      _ =>
+#if SYSTEM_DIAGNOSTICS_UNREACHABLEEXCEPTION
+        throw new UnreachableException(),
+#else
+        throw new NotImplementedException("unreachable"),
+#endif
+    };
 
     static IEnumerable<CustomAttributeData> GetAttributes(
       ICustomAttributeProvider attributeProvider,

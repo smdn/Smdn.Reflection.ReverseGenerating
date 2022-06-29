@@ -97,10 +97,18 @@ namespace Smdn.Reflection.ReverseGenerating {
           [AttributeUsage(System.AttributeTargets.GenericParameter)] public class GP1Attribute : Attribute { }
 
           [TypeDeclarationTestCase(
-            "public class C<[GP0] T0, [GP1] T1, T2>",
+            "public class C<[GP0] T0, [GP1] T1, T2, [GP0] [GP1] T3>",
             TypeWithNamespace = false,
             AttributeWithNamespace = false,
-            AttributeWithDeclaringTypeName = false
+            AttributeWithDeclaringTypeName = false,
+            AttributeGenericParameterFormat = AttributeSectionFormat.Discrete
+          )]
+          [TypeDeclarationTestCase(
+            "public class C<[GP0] T0, [GP1] T1, T2, [GP0, GP1] T3>",
+            TypeWithNamespace = false,
+            AttributeWithNamespace = false,
+            AttributeWithDeclaringTypeName = false,
+            AttributeGenericParameterFormat = AttributeSectionFormat.List
           )]
           public class C<
             [AttributeTestCase("[GP0]", AttributeWithNamespace = false, AttributeWithDeclaringTypeName = false)]
@@ -112,7 +120,13 @@ namespace Smdn.Reflection.ReverseGenerating {
             T1,
 
             [AttributeTestCase("", AttributeWithNamespace = false)]
-            T2
+            T2,
+
+            [AttributeTestCase("[GP0], [GP1]", AttributeWithNamespace = false, AttributeWithDeclaringTypeName = false, AttributeGenericParameterFormat = AttributeSectionFormat.Discrete)]
+            [AttributeTestCase("[GP0, GP1]", AttributeWithNamespace = false, AttributeWithDeclaringTypeName = false, AttributeGenericParameterFormat = AttributeSectionFormat.List)]
+            [GP0]
+            [GP1]
+            T3
           > { }
 
 #nullable enable annotations
@@ -166,9 +180,18 @@ namespace Smdn.Reflection.ReverseGenerating {
           [AttributeUsage(System.AttributeTargets.GenericParameter)] public class GP1Attribute : Attribute { }
 
           [MemberDeclarationTestCase(
-            "public void M<[GP0] T0, [GP1] T1, T2>(T0 p0, T1 p1, T2 p2)",
+            "public void M<[GP0] T0, [GP1] T1, T2, [GP0] [GP1] T3>(T0 p0, T1 p1, T2 p2, T3 p3)",
             AttributeWithNamespace = false,
             AttributeWithDeclaringTypeName = false,
+            AttributeGenericParameterFormat = AttributeSectionFormat.Discrete,
+            TypeWithNamespace = false,
+            MethodBody = MethodBodyOption.None
+          )]
+          [MemberDeclarationTestCase(
+            "public void M<[GP0] T0, [GP1] T1, T2, [GP0, GP1] T3>(T0 p0, T1 p1, T2 p2, T3 p3)",
+            AttributeWithNamespace = false,
+            AttributeWithDeclaringTypeName = false,
+            AttributeGenericParameterFormat = AttributeSectionFormat.List,
             TypeWithNamespace = false,
             MethodBody = MethodBodyOption.None
           )]
@@ -182,8 +205,14 @@ namespace Smdn.Reflection.ReverseGenerating {
             T1,
 
             [AttributeTestCase("", AttributeWithNamespace = false)]
-            T2
-          >(T0 p0, T1 p1, T2 p2) => throw new NotImplementedException();
+            T2,
+
+            [AttributeTestCase("[GP0], [GP1]", AttributeWithNamespace = false, AttributeWithDeclaringTypeName = false, AttributeGenericParameterFormat = AttributeSectionFormat.Discrete)]
+            [AttributeTestCase("[GP0, GP1]", AttributeWithNamespace = false, AttributeWithDeclaringTypeName = false, AttributeGenericParameterFormat = AttributeSectionFormat.List)]
+            [GP0]
+            [GP1]
+            T3
+          >(T0 p0, T1 p1, T2 p2, T3 p3) => throw new NotImplementedException();
 
 #nullable enable annotations
           [MemberDeclarationTestCase(
@@ -263,11 +292,25 @@ namespace Smdn.Reflection.ReverseGenerating {
           [MemberDeclarationTestCase(
             "[field: DebuggerBrowsable(DebuggerBrowsableState.Never)] [field: Obsolete] [field: CompilerGenerated] public int P0 { [CompilerGenerated] get; [CompilerGenerated] set; }",
             AttributeWithNamespace = false,
+            AttributeBackingFieldFormat = AttributeSectionFormat.Discrete,
+            TypeWithNamespace = false
+          )]
+          [MemberDeclarationTestCase(
+            "[field: DebuggerBrowsable(DebuggerBrowsableState.Never), Obsolete, CompilerGenerated] public int P0 { [CompilerGenerated] get; [CompilerGenerated] set; }",
+            AttributeWithNamespace = false,
+            AttributeBackingFieldFormat = AttributeSectionFormat.List,
             TypeWithNamespace = false
           )]
           [AttributeTestCase("[System.Obsolete]")]
           [Obsolete] // must not be shown in the result of MemberDeclarationTestCase
-          [field: AttributeTestCase("[field: System.Diagnostics.DebuggerBrowsable(System.Diagnostics.DebuggerBrowsableState.Never)], [field: System.Obsolete], [field: System.Runtime.CompilerServices.CompilerGenerated]")]
+          [field: AttributeTestCase(
+            "[field: System.Diagnostics.DebuggerBrowsable(System.Diagnostics.DebuggerBrowsableState.Never)], [field: System.Obsolete], [field: System.Runtime.CompilerServices.CompilerGenerated]",
+            AttributeBackingFieldFormat = AttributeSectionFormat.Discrete
+          )]
+          [field: AttributeTestCase(
+            "[field: System.Diagnostics.DebuggerBrowsable(System.Diagnostics.DebuggerBrowsableState.Never), System.Obsolete, System.Runtime.CompilerServices.CompilerGenerated]",
+            AttributeBackingFieldFormat = AttributeSectionFormat.List
+          )]
           [field: Obsolete]
           public int P0 { get; set; }
         }
@@ -279,13 +322,37 @@ namespace Smdn.Reflection.ReverseGenerating {
         class AttributeTargetsEventBackingField {
           [MemberDeclarationTestCase(
             "[field: DebuggerBrowsable(System.Diagnostics.DebuggerBrowsableState.Never)] [field: Obsolete] [field: CompilerGenerated] public event System.EventHandler E0;",
-            AttributeWithNamespace = false
+            AttributeWithNamespace = false,
+            AttributeBackingFieldFormat = AttributeSectionFormat.Discrete
+          )]
+          [MemberDeclarationTestCase(
+            "[field: DebuggerBrowsable(System.Diagnostics.DebuggerBrowsableState.Never), Obsolete, CompilerGenerated] public event System.EventHandler E0;",
+            AttributeWithNamespace = false,
+            AttributeBackingFieldFormat = AttributeSectionFormat.List
           )]
           [Obsolete] // must not be shown in the result of MemberDeclarationTestCase
           [AttributeTestCase("[System.Obsolete]")]
-          [field: AttributeTestCase("[field: System.Diagnostics.DebuggerBrowsable(System.Diagnostics.DebuggerBrowsableState.Never)], [field: System.Obsolete], [field: System.Runtime.CompilerServices.CompilerGenerated]")]
+          [field: AttributeTestCase(
+            "[field: System.Diagnostics.DebuggerBrowsable(System.Diagnostics.DebuggerBrowsableState.Never)], [field: System.Obsolete], [field: System.Runtime.CompilerServices.CompilerGenerated]",
+            AttributeBackingFieldFormat = AttributeSectionFormat.Discrete
+          )]
+          [field: AttributeTestCase(
+            "[field: System.Diagnostics.DebuggerBrowsable(System.Diagnostics.DebuggerBrowsableState.Never), System.Obsolete, System.Runtime.CompilerServices.CompilerGenerated]",
+            AttributeBackingFieldFormat = AttributeSectionFormat.List
+          )]
           [field: Obsolete]
           public event EventHandler E0;
+        }
+
+        [AttributeUsage(System.AttributeTargets.ReturnValue)]
+        public class ReturnParameterAttribute : Attribute {
+          public int CtorArg;
+          public int NamedArg;
+
+          public ReturnParameterAttribute(int ctorArg)
+          {
+            CtorArg = ctorArg;
+          }
         }
 
         class AttributeTargetsReturnParameter {
@@ -314,36 +381,71 @@ namespace Smdn.Reflection.ReverseGenerating {
 #endif
 
           [MemberDeclarationTestCase(
-            "[return: XmlIgnore] public bool M1()",
+            "[return: ReturnParameter(0, NamedArg = 1)] [return: XmlIgnore] public bool M1()",
             AttributeWithNamespace = false,
             MethodBody = MethodBodyOption.None
           )]
           [Obsolete] // must not be shown in the result of MemberDeclarationTestCase
           [AttributeTestCase("[System.Obsolete]")]
-          [return: AttributeTestCase("[return: System.Xml.Serialization.XmlIgnore]")]
+          [return: AttributeTestCase(
+            "[return: ReturnParameter(0, NamedArg = 1)], [return: XmlIgnore]",
+            AttributeWithNamespace = false
+          )]
           [return: System.Xml.Serialization.XmlIgnore]
+          [return: ReturnParameter(0, NamedArg = 1)]
           public bool M1() => throw new NotImplementedException();
 
           [TypeDeclarationTestCase(
-            "[return: XmlIgnore] public delegate bool D0();",
+            "[return: ReturnParameter(0, NamedArg = 1)] [return: XmlIgnore] public delegate bool D0();",
             AttributeWithNamespace = false
           )]
           [Obsolete] // must not be shown in the result of TypeDeclarationTestCase
           [AttributeTestCase("[System.Obsolete]")]
-          [return: AttributeTestCase("[return: System.Xml.Serialization.XmlIgnore]")]
+          [return: AttributeTestCase(
+            "[return: ReturnParameter(0, NamedArg = 1)], [return: XmlIgnore]",
+            AttributeWithNamespace = false
+          )]
           [return: System.Xml.Serialization.XmlIgnore]
+          [return: ReturnParameter(0, NamedArg = 1)]
           public delegate bool D0();
 
           [MemberDeclarationTestCase(
-            "public int P0 { [return: XmlIgnore] get; }",
-            AttributeWithNamespace = false
+            "public int P0 { [return: ReturnParameter(0, NamedArg = 1)] [return: XmlIgnore] get; }",
+            AttributeWithNamespace = false,
+            AttributeAccessorParameterFormat = AttributeSectionFormat.Discrete
+          )]
+          [MemberDeclarationTestCase(
+            "public int P0 { [return: ReturnParameter(0, NamedArg = 1), XmlIgnore] get; }",
+            AttributeWithNamespace = false,
+            AttributeAccessorParameterFormat = AttributeSectionFormat.List
           )]
           [Obsolete] // must not be shown in the result of MemberDeclarationTestCase
           [AttributeTestCase("[System.Obsolete]")]
           public int P0 {
-            [return: AttributeTestCase("[return: System.Xml.Serialization.XmlIgnore]")]
+            [return: AttributeTestCase(
+              "[return: ReturnParameter(0, NamedArg = 1)], [return: XmlIgnore]",
+              AttributeWithNamespace = false,
+              AttributeAccessorParameterFormat = AttributeSectionFormat.Discrete
+            )]
+            [return: AttributeTestCase(
+              "[return: ReturnParameter(0, NamedArg = 1), XmlIgnore]",
+              AttributeWithNamespace = false,
+              AttributeAccessorParameterFormat = AttributeSectionFormat.List
+            )]
             [return: System.Xml.Serialization.XmlIgnore]
+            [return: ReturnParameter(0, NamedArg = 1)]
             get => 0;
+          }
+        }
+
+        [AttributeUsage(System.AttributeTargets.Parameter)]
+        public class ParameterAttribute : Attribute {
+          public int CtorArg;
+          public int NamedArg;
+
+          public ParameterAttribute(int ctorArg)
+          {
+            CtorArg = ctorArg;
           }
         }
 
@@ -379,32 +481,45 @@ namespace Smdn.Reflection.ReverseGenerating {
           ) => throw new NotImplementedException();
 
           [TypeDeclarationTestCase(
-            "public delegate bool D([Optional] int arg = 0);",
+            "public delegate bool D([Parameter(0, NamedArg = 1)] [Optional] int arg = 0);",
             AttributeWithNamespace = false
           )]
           [Obsolete] // must not be shown in the result of TypeDeclarationTestCase
           [AttributeTestCase("[System.Obsolete]")]
           public delegate bool D(
             [AttributeTestCase(
-              "[System.Runtime.InteropServices.Optional]",
-              AttributeWithNamespace = true
-            )]
-            [AttributeTestCase(
-              "[Optional]",
+              "[Parameter(0, NamedArg = 1)], [Optional]",
               AttributeWithNamespace = false
             )]
+            [Parameter(0, NamedArg = 1)]
             int arg = 0
           );
 
           [MemberDeclarationTestCase(
-            "public int P0 { [param: XmlIgnore] set; }",
-            AttributeWithNamespace = false
+            "public int P0 { [param: Parameter(0, NamedArg = 1)] [param: XmlIgnore] set; }",
+            AttributeWithNamespace = false,
+            AttributeAccessorParameterFormat = AttributeSectionFormat.Discrete
+          )]
+          [MemberDeclarationTestCase(
+            "public int P0 { [param: Parameter(0, NamedArg = 1), XmlIgnore] set; }",
+            AttributeWithNamespace = false,
+            AttributeAccessorParameterFormat = AttributeSectionFormat.List
           )]
           [Obsolete] // must not be shown in the result of MemberDeclarationTestCase
           [AttributeTestCase("[System.Obsolete]")]
           public int P0 {
-            [param: AttributeTestCase("[param: System.Xml.Serialization.XmlIgnore]")]
+            [param: AttributeTestCase(
+              "[param: Parameter(0, NamedArg = 1)], [param: XmlIgnore]",
+              AttributeWithNamespace = false,
+              AttributeAccessorParameterFormat = AttributeSectionFormat.Discrete
+            )]
+            [param: AttributeTestCase(
+              "[param: Parameter(0, NamedArg = 1), XmlIgnore]",
+              AttributeWithNamespace = false,
+              AttributeAccessorParameterFormat = AttributeSectionFormat.List
+            )]
             [param: System.Xml.Serialization.XmlIgnore]
+            [param: Parameter(0, NamedArg = 1)]
             set => throw null;
           }
         }
