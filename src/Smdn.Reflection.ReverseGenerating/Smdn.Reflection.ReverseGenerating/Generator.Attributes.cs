@@ -82,7 +82,10 @@ partial class Generator {
 
       var nameOfAttr = attr
         .GetAttributeType()
-        .FormatTypeName(typeWithNamespace: options.AttributeDeclaration.WithNamespace);
+        .FormatTypeName(
+          typeWithNamespace: options.AttributeDeclaration.WithNamespace,
+          withDeclaringTypeName: options.AttributeDeclaration.WithDeclaringTypeName
+        );
 
       if (nameOfAttr.EndsWith("Attribute", StringComparison.Ordinal))
         nameOfAttr = nameOfAttr.Substring(0, nameOfAttr.Length - 9);

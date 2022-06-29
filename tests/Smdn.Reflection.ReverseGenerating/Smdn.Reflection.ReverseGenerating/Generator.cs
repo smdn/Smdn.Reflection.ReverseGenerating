@@ -30,6 +30,7 @@ public abstract class GeneratorTestCaseAttribute : Attribute, ITestCaseAttribute
   public bool TypeEnableNullabilityAnnotations { get; set; } = true;
   public bool AttributeWithNamespace { get; set; } = true;
   public bool AttributeWithNamedArguments { get; set; } = false;
+  public bool AttributeWithDeclaringTypeName { get; set; } = true;
   public Type? TypeOfAttributeTypeFilterFunc { get; set; } = null;
   public string? NameOfAttributeTypeFilterFunc { get; set; } = null;
   public bool UseDefaultLiteral { get; set; } = false;
@@ -122,6 +123,7 @@ public partial class GeneratorTests {
     var attributeDeclarationOptions = options.AttributeDeclaration;
 
     attributeDeclarationOptions.WithNamespace = testCaseAttribute.AttributeWithNamespace;
+    attributeDeclarationOptions.WithDeclaringTypeName = testCaseAttribute.AttributeWithDeclaringTypeName;
     attributeDeclarationOptions.WithNamedArguments = testCaseAttribute.AttributeWithNamedArguments;
 
     if (testCaseAttribute.TypeOfAttributeTypeFilterFunc is not null && !string.IsNullOrEmpty(testCaseAttribute.NameOfAttributeTypeFilterFunc)) {

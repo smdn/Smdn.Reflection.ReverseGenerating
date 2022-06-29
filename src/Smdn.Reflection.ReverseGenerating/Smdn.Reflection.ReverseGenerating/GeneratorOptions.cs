@@ -62,6 +62,7 @@ public class GeneratorOptions : ICloneable {
 
   public class AttributeDeclarationOptions {
     public bool WithNamespace { get; set; } = false;
+    public bool WithDeclaringTypeName { get; set; } = false;
     public bool WithNamedArguments { get; set; } = false;
     public AttributeTypeFilter? TypeFilter { get; set; } = null;
 

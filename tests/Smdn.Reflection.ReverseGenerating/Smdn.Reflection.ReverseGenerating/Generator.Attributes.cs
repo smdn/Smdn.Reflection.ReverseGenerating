@@ -48,6 +48,28 @@ namespace Smdn.Reflection.ReverseGenerating {
           [AttributeTestCase("[Obsolete(\"message\")]", AttributeWithNamedArguments = false, AttributeWithNamespace = false)]
           [Obsolete(message: "message")] class C2 { }
         }
+
+        namespace WithDeclaringTypeName {
+          public class C {
+            [AttributeUsage(System.AttributeTargets.Class)]
+            public class ClassAttribute : Attribute { }
+
+            [AttributeTestCase("[C.Class]", AttributeWithDeclaringTypeName = true, AttributeWithNamespace = false)]
+            [Class] public class C0 { }
+
+            [AttributeTestCase("[Class]", AttributeWithDeclaringTypeName = false, AttributeWithNamespace = false)]
+            [Class] public class C1 { }
+
+            [AttributeUsage(System.AttributeTargets.Method)]
+            public class MethodAttribute : Attribute { }
+
+            [AttributeTestCase("[C.Method]", AttributeWithDeclaringTypeName = true, AttributeWithNamespace = false)]
+            [Method] public void M0() => throw null;
+
+            [AttributeTestCase("[Method]", AttributeWithDeclaringTypeName = false, AttributeWithNamespace = false)]
+            [Method] public void M1() => throw null;
+          }
+        }
       }
 
       namespace AttributeTargets {
@@ -75,16 +97,17 @@ namespace Smdn.Reflection.ReverseGenerating {
           [AttributeUsage(System.AttributeTargets.GenericParameter)] public class GP1Attribute : Attribute { }
 
           [TypeDeclarationTestCase(
-            $"public class C<[{nameof(AttributeTargetsGenericTypeParameter)}.GP0] T0, [{nameof(AttributeTargetsGenericTypeParameter)}.GP1] T1, T2>",
+            "public class C<[GP0] T0, [GP1] T1, T2>",
             TypeWithNamespace = false,
-            AttributeWithNamespace = false
+            AttributeWithNamespace = false,
+            AttributeWithDeclaringTypeName = false
           )]
           public class C<
-            [AttributeTestCase($"[{nameof(AttributeTargetsGenericTypeParameter)}.GP0]", AttributeWithNamespace = false)]
+            [AttributeTestCase("[GP0]", AttributeWithNamespace = false, AttributeWithDeclaringTypeName = false)]
             [GP0]
             T0,
 
-            [AttributeTestCase($"[{nameof(AttributeTargetsGenericTypeParameter)}.GP1]", AttributeWithNamespace = false)]
+            [AttributeTestCase("[GP1]", AttributeWithNamespace = false, AttributeWithDeclaringTypeName = false)]
             [GP1]
             T1,
 
@@ -114,23 +137,25 @@ namespace Smdn.Reflection.ReverseGenerating {
 #nullable restore
 
           [TypeDeclarationTestCase(
-            $"public class ConstraintStruct<[{nameof(AttributeTargetsGenericTypeParameter)}.GP0] T> where T : struct",
+            "public class ConstraintStruct<[GP0] T> where T : struct",
             TypeWithNamespace = false,
-            AttributeWithNamespace = false
+            AttributeWithNamespace = false,
+            AttributeWithDeclaringTypeName = false
           )]
           public class ConstraintStruct<
-            [AttributeTestCase($"[{nameof(AttributeTargetsGenericTypeParameter)}.GP0]", AttributeWithNamespace = false)]
+            [AttributeTestCase("[GP0]", AttributeWithNamespace = false, AttributeWithDeclaringTypeName = false)]
             [GP0]
             T
           > where T : struct { }
 
           [TypeDeclarationTestCase(
-            $"public class ConstraintUnmanaged<[{nameof(AttributeTargetsGenericTypeParameter)}.GP0] [IsUnmanaged] T> where T : unmanaged",
+            "public class ConstraintUnmanaged<[GP0] [IsUnmanaged] T> where T : unmanaged",
             TypeWithNamespace = false,
-            AttributeWithNamespace = false
+            AttributeWithNamespace = false,
+            AttributeWithDeclaringTypeName = false
           )]
           public class ConstraintUnmanaged<
-            [AttributeTestCase($"[{nameof(AttributeTargetsGenericTypeParameter)}.GP0], [IsUnmanaged]", AttributeWithNamespace = false)]
+            [AttributeTestCase("[GP0], [IsUnmanaged]", AttributeWithNamespace = false, AttributeWithDeclaringTypeName = false)]
             [GP0]
             T
           > where T : unmanaged { }
@@ -141,17 +166,18 @@ namespace Smdn.Reflection.ReverseGenerating {
           [AttributeUsage(System.AttributeTargets.GenericParameter)] public class GP1Attribute : Attribute { }
 
           [MemberDeclarationTestCase(
-            $"public void M<[{nameof(AttributeTargetsGenericMethodParameter)}.GP0] T0, [{nameof(AttributeTargetsGenericMethodParameter)}.GP1] T1, T2>(T0 p0, T1 p1, T2 p2)",
+            "public void M<[GP0] T0, [GP1] T1, T2>(T0 p0, T1 p1, T2 p2)",
             AttributeWithNamespace = false,
+            AttributeWithDeclaringTypeName = false,
             TypeWithNamespace = false,
             MethodBody = MethodBodyOption.None
           )]
           public void M<
-            [AttributeTestCase($"[{nameof(AttributeTargetsGenericMethodParameter)}.GP0]", AttributeWithNamespace = false)]
+            [AttributeTestCase("[GP0]", AttributeWithNamespace = false, AttributeWithDeclaringTypeName = false)]
             [GP0]
             T0,
 
-            [AttributeTestCase($"[{nameof(AttributeTargetsGenericMethodParameter)}.GP1]", AttributeWithNamespace = false)]
+            [AttributeTestCase("[GP1]", AttributeWithNamespace = false, AttributeWithDeclaringTypeName = false)]
             [GP1]
             T1,
 
@@ -189,25 +215,27 @@ namespace Smdn.Reflection.ReverseGenerating {
 #nullable restore
 
           [MemberDeclarationTestCase(
-            $"public void ConstraintStruct<[{nameof(AttributeTargetsGenericMethodParameter)}.GP0] T>(T p) where T : struct",
+            "public void ConstraintStruct<[GP0] T>(T p) where T : struct",
             AttributeWithNamespace = false,
+            AttributeWithDeclaringTypeName = false,
             TypeWithNamespace = false,
             MethodBody = MethodBodyOption.None
           )]
           public void ConstraintStruct<
-            [AttributeTestCase($"[{nameof(AttributeTargetsGenericMethodParameter)}.GP0]", AttributeWithNamespace = false)]
+            [AttributeTestCase("[GP0]", AttributeWithNamespace = false, AttributeWithDeclaringTypeName = false)]
             [GP0]
             T
           >(T p) where T : struct { }
 
           [MemberDeclarationTestCase(
-            $"public void ConstraintUnmanaged<[{nameof(AttributeTargetsGenericMethodParameter)}.GP0] [IsUnmanaged] T>(T p) where T : unmanaged",
+            "public void ConstraintUnmanaged<[GP0] [IsUnmanaged] T>(T p) where T : unmanaged",
             AttributeWithNamespace = false,
+            AttributeWithDeclaringTypeName = false,
             TypeWithNamespace = false,
             MethodBody = MethodBodyOption.None
           )]
           public void ConstraintUnmanaged<
-            [AttributeTestCase($"[{nameof(AttributeTargetsGenericMethodParameter)}.GP0], [IsUnmanaged]", AttributeWithNamespace = false)]
+            [AttributeTestCase("[GP0], [IsUnmanaged]", AttributeWithNamespace = false, AttributeWithDeclaringTypeName = false)]
             [GP0]
             T
           >(T p) where T : unmanaged { }
