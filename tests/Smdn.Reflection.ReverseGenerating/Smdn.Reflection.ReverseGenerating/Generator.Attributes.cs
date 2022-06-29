@@ -29,6 +29,27 @@ namespace Smdn.Reflection.ReverseGenerating {
 
   namespace TestCases {
     namespace Attributes {
+      namespace Options {
+        namespace WithNamespace {
+          [AttributeTestCase("[System.Obsolete]", AttributeWithNamespace = true)]
+          [Obsolete] class C0 { }
+
+          [AttributeTestCase("[Obsolete]", AttributeWithNamespace = false)]
+          [Obsolete] class C1 { }
+        }
+
+        namespace WithNamedArguments {
+          [AttributeTestCase("[Obsolete]", AttributeWithNamedArguments = true, AttributeWithNamespace = false)]
+          [Obsolete] class C0 { }
+
+          [AttributeTestCase("[Obsolete(message: \"message\")]", AttributeWithNamedArguments = true, AttributeWithNamespace = false)]
+          [Obsolete(message: "message")] class C1 { }
+
+          [AttributeTestCase("[Obsolete(\"message\")]", AttributeWithNamedArguments = false, AttributeWithNamespace = false)]
+          [Obsolete(message: "message")] class C2 { }
+        }
+      }
+
       namespace AttributeTargets {
         [AttributeTestCase("[System.Obsolete]")][Obsolete] class C { }
         [AttributeTestCase("[System.Obsolete]")][Obsolete] struct S { }
@@ -36,7 +57,7 @@ namespace Smdn.Reflection.ReverseGenerating {
         [AttributeTestCase("[System.Obsolete]")][Obsolete] interface I { }
         [AttributeTestCase("[System.Obsolete]")][Obsolete] enum E { }
 
-        [AttributeTestCase("")] class N { }
+        [AttributeTestCase("")] class None { }
 
 #pragma warning disable CS0414
         class AttributeTargetsMember {
@@ -45,6 +66,8 @@ namespace Smdn.Reflection.ReverseGenerating {
           [AttributeTestCase("[System.Obsolete]")][Obsolete] public int P { get; set; }
           [AttributeTestCase("[System.Obsolete]")][Obsolete] public event EventHandler E = null;
           [AttributeTestCase("[System.Obsolete]")][Obsolete] public int F = default;
+
+          [AttributeTestCase("")] public void None() { }
         }
 
         class AttributeTargetsGenericTypeParameter {
