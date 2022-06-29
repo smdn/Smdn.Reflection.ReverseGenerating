@@ -738,9 +738,14 @@ public static partial class Generator {
           "<",
           string.Join(
             ", ",
-            m.GetGenericArguments().Select(
-              t => t.FormatTypeName(typeWithNamespace: formattingOptions.FormatTypeWithNamespace)
-            )
+            m.GetGenericArguments().Select(p => {
+              var name = p.FormatTypeName(typeWithNamespace: formattingOptions.FormatTypeWithNamespace);
+              var attributeList = GenerateAttributeList(p, referencingNamespaces, options);
+
+              return attributeList.Any()
+                ? string.Join(" ", attributeList) + " " + name
+                : name;
+            })
           ),
           ">"
         )

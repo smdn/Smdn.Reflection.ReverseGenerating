@@ -113,6 +113,83 @@ namespace Smdn.Reflection.ReverseGenerating {
           > where T : unmanaged { }
         }
 
+        class AttributeTargetsGenericMethodParameter {
+          [AttributeUsage(System.AttributeTargets.GenericParameter)] public class GP0Attribute : Attribute { }
+          [AttributeUsage(System.AttributeTargets.GenericParameter)] public class GP1Attribute : Attribute { }
+
+          [MemberDeclarationTestCase(
+            $"public void M<[{nameof(AttributeTargetsGenericMethodParameter)}.GP0] T0, [{nameof(AttributeTargetsGenericMethodParameter)}.GP1] T1, T2>(T0 p0, T1 p1, T2 p2)",
+            AttributeWithNamespace = false,
+            TypeWithNamespace = false,
+            MethodBody = MethodBodyOption.None
+          )]
+          public void M<
+            [AttributeTestCase($"[{nameof(AttributeTargetsGenericMethodParameter)}.GP0]", AttributeWithNamespace = false)]
+            [GP0]
+            T0,
+
+            [AttributeTestCase($"[{nameof(AttributeTargetsGenericMethodParameter)}.GP1]", AttributeWithNamespace = false)]
+            [GP1]
+            T1,
+
+            [AttributeTestCase("", AttributeWithNamespace = false)]
+            T2
+          >(T0 p0, T1 p1, T2 p2) => throw new NotImplementedException();
+
+#nullable enable annotations
+          [MemberDeclarationTestCase(
+#if SYSTEM_REFLECTION_NULLABILITYINFOCONTEXT
+            "public void GenericMethodParameter_NullableEnableContext<[Nullable(2)] T>(T? p)",
+#else
+            "public void GenericMethodParameter_NullableEnableContext<[Nullable(2)] T>(T p)",
+#endif
+            AttributeWithNamespace = false,
+            TypeWithNamespace = false,
+            MethodBody = MethodBodyOption.None
+          )]
+          public void GenericMethodParameter_NullableEnableContext<
+            [AttributeTestCase("[Nullable(2)]", AttributeWithNamespace = false)]
+            T
+          >(T p) { }
+#nullable restore
+#nullable disable annotations
+          [MemberDeclarationTestCase(
+            "public void GenericMethodParameter_NullableDisableContext<T>(T p)",
+            AttributeWithNamespace = false,
+            TypeWithNamespace = false,
+            MethodBody = MethodBodyOption.None
+          )]
+          public void GenericMethodParameter_NullableDisableContext<
+            [AttributeTestCase("", AttributeWithNamespace = false)]
+            T
+          >(T p) { }
+#nullable restore
+
+          [MemberDeclarationTestCase(
+            $"public void ConstraintStruct<[{nameof(AttributeTargetsGenericMethodParameter)}.GP0] T>(T p) where T : struct",
+            AttributeWithNamespace = false,
+            TypeWithNamespace = false,
+            MethodBody = MethodBodyOption.None
+          )]
+          public void ConstraintStruct<
+            [AttributeTestCase($"[{nameof(AttributeTargetsGenericMethodParameter)}.GP0]", AttributeWithNamespace = false)]
+            [GP0]
+            T
+          >(T p) where T : struct { }
+
+          [MemberDeclarationTestCase(
+            $"public void ConstraintUnmanaged<[{nameof(AttributeTargetsGenericMethodParameter)}.GP0] [IsUnmanaged] T>(T p) where T : unmanaged",
+            AttributeWithNamespace = false,
+            TypeWithNamespace = false,
+            MethodBody = MethodBodyOption.None
+          )]
+          public void ConstraintUnmanaged<
+            [AttributeTestCase($"[{nameof(AttributeTargetsGenericMethodParameter)}.GP0], [IsUnmanaged]", AttributeWithNamespace = false)]
+            [GP0]
+            T
+          >(T p) where T : unmanaged { }
+        }
+
         class AttributeTargetsPropertyAccessorMethod {
           [MemberDeclarationTestCase(
             "public int P0 { [Obsolete] get; [DebuggerHidden] set; }",
@@ -419,6 +496,11 @@ namespace Smdn.Reflection.ReverseGenerating {
           .GetMembers(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static | BindingFlags.DeclaredOnly)
           .Prepend((MemberInfo)t) // prepend type itself as a test target
           .Concat(t.GetGenericArguments())
+          .Concat(
+            t
+              .GetMethods(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static | BindingFlags.DeclaredOnly)
+              .SelectMany(static method => method.GetGenericArguments())
+          )
         )
         .SelectMany(
           m => m.GetCustomAttributes<AttributeTestCaseAttribute>().Select(
