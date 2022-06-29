@@ -47,6 +47,72 @@ namespace Smdn.Reflection.ReverseGenerating {
           [AttributeTestCase("[System.Obsolete]")][Obsolete] public int F = default;
         }
 
+        class AttributeTargetsGenericTypeParameter {
+          [AttributeUsage(System.AttributeTargets.GenericParameter)] public class GP0Attribute : Attribute { }
+          [AttributeUsage(System.AttributeTargets.GenericParameter)] public class GP1Attribute : Attribute { }
+
+          [TypeDeclarationTestCase(
+            $"public class C<[{nameof(AttributeTargetsGenericTypeParameter)}.GP0] T0, [{nameof(AttributeTargetsGenericTypeParameter)}.GP1] T1, T2>",
+            TypeWithNamespace = false,
+            AttributeWithNamespace = false
+          )]
+          public class C<
+            [AttributeTestCase($"[{nameof(AttributeTargetsGenericTypeParameter)}.GP0]", AttributeWithNamespace = false)]
+            [GP0]
+            T0,
+
+            [AttributeTestCase($"[{nameof(AttributeTargetsGenericTypeParameter)}.GP1]", AttributeWithNamespace = false)]
+            [GP1]
+            T1,
+
+            [AttributeTestCase("", AttributeWithNamespace = false)]
+            T2
+          > { }
+
+#nullable enable annotations
+          [TypeDeclarationTestCase(
+            "public class GenericTypeParameter_NullableEnableContext<[System.Runtime.CompilerServices.Nullable(2)] T>",
+            TypeWithNamespace = false
+          )]
+          public class GenericTypeParameter_NullableEnableContext<
+            [AttributeTestCase("[Nullable(2)]", AttributeWithNamespace = false)]
+            T
+          > { }
+#nullable restore
+#nullable disable annotations
+          [TypeDeclarationTestCase(
+            "public class GenericTypeParameter_NullableDisableContext<T>",
+            TypeWithNamespace = false
+          )]
+          public class GenericTypeParameter_NullableDisableContext<
+            [AttributeTestCase("", AttributeWithNamespace = false)]
+            T
+          > { }
+#nullable restore
+
+          [TypeDeclarationTestCase(
+            $"public class ConstraintStruct<[{nameof(AttributeTargetsGenericTypeParameter)}.GP0] T> where T : struct",
+            TypeWithNamespace = false,
+            AttributeWithNamespace = false
+          )]
+          public class ConstraintStruct<
+            [AttributeTestCase($"[{nameof(AttributeTargetsGenericTypeParameter)}.GP0]", AttributeWithNamespace = false)]
+            [GP0]
+            T
+          > where T : struct { }
+
+          [TypeDeclarationTestCase(
+            $"public class ConstraintUnmanaged<[{nameof(AttributeTargetsGenericTypeParameter)}.GP0] [IsUnmanaged] T> where T : unmanaged",
+            TypeWithNamespace = false,
+            AttributeWithNamespace = false
+          )]
+          public class ConstraintUnmanaged<
+            [AttributeTestCase($"[{nameof(AttributeTargetsGenericTypeParameter)}.GP0], [IsUnmanaged]", AttributeWithNamespace = false)]
+            [GP0]
+            T
+          > where T : unmanaged { }
+        }
+
         class AttributeTargetsPropertyAccessorMethod {
           [MemberDeclarationTestCase(
             "public int P0 { [Obsolete] get; [DebuggerHidden] set; }",
@@ -352,6 +418,7 @@ namespace Smdn.Reflection.ReverseGenerating {
         .SelectMany(t => t
           .GetMembers(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static | BindingFlags.DeclaredOnly)
           .Prepend((MemberInfo)t) // prepend type itself as a test target
+          .Concat(t.GetGenericArguments())
         )
         .SelectMany(
           m => m.GetCustomAttributes<AttributeTestCaseAttribute>().Select(

@@ -459,9 +459,13 @@ namespace Smdn.Reflection.ReverseGenerating {
       Type type
     )
     {
+      var options = GetGeneratorOptions(attrTestCase);
+
+      options.AttributeDeclaration.TypeFilter ??= static (_, _) => false;
+
       Assert.AreEqual(
         attrTestCase.Expected,
-        Generator.GenerateTypeDeclaration(attrTestCase.TestTargetType ?? type, null, GetGeneratorOptions(attrTestCase)),
+        Generator.GenerateTypeDeclaration(attrTestCase.TestTargetType ?? type, null, options),
         message: $"{attrTestCase.SourceLocation} ({type.FullName})"
       );
     }
@@ -475,9 +479,20 @@ namespace Smdn.Reflection.ReverseGenerating {
       Type type
     )
     {
+      var options = GetGeneratorOptions(attrTestCase);
+
+      options.AttributeDeclaration.TypeFilter ??= static (_, _) => false;
+
       Assert.AreEqual(
         attrTestCase.Expected.Replace("\r\n", "\n"),
-        string.Join("\n", Generator.GenerateTypeDeclarationWithExplicitBaseTypeAndInterfaces(attrTestCase.TestTargetType ?? type, null, GetGeneratorOptions(attrTestCase))),
+        string.Join(
+          "\n",
+          Generator.GenerateTypeDeclarationWithExplicitBaseTypeAndInterfaces(
+            attrTestCase.TestTargetType ?? type,
+            null,
+            options
+          )
+        ),
         message: $"{attrTestCase.SourceLocation} ({type.FullName})"
       );
     }

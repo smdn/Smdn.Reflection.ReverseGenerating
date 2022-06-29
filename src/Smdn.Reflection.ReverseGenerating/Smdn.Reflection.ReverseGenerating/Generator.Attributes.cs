@@ -60,6 +60,7 @@ partial class Generator {
       if (
         attributeProvider is Type t &&
         t.IsValueType &&
+        !t.IsGenericParameter &&
         !t.IsEnum &&
         !t.IsStructLayoutDefault()
       ) {

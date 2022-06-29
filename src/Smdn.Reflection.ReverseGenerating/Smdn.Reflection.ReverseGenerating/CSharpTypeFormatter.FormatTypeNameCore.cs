@@ -21,7 +21,7 @@ static partial class CSharpFormatter {
       "System".Equals(t.Namespace, StringComparison.Ordinal) &&
       t.GetGenericTypeName().Equals("ValueTuple", StringComparison.Ordinal);
 
-  private static string FormatTypeNameCore(
+  internal static string FormatTypeNameCore(
     Type t,
     FormatTypeNameOptions options
   )
@@ -136,7 +136,17 @@ static partial class CSharpFormatter {
 
           sb.Append(t.GetGenericTypeName());
 
-          var formattedGenericArgs = string.Join(", ", genericArgs.Select(arg => FormatCore(arg, showVariance: true, options)));
+          var formattedGenericArgs = string.Join(
+            ", ",
+            genericArgs.Select(arg => {
+              var name = FormatCore(arg, showVariance: true, options);
+
+              if (t.IsGenericTypeDefinition && options.GenericParameterNameModifier is not null)
+                name = options.GenericParameterNameModifier(arg, name);
+
+              return name;
+            })
+          );
 
           if (0 < formattedGenericArgs.Length)
             sb.Append('<').Append(formattedGenericArgs).Append('>');

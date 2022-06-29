@@ -8,12 +8,13 @@ namespace Smdn.Reflection.ReverseGenerating;
 #pragma warning disable IDE0040
 static partial class CSharpFormatter {
 #pragma warning restore IDE0040
-  private readonly record struct FormatTypeNameOptions(
+  internal readonly record struct FormatTypeNameOptions(
 #pragma warning disable SA1313
     ICustomAttributeProvider AttributeProvider,
     bool TypeWithNamespace,
     bool WithDeclaringTypeName,
-    bool TranslateLanguagePrimitiveType
+    bool TranslateLanguagePrimitiveType,
+    Func<Type, string, string>? GenericParameterNameModifier = null
 #pragma warning restore SA1313
   );
 
