@@ -41,5 +41,6 @@ public class GeneratorOptionsTests {
     Assert.AreNotSame(clone.MemberDeclaration, options.MemberDeclaration, nameof(GeneratorOptions.MemberDeclaration));
     Assert.AreNotSame(clone.AttributeDeclaration, options.AttributeDeclaration, nameof(GeneratorOptions.AttributeDeclaration));
     Assert.AreNotSame(clone.ValueDeclaration, options.ValueDeclaration, nameof(GeneratorOptions.ValueDeclaration));
+    Assert.AreNotSame(clone.ParameterDeclaration, options.ParameterDeclaration, nameof(GeneratorOptions.ParameterDeclaration));
   }
 }

@@ -764,108 +764,108 @@ namespace Smdn.Reflection.ReverseGenerating {
         namespace Operators {
           namespace UnaryOperators {
             public class C {
-              [MemberDeclarationTestCase("public static C operator + (C c) {}", MemberWithNamespace = false, MemberWithDeclaringTypeName = false)]
-              [MemberDeclarationTestCase("public static C operator + (C c) {}", MemberWithNamespace = false, MemberWithDeclaringTypeName = true)]
+              [MemberDeclarationTestCase("public static C operator + (C c) {}", MemberWithNamespace = false, MemberWithDeclaringTypeName = false, ParameterWithNamespace = false, ParameterWithDeclaringTypeName = false)]
+              [MemberDeclarationTestCase("public static C operator + (C c) {}", MemberWithNamespace = false, MemberWithDeclaringTypeName = true,  ParameterWithNamespace = false, ParameterWithDeclaringTypeName = true)]
               public static C operator +(C c) => throw new NotImplementedException();
 
-              [MemberDeclarationTestCase("public static C operator - (C c) {}", MemberWithNamespace = false, MemberWithDeclaringTypeName = false)]
-              [MemberDeclarationTestCase("public static C operator - (C c) {}", MemberWithNamespace = false, MemberWithDeclaringTypeName = true)]
+              [MemberDeclarationTestCase("public static C operator - (C c) {}", MemberWithNamespace = false, MemberWithDeclaringTypeName = false, ParameterWithNamespace = false, ParameterWithDeclaringTypeName = false)]
+              [MemberDeclarationTestCase("public static C operator - (C c) {}", MemberWithNamespace = false, MemberWithDeclaringTypeName = true,  ParameterWithNamespace = false, ParameterWithDeclaringTypeName = true)]
               public static C operator -(C c) => throw new NotImplementedException();
 
-              [MemberDeclarationTestCase("public static C operator ! (C c) {}", MemberWithNamespace = false, MemberWithDeclaringTypeName = false)]
-              [MemberDeclarationTestCase("public static C operator ! (C c) {}", MemberWithNamespace = false, MemberWithDeclaringTypeName = true)]
+              [MemberDeclarationTestCase("public static C operator ! (C c) {}", MemberWithNamespace = false, MemberWithDeclaringTypeName = false, ParameterWithNamespace = false, ParameterWithDeclaringTypeName = false)]
+              [MemberDeclarationTestCase("public static C operator ! (C c) {}", MemberWithNamespace = false, MemberWithDeclaringTypeName = true,  ParameterWithNamespace = false, ParameterWithDeclaringTypeName = true)]
               public static C operator !(C c) => throw new NotImplementedException();
 
-              [MemberDeclarationTestCase("public static C operator ~ (C c) {}", MemberWithNamespace = false, MemberWithDeclaringTypeName = false)]
-              [MemberDeclarationTestCase("public static C operator ~ (C c) {}", MemberWithNamespace = false, MemberWithDeclaringTypeName = true)]
+              [MemberDeclarationTestCase("public static C operator ~ (C c) {}", MemberWithNamespace = false, MemberWithDeclaringTypeName = false, ParameterWithNamespace = false, ParameterWithDeclaringTypeName = false)]
+              [MemberDeclarationTestCase("public static C operator ~ (C c) {}", MemberWithNamespace = false, MemberWithDeclaringTypeName = true,  ParameterWithNamespace = false, ParameterWithDeclaringTypeName = true)]
               public static C operator ~(C c) => throw new NotImplementedException();
 
-              [MemberDeclarationTestCase("public static bool operator true (C c) {}", MemberWithNamespace = false, MemberWithDeclaringTypeName = false)]
-              [MemberDeclarationTestCase("public static bool operator true (C c) {}", MemberWithNamespace = false, MemberWithDeclaringTypeName = true)]
+              [MemberDeclarationTestCase("public static bool operator true (C c) {}", MemberWithNamespace = false, MemberWithDeclaringTypeName = false, ParameterWithNamespace = false, ParameterWithDeclaringTypeName = false)]
+              [MemberDeclarationTestCase("public static bool operator true (C c) {}", MemberWithNamespace = false, MemberWithDeclaringTypeName = true,  ParameterWithNamespace = false, ParameterWithDeclaringTypeName = true)]
               public static bool operator true(C c) => throw new NotImplementedException();
 
-              [MemberDeclarationTestCase("public static bool operator false (C c) {}", MemberWithNamespace = false, MemberWithDeclaringTypeName = false)]
-              [MemberDeclarationTestCase("public static bool operator false (C c) {}", MemberWithNamespace = false, MemberWithDeclaringTypeName = true)]
+              [MemberDeclarationTestCase("public static bool operator false (C c) {}", MemberWithNamespace = false, MemberWithDeclaringTypeName = false, ParameterWithNamespace = false, ParameterWithDeclaringTypeName = false)]
+              [MemberDeclarationTestCase("public static bool operator false (C c) {}", MemberWithNamespace = false, MemberWithDeclaringTypeName = true,  ParameterWithNamespace = false, ParameterWithDeclaringTypeName = true)]
               public static bool operator false(C c) => throw new NotImplementedException();
 
-              [MemberDeclarationTestCase("public static C operator ++ (C c) {}", MemberWithNamespace = false, MemberWithDeclaringTypeName = false)]
-              [MemberDeclarationTestCase("public static C operator ++ (C c) {}", MemberWithNamespace = false, MemberWithDeclaringTypeName = true)]
+              [MemberDeclarationTestCase("public static C operator ++ (C c) {}", MemberWithNamespace = false, MemberWithDeclaringTypeName = false, ParameterWithNamespace = false, ParameterWithDeclaringTypeName = false)]
+              [MemberDeclarationTestCase("public static C operator ++ (C c) {}", MemberWithNamespace = false, MemberWithDeclaringTypeName = true,  ParameterWithNamespace = false, ParameterWithDeclaringTypeName = true)]
               public static C operator ++(C c) => throw new NotImplementedException();
 
-              [MemberDeclarationTestCase("public static C operator -- (C c) {}", MemberWithNamespace = false, MemberWithDeclaringTypeName = false)]
-              [MemberDeclarationTestCase("public static C operator -- (C c) {}", MemberWithNamespace = false, MemberWithDeclaringTypeName = true)]
+              [MemberDeclarationTestCase("public static C operator -- (C c) {}", MemberWithNamespace = false, MemberWithDeclaringTypeName = false, ParameterWithNamespace = false, ParameterWithDeclaringTypeName = false)]
+              [MemberDeclarationTestCase("public static C operator -- (C c) {}", MemberWithNamespace = false, MemberWithDeclaringTypeName = true,  ParameterWithNamespace = false, ParameterWithDeclaringTypeName = true)]
               public static C operator --(C c) => throw new NotImplementedException();
             }
           }
 
           namespace BinaryOperators {
             public class C {
-              [MemberDeclarationTestCase("public static C operator + (C x, C y) {}", MemberWithNamespace = false, MemberWithDeclaringTypeName = false)]
-              [MemberDeclarationTestCase("public static C operator + (C x, C y) {}", MemberWithNamespace = false, MemberWithDeclaringTypeName = true)]
+              [MemberDeclarationTestCase("public static C operator + (C x, C y) {}", MemberWithNamespace = false, MemberWithDeclaringTypeName = false, ParameterWithNamespace = false, ParameterWithDeclaringTypeName = false)]
+              [MemberDeclarationTestCase("public static C operator + (C x, C y) {}", MemberWithNamespace = false, MemberWithDeclaringTypeName = true,  ParameterWithNamespace = false, ParameterWithDeclaringTypeName = true)]
               public static C operator +(C x, C y) => throw new NotImplementedException();
 
-              [MemberDeclarationTestCase("public static C operator - (C x, C y) {}", MemberWithNamespace = false, MemberWithDeclaringTypeName = false)]
-              [MemberDeclarationTestCase("public static C operator - (C x, C y) {}", MemberWithNamespace = false, MemberWithDeclaringTypeName = true)]
+              [MemberDeclarationTestCase("public static C operator - (C x, C y) {}", MemberWithNamespace = false, MemberWithDeclaringTypeName = false, ParameterWithNamespace = false, ParameterWithDeclaringTypeName = false)]
+              [MemberDeclarationTestCase("public static C operator - (C x, C y) {}", MemberWithNamespace = false, MemberWithDeclaringTypeName = true,  ParameterWithNamespace = false, ParameterWithDeclaringTypeName = true)]
               public static C operator -(C x, C y) => throw new NotImplementedException();
 
-              [MemberDeclarationTestCase("public static C operator * (C x, C y) {}", MemberWithNamespace = false, MemberWithDeclaringTypeName = false)]
-              [MemberDeclarationTestCase("public static C operator * (C x, C y) {}", MemberWithNamespace = false, MemberWithDeclaringTypeName = true)]
+              [MemberDeclarationTestCase("public static C operator * (C x, C y) {}", MemberWithNamespace = false, MemberWithDeclaringTypeName = false, ParameterWithNamespace = false, ParameterWithDeclaringTypeName = false)]
+              [MemberDeclarationTestCase("public static C operator * (C x, C y) {}", MemberWithNamespace = false, MemberWithDeclaringTypeName = true,  ParameterWithNamespace = false, ParameterWithDeclaringTypeName = true)]
               public static C operator *(C x, C y) => throw new NotImplementedException();
 
-              [MemberDeclarationTestCase("public static C operator / (C x, C y) {}", MemberWithNamespace = false, MemberWithDeclaringTypeName = false)]
-              [MemberDeclarationTestCase("public static C operator / (C x, C y) {}", MemberWithNamespace = false, MemberWithDeclaringTypeName = true)]
+              [MemberDeclarationTestCase("public static C operator / (C x, C y) {}", MemberWithNamespace = false, MemberWithDeclaringTypeName = false, ParameterWithNamespace = false, ParameterWithDeclaringTypeName = false)]
+              [MemberDeclarationTestCase("public static C operator / (C x, C y) {}", MemberWithNamespace = false, MemberWithDeclaringTypeName = true,  ParameterWithNamespace = false, ParameterWithDeclaringTypeName = true)]
               public static C operator /(C x, C y) => throw new NotImplementedException();
 
-              [MemberDeclarationTestCase("public static C operator % (C x, C y) {}", MemberWithNamespace = false, MemberWithDeclaringTypeName = false)]
-              [MemberDeclarationTestCase("public static C operator % (C x, C y) {}", MemberWithNamespace = false, MemberWithDeclaringTypeName = true)]
+              [MemberDeclarationTestCase("public static C operator % (C x, C y) {}", MemberWithNamespace = false, MemberWithDeclaringTypeName = false, ParameterWithNamespace = false, ParameterWithDeclaringTypeName = false)]
+              [MemberDeclarationTestCase("public static C operator % (C x, C y) {}", MemberWithNamespace = false, MemberWithDeclaringTypeName = true,  ParameterWithNamespace = false, ParameterWithDeclaringTypeName = true)]
               public static C operator %(C x, C y) => throw new NotImplementedException();
 
-              [MemberDeclarationTestCase("public static C operator & (C x, C y) {}", MemberWithNamespace = false, MemberWithDeclaringTypeName = false)]
-              [MemberDeclarationTestCase("public static C operator & (C x, C y) {}", MemberWithNamespace = false, MemberWithDeclaringTypeName = true)]
+              [MemberDeclarationTestCase("public static C operator & (C x, C y) {}", MemberWithNamespace = false, MemberWithDeclaringTypeName = false, ParameterWithNamespace = false, ParameterWithDeclaringTypeName = false)]
+              [MemberDeclarationTestCase("public static C operator & (C x, C y) {}", MemberWithNamespace = false, MemberWithDeclaringTypeName = true,  ParameterWithNamespace = false, ParameterWithDeclaringTypeName = true)]
               public static C operator &(C x, C y) => throw new NotImplementedException();
 
-              [MemberDeclarationTestCase("public static C operator | (C x, C y) {}", MemberWithNamespace = false, MemberWithDeclaringTypeName = false)]
-              [MemberDeclarationTestCase("public static C operator | (C x, C y) {}", MemberWithNamespace = false, MemberWithDeclaringTypeName = true)]
+              [MemberDeclarationTestCase("public static C operator | (C x, C y) {}", MemberWithNamespace = false, MemberWithDeclaringTypeName = false, ParameterWithNamespace = false, ParameterWithDeclaringTypeName = false)]
+              [MemberDeclarationTestCase("public static C operator | (C x, C y) {}", MemberWithNamespace = false, MemberWithDeclaringTypeName = true,  ParameterWithNamespace = false, ParameterWithDeclaringTypeName = true)]
               public static C operator |(C x, C y) => throw new NotImplementedException();
 
-              [MemberDeclarationTestCase("public static C operator ^ (C x, C y) {}", MemberWithNamespace = false, MemberWithDeclaringTypeName = false)]
-              [MemberDeclarationTestCase("public static C operator ^ (C x, C y) {}", MemberWithNamespace = false, MemberWithDeclaringTypeName = true)]
+              [MemberDeclarationTestCase("public static C operator ^ (C x, C y) {}", MemberWithNamespace = false, MemberWithDeclaringTypeName = false, ParameterWithNamespace = false, ParameterWithDeclaringTypeName = false)]
+              [MemberDeclarationTestCase("public static C operator ^ (C x, C y) {}", MemberWithNamespace = false, MemberWithDeclaringTypeName = true,  ParameterWithNamespace = false, ParameterWithDeclaringTypeName = true)]
               public static C operator ^(C x, C y) => throw new NotImplementedException();
 
-              [MemberDeclarationTestCase("public static C operator >> (C x, int y) {}", MemberWithNamespace = false, MemberWithDeclaringTypeName = false)]
-              [MemberDeclarationTestCase("public static C operator >> (C x, int y) {}", MemberWithNamespace = false, MemberWithDeclaringTypeName = true)]
+              [MemberDeclarationTestCase("public static C operator >> (C x, int y) {}", MemberWithNamespace = false, MemberWithDeclaringTypeName = false, ParameterWithNamespace = false, ParameterWithDeclaringTypeName = false)]
+              [MemberDeclarationTestCase("public static C operator >> (C x, int y) {}", MemberWithNamespace = false, MemberWithDeclaringTypeName = true,  ParameterWithNamespace = false, ParameterWithDeclaringTypeName = true)]
               public static C operator >>(C x, int y) => throw new NotImplementedException();
 
-              [MemberDeclarationTestCase("public static C operator << (C x, int y) {}", MemberWithNamespace = false, MemberWithDeclaringTypeName = false)]
-              [MemberDeclarationTestCase("public static C operator << (C x, int y) {}", MemberWithNamespace = false, MemberWithDeclaringTypeName = true)]
+              [MemberDeclarationTestCase("public static C operator << (C x, int y) {}", MemberWithNamespace = false, MemberWithDeclaringTypeName = false, ParameterWithNamespace = false, ParameterWithDeclaringTypeName = false)]
+              [MemberDeclarationTestCase("public static C operator << (C x, int y) {}", MemberWithNamespace = false, MemberWithDeclaringTypeName = true,  ParameterWithNamespace = false, ParameterWithDeclaringTypeName = true)]
               public static C operator <<(C x, int y) => throw new NotImplementedException();
             }
           }
 
           namespace Comparison {
             public class C : IEquatable<C>, IComparable<C> {
-              [MemberDeclarationTestCase("public static bool operator == (C x, C y) {}", MemberWithNamespace = false, MemberWithDeclaringTypeName = false)]
-              [MemberDeclarationTestCase("public static bool operator == (C x, C y) {}", MemberWithNamespace = false, MemberWithDeclaringTypeName = true)]
+              [MemberDeclarationTestCase("public static bool operator == (C x, C y) {}", MemberWithNamespace = false, MemberWithDeclaringTypeName = false, ParameterWithNamespace = false, ParameterWithDeclaringTypeName = false)]
+              [MemberDeclarationTestCase("public static bool operator == (C x, C y) {}", MemberWithNamespace = false, MemberWithDeclaringTypeName = true,  ParameterWithNamespace = false, ParameterWithDeclaringTypeName = true)]
               public static bool operator ==(C x, C y) => throw new NotImplementedException();
 
-              [MemberDeclarationTestCase("public static bool operator != (C x, C y) {}", MemberWithNamespace = false, MemberWithDeclaringTypeName = false)]
-              [MemberDeclarationTestCase("public static bool operator != (C x, C y) {}", MemberWithNamespace = false, MemberWithDeclaringTypeName = true)]
+              [MemberDeclarationTestCase("public static bool operator != (C x, C y) {}", MemberWithNamespace = false, MemberWithDeclaringTypeName = false, ParameterWithNamespace = false, ParameterWithDeclaringTypeName = false)]
+              [MemberDeclarationTestCase("public static bool operator != (C x, C y) {}", MemberWithNamespace = false, MemberWithDeclaringTypeName = true,  ParameterWithNamespace = false, ParameterWithDeclaringTypeName = true)]
               public static bool operator !=(C x, C y) => throw new NotImplementedException();
 
-              [MemberDeclarationTestCase("public static bool operator < (C x, C y) {}", MemberWithNamespace = false, MemberWithDeclaringTypeName = false)]
-              [MemberDeclarationTestCase("public static bool operator < (C x, C y) {}", MemberWithNamespace = false, MemberWithDeclaringTypeName = true)]
+              [MemberDeclarationTestCase("public static bool operator < (C x, C y) {}", MemberWithNamespace = false, MemberWithDeclaringTypeName = false, ParameterWithNamespace = false, ParameterWithDeclaringTypeName = false)]
+              [MemberDeclarationTestCase("public static bool operator < (C x, C y) {}", MemberWithNamespace = false, MemberWithDeclaringTypeName = true,  ParameterWithNamespace = false, ParameterWithDeclaringTypeName = true)]
               public static bool operator <(C x, C y) => throw new NotImplementedException();
 
-              [MemberDeclarationTestCase("public static bool operator > (C x, C y) {}", MemberWithNamespace = false, MemberWithDeclaringTypeName = false)]
-              [MemberDeclarationTestCase("public static bool operator > (C x, C y) {}", MemberWithNamespace = false, MemberWithDeclaringTypeName = true)]
+              [MemberDeclarationTestCase("public static bool operator > (C x, C y) {}", MemberWithNamespace = false, MemberWithDeclaringTypeName = false, ParameterWithNamespace = false, ParameterWithDeclaringTypeName = false)]
+              [MemberDeclarationTestCase("public static bool operator > (C x, C y) {}", MemberWithNamespace = false, MemberWithDeclaringTypeName = true,  ParameterWithNamespace = false, ParameterWithDeclaringTypeName = true)]
               public static bool operator >(C x, C y) => throw new NotImplementedException();
 
-              [MemberDeclarationTestCase("public static bool operator <= (C x, C y) {}", MemberWithNamespace = false, MemberWithDeclaringTypeName = false)]
-              [MemberDeclarationTestCase("public static bool operator <= (C x, C y) {}", MemberWithNamespace = false, MemberWithDeclaringTypeName = true)]
+              [MemberDeclarationTestCase("public static bool operator <= (C x, C y) {}", MemberWithNamespace = false, MemberWithDeclaringTypeName = false, ParameterWithNamespace = false, ParameterWithDeclaringTypeName = false)]
+              [MemberDeclarationTestCase("public static bool operator <= (C x, C y) {}", MemberWithNamespace = false, MemberWithDeclaringTypeName = true,  ParameterWithNamespace = false, ParameterWithDeclaringTypeName = true)]
               public static bool operator <=(C x, C y) => throw new NotImplementedException();
 
-              [MemberDeclarationTestCase("public static bool operator >= (C x, C y) {}", MemberWithNamespace = false, MemberWithDeclaringTypeName = false)]
-              [MemberDeclarationTestCase("public static bool operator >= (C x, C y) {}", MemberWithNamespace = false, MemberWithDeclaringTypeName = true)]
+              [MemberDeclarationTestCase("public static bool operator >= (C x, C y) {}", MemberWithNamespace = false, MemberWithDeclaringTypeName = false, ParameterWithNamespace = false, ParameterWithDeclaringTypeName = false)]
+              [MemberDeclarationTestCase("public static bool operator >= (C x, C y) {}", MemberWithNamespace = false, MemberWithDeclaringTypeName = true,  ParameterWithNamespace = false, ParameterWithDeclaringTypeName = true)]
               public static bool operator >=(C x, C y) => throw new NotImplementedException();
 
               public bool Equals(C other) => throw new NotImplementedException();
@@ -880,21 +880,21 @@ namespace Smdn.Reflection.ReverseGenerating {
             public class W { }
 
             public class C {
-              [MemberDeclarationTestCase("public static explicit operator C(V v) {}", MemberWithNamespace = false, MemberWithDeclaringTypeName = false)]
-              [MemberDeclarationTestCase("public static explicit operator C(V v) {}", MemberWithNamespace = false, MemberWithDeclaringTypeName = true)]
+              [MemberDeclarationTestCase("public static explicit operator C(V v) {}", MemberWithNamespace = false, MemberWithDeclaringTypeName = false, ParameterWithNamespace = false, ParameterWithDeclaringTypeName = false)]
+              [MemberDeclarationTestCase("public static explicit operator C(V v) {}", MemberWithNamespace = false, MemberWithDeclaringTypeName = true,  ParameterWithNamespace = false, ParameterWithDeclaringTypeName = true)]
               public static explicit operator C(V v) => throw new NotImplementedException();
 
-              [MemberDeclarationTestCase("public static explicit operator V(C c) {}", MemberWithNamespace = false, MemberWithDeclaringTypeName = false)]
-              [MemberDeclarationTestCase("public static explicit operator V(C c) {}", MemberWithNamespace = false, MemberWithDeclaringTypeName = true)]
+              [MemberDeclarationTestCase("public static explicit operator V(C c) {}", MemberWithNamespace = false, MemberWithDeclaringTypeName = false, ParameterWithNamespace = false, ParameterWithDeclaringTypeName = false)]
+              [MemberDeclarationTestCase("public static explicit operator V(C c) {}", MemberWithNamespace = false, MemberWithDeclaringTypeName = true,  ParameterWithNamespace = false, ParameterWithDeclaringTypeName = true)]
               public static explicit operator V(C c) => throw new NotImplementedException();
 
 
-              [MemberDeclarationTestCase("public static implicit operator C(W w) {}", MemberWithNamespace = false, MemberWithDeclaringTypeName = false)]
-              [MemberDeclarationTestCase("public static implicit operator C(W w) {}", MemberWithNamespace = false, MemberWithDeclaringTypeName = true)]
+              [MemberDeclarationTestCase("public static implicit operator C(W w) {}", MemberWithNamespace = false, MemberWithDeclaringTypeName = false, ParameterWithNamespace = false, ParameterWithDeclaringTypeName = false)]
+              [MemberDeclarationTestCase("public static implicit operator C(W w) {}", MemberWithNamespace = false, MemberWithDeclaringTypeName = true,  ParameterWithNamespace = false, ParameterWithDeclaringTypeName = true)]
               public static implicit operator C(W w) => throw new NotImplementedException();
 
-              [MemberDeclarationTestCase("public static implicit operator W(C c) {}", MemberWithNamespace = false, MemberWithDeclaringTypeName = false)]
-              [MemberDeclarationTestCase("public static implicit operator W(C c) {}", MemberWithNamespace = false, MemberWithDeclaringTypeName = true)]
+              [MemberDeclarationTestCase("public static implicit operator W(C c) {}", MemberWithNamespace = false, MemberWithDeclaringTypeName = false, ParameterWithNamespace = false, ParameterWithDeclaringTypeName = false)]
+              [MemberDeclarationTestCase("public static implicit operator W(C c) {}", MemberWithNamespace = false, MemberWithDeclaringTypeName = true,  ParameterWithNamespace = false, ParameterWithDeclaringTypeName = true)]
               public static implicit operator W(C c) => throw new NotImplementedException();
             }
           }
@@ -1311,10 +1311,10 @@ namespace Smdn.Reflection.ReverseGenerating {
           public class C { }
 
           public static class Ex {
-            [MemberDeclarationTestCase("public static void M(this C c) {}", MemberWithNamespace = false)]
+            [MemberDeclarationTestCase("public static void M(this C c) {}", ParameterWithNamespace = false)]
             public static void M(this C c) { }
 
-            [MemberDeclarationTestCase("public static void M(this C c, int i) {}", MemberWithNamespace = false)]
+            [MemberDeclarationTestCase("public static void M(this C c, int i) {}", ParameterWithNamespace = false)]
             public static void M(this C c, int i) { }
           }
         }
@@ -1373,6 +1373,43 @@ namespace Smdn.Reflection.ReverseGenerating {
 
             [MemberDeclarationTestCase("public void M24(System.AttributeTargets x = (System.AttributeTargets)42) {}")] public void M24(AttributeTargets x = (System.AttributeTargets)42) { }
             [MemberDeclarationTestCase("public void M25(System.AttributeTargets x = (System.AttributeTargets)3) {}")] public void M25(AttributeTargets x = AttributeTargets.Assembly | AttributeTargets.Module) { }
+
+            [MemberDeclarationTestCase(
+              "public void M30(System.Environment.SpecialFolder x = System.Environment.SpecialFolder.Personal) {}",
+              ParameterWithNamespace = true,
+              ParameterWithDeclaringTypeName = true,
+              ValueWithNamespace = true,
+              ValueWithDeclaringTypeName = true
+            )]
+            [MemberDeclarationTestCase(
+              "public void M30(Environment.SpecialFolder x = System.Environment.SpecialFolder.Personal) {}",
+              ParameterWithNamespace = false,
+              ParameterWithDeclaringTypeName = true,
+              ValueWithNamespace = true,
+              ValueWithDeclaringTypeName = true
+            )]
+            [MemberDeclarationTestCase(
+              "public void M30(SpecialFolder x = System.Environment.SpecialFolder.Personal) {}",
+              ParameterWithNamespace = false,
+              ParameterWithDeclaringTypeName = false,
+              ValueWithNamespace = true,
+              ValueWithDeclaringTypeName = true
+            )]
+            [MemberDeclarationTestCase(
+              "public void M30(SpecialFolder x = Environment.SpecialFolder.Personal) {}",
+              ParameterWithNamespace = false,
+              ParameterWithDeclaringTypeName = false,
+              ValueWithNamespace = false,
+              ValueWithDeclaringTypeName = true
+            )]
+            [MemberDeclarationTestCase(
+              "public void M30(SpecialFolder x = SpecialFolder.Personal) {}",
+              ParameterWithNamespace = false,
+              ParameterWithDeclaringTypeName = false,
+              ValueWithNamespace = false,
+              ValueWithDeclaringTypeName = false
+            )]
+            public void M30(Environment.SpecialFolder x = Environment.SpecialFolder.Personal) { }
           }
 
           public class Nullables {
@@ -1386,7 +1423,9 @@ namespace Smdn.Reflection.ReverseGenerating {
           }
 
           public class ValueTypes {
-            [MemberDeclarationTestCase("public void M1(System.DateTimeOffset x = default(System.DateTimeOffset)) {}", ValueUseDefaultLiteral = false)]
+            [MemberDeclarationTestCase("public void M1(System.DateTimeOffset x = default(System.DateTimeOffset)) {}", ParameterWithNamespace = true, ValueWithNamespace = true, ValueUseDefaultLiteral = false)]
+            [MemberDeclarationTestCase("public void M1(System.DateTimeOffset x = default(DateTimeOffset)) {}", ParameterWithNamespace = true, ValueWithNamespace = false, ValueUseDefaultLiteral = false)]
+            [MemberDeclarationTestCase("public void M1(DateTimeOffset x = default(DateTimeOffset)) {}", ParameterWithNamespace = false, ValueWithNamespace = false, ValueUseDefaultLiteral = false)]
             [MemberDeclarationTestCase("public void M1(System.DateTimeOffset x = default) {}", ValueUseDefaultLiteral = true)]
             public void M1(DateTimeOffset x = default(DateTimeOffset)) { }
 

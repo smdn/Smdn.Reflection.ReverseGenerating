@@ -42,6 +42,8 @@ public abstract class GeneratorTestCaseAttribute : Attribute, ITestCaseAttribute
   public bool ValueUseDefaultLiteral { get; set; } = false;
   public bool ValueWithNamespace { get; set; } = true;
   public bool ValueWithDeclaringTypeName { get; set; } = true;
+  public bool ParameterWithNamespace { get; set; } = true;
+  public bool ParameterWithDeclaringTypeName { get; set; } = true;
   public bool IgnorePrivateOrAssembly { get; set; } = false;
   public MethodBodyOption MethodBody { get; set; } = MethodBodyOption.EmptyImplementation;
   public MethodBodyOption AccessorBody { get; set; } = MethodBodyOption.EmptyImplementation;
@@ -162,6 +164,11 @@ public partial class GeneratorTests {
     valueDeclarationOptions.UseDefaultLiteral = testCaseAttribute.ValueUseDefaultLiteral;
     valueDeclarationOptions.WithNamespace = testCaseAttribute.ValueWithNamespace;
     valueDeclarationOptions.WithDeclaringTypeName = testCaseAttribute.ValueWithDeclaringTypeName;
+
+    var parameterDeclarationOptions = options.ParameterDeclaration;
+
+    parameterDeclarationOptions.WithNamespace = testCaseAttribute.ParameterWithNamespace;
+    parameterDeclarationOptions.WithDeclaringTypeName = testCaseAttribute.ParameterWithDeclaringTypeName;
 
     return options;
   }

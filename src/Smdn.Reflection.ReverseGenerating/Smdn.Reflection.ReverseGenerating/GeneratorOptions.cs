@@ -87,4 +87,14 @@ public class GeneratorOptions : ICloneable {
     internal ValueDeclarationOptions Clone()
       => (ValueDeclarationOptions)MemberwiseClone();
   }
+
+  public ParameterDeclarationOptions ParameterDeclaration { get; init; } = new();
+
+  public class ParameterDeclarationOptions {
+    public bool WithNamespace { get; set; } = false;
+    public bool WithDeclaringTypeName { get; set; } = false;
+
+    internal ParameterDeclarationOptions Clone()
+      => (ParameterDeclarationOptions)MemberwiseClone();
+  }
 }

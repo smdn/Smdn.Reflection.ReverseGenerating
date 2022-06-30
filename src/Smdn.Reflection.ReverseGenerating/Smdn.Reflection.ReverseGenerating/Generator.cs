@@ -902,8 +902,8 @@ public static partial class Generator {
         ? options.TypeDeclaration.NullabilityInfoContext
         : options.MemberDeclaration.NullabilityInfoContext,
 #endif
-      typeWithNamespace: options.MemberDeclaration.WithNamespace,
-      typeWithDeclaringTypeName: options.MemberDeclaration.WithDeclaringTypeName,
+      typeWithNamespace: options.ParameterDeclaration.WithNamespace,
+      typeWithDeclaringTypeName: options.ParameterDeclaration.WithDeclaringTypeName,
       valueFormatOptions: CSharpFormatter.ValueFormatOptions.FromGeneratorOptions(options, tryFindConstantField: true)
     );
     var paramAttributeList = GenerateParameterAttributeList(

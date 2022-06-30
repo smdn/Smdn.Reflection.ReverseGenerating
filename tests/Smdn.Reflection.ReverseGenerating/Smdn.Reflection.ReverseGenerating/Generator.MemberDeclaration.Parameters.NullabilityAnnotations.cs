@@ -48,20 +48,20 @@ public class NullabilityAnnotations {
   [MemberDeclarationTestCase($"public void {nameof(NullableValueTupleOfRefType)}((int, string)? p) {{}}")] public void NullableValueTupleOfRefType((int, string)? p) { }
   [MemberDeclarationTestCase($"public void {nameof(NullableValueTupleOfNullableRefType)}((int, string?)? p) {{}}")] public void NullableValueTupleOfNullableRefType((int, string?)? p) { }
 
-  [MemberDeclarationTestCase($"public void {nameof(ListOfValueType)}(List<int> p) {{}}", MemberWithNamespace = false)] public void ListOfValueType(List<int> p) { }
-  [MemberDeclarationTestCase($"public void {nameof(ListOfNullableValueType)}(List<int?> p) {{}}", MemberWithNamespace = false)] public void ListOfNullableValueType(List<int?> p) { }
-  [MemberDeclarationTestCase($"public void {nameof(NullableListOfValueType)}(List<int>? p) {{}}", MemberWithNamespace = false)] public void NullableListOfValueType(List<int>? p) { }
-  [MemberDeclarationTestCase($"public void {nameof(NullableListOfNullableValueType)}(List<int?>? p) {{}}", MemberWithNamespace = false)] public void NullableListOfNullableValueType(List<int?>? p) { }
+  [MemberDeclarationTestCase($"public void {nameof(ListOfValueType)}(List<int> p) {{}}", ParameterWithNamespace = false)] public void ListOfValueType(List<int> p) { }
+  [MemberDeclarationTestCase($"public void {nameof(ListOfNullableValueType)}(List<int?> p) {{}}", ParameterWithNamespace = false)] public void ListOfNullableValueType(List<int?> p) { }
+  [MemberDeclarationTestCase($"public void {nameof(NullableListOfValueType)}(List<int>? p) {{}}", ParameterWithNamespace = false)] public void NullableListOfValueType(List<int>? p) { }
+  [MemberDeclarationTestCase($"public void {nameof(NullableListOfNullableValueType)}(List<int?>? p) {{}}", ParameterWithNamespace = false)] public void NullableListOfNullableValueType(List<int?>? p) { }
 
-  [MemberDeclarationTestCase($"public void {nameof(ListOfRefType)}(List<string> p) {{}}", MemberWithNamespace = false)] public void ListOfRefType(List<string> p) { }
-  [MemberDeclarationTestCase($"public void {nameof(ListOfNullableRefType)}(List<string?> p) {{}}", MemberWithNamespace = false)] public void ListOfNullableRefType(List<string?> p) { }
-  [MemberDeclarationTestCase($"public void {nameof(NullableListOfRefType)}(List<string>? p) {{}}", MemberWithNamespace = false)] public void NullableListOfRefType(List<string>? p) { }
-  [MemberDeclarationTestCase($"public void {nameof(NullableListOfNullableRefType)}(List<string?>? p) {{}}", MemberWithNamespace = false)] public void NullableListOfNullableRefType(List<string?>? p) { }
+  [MemberDeclarationTestCase($"public void {nameof(ListOfRefType)}(List<string> p) {{}}", ParameterWithNamespace = false)] public void ListOfRefType(List<string> p) { }
+  [MemberDeclarationTestCase($"public void {nameof(ListOfNullableRefType)}(List<string?> p) {{}}", ParameterWithNamespace = false)] public void ListOfNullableRefType(List<string?> p) { }
+  [MemberDeclarationTestCase($"public void {nameof(NullableListOfRefType)}(List<string>? p) {{}}", ParameterWithNamespace = false)] public void NullableListOfRefType(List<string>? p) { }
+  [MemberDeclarationTestCase($"public void {nameof(NullableListOfNullableRefType)}(List<string?>? p) {{}}", ParameterWithNamespace = false)] public void NullableListOfNullableRefType(List<string?>? p) { }
 
-  [MemberDeclarationTestCase($"public void {nameof(DictionaryOfRefTypeValue)}(Dictionary<string, string> p) {{}}", MemberWithNamespace = false)] public void DictionaryOfRefTypeValue(Dictionary<string, string> p) { }
-  [MemberDeclarationTestCase($"public void {nameof(DictionaryOfNullableRefTypeValue)}(Dictionary<string, string?> p) {{}}", MemberWithNamespace = false)] public void DictionaryOfNullableRefTypeValue(Dictionary<string, string?> p) { }
-  [MemberDeclarationTestCase($"public void {nameof(NullableDictionaryOfRefTypeValue)}(Dictionary<string, string>? p) {{}}", MemberWithNamespace = false)] public void NullableDictionaryOfRefTypeValue(Dictionary<string, string>? p) { }
-  [MemberDeclarationTestCase($"public void {nameof(NullableDictionaryOfNullableRefTypeValue)}(Dictionary<string, string?>? p) {{}}", MemberWithNamespace = false)] public void NullableDictionaryOfNullableRefTypeValue(Dictionary<string, string?>? p) { }
+  [MemberDeclarationTestCase($"public void {nameof(DictionaryOfRefTypeValue)}(Dictionary<string, string> p) {{}}", ParameterWithNamespace = false)] public void DictionaryOfRefTypeValue(Dictionary<string, string> p) { }
+  [MemberDeclarationTestCase($"public void {nameof(DictionaryOfNullableRefTypeValue)}(Dictionary<string, string?> p) {{}}", ParameterWithNamespace = false)] public void DictionaryOfNullableRefTypeValue(Dictionary<string, string?> p) { }
+  [MemberDeclarationTestCase($"public void {nameof(NullableDictionaryOfRefTypeValue)}(Dictionary<string, string>? p) {{}}", ParameterWithNamespace = false)] public void NullableDictionaryOfRefTypeValue(Dictionary<string, string>? p) { }
+  [MemberDeclarationTestCase($"public void {nameof(NullableDictionaryOfNullableRefTypeValue)}(Dictionary<string, string?>? p) {{}}", ParameterWithNamespace = false)] public void NullableDictionaryOfNullableRefTypeValue(Dictionary<string, string?>? p) { }
 
   class Params {
     [MemberDeclarationTestCase($"public void {nameof(ArrayOfValueType)}(params int[] p) {{}}")] public void ArrayOfValueType(params int[] p) { }
@@ -102,10 +102,10 @@ public class NullabilityAnnotations {
       [MemberDeclarationTestCase($"public void {nameof(ValueTupleOfNullableValueTypeAndRefType)}(out (int? X, string Y) p) {{}}")] public void ValueTupleOfNullableValueTypeAndRefType(out (int? X, string Y) p) => throw null;
       [SkipTestCase("cannot get NullabilityInfo of generic type arguments from by-ref parameter type")][MemberDeclarationTestCase($"public void {nameof(ValueTupleOfValueTypeAndNullableRefType)}(out (int X, string? Y) p) {{}}")] public void ValueTupleOfValueTypeAndNullableRefType(out (int X, string? Y) p) => throw null;
 
-      [MemberDeclarationTestCase($"public void {nameof(IEnumerableOfValueType)}(out IEnumerable<int> p) {{}}", MemberWithNamespace = false)] public void IEnumerableOfValueType(out IEnumerable<int> p) => throw null;
-      [MemberDeclarationTestCase($"public void {nameof(IEnumerableOfNullableValueType)}(out IEnumerable<int?> p) {{}}", MemberWithNamespace = false)] public void IEnumerableOfNullableValueType(out IEnumerable<int?> p) => throw null;
-      [MemberDeclarationTestCase($"public void {nameof(IEnumerableOfRefType)}(out IEnumerable<string> p) {{}}", MemberWithNamespace = false)] public void IEnumerableOfRefType(out IEnumerable<string> p) => throw null;
-      [SkipTestCase("cannot get NullabilityInfo of generic type arguments from by-ref parameter type")][MemberDeclarationTestCase($"public void {nameof(IEnumerableOfNullableRefType)}(out IEnumerable<string?> p) {{}}", MemberWithNamespace = false)] public void IEnumerableOfNullableRefType(out IEnumerable<string?> p) => throw null;
+      [MemberDeclarationTestCase($"public void {nameof(IEnumerableOfValueType)}(out IEnumerable<int> p) {{}}", ParameterWithNamespace = false)] public void IEnumerableOfValueType(out IEnumerable<int> p) => throw null;
+      [MemberDeclarationTestCase($"public void {nameof(IEnumerableOfNullableValueType)}(out IEnumerable<int?> p) {{}}", ParameterWithNamespace = false)] public void IEnumerableOfNullableValueType(out IEnumerable<int?> p) => throw null;
+      [MemberDeclarationTestCase($"public void {nameof(IEnumerableOfRefType)}(out IEnumerable<string> p) {{}}", ParameterWithNamespace = false)] public void IEnumerableOfRefType(out IEnumerable<string> p) => throw null;
+      [SkipTestCase("cannot get NullabilityInfo of generic type arguments from by-ref parameter type")][MemberDeclarationTestCase($"public void {nameof(IEnumerableOfNullableRefType)}(out IEnumerable<string?> p) {{}}", ParameterWithNamespace = false)] public void IEnumerableOfNullableRefType(out IEnumerable<string?> p) => throw null;
     }
   }
 
