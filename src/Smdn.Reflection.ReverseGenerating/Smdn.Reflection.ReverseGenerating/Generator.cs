@@ -610,7 +610,7 @@ public static partial class Generator {
 
     var bodyOption = accessorMethod.IsAbstract
       ? MethodBodyOption.EmptyImplementation
-      : options.MemberDeclaration.MethodBody;
+      : options.MemberDeclaration.AccessorBody;
 
     builder.Append(bodyOption switch {
       MethodBodyOption.ThrowNotImplementedException => " => throw new NotImplementedException(); ",

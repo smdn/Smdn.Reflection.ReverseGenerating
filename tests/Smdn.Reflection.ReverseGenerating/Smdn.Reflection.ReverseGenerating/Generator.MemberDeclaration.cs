@@ -311,22 +311,22 @@ namespace Smdn.Reflection.ReverseGenerating {
       namespace Properties {
         namespace Options {
           public abstract class Abstract {
-            [MemberDeclarationTestCase("public abstract int P { get; set; }", MethodBody = MethodBodyOption.None)]
-            [MemberDeclarationTestCase("public abstract int P { get; set; }", MethodBody = MethodBodyOption.EmptyImplementation)]
-            [MemberDeclarationTestCase("public abstract int P { get; set; }", MethodBody = MethodBodyOption.ThrowNotImplementedException)]
-            [MemberDeclarationTestCase("public abstract int P { get; set; }", MethodBody = MethodBodyOption.ThrowNull)]
-            [MemberDeclarationTestCase("public abstract int Abstract.P { get; set; }", MemberWithDeclaringTypeName = true, MemberWithNamespace = false, MethodBody = MethodBodyOption.None)]
-            [MemberDeclarationTestCase("public abstract int Smdn.Reflection.ReverseGenerating.TestCases.MemberDeclaration.Properties.Options.Abstract.P { get; set; }", MemberWithDeclaringTypeName = true, MemberWithNamespace = true, MethodBody = MethodBodyOption.None)]
+            [MemberDeclarationTestCase("public abstract int P { get; set; }", AccessorBody = MethodBodyOption.None)]
+            [MemberDeclarationTestCase("public abstract int P { get; set; }", AccessorBody = MethodBodyOption.EmptyImplementation)]
+            [MemberDeclarationTestCase("public abstract int P { get; set; }", AccessorBody = MethodBodyOption.ThrowNotImplementedException)]
+            [MemberDeclarationTestCase("public abstract int P { get; set; }", AccessorBody = MethodBodyOption.ThrowNull)]
+            [MemberDeclarationTestCase("public abstract int Abstract.P { get; set; }", MemberWithDeclaringTypeName = true, MemberWithNamespace = false, AccessorBody = MethodBodyOption.None)]
+            [MemberDeclarationTestCase("public abstract int Smdn.Reflection.ReverseGenerating.TestCases.MemberDeclaration.Properties.Options.Abstract.P { get; set; }", MemberWithDeclaringTypeName = true, MemberWithNamespace = true, AccessorBody = MethodBodyOption.None)]
             public abstract int P { get; set; }
           }
 
           public abstract class NonAbstract {
-            [MemberDeclarationTestCase("public int P { get; set; }", MethodBody = MethodBodyOption.None)]
-            [MemberDeclarationTestCase("public int P { get; set; }", MethodBody = MethodBodyOption.EmptyImplementation)]
-            [MemberDeclarationTestCase("public int P { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }", MethodBody = MethodBodyOption.ThrowNotImplementedException)]
-            [MemberDeclarationTestCase("public int P { get => throw null; set => throw null; }", MethodBody = MethodBodyOption.ThrowNull)]
-            [MemberDeclarationTestCase("public int NonAbstract.P { get; set; }", MemberWithDeclaringTypeName = true, MemberWithNamespace = false, MethodBody = MethodBodyOption.None)]
-            [MemberDeclarationTestCase("public int Smdn.Reflection.ReverseGenerating.TestCases.MemberDeclaration.Properties.Options.NonAbstract.P { get; set; }", MemberWithDeclaringTypeName = true, MemberWithNamespace = true, MethodBody = MethodBodyOption.None)]
+            [MemberDeclarationTestCase("public int P { get; set; }", AccessorBody = MethodBodyOption.None)]
+            [MemberDeclarationTestCase("public int P { get; set; }", AccessorBody = MethodBodyOption.EmptyImplementation)]
+            [MemberDeclarationTestCase("public int P { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }", AccessorBody = MethodBodyOption.ThrowNotImplementedException)]
+            [MemberDeclarationTestCase("public int P { get => throw null; set => throw null; }", AccessorBody = MethodBodyOption.ThrowNull)]
+            [MemberDeclarationTestCase("public int NonAbstract.P { get; set; }", MemberWithDeclaringTypeName = true, MemberWithNamespace = false, AccessorBody = MethodBodyOption.None)]
+            [MemberDeclarationTestCase("public int Smdn.Reflection.ReverseGenerating.TestCases.MemberDeclaration.Properties.Options.NonAbstract.P { get; set; }", MemberWithDeclaringTypeName = true, MemberWithNamespace = true, AccessorBody = MethodBodyOption.None)]
             public int P { get; set; }
           }
         }
@@ -1048,20 +1048,20 @@ namespace Smdn.Reflection.ReverseGenerating {
         }
 
         public class Accessors {
-          [MemberDeclarationTestCase("public event System.EventHandler CompilerGeneratedAccessor;", MethodBody = MethodBodyOption.None)]
-          [MemberDeclarationTestCase("public event System.EventHandler CompilerGeneratedAccessor;", MethodBody = MethodBodyOption.EmptyImplementation)]
-          [MemberDeclarationTestCase("public event System.EventHandler CompilerGeneratedAccessor", MethodBody = MethodBodyOption.EmptyImplementation, MemberOmitEndOfStatement = true)]
-          [MemberDeclarationTestCase("public event System.EventHandler CompilerGeneratedAccessor;", MethodBody = MethodBodyOption.EmptyImplementation, MemberOmitEndOfStatement = false)]
-          [MemberDeclarationTestCase("public event System.EventHandler CompilerGeneratedAccessor;", MethodBody = MethodBodyOption.ThrowNotImplementedException)]
-          [MemberDeclarationTestCase("public event System.EventHandler CompilerGeneratedAccessor;", MethodBody = MethodBodyOption.ThrowNull)]
+          [MemberDeclarationTestCase("public event System.EventHandler CompilerGeneratedAccessor;", AccessorBody = MethodBodyOption.None)]
+          [MemberDeclarationTestCase("public event System.EventHandler CompilerGeneratedAccessor;", AccessorBody = MethodBodyOption.EmptyImplementation)]
+          [MemberDeclarationTestCase("public event System.EventHandler CompilerGeneratedAccessor", AccessorBody = MethodBodyOption.EmptyImplementation, MemberOmitEndOfStatement = true)]
+          [MemberDeclarationTestCase("public event System.EventHandler CompilerGeneratedAccessor;", AccessorBody = MethodBodyOption.EmptyImplementation, MemberOmitEndOfStatement = false)]
+          [MemberDeclarationTestCase("public event System.EventHandler CompilerGeneratedAccessor;", AccessorBody = MethodBodyOption.ThrowNotImplementedException)]
+          [MemberDeclarationTestCase("public event System.EventHandler CompilerGeneratedAccessor;", AccessorBody = MethodBodyOption.ThrowNull)]
           public event EventHandler CompilerGeneratedAccessor;
 
-          [MemberDeclarationTestCase("public event System.EventHandler CustomAccessor { add; remove; }", MethodBody = MethodBodyOption.None)]
-          [MemberDeclarationTestCase("public event System.EventHandler CustomAccessor { add; remove; }", MethodBody = MethodBodyOption.EmptyImplementation)]
-          [MemberDeclarationTestCase("public event System.EventHandler CustomAccessor { add; remove; }", MethodBody = MethodBodyOption.EmptyImplementation, MemberOmitEndOfStatement = true)]
-          [MemberDeclarationTestCase("public event System.EventHandler CustomAccessor { add; remove; }", MethodBody = MethodBodyOption.EmptyImplementation, MemberOmitEndOfStatement = false)]
-          [MemberDeclarationTestCase("public event System.EventHandler CustomAccessor { add => throw new NotImplementedException(); remove => throw new NotImplementedException(); }", MethodBody = MethodBodyOption.ThrowNotImplementedException)]
-          [MemberDeclarationTestCase("public event System.EventHandler CustomAccessor { add => throw null; remove => throw null; }", MethodBody = MethodBodyOption.ThrowNull)]
+          [MemberDeclarationTestCase("public event System.EventHandler CustomAccessor { add; remove; }", AccessorBody = MethodBodyOption.None)]
+          [MemberDeclarationTestCase("public event System.EventHandler CustomAccessor { add; remove; }", AccessorBody = MethodBodyOption.EmptyImplementation)]
+          [MemberDeclarationTestCase("public event System.EventHandler CustomAccessor { add; remove; }", AccessorBody = MethodBodyOption.EmptyImplementation, MemberOmitEndOfStatement = true)]
+          [MemberDeclarationTestCase("public event System.EventHandler CustomAccessor { add; remove; }", AccessorBody = MethodBodyOption.EmptyImplementation, MemberOmitEndOfStatement = false)]
+          [MemberDeclarationTestCase("public event System.EventHandler CustomAccessor { add => throw new NotImplementedException(); remove => throw new NotImplementedException(); }", AccessorBody = MethodBodyOption.ThrowNotImplementedException)]
+          [MemberDeclarationTestCase("public event System.EventHandler CustomAccessor { add => throw null; remove => throw null; }", AccessorBody = MethodBodyOption.ThrowNull)]
           public event EventHandler CustomAccessor {
             add => throw new NotImplementedException();
             remove => throw new NotImplementedException();
@@ -1115,8 +1115,9 @@ namespace Smdn.Reflection.ReverseGenerating {
 
         class ImplicitProperty1 : IProperty {
           [MemberDeclarationTestCase("public int P1 { get; set; }", MemberWithNamespace = false)]
-          [MemberDeclarationTestCase("public int ImplicitProperty1.P1 { get; set; }", MemberWithDeclaringTypeName = true, MemberWithNamespace = false, MethodBody = MethodBodyOption.None)]
-          [MemberDeclarationTestCase("public int Smdn.Reflection.ReverseGenerating.TestCases.MemberDeclaration.ImplementedInterfaceMembers.ImplicitProperty1.P1 { get; set; }", MemberWithDeclaringTypeName = true, MemberWithNamespace = true, MethodBody = MethodBodyOption.None)]
+          [MemberDeclarationTestCase("public int ImplicitProperty1.P1 { get; set; }", MemberWithDeclaringTypeName = true, MemberWithNamespace = false, AccessorBody = MethodBodyOption.None)]
+          [MemberDeclarationTestCase("public int ImplicitProperty1.P1 { get => throw null; set => throw null; }", MemberWithDeclaringTypeName = true, MemberWithNamespace = false, AccessorBody = MethodBodyOption.ThrowNull)]
+          [MemberDeclarationTestCase("public int Smdn.Reflection.ReverseGenerating.TestCases.MemberDeclaration.ImplementedInterfaceMembers.ImplicitProperty1.P1 { get; set; }", MemberWithDeclaringTypeName = true, MemberWithNamespace = true, AccessorBody = MethodBodyOption.None)]
           public int P1 { get; set; }
 
           [MemberDeclarationTestCase("public int P2 { get; }", MemberWithNamespace = false)]
@@ -1128,7 +1129,8 @@ namespace Smdn.Reflection.ReverseGenerating {
 
         class ExplicitProperty1 : IProperty {
           [MemberDeclarationTestCase("int IProperty.P1 { get; set; }", MemberWithNamespace = false)]
-          [MemberDeclarationTestCase("int ExplicitProperty1.IProperty.P1 { get; set; }", MemberWithDeclaringTypeName = true, MemberWithNamespace = false, MethodBody = MethodBodyOption.None)]
+          [MemberDeclarationTestCase("int ExplicitProperty1.IProperty.P1 { get; set; }", MemberWithDeclaringTypeName = true, MemberWithNamespace = false, AccessorBody = MethodBodyOption.None)]
+          [MemberDeclarationTestCase("int ExplicitProperty1.IProperty.P1 { get => throw null; set => throw null; }", MemberWithDeclaringTypeName = true, MemberWithNamespace = false, AccessorBody = MethodBodyOption.ThrowNull)]
           [MemberDeclarationTestCase("int Smdn.Reflection.ReverseGenerating.TestCases.MemberDeclaration.ImplementedInterfaceMembers.ExplicitProperty1.Smdn.Reflection.ReverseGenerating.TestCases.MemberDeclaration.ImplementedInterfaceMembers.IProperty.P1 { get; set; }", MemberWithDeclaringTypeName = true, MemberWithNamespace = true, MethodBody = MethodBodyOption.None)]
           int IProperty.P1 { get; set; }
 

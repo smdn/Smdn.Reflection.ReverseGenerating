@@ -42,6 +42,7 @@ public abstract class GeneratorTestCaseAttribute : Attribute, ITestCaseAttribute
   public bool UseDefaultLiteral { get; set; } = false;
   public bool IgnorePrivateOrAssembly { get; set; } = false;
   public MethodBodyOption MethodBody { get; set; } = MethodBodyOption.EmptyImplementation;
+  public MethodBodyOption AccessorBody { get; set; } = MethodBodyOption.EmptyImplementation;
   public string SourceLocation { get; }
 
   public string Expected {
@@ -119,6 +120,7 @@ public partial class GeneratorTests {
     memberDeclarationOptions.WithDeclaringTypeName = testCaseAttribute.MemberWithDeclaringTypeName;
     memberDeclarationOptions.WithAccessibility = testCaseAttribute.MemberWithAccessibility;
     memberDeclarationOptions.MethodBody = testCaseAttribute.MethodBody;
+    memberDeclarationOptions.AccessorBody = testCaseAttribute.AccessorBody;
     memberDeclarationOptions.OmitEndOfStatement = testCaseAttribute.MemberOmitEndOfStatement;
 #if SYSTEM_REFLECTION_NULLABILITYINFOCONTEXT
     memberDeclarationOptions.NullabilityInfoContext = testCaseAttribute.MemberEnableNullabilityAnnotations

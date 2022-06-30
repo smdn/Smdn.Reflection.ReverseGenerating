@@ -50,6 +50,7 @@ public class GeneratorOptions : ICloneable {
     public bool WithAccessibility { get; set; } = true;
     public bool OmitEndOfStatement { get; set; } = false;
     public MethodBodyOption MethodBody { get; set; } = MethodBodyOption.EmptyImplementation;
+    public MethodBodyOption AccessorBody { get; set; } = MethodBodyOption.EmptyImplementation;
 #if SYSTEM_REFLECTION_NULLABILITYINFOCONTEXT
     public NullabilityInfoContext? NullabilityInfoContext { get; set; } = new();
 #endif
