@@ -101,11 +101,10 @@ static partial class CSharpFormatter {
     }
 
     if (!targetType.IsGenericParameter) {
-      if (options.TypeWithNamespace)
-        builder.Append(targetType.Namespace).Append('.');
-
-      if (options.WithDeclaringTypeName && targetType.IsNested)
+      if (targetType.IsNested && options.WithDeclaringTypeName)
         builder.Append(FormatTypeNameCore(targetType.GetDeclaringTypeOrThrow(), options)).Append('.');
+      else if (options.TypeWithNamespace)
+        builder.Append(targetType.Namespace).Append('.');
     }
 
     return builder
