@@ -526,12 +526,25 @@ namespace Smdn.Reflection.ReverseGenerating {
           [MemberDeclarationTestCase(
             "[return: ReturnParameter(0, NamedArg = 1)] [return: XmlIgnore] public bool M1()",
             AttributeWithNamespace = false,
+            AttributeMethodParameterFormat = AttributeSectionFormat.Discrete,
+            MethodBody = MethodBodyOption.None
+          )]
+          [MemberDeclarationTestCase(
+            "[return: ReturnParameter(0, NamedArg = 1), XmlIgnore] public bool M1()",
+            AttributeWithNamespace = false,
+            AttributeMethodParameterFormat = AttributeSectionFormat.List,
             MethodBody = MethodBodyOption.None
           )]
           [Obsolete] // must not be shown in the result of MemberDeclarationTestCase
           [AttributeTestCase("[System.Obsolete]")]
           [return: AttributeTestCase(
             "[return: ReturnParameter(0, NamedArg = 1)], [return: XmlIgnore]",
+            AttributeMethodParameterFormat = AttributeSectionFormat.Discrete,
+            AttributeWithNamespace = false
+          )]
+          [return: AttributeTestCase(
+            "[return: ReturnParameter(0, NamedArg = 1), XmlIgnore]",
+            AttributeMethodParameterFormat = AttributeSectionFormat.List,
             AttributeWithNamespace = false
           )]
           [return: System.Xml.Serialization.XmlIgnore]
@@ -540,12 +553,24 @@ namespace Smdn.Reflection.ReverseGenerating {
 
           [TypeDeclarationTestCase(
             "[return: ReturnParameter(0, NamedArg = 1)] [return: XmlIgnore] public delegate bool D0();",
+            AttributeDelegateParameterFormat = AttributeSectionFormat.Discrete,
+            AttributeWithNamespace = false
+          )]
+          [TypeDeclarationTestCase(
+            "[return: ReturnParameter(0, NamedArg = 1), XmlIgnore] public delegate bool D0();",
+            AttributeDelegateParameterFormat = AttributeSectionFormat.List,
             AttributeWithNamespace = false
           )]
           [Obsolete] // must not be shown in the result of TypeDeclarationTestCase
           [AttributeTestCase("[System.Obsolete]")]
           [return: AttributeTestCase(
             "[return: ReturnParameter(0, NamedArg = 1)], [return: XmlIgnore]",
+            AttributeDelegateParameterFormat = AttributeSectionFormat.Discrete,
+            AttributeWithNamespace = false
+          )]
+          [return: AttributeTestCase(
+            "[return: ReturnParameter(0, NamedArg = 1), XmlIgnore]",
+            AttributeDelegateParameterFormat = AttributeSectionFormat.List,
             AttributeWithNamespace = false
           )]
           [return: System.Xml.Serialization.XmlIgnore]
@@ -596,6 +621,13 @@ namespace Smdn.Reflection.ReverseGenerating {
           [MemberDeclarationTestCase(
             "public bool M([CallerFilePath] [Optional] string sourceFilePath = null, [CallerLineNumber] [Optional] int sourceLineNumber = 0)",
             AttributeWithNamespace = false,
+            AttributeMethodParameterFormat = AttributeSectionFormat.Discrete,
+            MethodBody = MethodBodyOption.None
+          )]
+          [MemberDeclarationTestCase(
+            "public bool M([CallerFilePath, Optional] string sourceFilePath = null, [CallerLineNumber, Optional] int sourceLineNumber = 0)",
+            AttributeWithNamespace = false,
+            AttributeMethodParameterFormat = AttributeSectionFormat.List,
             MethodBody = MethodBodyOption.None
           )]
           [Obsolete] // must not be shown in the result of MemberDeclarationTestCase
@@ -606,7 +638,13 @@ namespace Smdn.Reflection.ReverseGenerating {
             )]
             [AttributeTestCase(
               "[CallerFilePath], [Optional]",
-              AttributeWithNamespace = false
+              AttributeWithNamespace = false,
+              AttributeMethodParameterFormat = AttributeSectionFormat.Discrete
+            )]
+            [AttributeTestCase(
+              "[CallerFilePath, Optional]",
+              AttributeWithNamespace = false,
+              AttributeMethodParameterFormat = AttributeSectionFormat.List
             )]
             [CallerFilePath]
             string sourceFilePath = default,
@@ -625,14 +663,26 @@ namespace Smdn.Reflection.ReverseGenerating {
 
           [TypeDeclarationTestCase(
             "public delegate bool D([Parameter(0, NamedArg = 1)] [Optional] int arg = 0);",
-            AttributeWithNamespace = false
+            AttributeWithNamespace = false,
+            AttributeDelegateParameterFormat = AttributeSectionFormat.Discrete
+          )]
+          [TypeDeclarationTestCase(
+            "public delegate bool D([Parameter(0, NamedArg = 1), Optional] int arg = 0);",
+            AttributeWithNamespace = false,
+            AttributeDelegateParameterFormat = AttributeSectionFormat.List
           )]
           [Obsolete] // must not be shown in the result of TypeDeclarationTestCase
           [AttributeTestCase("[System.Obsolete]")]
           public delegate bool D(
             [AttributeTestCase(
               "[Parameter(0, NamedArg = 1)], [Optional]",
-              AttributeWithNamespace = false
+              AttributeWithNamespace = false,
+              AttributeMethodParameterFormat = AttributeSectionFormat.Discrete
+            )]
+            [AttributeTestCase(
+              "[Parameter(0, NamedArg = 1), Optional]",
+              AttributeWithNamespace = false,
+              AttributeMethodParameterFormat = AttributeSectionFormat.List
             )]
             [Parameter(0, NamedArg = 1)]
             int arg = 0

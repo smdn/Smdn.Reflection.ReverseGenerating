@@ -28,6 +28,10 @@ partial class Generator {
     EventAccessorMethod,
     EventBackingField,
     GenericParameter,
+    MethodParameter,
+    MethodReturnParameter,
+    DelegateParameter,
+    DelegateReturnParameter,
   }
 
   public static IEnumerable<string> GenerateAttributeList(
@@ -71,7 +75,15 @@ partial class Generator {
         }
         else if (para.IsReturnParameter()) {
           attributeSectionPrefix = attributeSectionPrefixReturnParameter;
-          attributeTarget = AttributeTarget.Default;
+          attributeTarget = para.Member.GetDeclaringTypeOrThrow().IsDelegate()
+            ? AttributeTarget.DelegateReturnParameter
+            : AttributeTarget.MethodReturnParameter;
+        }
+        else {
+          attributeSectionPrefix = attributeSectionPrefixDefault;
+          attributeTarget = para.Member.GetDeclaringTypeOrThrow().IsDelegate()
+            ? AttributeTarget.DelegateParameter
+            : AttributeTarget.MethodParameter;
         }
 
         break;
@@ -112,6 +124,12 @@ partial class Generator {
       AttributeTarget.EventBackingField => options.AttributeDeclaration.BackingFieldFormat,
 
       AttributeTarget.GenericParameter => options.AttributeDeclaration.GenericParameterFormat,
+
+      AttributeTarget.MethodParameter or
+      AttributeTarget.MethodReturnParameter => options.AttributeDeclaration.MethodParameterFormat,
+
+      AttributeTarget.DelegateParameter or
+      AttributeTarget.DelegateReturnParameter => options.AttributeDeclaration.DelegateParameterFormat,
 
       _ => AttributeSectionFormat.Discrete,
     };

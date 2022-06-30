@@ -69,6 +69,8 @@ public class GeneratorOptions : ICloneable {
     public AttributeSectionFormat AccessorParameterFormat { get; set; } = AttributeSectionFormat.List;
     public AttributeSectionFormat BackingFieldFormat { get; set; } = AttributeSectionFormat.List;
     public AttributeSectionFormat GenericParameterFormat { get; set; } = AttributeSectionFormat.List;
+    public AttributeSectionFormat MethodParameterFormat { get; set; } = AttributeSectionFormat.List;
+    public AttributeSectionFormat DelegateParameterFormat { get; set; } = AttributeSectionFormat.List;
 
     internal AttributeDeclarationOptions Clone()
       => (AttributeDeclarationOptions)MemberwiseClone();

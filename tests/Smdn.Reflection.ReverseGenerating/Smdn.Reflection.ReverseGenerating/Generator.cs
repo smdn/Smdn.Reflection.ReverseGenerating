@@ -35,6 +35,8 @@ public abstract class GeneratorTestCaseAttribute : Attribute, ITestCaseAttribute
   public AttributeSectionFormat AttributeAccessorParameterFormat { get; set; } = AttributeSectionFormat.Discrete;
   public AttributeSectionFormat AttributeBackingFieldFormat { get; set; } = AttributeSectionFormat.Discrete;
   public AttributeSectionFormat AttributeGenericParameterFormat { get; set; } = AttributeSectionFormat.Discrete;
+  public AttributeSectionFormat AttributeMethodParameterFormat { get; set; } = AttributeSectionFormat.Discrete;
+  public AttributeSectionFormat AttributeDelegateParameterFormat { get; set; } = AttributeSectionFormat.Discrete;
   public Type? TypeOfAttributeTypeFilterFunc { get; set; } = null;
   public string? NameOfAttributeTypeFilterFunc { get; set; } = null;
   public bool UseDefaultLiteral { get; set; } = false;
@@ -133,6 +135,8 @@ public partial class GeneratorTests {
     attributeDeclarationOptions.AccessorParameterFormat = testCaseAttribute.AttributeAccessorParameterFormat;
     attributeDeclarationOptions.BackingFieldFormat = testCaseAttribute.AttributeBackingFieldFormat;
     attributeDeclarationOptions.GenericParameterFormat = testCaseAttribute.AttributeGenericParameterFormat;
+    attributeDeclarationOptions.MethodParameterFormat = testCaseAttribute.AttributeMethodParameterFormat;
+    attributeDeclarationOptions.DelegateParameterFormat = testCaseAttribute.AttributeDelegateParameterFormat;
 
     if (testCaseAttribute.TypeOfAttributeTypeFilterFunc is not null && !string.IsNullOrEmpty(testCaseAttribute.NameOfAttributeTypeFilterFunc)) {
       var methodSignatureOfAttributeTypeFilter = typeof(AttributeTypeFilter).GetDelegateSignatureMethod() ?? throw new InvalidOperationException("cannot get delegate signature method");
