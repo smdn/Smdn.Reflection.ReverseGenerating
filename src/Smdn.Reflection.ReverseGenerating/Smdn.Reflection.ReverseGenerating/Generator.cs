@@ -448,20 +448,12 @@ public static partial class Generator {
     var sb = new StringBuilder();
     var memberOptions = options.MemberDeclaration;
 
-    var backingField = property.GetBackingField();
-    var backingFieldAttributeList = backingField is null
-      ? Enumerable.Empty<string>()
-      : GenerateAttributeList(backingField, referencingNamespaces, options);
-
-    if (backingFieldAttributeList.Any()) {
-      sb
-#if SYSTEM_TEXT_STRINGBUILDER_APPENDJOIN
-        .AppendJoin(' ', backingFieldAttributeList)
-#else
-        .Append(string.Join(" ", backingFieldAttributeList))
-#endif
-        .Append(' ');
-    }
+    AppendAttributeList(
+      property.GetBackingField(),
+      sb,
+      referencingNamespaces,
+      options
+    );
 
     var modifier = GetMemberModifierOf(
       property,
@@ -556,83 +548,26 @@ public static partial class Generator {
       if (explicitInterface == null && 0 < getAccessibility.Length)
         sb.Append(getAccessibility).Append(' ');
 
-      var returnParameterAttributeList = GenerateAttributeList(
-        property.GetMethod!.ReturnParameter,
-        referencingNamespaces,
-        options
-      );
-
-      if (returnParameterAttributeList.Any()) {
-        sb
-#if SYSTEM_TEXT_STRINGBUILDER_APPENDJOIN
-          .AppendJoin(' ', returnParameterAttributeList)
-#else
-          .Append(string.Join(" ", returnParameterAttributeList))
-#endif
-          .Append(' ');
-      }
-
-      var accessorMethodAttributeList = GenerateAttributeList(
+      GenerateAccessorDeclaration(
+        "get",
         property.GetMethod!,
+        sb,
         referencingNamespaces,
         options
       );
-
-      if (accessorMethodAttributeList.Any()) {
-        sb
-#if SYSTEM_TEXT_STRINGBUILDER_APPENDJOIN
-          .AppendJoin(' ', accessorMethodAttributeList)
-#else
-          .Append(string.Join(" ", accessorMethodAttributeList))
-#endif
-          .Append(' ');
-      }
-
-      sb.Append("get").Append(GenerateAccessorBody(property.GetMethod!, options));
     }
 
     if (emitSetAccessor) {
       if (explicitInterface == null && 0 < setAccessibility.Length)
         sb.Append(setAccessibility).Append(' ');
 
-      var accessorParameterAttributeList = GenerateAttributeList(
-        property.SetMethod!.GetParameters().First(),
-        referencingNamespaces,
-        options
-      );
-
-      if (accessorParameterAttributeList.Any()) {
-        sb
-#if SYSTEM_TEXT_STRINGBUILDER_APPENDJOIN
-          .AppendJoin(' ', accessorParameterAttributeList)
-#else
-          .Append(string.Join(" ", accessorParameterAttributeList))
-#endif
-          .Append(' ');
-      }
-
-      var accessorMethodAttributeList = GenerateAttributeList(
+      GenerateAccessorDeclaration(
+        property.IsSetMethodInitOnly() ? "init" : "set",
         property.SetMethod!,
+        sb,
         referencingNamespaces,
         options
       );
-
-      if (accessorMethodAttributeList.Any()) {
-        sb
-#if SYSTEM_TEXT_STRINGBUILDER_APPENDJOIN
-          .AppendJoin(' ', accessorMethodAttributeList)
-#else
-          .Append(string.Join(" ", accessorMethodAttributeList))
-#endif
-          .Append(' ');
-      }
-
-      if (property.IsSetMethodInitOnly())
-        sb.Append("init");
-      else
-        sb.Append("set");
-
-      sb.Append(GenerateAccessorBody(property.SetMethod!, options));
     }
 
     sb.Append('}');
@@ -643,22 +578,78 @@ public static partial class Generator {
 #endif
 
     return sb.ToString();
+  }
 
-    static string GenerateAccessorBody(MethodInfo accessor, GeneratorOptions opts)
-    {
-      var bodyOption = accessor.IsAbstract
-        ? MethodBodyOption.EmptyImplementation
-        : opts.MemberDeclaration.MethodBody;
+  private static void GenerateAccessorDeclaration(
+    string accessor,
+    MethodInfo accessorMethod,
+    StringBuilder builder,
+    ISet<string>? referencingNamespaces,
+    GeneratorOptions options
+  )
+  {
+    // accessor parameter attribute list
+    AppendAttributeList(
+      accessorMethod.ReturnParameter.ParameterType == typeof(void)
+        ? accessorMethod.GetParameters().First() // property set/init accessor or event add/remove accessor
+        : accessorMethod.ReturnParameter, // property get accessor
+      builder,
+      referencingNamespaces,
+      options
+    );
 
-      return bodyOption switch {
-        MethodBodyOption.ThrowNotImplementedException => " => throw new NotImplementedException(); ",
-        MethodBodyOption.ThrowNull => " => throw null; ",
+    // accessor method attribute list
+    AppendAttributeList(
+      accessorMethod,
+      builder,
+      referencingNamespaces,
+      options
+    );
 
-        // MethodBodyOption.None or
-        // MethodBodyOption.EmptyImplementation or
-        _ => "; ",
-      };
-    }
+    builder.Append(accessor);
+
+    var bodyOption = accessorMethod.IsAbstract
+      ? MethodBodyOption.EmptyImplementation
+      : options.MemberDeclaration.MethodBody;
+
+    builder.Append(bodyOption switch {
+      MethodBodyOption.ThrowNotImplementedException => " => throw new NotImplementedException(); ",
+      MethodBodyOption.ThrowNull => " => throw null; ",
+
+      // MethodBodyOption.None or
+      // MethodBodyOption.EmptyImplementation or
+      _ => "; ",
+    });
+  }
+
+  private static StringBuilder AppendAttributeList(
+    ICustomAttributeProvider? attributeProvider,
+    StringBuilder builder,
+    ISet<string>? referencingNamespaces,
+    GeneratorOptions options
+  )
+  {
+    if (attributeProvider is null)
+      return builder;
+
+    var initialLength = builder.Length;
+    var attributeList = GenerateAttributeList(
+      attributeProvider,
+      referencingNamespaces,
+      options
+    );
+
+    builder
+#if SYSTEM_TEXT_STRINGBUILDER_APPENDJOIN
+      .AppendJoin(' ', attributeList);
+#else
+      .Append(string.Join(" ", attributeList));
+#endif
+
+    if (initialLength < builder.Length)
+      builder.Append(' ');
+
+    return builder;
   }
 
   private static string? GenerateDelegateDeclaration(
@@ -967,20 +958,12 @@ public static partial class Generator {
     var sb = new StringBuilder();
     var memberOptions = options.MemberDeclaration;
 
-    var backingField = ev.GetBackingField();
-    var backingFieldAttributeList = backingField is null
-      ? Enumerable.Empty<string>()
-      : GenerateAttributeList(backingField, referencingNamespaces, options);
-
-    if (backingFieldAttributeList.Any()) {
-      sb
-#if SYSTEM_TEXT_STRINGBUILDER_APPENDJOIN
-        .AppendJoin(' ', backingFieldAttributeList)
-#else
-        .Append(string.Join(" ", backingFieldAttributeList))
-#endif
-        .Append(' ');
-    }
+    AppendAttributeList(
+      ev.GetBackingField(),
+      sb,
+      referencingNamespaces,
+      options
+    );
 
     if (explicitInterface == null)
       sb.Append(GetMemberModifierOf(ev.GetMethods(true).First(), options));
