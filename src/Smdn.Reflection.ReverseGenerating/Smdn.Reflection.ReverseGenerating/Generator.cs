@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Text;
 
@@ -1024,10 +1025,75 @@ public static partial class Generator {
       );
     }
 
-    if (!memberOptions.OmitEndOfStatement)
-      sb.Append(';');
+    var emitAccessor = !ev.GetDeclaringTypeOrThrow().IsInterface && (
+      ev.AddMethod?.GetCustomAttribute<CompilerGeneratedAttribute>() is null ||
+      ev.RemoveMethod?.GetCustomAttribute<CompilerGeneratedAttribute>() is null
+    );
+
+    static IEnumerable<string> GenerateAttributeListExceptCompilerGeneratedAttribute(
+      MethodInfo? accessor,
+      ISet<string>? setRefNs,
+      GeneratorOptions opts
+    )
+    {
+      if (accessor is null)
+        return Enumerable.Empty<string>();
+      if (accessor.GetCustomAttributes().All(static a => a.GetType() == typeof(CompilerGeneratedAttribute)))
+        return Enumerable.Empty<string>();
+
+      return GenerateAttributeList(accessor, setRefNs, opts);
+    }
+
+    var addMethodAttributeList = GenerateAttributeListExceptCompilerGeneratedAttribute(ev.AddMethod, referencingNamespaces, options);
+    var removeMethodAttributeList = GenerateAttributeListExceptCompilerGeneratedAttribute(ev.RemoveMethod, referencingNamespaces, options);
+
+    emitAccessor |= addMethodAttributeList.Any();
+    emitAccessor |= removeMethodAttributeList.Any();
+
+    if (!emitAccessor) {
+      if (!memberOptions.OmitEndOfStatement)
+        sb.Append(';');
+
+      return sb.ToString();
+    }
+
+    sb.Append(" { ");
+
+    if (addMethodAttributeList.Any()) {
+      sb
+#if SYSTEM_TEXT_STRINGBUILDER_APPENDJOIN
+        .AppendJoin(' ', addMethodAttributeList)
+#else
+        .Append(string.Join(" ", addMethodAttributeList))
+#endif
+        .Append(' ');
+    }
+
+    sb.Append("add").Append(GenerateAccessorBody(options.MemberDeclaration.MethodBody));
+
+    if (removeMethodAttributeList.Any()) {
+      sb
+#if SYSTEM_TEXT_STRINGBUILDER_APPENDJOIN
+        .AppendJoin(' ', removeMethodAttributeList)
+#else
+        .Append(string.Join(" ", removeMethodAttributeList))
+#endif
+        .Append(' ');
+    }
+
+    sb.Append("remove").Append(GenerateAccessorBody(options.MemberDeclaration.MethodBody)).Append('}');
 
     return sb.ToString();
+
+    static string GenerateAccessorBody(MethodBodyOption bodyOption)
+      => bodyOption switch {
+        MethodBodyOption.ThrowNotImplementedException => " => throw new NotImplementedException(); ",
+        MethodBodyOption.ThrowNull => " => throw null; ",
+
+        // MethodBodyOption.None or
+        // MethodBodyOption.EmptyImplementation or
+        _ => "; ",
+      };
   }
 
   private static string GenerateMemberName(

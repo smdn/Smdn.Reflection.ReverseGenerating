@@ -1046,6 +1046,27 @@ namespace Smdn.Reflection.ReverseGenerating {
           [MemberDeclarationTestCase(null, IgnorePrivateOrAssembly = true)] private protected event EventHandler E10;
           [MemberDeclarationTestCase(null, IgnorePrivateOrAssembly = true)] private event EventHandler E11;
         }
+
+        public class Accessors {
+          [MemberDeclarationTestCase("public event System.EventHandler CompilerGeneratedAccessor;", MethodBody = MethodBodyOption.None)]
+          [MemberDeclarationTestCase("public event System.EventHandler CompilerGeneratedAccessor;", MethodBody = MethodBodyOption.EmptyImplementation)]
+          [MemberDeclarationTestCase("public event System.EventHandler CompilerGeneratedAccessor", MethodBody = MethodBodyOption.EmptyImplementation, MemberOmitEndOfStatement = true)]
+          [MemberDeclarationTestCase("public event System.EventHandler CompilerGeneratedAccessor;", MethodBody = MethodBodyOption.EmptyImplementation, MemberOmitEndOfStatement = false)]
+          [MemberDeclarationTestCase("public event System.EventHandler CompilerGeneratedAccessor;", MethodBody = MethodBodyOption.ThrowNotImplementedException)]
+          [MemberDeclarationTestCase("public event System.EventHandler CompilerGeneratedAccessor;", MethodBody = MethodBodyOption.ThrowNull)]
+          public event EventHandler CompilerGeneratedAccessor;
+
+          [MemberDeclarationTestCase("public event System.EventHandler CustomAccessor { add; remove; }", MethodBody = MethodBodyOption.None)]
+          [MemberDeclarationTestCase("public event System.EventHandler CustomAccessor { add; remove; }", MethodBody = MethodBodyOption.EmptyImplementation)]
+          [MemberDeclarationTestCase("public event System.EventHandler CustomAccessor { add; remove; }", MethodBody = MethodBodyOption.EmptyImplementation, MemberOmitEndOfStatement = true)]
+          [MemberDeclarationTestCase("public event System.EventHandler CustomAccessor { add; remove; }", MethodBody = MethodBodyOption.EmptyImplementation, MemberOmitEndOfStatement = false)]
+          [MemberDeclarationTestCase("public event System.EventHandler CustomAccessor { add => throw new NotImplementedException(); remove => throw new NotImplementedException(); }", MethodBody = MethodBodyOption.ThrowNotImplementedException)]
+          [MemberDeclarationTestCase("public event System.EventHandler CustomAccessor { add => throw null; remove => throw null; }", MethodBody = MethodBodyOption.ThrowNull)]
+          public event EventHandler CustomAccessor {
+            add => throw new NotImplementedException();
+            remove => throw new NotImplementedException();
+          }
+        }
 #pragma warning restore CS0067
       }
 
@@ -1169,6 +1190,7 @@ namespace Smdn.Reflection.ReverseGenerating {
         }
 
         interface IEvent {
+          [MemberDeclarationTestCase("event EventHandler E;", MemberWithNamespace = false)]
           event EventHandler E;
         }
 
@@ -1183,10 +1205,10 @@ namespace Smdn.Reflection.ReverseGenerating {
 #pragma warning restore CS0067
 
         class ExplicitEvent : IEvent {
-          [MemberDeclarationTestCase("event EventHandler IEvent.E;", MemberWithNamespace = false)]
-          [MemberDeclarationTestCase("event EventHandler IEvent.E", MemberWithNamespace = false, MemberOmitEndOfStatement = true)]
-          [MemberDeclarationTestCase("event EventHandler ExplicitEvent.IEvent.E;", MemberWithDeclaringTypeName = true, MemberWithNamespace = false)]
-          [MemberDeclarationTestCase("event System.EventHandler Smdn.Reflection.ReverseGenerating.TestCases.MemberDeclaration.ImplementedInterfaceMembers.ExplicitEvent.Smdn.Reflection.ReverseGenerating.TestCases.MemberDeclaration.ImplementedInterfaceMembers.IEvent.E;", MemberWithDeclaringTypeName = true, MemberWithNamespace = true)]
+          [MemberDeclarationTestCase("event EventHandler IEvent.E { add; remove; }", MemberWithNamespace = false)]
+          [MemberDeclarationTestCase("event EventHandler IEvent.E { add; remove; }", MemberWithNamespace = false, MemberOmitEndOfStatement = true)]
+          [MemberDeclarationTestCase("event EventHandler ExplicitEvent.IEvent.E { add; remove; }", MemberWithDeclaringTypeName = true, MemberWithNamespace = false)]
+          [MemberDeclarationTestCase("event System.EventHandler Smdn.Reflection.ReverseGenerating.TestCases.MemberDeclaration.ImplementedInterfaceMembers.ExplicitEvent.Smdn.Reflection.ReverseGenerating.TestCases.MemberDeclaration.ImplementedInterfaceMembers.IEvent.E { add; remove; }", MemberWithDeclaringTypeName = true, MemberWithNamespace = true)]
           event EventHandler IEvent.E {
             add { throw new NotImplementedException(); }
             remove { throw new NotImplementedException(); }
