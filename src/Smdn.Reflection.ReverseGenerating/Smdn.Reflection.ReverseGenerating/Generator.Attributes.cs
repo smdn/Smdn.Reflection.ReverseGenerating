@@ -262,11 +262,12 @@ partial class Generator {
 
     string ConvertAttributeTypedArgument(CustomAttributeTypedArgument arg)
       => CSharpFormatter.FormatValueDeclaration(
-        arg.GetTypedValue(),
-        arg.ArgumentType,
-        typeWithNamespace: options.TypeDeclaration.WithNamespace,
-        findConstantField: false,
-        useDefaultLiteral: options.ValueDeclaration.UseDefaultLiteral
+        val: arg.GetTypedValue(),
+        typeOfValue: arg.ArgumentType,
+        options: CSharpFormatter.ValueFormatOptions.FromGeneratorOptions(
+          options: options,
+          tryFindConstantField: false
+        )
       );
   }
 }

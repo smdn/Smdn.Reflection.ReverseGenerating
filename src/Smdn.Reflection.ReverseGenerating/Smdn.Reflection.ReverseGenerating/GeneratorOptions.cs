@@ -81,6 +81,8 @@ public class GeneratorOptions : ICloneable {
 
   public class ValueDeclarationOptions {
     public bool UseDefaultLiteral { get; set; } = false;
+    public bool WithNamespace { get; set; } = false;
+    public bool WithDeclaringTypeName { get; set; } = true;
 
     internal ValueDeclarationOptions Clone()
       => (ValueDeclarationOptions)MemberwiseClone();

@@ -296,13 +296,20 @@ public static partial class CSharpFormatter /* ITypeFormatter */ {
     bool typeWithNamespace = true,
     bool useDefaultLiteral = false
   )
-    => FormatParameterCore(
+    => FormatParameter(
       p: p ?? throw new ArgumentNullException(nameof(p)),
 #if SYSTEM_REFLECTION_NULLABILITYINFOCONTEXT
       nullabilityInfoContext: null,
 #endif
       typeWithNamespace: typeWithNamespace,
-      useDefaultLiteral: useDefaultLiteral
+      typeWithDeclaringTypeName: true,
+      valueFormatOptions: new(
+        TranslateLanguagePrimitiveType: true,
+        TryFindConstantField: true,
+        UseDefaultLiteral: useDefaultLiteral,
+        WithNamespace: typeWithNamespace,
+        WithDeclaringTypeName: true
+      )
     );
 
 #if SYSTEM_REFLECTION_NULLABILITYINFOCONTEXT
@@ -312,21 +319,29 @@ public static partial class CSharpFormatter /* ITypeFormatter */ {
     bool typeWithNamespace = true,
     bool useDefaultLiteral = false
   )
-    => FormatParameterCore(
+    => FormatParameter(
       p: p ?? throw new ArgumentNullException(nameof(p)),
       nullabilityInfoContext: nullabilityInfoContext,
       typeWithNamespace: typeWithNamespace,
-      useDefaultLiteral: useDefaultLiteral
+      typeWithDeclaringTypeName: true,
+      valueFormatOptions: new(
+        TranslateLanguagePrimitiveType: true,
+        TryFindConstantField: true,
+        UseDefaultLiteral: useDefaultLiteral,
+        WithNamespace: typeWithNamespace,
+        WithDeclaringTypeName: true
+      )
     );
 #endif
 
-  private static string FormatParameterCore(
+  internal static string FormatParameter(
     ParameterInfo p,
 #if SYSTEM_REFLECTION_NULLABILITYINFOCONTEXT
     NullabilityInfoContext? nullabilityInfoContext,
 #endif
-    bool typeWithNamespace = true,
-    bool useDefaultLiteral = false
+    bool typeWithNamespace,
+    bool typeWithDeclaringTypeName,
+    ValueFormatOptions valueFormatOptions
   )
   {
     var ret = new StringBuilder(capacity: 64);
@@ -354,7 +369,7 @@ public static partial class CSharpFormatter /* ITypeFormatter */ {
         nullabilityInfoContext: nullabilityInfoContext,
 #endif
         typeWithNamespace: typeWithNamespace,
-        withDeclaringTypeName: false
+        withDeclaringTypeName: typeWithDeclaringTypeName
 #pragma warning restore SA1114
       )
     );
@@ -362,16 +377,14 @@ public static partial class CSharpFormatter /* ITypeFormatter */ {
     AppendName(ret, p);
 
     if (p.HasDefaultValue) {
-      var defaultValueDeclaration = FormatValueDeclaration(
-        p.GetDefaultValue(),
-        p.ParameterType,
-        typeWithNamespace: typeWithNamespace,
-        findConstantField: true,
-        useDefaultLiteral: useDefaultLiteral
-      );
-
       ret.Append(" = ");
-      ret.Append(defaultValueDeclaration);
+      ret.Append(
+        FormatValueDeclaration(
+          val: p.GetDefaultValue(),
+          typeOfValue: p.ParameterType,
+          options: valueFormatOptions
+        )
+      );
     }
 
     return ret.ToString();
@@ -420,8 +433,44 @@ public static partial class CSharpFormatter /* ITypeFormatter */ {
     object? val,
     Type typeOfValue,
     bool typeWithNamespace = true,
-    bool findConstantField = false,
+    bool findConstantField = false, // TODO: rename parameter
     bool useDefaultLiteral = false
+  )
+    => FormatValueDeclaration(
+      val: val,
+      typeOfValue: typeOfValue,
+      options: new(
+        TranslateLanguagePrimitiveType: true,
+        TryFindConstantField: findConstantField,
+        UseDefaultLiteral: useDefaultLiteral,
+        WithNamespace: typeWithNamespace,
+        WithDeclaringTypeName: true
+      )
+    );
+
+  internal readonly record struct ValueFormatOptions(
+#pragma warning disable SA1313
+    bool TranslateLanguagePrimitiveType,
+    bool TryFindConstantField,
+    bool UseDefaultLiteral,
+    bool WithNamespace,
+    bool WithDeclaringTypeName
+#pragma warning restore SA1313
+  ) {
+    public static ValueFormatOptions FromGeneratorOptions(GeneratorOptions options, bool tryFindConstantField)
+      => new(
+        TranslateLanguagePrimitiveType: options.TranslateLanguagePrimitiveTypeDeclaration,
+        TryFindConstantField: tryFindConstantField,
+        UseDefaultLiteral: options.ValueDeclaration.UseDefaultLiteral,
+        WithNamespace: options.ValueDeclaration.WithNamespace,
+        WithDeclaringTypeName: options.ValueDeclaration.WithDeclaringTypeName
+      );
+  }
+
+  internal static string FormatValueDeclaration(
+    object? val,
+    Type typeOfValue,
+    ValueFormatOptions options
   )
   {
     if (val == null) {
@@ -429,10 +478,18 @@ public static partial class CSharpFormatter /* ITypeFormatter */ {
         return "null";
       }
       else if (typeOfValue.IsValueType) {
-        if (useDefaultLiteral)
+        if (options.UseDefaultLiteral)
           return "default";
-        else
-          return $"default({FormatTypeName(typeOfValue, typeWithNamespace: typeWithNamespace)})";
+
+        return string.Concat(
+          "default(",
+          FormatTypeName(
+            typeOfValue,
+            typeWithNamespace: options.WithNamespace,
+            withDeclaringTypeName: options.WithDeclaringTypeName
+          ),
+          ")"
+        );
       }
       else {
         return "null";
@@ -453,26 +510,63 @@ public static partial class CSharpFormatter /* ITypeFormatter */ {
       else
         return "false";
     }
+    else if (string.Equals(typeOfValue.FullName, typeof(Type).FullName, StringComparison.Ordinal)) {
+      var typeName = FormatTypeName(
+        (Type)val,
+        typeWithNamespace: options.WithNamespace,
+        withDeclaringTypeName: options.WithDeclaringTypeName,
+        translateLanguagePrimitiveType: options.TranslateLanguagePrimitiveType
+      );
+
+      return "typeof(" + typeName + ")";
+    }
     else {
-      if (typeOfValue.IsEnum || (typeOfValue.IsValueType && findConstantField)) {
+      if (typeOfValue.IsEnum || (typeOfValue.IsValueType && options.TryFindConstantField)) {
         // try to find constant field
         foreach (var f in typeOfValue.GetFields(BindingFlags.Static | BindingFlags.Public)) {
           var isConstantField = f.IsLiteral || f.IsInitOnly;
 
-          if (isConstantField && f.TryGetValue(null, out var constantFieldValue) && val.Equals(constantFieldValue))
-            return FormatTypeName(typeOfValue, typeWithNamespace: typeWithNamespace) + "." + f.Name;
+          if (isConstantField && f.TryGetValue(null, out var constantFieldValue) && val.Equals(constantFieldValue)) {
+            return string.Concat(
+              FormatTypeName(
+                typeOfValue,
+                typeWithNamespace: options.WithNamespace,
+                withDeclaringTypeName: options.WithDeclaringTypeName
+              ),
+              ".",
+              f.Name
+            );
+          }
         }
 
         if (!typeOfValue.IsPrimitive && val.Equals(Activator.CreateInstance(typeOfValue))) {
-          if (useDefaultLiteral)
+          if (options.UseDefaultLiteral)
             return "default";
-          else
-            return $"default({FormatTypeName(typeOfValue, typeWithNamespace: typeWithNamespace)})";
+
+          return string.Concat(
+            "default(",
+            FormatTypeName(
+              typeOfValue,
+              typeWithNamespace: options.WithNamespace,
+              withDeclaringTypeName: options.WithDeclaringTypeName
+            ),
+            ")"
+          );
         }
       }
 
-      if (typeOfValue.IsEnum)
-        return $"({typeOfValue.FormatTypeName(typeWithNamespace: typeWithNamespace)}){Convert.ChangeType(val, typeOfValue.GetEnumUnderlyingType(), provider: null)}";
+      if (typeOfValue.IsEnum) {
+        return string.Concat(
+          "(",
+          FormatTypeName(
+            typeOfValue,
+            typeWithNamespace: options.WithNamespace,
+            withDeclaringTypeName: options.WithDeclaringTypeName
+          ),
+          ")",
+          Convert.ChangeType(val, typeOfValue.GetEnumUnderlyingType(), provider: null)
+        );
+      }
 
       if (typeOfValue.IsPrimitive && typeOfValue.IsValueType)
         return val.ToString() ?? string.Empty;

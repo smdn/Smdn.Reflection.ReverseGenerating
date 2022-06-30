@@ -360,11 +360,12 @@ public static partial class Generator {
       if (field.IsStatic && (field.IsLiteral || field.IsInitOnly) && !field.FieldType.ContainsGenericParameters) {
         if (field.TryGetValue(null, out var val)) {
           var valueDeclaration = CSharpFormatter.FormatValueDeclaration(
-            val,
-            field.FieldType,
-            typeWithNamespace: memberOptions.WithNamespace,
-            findConstantField: field.FieldType != field.DeclaringType,
-            useDefaultLiteral: options.ValueDeclaration.UseDefaultLiteral
+            val: val,
+            typeOfValue: field.FieldType,
+            options: CSharpFormatter.ValueFormatOptions.FromGeneratorOptions(
+              options: options,
+              tryFindConstantField: field.FieldType != field.DeclaringType
+            )
           );
 
           if (string.IsNullOrEmpty(valueDeclaration)) {
@@ -902,7 +903,8 @@ public static partial class Generator {
         : options.MemberDeclaration.NullabilityInfoContext,
 #endif
       typeWithNamespace: options.MemberDeclaration.WithNamespace,
-      useDefaultLiteral: options.ValueDeclaration.UseDefaultLiteral
+      typeWithDeclaringTypeName: options.MemberDeclaration.WithDeclaringTypeName,
+      valueFormatOptions: CSharpFormatter.ValueFormatOptions.FromGeneratorOptions(options, tryFindConstantField: true)
     );
     var paramAttributeList = GenerateParameterAttributeList(
       p,

@@ -239,6 +239,72 @@ namespace Smdn.Reflection.ReverseGenerating {
             [MemberDeclarationTestCase("public const string F6 = \"\\\"\";")] public const string F6 = "\"";
           }
 
+          public class Types {
+            [MemberDeclarationTestCase(
+              "public static readonly System.Type TypeOfLanguagePrimitiveType = typeof(int);",
+              TranslateLanguagePrimitiveTypeDeclaration = true,
+              MemberWithNamespace = true,
+              ValueWithNamespace = true
+            )]
+            [MemberDeclarationTestCase(
+              "public static readonly System.Type TypeOfLanguagePrimitiveType = typeof(System.Int32);",
+              TranslateLanguagePrimitiveTypeDeclaration = false,
+              MemberWithNamespace = true,
+              ValueWithNamespace = true
+            )]
+            [MemberDeclarationTestCase(
+              "public static readonly Type TypeOfLanguagePrimitiveType = typeof(System.Int32);",
+              TranslateLanguagePrimitiveTypeDeclaration = false,
+              MemberWithNamespace = false,
+              ValueWithNamespace = true
+            )]
+            [MemberDeclarationTestCase(
+              "public static readonly Type TypeOfLanguagePrimitiveType = typeof(Int32);",
+              TranslateLanguagePrimitiveTypeDeclaration = false,
+              MemberWithNamespace = false,
+              ValueWithNamespace = false
+            )]
+            public static readonly Type TypeOfLanguagePrimitiveType = typeof(int);
+
+            [MemberDeclarationTestCase(
+              "public static readonly System.Type TypeOfNonPrimitiveType = typeof(System.Guid);",
+              MemberWithNamespace = true,
+              ValueWithNamespace = true
+            )]
+            [MemberDeclarationTestCase(
+              "public static readonly Type TypeOfNonPrimitiveType = typeof(Guid);",
+              MemberWithNamespace = false,
+              ValueWithNamespace = false
+            )]
+            public static readonly Type TypeOfNonPrimitiveType = typeof(Guid);
+
+            [MemberDeclarationTestCase(
+              "public static readonly System.Type TypeOfNestedType = typeof(System.Environment.SpecialFolder);",
+              MemberWithNamespace = true,
+              ValueWithNamespace = true,
+              ValueWithDeclaringTypeName = true
+            )]
+            [MemberDeclarationTestCase(
+              "public static readonly Type TypeOfNestedType = typeof(System.Environment.SpecialFolder);",
+              MemberWithNamespace = false,
+              ValueWithNamespace = true,
+              ValueWithDeclaringTypeName = true
+            )]
+            [MemberDeclarationTestCase(
+              "public static readonly Type TypeOfNestedType = typeof(Environment.SpecialFolder);",
+              MemberWithNamespace = false,
+              ValueWithNamespace = false,
+              ValueWithDeclaringTypeName = true
+            )]
+            [MemberDeclarationTestCase(
+              "public static readonly Type TypeOfNestedType = typeof(SpecialFolder);",
+              MemberWithNamespace = false,
+              ValueWithNamespace = false,
+              ValueWithDeclaringTypeName = false
+            )]
+            public static readonly Type TypeOfNestedType = typeof(Environment.SpecialFolder);
+          }
+
           public class Nullables {
             [MemberDeclarationTestCase("public static readonly int? F1 = 0;")] public static readonly int? F1 = 0;
             [MemberDeclarationTestCase("public static readonly int? F2 = null;")] public static readonly int? F2 = null;

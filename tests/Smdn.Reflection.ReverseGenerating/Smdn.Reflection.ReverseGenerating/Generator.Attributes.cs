@@ -328,16 +328,25 @@ namespace Smdn.Reflection.ReverseGenerating {
 
         class AttributeTargetsPropertyBackingField {
           [MemberDeclarationTestCase(
+            "[field: DebuggerBrowsable(System.Diagnostics.DebuggerBrowsableState.Never)] [field: Obsolete] [field: CompilerGenerated] public int P0 { [CompilerGenerated] get; [CompilerGenerated] set; }",
+            AttributeWithNamespace = false,
+            AttributeBackingFieldFormat = AttributeSectionFormat.Discrete,
+            TypeWithNamespace = false,
+            ValueWithNamespace = true
+          )]
+          [MemberDeclarationTestCase(
             "[field: DebuggerBrowsable(DebuggerBrowsableState.Never)] [field: Obsolete] [field: CompilerGenerated] public int P0 { [CompilerGenerated] get; [CompilerGenerated] set; }",
             AttributeWithNamespace = false,
             AttributeBackingFieldFormat = AttributeSectionFormat.Discrete,
-            TypeWithNamespace = false
+            TypeWithNamespace = false,
+            ValueWithNamespace = false
           )]
           [MemberDeclarationTestCase(
             "[field: DebuggerBrowsable(DebuggerBrowsableState.Never), Obsolete, CompilerGenerated] public int P0 { [CompilerGenerated] get; [CompilerGenerated] set; }",
             AttributeWithNamespace = false,
             AttributeBackingFieldFormat = AttributeSectionFormat.List,
-            TypeWithNamespace = false
+            TypeWithNamespace = false,
+            ValueWithNamespace = false
           )]
           [AttributeTestCase("[System.Obsolete]")]
           [Obsolete] // must not be shown in the result of MemberDeclarationTestCase
@@ -804,25 +813,25 @@ namespace Smdn.Reflection.ReverseGenerating {
           public static void M1(this int x) { }
         }
 
-        [AttributeTestCase("[System.Runtime.InteropServices.StructLayout(System.Runtime.InteropServices.LayoutKind.Explicit, Pack = 1)]", AttributeWithNamespace = true, TypeWithNamespace = true)]
-        [AttributeTestCase("[System.Runtime.InteropServices.StructLayout(LayoutKind.Explicit, Pack = 1)]", AttributeWithNamespace = true, TypeWithNamespace = false)]
-        [AttributeTestCase("[StructLayout(System.Runtime.InteropServices.LayoutKind.Explicit, Pack = 1)]", AttributeWithNamespace = false, TypeWithNamespace = true)]
-        [AttributeTestCase("[StructLayout(LayoutKind.Explicit, Pack = 1)]", AttributeWithNamespace = false, TypeWithNamespace = false)]
+        [AttributeTestCase("[System.Runtime.InteropServices.StructLayout(System.Runtime.InteropServices.LayoutKind.Explicit, Pack = 1)]", AttributeWithNamespace = true, ValueWithNamespace = true)]
+        [AttributeTestCase("[System.Runtime.InteropServices.StructLayout(LayoutKind.Explicit, Pack = 1)]", AttributeWithNamespace = true, ValueWithNamespace = false)]
+        [AttributeTestCase("[StructLayout(System.Runtime.InteropServices.LayoutKind.Explicit, Pack = 1)]", AttributeWithNamespace = false, ValueWithNamespace = true)]
+        [AttributeTestCase("[StructLayout(LayoutKind.Explicit, Pack = 1)]", AttributeWithNamespace = false, ValueWithNamespace = false)]
         [System.Runtime.InteropServices.StructLayout(System.Runtime.InteropServices.LayoutKind.Explicit, Pack = 1)]
         struct StructLayout1 {
-          [AttributeTestCase("[System.Runtime.InteropServices.FieldOffset(0)]")]
+          [AttributeTestCase("[System.Runtime.InteropServices.FieldOffset(0)]", AttributeWithNamespace = true)]
           [AttributeTestCase("[FieldOffset(0)]", AttributeWithNamespace = false)]
           [System.Runtime.InteropServices.FieldOffset(0)]
           public byte F0;
         }
 
-        [AttributeTestCase("[System.Runtime.InteropServices.StructLayout(System.Runtime.InteropServices.LayoutKind.Explicit, Size = 1)]", AttributeWithNamespace = true, TypeWithNamespace = true)]
-        [AttributeTestCase("[System.Runtime.InteropServices.StructLayout(LayoutKind.Explicit, Size = 1)]", AttributeWithNamespace = true, TypeWithNamespace = false)]
-        [AttributeTestCase("[StructLayout(System.Runtime.InteropServices.LayoutKind.Explicit, Size = 1)]", AttributeWithNamespace = false, TypeWithNamespace = true)]
-        [AttributeTestCase("[StructLayout(LayoutKind.Explicit, Size = 1)]", AttributeWithNamespace = false, TypeWithNamespace = false)]
+        [AttributeTestCase("[System.Runtime.InteropServices.StructLayout(System.Runtime.InteropServices.LayoutKind.Explicit, Size = 1)]", AttributeWithNamespace = true, ValueWithNamespace = true)]
+        [AttributeTestCase("[System.Runtime.InteropServices.StructLayout(LayoutKind.Explicit, Size = 1)]", AttributeWithNamespace = true, ValueWithNamespace = false)]
+        [AttributeTestCase("[StructLayout(System.Runtime.InteropServices.LayoutKind.Explicit, Size = 1)]", AttributeWithNamespace = false, ValueWithNamespace = true)]
+        [AttributeTestCase("[StructLayout(LayoutKind.Explicit, Size = 1)]", AttributeWithNamespace = false, ValueWithNamespace = false)]
         [System.Runtime.InteropServices.StructLayout(System.Runtime.InteropServices.LayoutKind.Explicit, Size = 1)]
         struct StructLayout2 {
-          [AttributeTestCase("[System.Runtime.InteropServices.FieldOffset(0)]")]
+          [AttributeTestCase("[System.Runtime.InteropServices.FieldOffset(0)]", AttributeWithNamespace = true)]
           [AttributeTestCase("[FieldOffset(0)]", AttributeWithNamespace = false)]
           [System.Runtime.InteropServices.FieldOffset(0)] public byte F0;
         }
@@ -861,15 +870,16 @@ namespace Smdn.Reflection.ReverseGenerating {
           [ObjectValue((double)0.0)]
           public int DoubleValue = 0;
 
-          [AttributeTestCase("[ObjectValue(DayOfWeek.Sunday)]", AttributeWithNamespace = false, TypeWithNamespace = false)]
-          [AttributeTestCase("[ObjectValue(System.DayOfWeek.Sunday)]", AttributeWithNamespace = false, TypeWithNamespace = true)]
+          [AttributeTestCase("[ObjectValue(DayOfWeek.Sunday)]", AttributeWithNamespace = false, ValueWithNamespace = false)]
+          [AttributeTestCase("[ObjectValue(System.DayOfWeek.Sunday)]", AttributeWithNamespace = false, ValueWithNamespace = true)]
           [ObjectValue(DayOfWeek.Sunday)]
           public int EnumValue = 0;
 
-          [AttributeTestCase("[ObjectValue((DayOfWeek)999)]", AttributeWithNamespace = false, TypeWithNamespace = false)]
-          [AttributeTestCase("[ObjectValue((System.DayOfWeek)999)]", AttributeWithNamespace = false, TypeWithNamespace = true)]
+          [AttributeTestCase("[ObjectValue((DayOfWeek)999)]", AttributeWithNamespace = false, ValueWithNamespace = false)]
+          [AttributeTestCase("[ObjectValue((System.DayOfWeek)999)]", AttributeWithNamespace = false, ValueWithNamespace = true)]
           [ObjectValue((DayOfWeek)999)]
           public int EnumValueUndefined = 0;
+
         }
       }
     }
