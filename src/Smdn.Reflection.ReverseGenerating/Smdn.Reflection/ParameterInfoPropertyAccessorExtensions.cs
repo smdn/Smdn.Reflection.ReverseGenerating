@@ -7,19 +7,6 @@ using System.Reflection;
 namespace Smdn.Reflection;
 
 internal static class ParameterInfoPropertyAccessorExtensions {
-  private static bool IsPropertySetMethod(MethodInfo m)
-    => m.IsSpecialName &&
-      m.DeclaringType is not null &&
-      m.DeclaringType.GetProperties(
-        BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic
-      ).Any(p => p.SetMethod == m);
-
-  public static bool IsPropertySetMethodParameter(this ParameterInfo p)
-    => p is null
-      ? throw new ArgumentNullException(nameof(p))
-      : p.Member is MethodInfo m &&
-        IsPropertySetMethod(m);
-
   public static PropertyInfo? GetDeclaringProperty(this ParameterInfo para)
   {
     if (para is null)
