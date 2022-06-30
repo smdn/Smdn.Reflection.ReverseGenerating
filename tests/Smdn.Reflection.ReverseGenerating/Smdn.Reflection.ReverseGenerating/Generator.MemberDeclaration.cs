@@ -1375,41 +1375,41 @@ namespace Smdn.Reflection.ReverseGenerating {
             [MemberDeclarationTestCase("public void M25(System.AttributeTargets x = (System.AttributeTargets)3) {}")] public void M25(AttributeTargets x = AttributeTargets.Assembly | AttributeTargets.Module) { }
 
             [MemberDeclarationTestCase(
-              "public void M30(System.Environment.SpecialFolder x = System.Environment.SpecialFolder.Personal) {}",
+              "public void M30(System.Environment.SpecialFolder x = System.Environment.SpecialFolder.UserProfile) {}",
               ParameterWithNamespace = true,
               ParameterWithDeclaringTypeName = true,
               ValueWithNamespace = true,
               ValueWithDeclaringTypeName = true
             )]
             [MemberDeclarationTestCase(
-              "public void M30(Environment.SpecialFolder x = System.Environment.SpecialFolder.Personal) {}",
+              "public void M30(Environment.SpecialFolder x = System.Environment.SpecialFolder.UserProfile) {}",
               ParameterWithNamespace = false,
               ParameterWithDeclaringTypeName = true,
               ValueWithNamespace = true,
               ValueWithDeclaringTypeName = true
             )]
             [MemberDeclarationTestCase(
-              "public void M30(SpecialFolder x = System.Environment.SpecialFolder.Personal) {}",
+              "public void M30(SpecialFolder x = System.Environment.SpecialFolder.UserProfile) {}",
               ParameterWithNamespace = false,
               ParameterWithDeclaringTypeName = false,
               ValueWithNamespace = true,
               ValueWithDeclaringTypeName = true
             )]
             [MemberDeclarationTestCase(
-              "public void M30(SpecialFolder x = Environment.SpecialFolder.Personal) {}",
+              "public void M30(SpecialFolder x = Environment.SpecialFolder.UserProfile) {}",
               ParameterWithNamespace = false,
               ParameterWithDeclaringTypeName = false,
               ValueWithNamespace = false,
               ValueWithDeclaringTypeName = true
             )]
             [MemberDeclarationTestCase(
-              "public void M30(SpecialFolder x = SpecialFolder.Personal) {}",
+              "public void M30(SpecialFolder x = SpecialFolder.UserProfile) {}",
               ParameterWithNamespace = false,
               ParameterWithDeclaringTypeName = false,
               ValueWithNamespace = false,
               ValueWithDeclaringTypeName = false
             )]
-            public void M30(Environment.SpecialFolder x = Environment.SpecialFolder.Personal) { }
+            public void M30(Environment.SpecialFolder x = Environment.SpecialFolder.UserProfile) { }
           }
 
           public class Nullables {
