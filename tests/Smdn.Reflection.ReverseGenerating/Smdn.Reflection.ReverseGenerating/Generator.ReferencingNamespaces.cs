@@ -24,7 +24,7 @@ namespace Smdn.Reflection.ReverseGenerating {
       )
     {
       base.MemberWithNamespace = true;
-      base.UseDefaultLiteral = false;
+      base.ValueUseDefaultLiteral = false;
     }
 
     public bool TypeDeclarationWithExplicitBaseTypeAndInterfaces { get; set; } = false;

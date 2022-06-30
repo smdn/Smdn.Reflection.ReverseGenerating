@@ -208,8 +208,9 @@ namespace Smdn.Reflection.ReverseGenerating {
 
           public class EnumFlags {
             [MemberDeclarationTestCase("public const System.AttributeTargets F1 = System.AttributeTargets.All;")] public const AttributeTargets F1 = AttributeTargets.All;
-            [MemberDeclarationTestCase("public const System.AttributeTargets F2 = default(System.AttributeTargets);")] public const AttributeTargets F2 = default(AttributeTargets);
-            [MemberDeclarationTestCase("public const System.AttributeTargets F22 = default;", UseDefaultLiteral = true)] public const AttributeTargets F22 = default(AttributeTargets);
+            [MemberDeclarationTestCase("public const System.AttributeTargets F2 = default(System.AttributeTargets);", ValueUseDefaultLiteral = false)]
+            [MemberDeclarationTestCase("public const System.AttributeTargets F2 = default;", ValueUseDefaultLiteral = true)]
+            public const AttributeTargets F2 = default(AttributeTargets);
             [MemberDeclarationTestCase("public const System.AttributeTargets F3 = System.AttributeTargets.Assembly;")] public const AttributeTargets F3 = AttributeTargets.Assembly;
             [MemberDeclarationTestCase("public const System.AttributeTargets F4 = (System.AttributeTargets)3;")] public const AttributeTargets F4 = AttributeTargets.Assembly | AttributeTargets.Module;
             [MemberDeclarationTestCase("public const System.AttributeTargets F5 = (System.AttributeTargets)42;")] public const AttributeTargets F5 =(AttributeTargets)42;
@@ -260,9 +261,13 @@ namespace Smdn.Reflection.ReverseGenerating {
             [MemberDeclarationTestCase("public static readonly System.DateTimeOffset F6; // = \"2018-10-31T21:00:00.0000000+09:00\"")] public static readonly DateTimeOffset F6 = new DateTimeOffset(2018, 10, 31, 21, 0, 0, 0, TimeSpan.FromHours(+9.0));
 
             // XXX: System.Threading.CancellationToken.None is a property
-            [MemberDeclarationTestCase("public static readonly System.Threading.CancellationToken F7 = default(System.Threading.CancellationToken);")] public static readonly CancellationToken F7 = CancellationToken.None;
-            [MemberDeclarationTestCase("public static readonly System.Threading.CancellationToken F8 = default(System.Threading.CancellationToken);")] public static readonly CancellationToken F8 = default(CancellationToken);
-            [MemberDeclarationTestCase("public static readonly System.Threading.CancellationToken F9 = default;", UseDefaultLiteral = true)] public static readonly CancellationToken F9 = default(CancellationToken);
+            [MemberDeclarationTestCase("public static readonly System.Threading.CancellationToken F7 = default(System.Threading.CancellationToken);", ValueUseDefaultLiteral = false)]
+            [MemberDeclarationTestCase("public static readonly System.Threading.CancellationToken F7 = default;", ValueUseDefaultLiteral = true)]
+            public static readonly CancellationToken F7 = CancellationToken.None;
+
+            [MemberDeclarationTestCase("public static readonly System.Threading.CancellationToken F8 = default(System.Threading.CancellationToken);", ValueUseDefaultLiteral = false)]
+            [MemberDeclarationTestCase("public static readonly System.Threading.CancellationToken F8 = default;", ValueUseDefaultLiteral = true)]
+            public static readonly CancellationToken F8 = default(CancellationToken);
           }
 
           public class NonPrimitiveValueTypes_Stringification {
@@ -1295,8 +1300,11 @@ namespace Smdn.Reflection.ReverseGenerating {
 
             [MemberDeclarationTestCase("public void M21(System.AttributeTargets x = System.AttributeTargets.All) {}")] public void M21(AttributeTargets x = AttributeTargets.All) { }
             [MemberDeclarationTestCase("public void M22(System.AttributeTargets x = System.AttributeTargets.Assembly) {}")] public void M22(AttributeTargets x = AttributeTargets.Assembly) { }
-            [MemberDeclarationTestCase("public void M23(System.AttributeTargets x = default(System.AttributeTargets)) {}")] public void M23(AttributeTargets x = default(AttributeTargets)) { }
-            [MemberDeclarationTestCase("public void M231(System.AttributeTargets x = default) {}", UseDefaultLiteral = true)] public void M231(AttributeTargets x = default(AttributeTargets)) { }
+
+            [MemberDeclarationTestCase("public void M23(System.AttributeTargets x = default(System.AttributeTargets)) {}", ValueUseDefaultLiteral = false)]
+            [MemberDeclarationTestCase("public void M23(System.AttributeTargets x = default) {}", ValueUseDefaultLiteral = true)]
+            public void M23(AttributeTargets x = default(AttributeTargets)) { }
+
             [MemberDeclarationTestCase("public void M24(System.AttributeTargets x = (System.AttributeTargets)42) {}")] public void M24(AttributeTargets x = (System.AttributeTargets)42) { }
             [MemberDeclarationTestCase("public void M25(System.AttributeTargets x = (System.AttributeTargets)3) {}")] public void M25(AttributeTargets x = AttributeTargets.Assembly | AttributeTargets.Module) { }
           }
@@ -1312,17 +1320,17 @@ namespace Smdn.Reflection.ReverseGenerating {
           }
 
           public class ValueTypes {
-            [MemberDeclarationTestCase("public void M1(System.DateTimeOffset x = default(System.DateTimeOffset)) {}")]
+            [MemberDeclarationTestCase("public void M1(System.DateTimeOffset x = default(System.DateTimeOffset)) {}", ValueUseDefaultLiteral = false)]
+            [MemberDeclarationTestCase("public void M1(System.DateTimeOffset x = default) {}", ValueUseDefaultLiteral = true)]
             public void M1(DateTimeOffset x = default(DateTimeOffset)) { }
 
-            [MemberDeclarationTestCase("public void M2(System.Guid x = default(System.Guid)) {}")]
+            [MemberDeclarationTestCase("public void M2(System.Guid x = default(System.Guid)) {}", ValueUseDefaultLiteral = false)]
+            [MemberDeclarationTestCase("public void M2(System.Guid x = default) {}", ValueUseDefaultLiteral = true)]
             public void M2(Guid x = default(Guid)) { }
 
-            [MemberDeclarationTestCase("public void M3(System.Threading.CancellationToken x = default(System.Threading.CancellationToken)) {}")]
+            [MemberDeclarationTestCase("public void M3(System.Threading.CancellationToken x = default(System.Threading.CancellationToken)) {}", ValueUseDefaultLiteral = false)]
+            [MemberDeclarationTestCase("public void M3(System.Threading.CancellationToken x = default) {}", ValueUseDefaultLiteral = true)]
             public void M3(CancellationToken x = default(CancellationToken)) { }
-
-            [MemberDeclarationTestCase("public void M4(System.Threading.CancellationToken x = default) {}", UseDefaultLiteral = true)]
-            public void M4(CancellationToken x = default(CancellationToken)) { }
           }
         }
       }
