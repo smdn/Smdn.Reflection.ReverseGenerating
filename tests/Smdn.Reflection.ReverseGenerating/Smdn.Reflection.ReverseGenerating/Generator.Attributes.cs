@@ -715,6 +715,36 @@ namespace Smdn.Reflection.ReverseGenerating {
             [param: Parameter(0, NamedArg = 1)]
             set => throw null;
           }
+
+          [MemberDeclarationTestCase(
+            "public event System.EventHandler E0 { [param: Parameter(0, NamedArg = 1)] [param: XmlIgnore] add; remove; }",
+            AttributeWithNamespace = false,
+            AttributeAccessorParameterFormat = AttributeSectionFormat.Discrete
+          )]
+          [MemberDeclarationTestCase(
+            "public event System.EventHandler E0 { [param: Parameter(0, NamedArg = 1), XmlIgnore] add; remove; }",
+            AttributeWithNamespace = false,
+            AttributeAccessorParameterFormat = AttributeSectionFormat.List
+          )]
+          [Obsolete] // must not be shown in the result of MemberDeclarationTestCase
+          [AttributeTestCase("[System.Obsolete]")]
+          public event EventHandler E0 {
+            [param: AttributeTestCase(
+              "[param: Parameter(0, NamedArg = 1)], [param: XmlIgnore]",
+              AttributeWithNamespace = false,
+              AttributeAccessorParameterFormat = AttributeSectionFormat.Discrete
+            )]
+            [param: AttributeTestCase(
+              "[param: Parameter(0, NamedArg = 1), XmlIgnore]",
+              AttributeWithNamespace = false,
+              AttributeAccessorParameterFormat = AttributeSectionFormat.List
+            )]
+            [param: System.Xml.Serialization.XmlIgnore]
+            [param: Parameter(0, NamedArg = 1)]
+            add => throw null;
+
+            remove => throw null;
+          }
         }
 #pragma warning restore CS0414
       }

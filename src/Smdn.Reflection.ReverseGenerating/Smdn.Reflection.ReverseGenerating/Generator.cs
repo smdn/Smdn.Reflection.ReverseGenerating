@@ -1013,25 +1013,23 @@ public static partial class Generator {
       ev.RemoveMethod?.GetCustomAttribute<CompilerGeneratedAttribute>() is null
     );
 
-    static IEnumerable<string> GenerateAttributeListExceptCompilerGeneratedAttribute(
-      MethodInfo? accessor,
-      ISet<string>? setRefNs,
-      GeneratorOptions opts
-    )
+    static bool HasAttributeExceptCompilerGeneratedAttribute(MethodInfo? accessor, AttributeTypeFilter? filter)
     {
       if (accessor is null)
-        return Enumerable.Empty<string>();
-      if (accessor.GetCustomAttributes().All(static a => a.GetType() == typeof(CompilerGeneratedAttribute)))
-        return Enumerable.Empty<string>();
+        return false;
 
-      return GenerateAttributeList(accessor, setRefNs, opts);
+      var attributesExceptCompilerGenerated = accessor
+        .GetCustomAttributes()
+        .Where(static a => a.GetType() != typeof(CompilerGeneratedAttribute));
+
+      if (filter is null)
+        return attributesExceptCompilerGenerated.Any();
+      else
+        return attributesExceptCompilerGenerated.Any(a => filter(a.GetType(), accessor));
     }
 
-    var addMethodAttributeList = GenerateAttributeListExceptCompilerGeneratedAttribute(ev.AddMethod, referencingNamespaces, options);
-    var removeMethodAttributeList = GenerateAttributeListExceptCompilerGeneratedAttribute(ev.RemoveMethod, referencingNamespaces, options);
-
-    emitAccessor |= addMethodAttributeList.Any();
-    emitAccessor |= removeMethodAttributeList.Any();
+    emitAccessor |= HasAttributeExceptCompilerGeneratedAttribute(ev.AddMethod, options.AttributeDeclaration.TypeFilter);
+    emitAccessor |= HasAttributeExceptCompilerGeneratedAttribute(ev.RemoveMethod, options.AttributeDeclaration.TypeFilter);
 
     if (!emitAccessor) {
       if (!memberOptions.OmitEndOfStatement)
@@ -1042,41 +1040,23 @@ public static partial class Generator {
 
     sb.Append(" { ");
 
-    if (addMethodAttributeList.Any()) {
-      sb
-#if SYSTEM_TEXT_STRINGBUILDER_APPENDJOIN
-        .AppendJoin(' ', addMethodAttributeList)
-#else
-        .Append(string.Join(" ", addMethodAttributeList))
-#endif
-        .Append(' ');
-    }
+    GenerateAccessorDeclaration(
+      "add",
+      ev.AddMethod!,
+      sb,
+      referencingNamespaces,
+      options
+    );
 
-    sb.Append("add").Append(GenerateAccessorBody(options.MemberDeclaration.MethodBody));
+    GenerateAccessorDeclaration(
+      "remove",
+      ev.RemoveMethod!,
+      sb,
+      referencingNamespaces,
+      options
+    );
 
-    if (removeMethodAttributeList.Any()) {
-      sb
-#if SYSTEM_TEXT_STRINGBUILDER_APPENDJOIN
-        .AppendJoin(' ', removeMethodAttributeList)
-#else
-        .Append(string.Join(" ", removeMethodAttributeList))
-#endif
-        .Append(' ');
-    }
-
-    sb.Append("remove").Append(GenerateAccessorBody(options.MemberDeclaration.MethodBody)).Append('}');
-
-    return sb.ToString();
-
-    static string GenerateAccessorBody(MethodBodyOption bodyOption)
-      => bodyOption switch {
-        MethodBodyOption.ThrowNotImplementedException => " => throw new NotImplementedException(); ",
-        MethodBodyOption.ThrowNull => " => throw null; ",
-
-        // MethodBodyOption.None or
-        // MethodBodyOption.EmptyImplementation or
-        _ => "; ",
-      };
+    return sb.Append('}').ToString();
   }
 
   private static string GenerateMemberName(

@@ -26,6 +26,7 @@ partial class Generator {
     PropertySetMethodParameter,
     PropertyBackingField,
     EventAccessorMethod,
+    EventAccessorMethodParameter,
     EventBackingField,
     GenericParameter,
     MethodParameter,
@@ -61,9 +62,7 @@ partial class Generator {
         break;
 
       case ParameterInfo para:
-        var p = para.GetDeclaringProperty();
-
-        if (p is not null) {
+        if (para.GetDeclaringProperty() is PropertyInfo p) {
           if (para.Member == p.GetMethod) {
             attributeSectionPrefix = attributeSectionPrefixReturnParameter;
             attributeTarget = AttributeTarget.PropertyGetMethodReturnParameter;
@@ -72,6 +71,10 @@ partial class Generator {
             attributeSectionPrefix = attributeSectionPrefixParameter;
             attributeTarget = AttributeTarget.PropertySetMethodParameter;
           }
+        }
+        else if (para.GetDeclaringEvent() is EventInfo ev) {
+          attributeSectionPrefix = attributeSectionPrefixParameter;
+          attributeTarget = AttributeTarget.EventAccessorMethodParameter;
         }
         else if (para.IsReturnParameter()) {
           attributeSectionPrefix = attributeSectionPrefixReturnParameter;
@@ -118,7 +121,8 @@ partial class Generator {
       AttributeTarget.EventAccessorMethod => options.AttributeDeclaration.AccessorFormat,
 
       AttributeTarget.PropertyGetMethodReturnParameter or
-      AttributeTarget.PropertySetMethodParameter => options.AttributeDeclaration.AccessorParameterFormat,
+      AttributeTarget.PropertySetMethodParameter or
+      AttributeTarget.EventAccessorMethodParameter => options.AttributeDeclaration.AccessorParameterFormat,
 
       AttributeTarget.PropertyBackingField or
       AttributeTarget.EventBackingField => options.AttributeDeclaration.BackingFieldFormat,
