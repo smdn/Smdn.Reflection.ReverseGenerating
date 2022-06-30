@@ -21,9 +21,11 @@ partial class Generator {
 #pragma warning restore IDE0040
   private enum AttributeTarget {
     Default,
+    PropertyAccessorMethod,
     PropertyGetMethodReturnParameter,
     PropertySetMethodParameter,
     PropertyBackingField,
+    EventAccessorMethod,
     EventBackingField,
     GenericParameter,
   }
@@ -85,9 +87,24 @@ partial class Generator {
         }
 
         break;
+
+      case MethodInfo m:
+        if (m.IsPropertyAccessorMethod()) {
+          attributeSectionPrefix = attributeSectionPrefixDefault;
+          attributeTarget = AttributeTarget.PropertyAccessorMethod;
+        }
+        else if (m.IsEventAccessorMethod()) {
+          attributeSectionPrefix = attributeSectionPrefixDefault;
+          attributeTarget = AttributeTarget.EventAccessorMethod;
+        }
+
+        break;
     }
 
     var attributeSectionFormat = attributeTarget switch {
+      AttributeTarget.PropertyAccessorMethod or
+      AttributeTarget.EventAccessorMethod => options.AttributeDeclaration.AccessorFormat,
+
       AttributeTarget.PropertyGetMethodReturnParameter or
       AttributeTarget.PropertySetMethodParameter => options.AttributeDeclaration.AccessorParameterFormat,
 

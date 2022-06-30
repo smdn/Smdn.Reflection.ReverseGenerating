@@ -65,6 +65,7 @@ public class GeneratorOptions : ICloneable {
     public bool WithDeclaringTypeName { get; set; } = false;
     public bool WithNamedArguments { get; set; } = false;
     public AttributeTypeFilter? TypeFilter { get; set; } = null;
+    public AttributeSectionFormat AccessorFormat { get; set; } = AttributeSectionFormat.List;
     public AttributeSectionFormat AccessorParameterFormat { get; set; } = AttributeSectionFormat.List;
     public AttributeSectionFormat BackingFieldFormat { get; set; } = AttributeSectionFormat.List;
     public AttributeSectionFormat GenericParameterFormat { get; set; } = AttributeSectionFormat.List;

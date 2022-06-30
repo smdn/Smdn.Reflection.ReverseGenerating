@@ -31,6 +31,7 @@ public abstract class GeneratorTestCaseAttribute : Attribute, ITestCaseAttribute
   public bool AttributeWithNamespace { get; set; } = true;
   public bool AttributeWithNamedArguments { get; set; } = false;
   public bool AttributeWithDeclaringTypeName { get; set; } = true;
+  public AttributeSectionFormat AttributeAccessorFormat { get; set; } = AttributeSectionFormat.Discrete;
   public AttributeSectionFormat AttributeAccessorParameterFormat { get; set; } = AttributeSectionFormat.Discrete;
   public AttributeSectionFormat AttributeBackingFieldFormat { get; set; } = AttributeSectionFormat.Discrete;
   public AttributeSectionFormat AttributeGenericParameterFormat { get; set; } = AttributeSectionFormat.Discrete;
@@ -128,6 +129,7 @@ public partial class GeneratorTests {
     attributeDeclarationOptions.WithNamespace = testCaseAttribute.AttributeWithNamespace;
     attributeDeclarationOptions.WithDeclaringTypeName = testCaseAttribute.AttributeWithDeclaringTypeName;
     attributeDeclarationOptions.WithNamedArguments = testCaseAttribute.AttributeWithNamedArguments;
+    attributeDeclarationOptions.AccessorFormat = testCaseAttribute.AttributeAccessorFormat;
     attributeDeclarationOptions.AccessorParameterFormat = testCaseAttribute.AttributeAccessorParameterFormat;
     attributeDeclarationOptions.BackingFieldFormat = testCaseAttribute.AttributeBackingFieldFormat;
     attributeDeclarationOptions.GenericParameterFormat = testCaseAttribute.AttributeGenericParameterFormat;

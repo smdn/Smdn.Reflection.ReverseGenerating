@@ -271,19 +271,57 @@ namespace Smdn.Reflection.ReverseGenerating {
         }
 
         class AttributeTargetsPropertyAccessorMethod {
+          [AttributeUsage(System.AttributeTargets.Method)]
+          public class GetMethodAttribute : Attribute { }
+
+          [AttributeUsage(System.AttributeTargets.Method)]
+          public class SetMethodAttribute : Attribute { }
+
           [MemberDeclarationTestCase(
-            "public int P0 { [Obsolete] get; [DebuggerHidden] set; }",
-            AttributeWithNamespace = false
+            "public int P0 { [GetMethod] [Obsolete] get; [SetMethod] [DebuggerHidden] set; }",
+            AttributeWithNamespace = false,
+            AttributeWithDeclaringTypeName = false,
+            AttributeAccessorFormat = AttributeSectionFormat.Discrete
+          )]
+          [MemberDeclarationTestCase(
+            "public int P0 { [GetMethod, Obsolete] get; [SetMethod, DebuggerHidden] set; }",
+            AttributeWithNamespace = false,
+            AttributeWithDeclaringTypeName = false,
+            AttributeAccessorFormat = AttributeSectionFormat.List
           )]
           [Obsolete] // must not be shown in the result of MemberDeclarationTestCase
           [AttributeTestCase("[System.Obsolete]")]
           public int P0 {
-            [AttributeTestCase("[System.Obsolete]")]
+            [AttributeTestCase(
+              "[GetMethod], [Obsolete]",
+              AttributeWithNamespace = false,
+              AttributeWithDeclaringTypeName = false,
+              AttributeAccessorFormat = AttributeSectionFormat.Discrete
+            )]
+            [AttributeTestCase(
+              "[GetMethod, Obsolete]",
+              AttributeWithNamespace = false,
+              AttributeWithDeclaringTypeName = false,
+              AttributeAccessorFormat = AttributeSectionFormat.List
+            )]
             [Obsolete]
+            [GetMethod]
             get => throw null;
 
-            [AttributeTestCase("[System.Diagnostics.DebuggerHidden]")]
+            [AttributeTestCase(
+              "[SetMethod], [DebuggerHidden]",
+              AttributeWithNamespace = false,
+              AttributeWithDeclaringTypeName = false,
+              AttributeAccessorFormat = AttributeSectionFormat.Discrete
+            )]
+            [AttributeTestCase(
+              "[SetMethod, DebuggerHidden]",
+              AttributeWithNamespace = false,
+              AttributeWithDeclaringTypeName = false,
+              AttributeAccessorFormat = AttributeSectionFormat.List
+            )]
             [DebuggerHidden]
+            [SetMethod]
             set => throw null;
           }
         }
@@ -315,8 +353,113 @@ namespace Smdn.Reflection.ReverseGenerating {
           public int P0 { get; set; }
         }
 
+        [AttributeUsage(System.AttributeTargets.Method)]
+        public class AddMethodAttribute : Attribute { }
+
+        [AttributeUsage(System.AttributeTargets.Method)]
+        public class RemoveMethodAttribute : Attribute { }
+
+        [AttributeUsage(System.AttributeTargets.Method)]
+        public class CustomAccessorAttribute : Attribute { }
+
+        [AttributeUsage(System.AttributeTargets.Method)]
+        public class CompilerGeneratedAccessorAttribute : Attribute { }
+
         class AttributeTargetsEventAccessorMethod {
-          // TODO
+          [MemberDeclarationTestCase(
+            "public event System.EventHandler E0 { [AddMethod] [CustomAccessor] add; [RemoveMethod] [DebuggerHidden] remove; }",
+            AttributeWithNamespace = false,
+            AttributeWithDeclaringTypeName = false,
+            AttributeAccessorFormat = AttributeSectionFormat.Discrete
+          )]
+          [MemberDeclarationTestCase(
+            "public event System.EventHandler E0 { [AddMethod, CustomAccessor] add; [RemoveMethod, DebuggerHidden] remove; }",
+            AttributeWithNamespace = false,
+            AttributeWithDeclaringTypeName = false,
+            AttributeAccessorFormat = AttributeSectionFormat.List
+          )]
+          [Obsolete] // must not be shown in the result of MemberDeclarationTestCase
+          [AttributeTestCase("[System.Obsolete]")]
+          public event EventHandler E0 {
+            [AttributeTestCase(
+              "[AddMethod], [CustomAccessor]",
+              AttributeWithNamespace = false,
+              AttributeWithDeclaringTypeName = false,
+              AttributeAccessorFormat = AttributeSectionFormat.Discrete
+            )]
+            [AttributeTestCase(
+              "[AddMethod, CustomAccessor]",
+              AttributeWithNamespace = false,
+              AttributeWithDeclaringTypeName = false,
+              AttributeAccessorFormat = AttributeSectionFormat.List
+            )]
+            [CustomAccessor]
+            [AddMethod]
+            add => throw null;
+
+            [AttributeTestCase(
+              "[RemoveMethod], [DebuggerHidden]",
+              AttributeWithNamespace = false,
+              AttributeWithDeclaringTypeName = false,
+              AttributeAccessorFormat = AttributeSectionFormat.Discrete
+            )]
+            [AttributeTestCase(
+              "[RemoveMethod, DebuggerHidden]",
+              AttributeWithNamespace = false,
+              AttributeWithDeclaringTypeName = false,
+              AttributeAccessorFormat = AttributeSectionFormat.List
+            )]
+            [DebuggerHidden]
+            [RemoveMethod]
+            remove => throw null;
+          }
+
+          [MemberDeclarationTestCase(
+            "[field: DebuggerBrowsable(System.Diagnostics.DebuggerBrowsableState.Never)] [field: CompilerGenerated] public event System.EventHandler CompilerGeneratedAccessorWithAccessorAttributes { [CompilerGeneratedAccessor] [CompilerGenerated] add; [CompilerGeneratedAccessor] [CompilerGenerated] remove; }",
+            AttributeWithNamespace = false,
+            AttributeWithDeclaringTypeName = false,
+            AttributeAccessorFormat = AttributeSectionFormat.Discrete
+          )]
+          [MemberDeclarationTestCase(
+            "[field: DebuggerBrowsable(System.Diagnostics.DebuggerBrowsableState.Never)] [field: CompilerGenerated] public event System.EventHandler CompilerGeneratedAccessorWithAccessorAttributes { [CompilerGeneratedAccessor, CompilerGenerated] add; [CompilerGeneratedAccessor, CompilerGenerated] remove; }",
+            AttributeWithNamespace = false,
+            AttributeWithDeclaringTypeName = false,
+            AttributeAccessorFormat = AttributeSectionFormat.List,
+            AttributeBackingFieldFormat = AttributeSectionFormat.Discrete
+          )]
+          [MemberDeclarationTestCase(
+            "[field: DebuggerBrowsable(System.Diagnostics.DebuggerBrowsableState.Never), CompilerGenerated] public event System.EventHandler CompilerGeneratedAccessorWithAccessorAttributes { [CompilerGeneratedAccessor, CompilerGenerated] add; [CompilerGeneratedAccessor, CompilerGenerated] remove; }",
+            AttributeWithNamespace = false,
+            AttributeWithDeclaringTypeName = false,
+            AttributeAccessorFormat = AttributeSectionFormat.List,
+            AttributeBackingFieldFormat = AttributeSectionFormat.List
+          )]
+          [method: CompilerGeneratedAccessor]
+          public event EventHandler CompilerGeneratedAccessorWithAccessorAttributes;
+        }
+
+        interface IAttributeTargetsEventAccessorMethod {
+          [MemberDeclarationTestCase(
+            "event System.EventHandler E;",
+            AttributeWithNamespace = false,
+            AttributeWithDeclaringTypeName = false
+          )]
+          event EventHandler E;
+
+          [MemberDeclarationTestCase(
+            "event System.EventHandler EAccessorAttributes { [CustomAccessor] [CompilerGenerated] add; [CustomAccessor] [CompilerGenerated] remove; }",
+            AttributeWithNamespace = false,
+            AttributeWithDeclaringTypeName = false,
+            AttributeAccessorFormat = AttributeSectionFormat.Discrete
+          )]
+          [MemberDeclarationTestCase(
+            "event System.EventHandler EAccessorAttributes { [CustomAccessor, CompilerGenerated] add; [CustomAccessor, CompilerGenerated] remove; }",
+            AttributeWithNamespace = false,
+            AttributeWithDeclaringTypeName = false,
+            AttributeAccessorFormat = AttributeSectionFormat.List
+          )]
+          [method: CustomAccessor]
+          event EventHandler EAccessorAttributes;
         }
 
         class AttributeTargetsEventBackingField {
