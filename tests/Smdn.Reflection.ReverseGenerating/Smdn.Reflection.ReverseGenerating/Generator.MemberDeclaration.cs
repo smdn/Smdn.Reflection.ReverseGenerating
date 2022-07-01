@@ -337,6 +337,16 @@ namespace Smdn.Reflection.ReverseGenerating {
             [MemberDeclarationTestCase("public static readonly System.DateTimeOffset? F6 = null;")] public static readonly DateTimeOffset? F6 = null;
             [MemberDeclarationTestCase("public static readonly System.DateTimeOffset? F7 = System.DateTimeOffset.MinValue;")] public static readonly DateTimeOffset? F7 = DateTimeOffset.MinValue;
             [MemberDeclarationTestCase("public static readonly System.DateTimeOffset? F8 = System.DateTimeOffset.MaxValue;")] public static readonly DateTimeOffset? F8 = DateTimeOffset.MaxValue;
+
+            [MemberDeclarationTestCase("public static readonly char? NullableCharHasValue = '\\u0000';")] public static readonly char? NullableCharHasValue = '\0';
+            [MemberDeclarationTestCase("public static readonly char? NullableCharNull = null;")] public static readonly char? NullableCharNull = null;
+
+            [MemberDeclarationTestCase("public static readonly bool? NullableBooleanTrue = true;")] public static readonly bool? NullableBooleanTrue = true;
+            [MemberDeclarationTestCase("public static readonly bool? NullableBooleanFalse = false;")] public static readonly bool? NullableBooleanFalse = false;
+            [MemberDeclarationTestCase("public static readonly bool? NullableBooleanNull = null;")] public static readonly bool? NullableBooleanNull = null;
+
+            [MemberDeclarationTestCase("public static readonly System.DateTimeKind? NullableEnumHasValue = System.DateTimeKind.Unspecified;")] public static readonly DateTimeKind? NullableEnumHasValue = DateTimeKind.Unspecified;
+            [MemberDeclarationTestCase("public static readonly System.DateTimeKind? NullableEnumNull = null;")] public static readonly DateTimeKind? NullableEnumNull = null;
           }
 
           public class NonPrimitiveValueTypes {
