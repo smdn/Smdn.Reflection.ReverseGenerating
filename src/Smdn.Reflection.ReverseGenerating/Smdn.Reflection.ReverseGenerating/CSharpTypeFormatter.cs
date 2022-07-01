@@ -486,7 +486,8 @@ public static partial class CSharpFormatter /* ITypeFormatter */ {
           FormatTypeName(
             typeOfValue,
             typeWithNamespace: options.WithNamespace,
-            withDeclaringTypeName: options.WithDeclaringTypeName
+            withDeclaringTypeName: options.WithDeclaringTypeName,
+            translateLanguagePrimitiveType: options.TranslateLanguagePrimitiveType
           ),
           ")"
         );
@@ -532,7 +533,8 @@ public static partial class CSharpFormatter /* ITypeFormatter */ {
             FormatTypeName(
               typeOfValue,
               typeWithNamespace: options.WithNamespace,
-              withDeclaringTypeName: options.WithDeclaringTypeName
+              withDeclaringTypeName: options.WithDeclaringTypeName,
+              translateLanguagePrimitiveType: options.TranslateLanguagePrimitiveType
             ),
             ".",
             f.Name

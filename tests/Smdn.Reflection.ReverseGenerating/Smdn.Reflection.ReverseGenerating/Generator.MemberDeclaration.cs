@@ -196,8 +196,28 @@ namespace Smdn.Reflection.ReverseGenerating {
 
             [MemberDeclarationTestCase("public static int F4;")] public static int F4 = 4;
             [MemberDeclarationTestCase("public static readonly int F5 = 5;")] public static readonly int F5 = 5;
-            [MemberDeclarationTestCase("public static readonly int F6 = int.MaxValue;")] public static readonly int F6 = int.MaxValue;
-            [MemberDeclarationTestCase("public static readonly int F7 = int.MinValue;")] public static readonly int F7 = int.MinValue;
+
+            [MemberDeclarationTestCase(
+              "public static readonly int Int32MaxValue = System.Int32.MaxValue;",
+              TranslateLanguagePrimitiveTypeDeclaration = false,
+              ValueWithNamespace = true
+            )]
+            [MemberDeclarationTestCase(
+              "public static readonly int Int32MaxValue = Int32.MaxValue;",
+              TranslateLanguagePrimitiveTypeDeclaration = false,
+              ValueWithNamespace = false
+            )]
+            [MemberDeclarationTestCase(
+              "public static readonly int Int32MaxValue = int.MaxValue;",
+              TranslateLanguagePrimitiveTypeDeclaration = true
+            )]
+            public static readonly int Int32MaxValue = int.MaxValue;
+
+            [MemberDeclarationTestCase(
+              "public static readonly int Int32MinValue = int.MinValue;",
+              TranslateLanguagePrimitiveTypeDeclaration = true
+            )]
+            public static readonly int Int32MinValue = int.MinValue;
           }
 #pragma warning restore CA2211
 
