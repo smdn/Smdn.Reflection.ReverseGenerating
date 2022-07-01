@@ -83,21 +83,23 @@ public static partial class Generator {
     string GetSingleLineGenericArgumentConstraintsDeclaration()
       => genericArgumentConstraints.Count == 0 ? string.Empty : " " + string.Join(" ", genericArgumentConstraints);
 
+    var modifierNew = t.IsHidingInheritedType() ? "new " : null;
+
     if (t.IsEnum) {
-      yield return $"{accessibilities}enum {typeName} : {t.GetEnumUnderlyingType().FormatTypeName()}";
+      yield return $"{modifierNew}{accessibilities}enum {typeName} : {t.GetEnumUnderlyingType().FormatTypeName()}";
       yield break;
     }
 
     string typeDeclaration;
 
     if (t.IsInterface) {
-      typeDeclaration = $"{accessibilities}interface {typeName}";
+      typeDeclaration = $"{modifierNew}{accessibilities}interface {typeName}";
     }
     else if (t.IsValueType) {
       var isReadOnly = t.IsReadOnlyValueType() ? "readonly " : string.Empty;
       var isByRefLike = t.IsByRefLikeValueType() ? "ref " : string.Empty;
 
-      typeDeclaration = $"{accessibilities}{isReadOnly}{isByRefLike}struct {typeName}";
+      typeDeclaration = $"{modifierNew}{accessibilities}{isReadOnly}{isByRefLike}struct {typeName}";
     }
     else {
       string? modifier = null;
@@ -109,7 +111,7 @@ public static partial class Generator {
       else if (t.IsSealed)
         modifier = "sealed ";
 
-      typeDeclaration = $"{accessibilities}{modifier}class {typeName}";
+      typeDeclaration = $"{modifierNew}{accessibilities}{modifier}class {typeName}";
     }
 
     if (!generateExplicitBaseTypeAndInterfaces) {
@@ -836,6 +838,9 @@ public static partial class Generator {
 
     if (!string.IsNullOrEmpty(methodReturnTypeAttributes))
       sb.Append(methodReturnTypeAttributes).Append(' ');
+
+    if (asDelegateDeclaration && m.GetDeclaringTypeOrThrow().IsHidingInheritedType())
+      sb.Append("new ");
 
     sb.Append(methodModifiers);
 

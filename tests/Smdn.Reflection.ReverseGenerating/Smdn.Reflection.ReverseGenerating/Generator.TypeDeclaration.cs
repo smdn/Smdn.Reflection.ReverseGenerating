@@ -196,13 +196,40 @@ namespace Smdn.Reflection.ReverseGenerating {
           namespace NewModifier {
             class C {
               class C0 {
-                protected class CX {
-                }
+                protected class CProtected { }
+                private protected class CPrivateProtected { }
+                internal protected class CInternalProtected { }
+                public class CPublic { }
+
+                public struct S { }
+                public enum E : int { }
+                public delegate void D();
+                public interface I { }
               }
+
               class C1 : C0 {
-#if false // TODO
-                [TypeDeclarationTestCase("new protected class CX")] new protected class CX { }
-#endif
+                [TypeDeclarationTestCase("new protected class CProtected")] protected new class CProtected { }
+                [TypeDeclarationTestCase("new private protected class CPrivateProtected")] private protected new class CPrivateProtected { }
+                [TypeDeclarationTestCase("new internal protected class CInternalProtected")] internal protected new class CInternalProtected { }
+                [TypeDeclarationTestCase("new public class CPublic")] public new class CPublic { }
+
+                [TypeDeclarationTestCase("new public readonly struct S")] public new readonly struct S { }
+                [TypeDeclarationTestCase("new public enum E : short")] public new enum E : short { }
+                [TypeDeclarationTestCase("new public delegate int D(int x);")] public new delegate int D(int x);
+                [TypeDeclarationTestCase("new public interface I")] public new interface I { }
+              }
+
+              class C2 : C0 {
+                [TypeDeclarationTestCase("new protected class CProtected")] new protected class CProtected { }
+                [TypeDeclarationTestCase("new private protected class CPrivateProtected")] new private protected class CPrivateProtected { }
+                [TypeDeclarationTestCase("new internal protected class CInternalProtected")] new internal protected class CInternalProtected { }
+                [TypeDeclarationTestCase("new public class CPublic")] new public class CPublic { }
+              }
+
+              class C00 : C0 { }
+              class C3 : C00 {
+                [TypeDeclarationTestCase("new protected class CProtected")] new protected class CProtected { }
+                [TypeDeclarationTestCase("new public class CPublic")] new public class CPublic { }
               }
             }
           }
