@@ -498,6 +498,11 @@ public static partial class CSharpFormatter /* ITypeFormatter */ {
     else if (string.Equals(typeOfValue.FullName, typeof(Type).FullName, StringComparison.Ordinal))
       // System.Type
       return "typeof(" + ToString((Type)val) + ")";
+#if NETFRAMEWORK
+    else if (val is Type t)
+      // System.Type
+      return "typeof(" + ToString(t) + ")";
+#endif
 
     typeOfValue = Nullable.GetUnderlyingType(typeOfValue) ?? typeOfValue;
 
