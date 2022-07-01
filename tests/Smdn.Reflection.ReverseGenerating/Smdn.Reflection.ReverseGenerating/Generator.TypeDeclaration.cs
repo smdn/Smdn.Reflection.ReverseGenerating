@@ -99,6 +99,8 @@ namespace Smdn.Reflection.ReverseGenerating {
         [TypeDeclarationTestCase("public delegate Guid D61();", TypeWithNamespace = false)] public delegate Guid D61();
         [TypeDeclarationTestCase("public delegate System.Guid D62();", TypeWithNamespace = true)] public delegate Guid D62();
 
+        [TypeDeclarationTestCase("public unsafe delegate void Unsafe(int* x);")] public unsafe delegate void Unsafe(int* x);
+
         class Accessibilities {
           [TypeDeclarationTestCase("public delegate void D1();")] public delegate void D1();
           [TypeDeclarationTestCase("internal delegate void D2();")] internal delegate void D2();
@@ -170,6 +172,30 @@ namespace Smdn.Reflection.ReverseGenerating {
           [TypeDeclarationTestCase("public ref struct S0")] public ref struct S0 { }
           [TypeDeclarationTestCase("public readonly struct S1")] public readonly struct S1 { }
           [TypeDeclarationTestCase("public readonly ref struct S2")] public readonly ref struct S2 { }
+
+#pragma warning disable CS0649
+          [SkipTestCase("`unsafe struct` is not supported currently")]
+          [TypeDeclarationTestCase("public unsafe struct Unsafe")]
+          public unsafe struct Unsafe {
+            public int* F;
+          }
+
+          [TypeDeclarationTestCase("public struct Unsafe_CurrentImplementation")]
+          public unsafe struct Unsafe_CurrentImplementation {
+            public int* F;
+          }
+
+          [SkipTestCase("`unsafe struct` is not supported currently")]
+          [TypeDeclarationTestCase("public readonly unsafe struct ReadOnlyUnsafe")]
+          public readonly unsafe struct ReadOnlyUnsafe {
+            public readonly int* F;
+          }
+
+          [TypeDeclarationTestCase("public readonly struct ReadOnlyUnsafe_CurrentImplementation")]
+          public readonly unsafe struct ReadOnlyUnsafe_CurrentImplementation {
+            public readonly int* F;
+          }
+#pragma warning restore CS0649
         }
       }
 
@@ -486,6 +512,8 @@ namespace Smdn.Reflection.ReverseGenerating {
       Type type
     )
     {
+      type.GetCustomAttribute<SkipTestCaseAttribute>()?.Throw();
+
       var options = GetGeneratorOptions(attrTestCase);
 
       options.AttributeDeclaration.TypeFilter ??= static (_, _) => false;
@@ -506,6 +534,8 @@ namespace Smdn.Reflection.ReverseGenerating {
       Type type
     )
     {
+      type.GetCustomAttribute<SkipTestCaseAttribute>()?.Throw();
+
       var options = GetGeneratorOptions(attrTestCase);
 
       options.AttributeDeclaration.TypeFilter ??= static (_, _) => false;

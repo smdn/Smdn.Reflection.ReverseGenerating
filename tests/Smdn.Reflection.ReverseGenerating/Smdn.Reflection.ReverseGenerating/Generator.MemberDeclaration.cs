@@ -103,6 +103,14 @@ namespace Smdn.Reflection.ReverseGenerating {
           [MemberDeclarationTestCase("public float* F2;")] public float* F2;
         }
 
+        public unsafe struct FixedSizeBuffers {
+          [SkipTestCase("`fixed` field is not supported currently")]
+          [MemberDeclarationTestCase("public fixed int F0[4];")] public fixed int F0[4];
+
+          [MemberDeclarationTestCase("public FixedSizeBuffers.<F1>e__FixedBuffer F1;", MemberWithNamespace = false, MemberWithDeclaringTypeName = false)]
+          public fixed int F1[4];
+        }
+
         public class ValueTupleTypes {
           [MemberDeclarationTestCase("public (int X, int Y) F1;")] public (int X, int Y) F1;
           [MemberDeclarationTestCase("public (int, int) F2;")] public (int, int) F2;
@@ -450,11 +458,20 @@ namespace Smdn.Reflection.ReverseGenerating {
 
         public struct AccessorsStruct {
           [MemberDeclarationTestCase("public int P1 { get; init; }")] public int P1 { get; init; }
-          // TODO: [MemberDeclarationTestCase("public readonly int P2 { get; init; }")] public readonly int P2 { get; init; }
+
+          [SkipTestCase("`readonly` modifier for property is not supported currently")]
+          [MemberDeclarationTestCase("public readonly int P2 { get; init; }")] public readonly int P2 { get; init; }
+
+          [MemberDeclarationTestCase("public int P3 { get; init; }")] public readonly int P3 { get; init; }
         }
 
         public readonly struct AccessorsReadOnlyStruct {
           [MemberDeclarationTestCase("public int P1 { get; init; }")] public int P1 { get; init; }
+
+          [SkipTestCase("`readonly` modifier for property is not supported currently")]
+          [MemberDeclarationTestCase("public readonly int P2 { get; init; }")] public readonly int P2 { get; init; }
+
+          [MemberDeclarationTestCase("public int P3 { get; init; }")] public readonly int P3 { get; init; }
         }
 
         public class Modifiers1 {
