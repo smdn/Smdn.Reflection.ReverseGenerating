@@ -841,6 +841,40 @@ namespace Smdn.Reflection.ReverseGenerating {
       }
 
       namespace AttributeArguments {
+        public class TypeValueAttribute : Attribute {
+          public Type Value { get; }
+          public TypeValueAttribute(Type value)
+          {
+            this.Value = value;
+          }
+        }
+
+        class TypeArgument {
+          [AttributeTestCase("[TypeValue(typeof(System.Guid))]", AttributeWithNamespace = false, ValueWithNamespace = true)]
+          [AttributeTestCase("[TypeValue(typeof(Guid))]", AttributeWithNamespace = false, ValueWithNamespace = false)]
+          [TypeValue(typeof(Guid))]
+          public int Value = 0;
+
+          [AttributeTestCase("[TypeValue(typeof(System.Environment.SpecialFolder))]", AttributeWithNamespace = false, ValueWithNamespace = true, ValueWithDeclaringTypeName = true)]
+          [AttributeTestCase("[TypeValue(typeof(Environment.SpecialFolder))]", AttributeWithNamespace = false, ValueWithNamespace = false, ValueWithDeclaringTypeName = true)]
+          [AttributeTestCase("[TypeValue(typeof(System.SpecialFolder))]", AttributeWithNamespace = false, ValueWithNamespace = true, ValueWithDeclaringTypeName = false)]
+          [AttributeTestCase("[TypeValue(typeof(SpecialFolder))]", AttributeWithNamespace = false, ValueWithNamespace = false, ValueWithDeclaringTypeName = false)]
+          [TypeValue(typeof(Environment.SpecialFolder))]
+          public int ValueNestedType = 0;
+
+          [AttributeTestCase("[TypeValue(typeof(int))]", AttributeWithNamespace = false, ValueWithNamespace = false, TranslateLanguagePrimitiveTypeDeclaration = true)]
+          [AttributeTestCase("[TypeValue(typeof(Int32))]", AttributeWithNamespace = false, ValueWithNamespace = false, TranslateLanguagePrimitiveTypeDeclaration = false)]
+          [AttributeTestCase("[TypeValue(typeof(System.Int32))]", AttributeWithNamespace = false, ValueWithNamespace = true, TranslateLanguagePrimitiveTypeDeclaration = false)]
+          [TypeValue(typeof(int))]
+          public int ValueLanguagePrimitive = 0;
+
+          [AttributeTestCase("[TypeValue(typeof(System.Tuple<int, System.Guid>))]", AttributeWithNamespace = false, ValueWithNamespace = true, TranslateLanguagePrimitiveTypeDeclaration = true)]
+          [AttributeTestCase("[TypeValue(typeof(System.Tuple<System.Int32, System.Guid>))]", AttributeWithNamespace = false, ValueWithNamespace = true, TranslateLanguagePrimitiveTypeDeclaration = false)]
+          [AttributeTestCase("[TypeValue(typeof(Tuple<int, Guid>))]", AttributeWithNamespace = false, ValueWithNamespace = false, TranslateLanguagePrimitiveTypeDeclaration = true)]
+          [TypeValue(typeof(Tuple<int, Guid>))]
+          public int ValueGenericType = 0;
+        }
+
         public class ObjectValueAttribute : Attribute {
           public object Value { get; }
           public ObjectValueAttribute(object value)
@@ -849,7 +883,7 @@ namespace Smdn.Reflection.ReverseGenerating {
           }
         }
 
-        class C {
+        class ObjectArgument {
           [AttributeTestCase("[ObjectValue(null)]", AttributeWithNamespace = false)]
           [ObjectValue(null)]
           public int NullValue = 0;
@@ -880,6 +914,22 @@ namespace Smdn.Reflection.ReverseGenerating {
           [ObjectValue((DayOfWeek)999)]
           public int EnumValueUndefined = 0;
 
+          [AttributeTestCase("[ObjectValue(typeof(System.Guid))]", AttributeWithNamespace = false, ValueWithNamespace = true)]
+          [AttributeTestCase("[ObjectValue(typeof(Guid))]", AttributeWithNamespace = false, ValueWithNamespace = false)]
+          [ObjectValue(typeof(Guid))]
+          public int TypeValue = 0;
+
+          [AttributeTestCase("[ObjectValue(typeof(int))]", AttributeWithNamespace = false, ValueWithNamespace = false, TranslateLanguagePrimitiveTypeDeclaration = true)]
+          [AttributeTestCase("[ObjectValue(typeof(Int32))]", AttributeWithNamespace = false, ValueWithNamespace = false, TranslateLanguagePrimitiveTypeDeclaration = false)]
+          [AttributeTestCase("[ObjectValue(typeof(System.Int32))]", AttributeWithNamespace = false, ValueWithNamespace = true, TranslateLanguagePrimitiveTypeDeclaration = false)]
+          [ObjectValue(typeof(int))]
+          public int TypeValueLanguagePrimitive = 0;
+
+          [AttributeTestCase("[ObjectValue(typeof(System.Tuple<int, System.Guid>))]", AttributeWithNamespace = false, ValueWithNamespace = true, TranslateLanguagePrimitiveTypeDeclaration = true)]
+          [AttributeTestCase("[ObjectValue(typeof(System.Tuple<System.Int32, System.Guid>))]", AttributeWithNamespace = false, ValueWithNamespace = true, TranslateLanguagePrimitiveTypeDeclaration = false)]
+          [AttributeTestCase("[ObjectValue(typeof(Tuple<int, Guid>))]", AttributeWithNamespace = false, ValueWithNamespace = false, TranslateLanguagePrimitiveTypeDeclaration = true)]
+          [ObjectValue(typeof(Tuple<int, Guid>))]
+          public int TypeValueGenericType = 0;
         }
       }
     }

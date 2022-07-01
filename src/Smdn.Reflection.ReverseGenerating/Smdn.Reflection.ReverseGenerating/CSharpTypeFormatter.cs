@@ -496,21 +496,12 @@ public static partial class CSharpFormatter /* ITypeFormatter */ {
       }
     }
 
-    typeOfValue = Nullable.GetUnderlyingType(typeOfValue) ?? typeOfValue;
-
     if (string.Equals(typeOfValue.FullName, typeof(string).FullName, StringComparison.Ordinal)) {
+      // System.String
       return "\"" + EscapeString((string)val, escapeDoubleQuote: true) + "\"";
     }
-    else if (string.Equals(typeOfValue.FullName, typeof(char).FullName, StringComparison.Ordinal)) {
-      return "\'" + EscapeString(((char)val).ToString(), escapeSingleQuote: true) + "\'";
-    }
-    else if (string.Equals(typeOfValue.FullName, typeof(bool).FullName, StringComparison.Ordinal)) {
-      if ((bool)val)
-        return "true";
-      else
-        return "false";
-    }
     else if (string.Equals(typeOfValue.FullName, typeof(Type).FullName, StringComparison.Ordinal)) {
+      // System.Type
       var typeName = FormatTypeName(
         (Type)val,
         typeWithNamespace: options.WithNamespace,
@@ -520,58 +511,68 @@ public static partial class CSharpFormatter /* ITypeFormatter */ {
 
       return "typeof(" + typeName + ")";
     }
-    else {
-      if (typeOfValue.IsEnum || (typeOfValue.IsValueType && options.TryFindConstantField)) {
-        // try to find constant field
-        foreach (var f in typeOfValue.GetFields(BindingFlags.Static | BindingFlags.Public)) {
-          var isConstantField = f.IsLiteral || f.IsInitOnly;
 
-          if (isConstantField && f.TryGetValue(null, out var constantFieldValue) && val.Equals(constantFieldValue)) {
-            return string.Concat(
-              FormatTypeName(
-                typeOfValue,
-                typeWithNamespace: options.WithNamespace,
-                withDeclaringTypeName: options.WithDeclaringTypeName
-              ),
-              ".",
-              f.Name
-            );
-          }
-        }
+    typeOfValue = Nullable.GetUnderlyingType(typeOfValue) ?? typeOfValue;
 
-        if (!typeOfValue.IsPrimitive && val.Equals(Activator.CreateInstance(typeOfValue))) {
-          if (options.UseDefaultLiteral)
-            return "default";
+    if (string.Equals(typeOfValue.FullName, typeof(bool).FullName, StringComparison.Ordinal)) {
+      // System.Boolean
+      return (bool)val ? "true" : "false";
+    }
+    else if (string.Equals(typeOfValue.FullName, typeof(char).FullName, StringComparison.Ordinal)) {
+      // System.Char
+      return "\'" + EscapeString(((char)val).ToString(), escapeSingleQuote: true) + "\'";
+    }
+    else if (typeOfValue.IsEnum || (typeOfValue.IsValueType && options.TryFindConstantField)) {
+      // try to find constant field
+      foreach (var f in typeOfValue.GetFields(BindingFlags.Static | BindingFlags.Public)) {
+        var isConstantField = f.IsLiteral || f.IsInitOnly;
 
+        if (isConstantField && f.TryGetValue(null, out var constantFieldValue) && val.Equals(constantFieldValue)) {
           return string.Concat(
-            "default(",
             FormatTypeName(
               typeOfValue,
               typeWithNamespace: options.WithNamespace,
               withDeclaringTypeName: options.WithDeclaringTypeName
             ),
-            ")"
+            ".",
+            f.Name
           );
         }
       }
 
-      if (typeOfValue.IsEnum) {
+      if (!typeOfValue.IsPrimitive && val.Equals(Activator.CreateInstance(typeOfValue))) {
+        // format as 'default'
+        if (options.UseDefaultLiteral)
+          return "default";
+
         return string.Concat(
-          "(",
+          "default(",
           FormatTypeName(
             typeOfValue,
             typeWithNamespace: options.WithNamespace,
             withDeclaringTypeName: options.WithDeclaringTypeName
           ),
-          ")",
-          Convert.ChangeType(val, typeOfValue.GetEnumUnderlyingType(), provider: null)
+          ")"
         );
       }
-
-      if (typeOfValue.IsPrimitive && typeOfValue.IsValueType)
-        return val.ToString() ?? string.Empty;
-
-      return string.Empty;
     }
+
+    if (typeOfValue.IsEnum) {
+      return string.Concat(
+        "(",
+        FormatTypeName(
+          typeOfValue,
+          typeWithNamespace: options.WithNamespace,
+          withDeclaringTypeName: options.WithDeclaringTypeName
+        ),
+        ")",
+        Convert.ChangeType(val, typeOfValue.GetEnumUnderlyingType(), provider: null)
+      );
+    }
+
+    if (typeOfValue.IsPrimitive && typeOfValue.IsValueType)
+      return val.ToString() ?? string.Empty;
+
+    return string.Empty;
   }
 }
