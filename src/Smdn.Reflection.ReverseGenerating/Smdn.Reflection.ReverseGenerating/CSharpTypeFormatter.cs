@@ -473,45 +473,31 @@ public static partial class CSharpFormatter /* ITypeFormatter */ {
     ValueFormatOptions options
   )
   {
-    if (val == null) {
-      if (Nullable.GetUnderlyingType(typeOfValue) != null) {
-        return "null";
-      }
-      else if (typeOfValue.IsValueType) {
-        if (options.UseDefaultLiteral)
-          return "default";
-
-        return string.Concat(
-          "default(",
-          FormatTypeName(
-            typeOfValue,
-            typeWithNamespace: options.WithNamespace,
-            withDeclaringTypeName: options.WithDeclaringTypeName,
-            translateLanguagePrimitiveType: options.TranslateLanguagePrimitiveType
-          ),
-          ")"
-        );
-      }
-      else {
-        return "null";
-      }
-    }
-
-    if (string.Equals(typeOfValue.FullName, typeof(string).FullName, StringComparison.Ordinal)) {
-      // System.String
-      return "\"" + EscapeString((string)val, escapeDoubleQuote: true) + "\"";
-    }
-    else if (string.Equals(typeOfValue.FullName, typeof(Type).FullName, StringComparison.Ordinal)) {
-      // System.Type
-      var typeName = FormatTypeName(
-        (Type)val,
+    string ToString(Type t)
+      => FormatTypeName(
+        t,
         typeWithNamespace: options.WithNamespace,
         withDeclaringTypeName: options.WithDeclaringTypeName,
         translateLanguagePrimitiveType: options.TranslateLanguagePrimitiveType
       );
 
-      return "typeof(" + typeName + ")";
+    string ToDefaultValue(Type t)
+      => options.UseDefaultLiteral
+        ? "default"
+        : "default(" + ToString(t) + ")";
+
+    if (val == null) {
+      return (typeOfValue.IsValueType && Nullable.GetUnderlyingType(typeOfValue) is null)
+        ? ToDefaultValue(typeOfValue)
+        : "null";
     }
+
+    if (string.Equals(typeOfValue.FullName, typeof(string).FullName, StringComparison.Ordinal))
+      // System.String
+      return "\"" + EscapeString((string)val, escapeDoubleQuote: true) + "\"";
+    else if (string.Equals(typeOfValue.FullName, typeof(Type).FullName, StringComparison.Ordinal))
+      // System.Type
+      return "typeof(" + ToString((Type)val) + ")";
 
     typeOfValue = Nullable.GetUnderlyingType(typeOfValue) ?? typeOfValue;
 
@@ -528,49 +514,17 @@ public static partial class CSharpFormatter /* ITypeFormatter */ {
       foreach (var f in typeOfValue.GetFields(BindingFlags.Static | BindingFlags.Public)) {
         var isConstantField = f.IsLiteral || f.IsInitOnly;
 
-        if (isConstantField && f.TryGetValue(null, out var constantFieldValue) && val.Equals(constantFieldValue)) {
-          return string.Concat(
-            FormatTypeName(
-              typeOfValue,
-              typeWithNamespace: options.WithNamespace,
-              withDeclaringTypeName: options.WithDeclaringTypeName,
-              translateLanguagePrimitiveType: options.TranslateLanguagePrimitiveType
-            ),
-            ".",
-            f.Name
-          );
-        }
+        if (isConstantField && f.TryGetValue(null, out var constantFieldValue) && val.Equals(constantFieldValue))
+          return ToString(typeOfValue) + "." + f.Name;
       }
 
-      if (!typeOfValue.IsPrimitive && val.Equals(Activator.CreateInstance(typeOfValue))) {
+      if (!typeOfValue.IsPrimitive && val.Equals(Activator.CreateInstance(typeOfValue)))
         // format as 'default'
-        if (options.UseDefaultLiteral)
-          return "default";
-
-        return string.Concat(
-          "default(",
-          FormatTypeName(
-            typeOfValue,
-            typeWithNamespace: options.WithNamespace,
-            withDeclaringTypeName: options.WithDeclaringTypeName
-          ),
-          ")"
-        );
-      }
+        return ToDefaultValue(typeOfValue);
     }
 
-    if (typeOfValue.IsEnum) {
-      return string.Concat(
-        "(",
-        FormatTypeName(
-          typeOfValue,
-          typeWithNamespace: options.WithNamespace,
-          withDeclaringTypeName: options.WithDeclaringTypeName
-        ),
-        ")",
-        Convert.ChangeType(val, typeOfValue.GetEnumUnderlyingType(), provider: null)
-      );
-    }
+    if (typeOfValue.IsEnum)
+      return "(" + ToString(typeOfValue) + ")" + Convert.ChangeType(val, typeOfValue.GetEnumUnderlyingType(), provider: null);
 
     if (typeOfValue.IsPrimitive && typeOfValue.IsValueType)
       return val.ToString() ?? string.Empty;
