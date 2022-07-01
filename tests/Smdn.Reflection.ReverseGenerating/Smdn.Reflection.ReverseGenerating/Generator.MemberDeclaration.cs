@@ -11,6 +11,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using NUnit.Framework;
 
+using NSTestTypes = Smdn.Reflection.ReverseGenerating.TestTypes;
+
 namespace Smdn.Reflection.ReverseGenerating {
   [AttributeUsage(AttributeTargets.All, AllowMultiple = true, Inherited = false)]
   public class MemberDeclarationTestCaseAttribute : GeneratorTestCaseAttribute {
@@ -1410,6 +1412,64 @@ namespace Smdn.Reflection.ReverseGenerating {
               ValueWithDeclaringTypeName = false
             )]
             public void M30(Environment.SpecialFolder x = Environment.SpecialFolder.UserProfile) { }
+          }
+
+          public class EnumsDefaultEnumValue {
+            [MemberDeclarationTestCase(
+              $"public void M({NSTestTypes.NS.Namespace}.{nameof(NSTestTypes.C)}.{nameof(NSTestTypes.C.NestedEnumWithoutDefaultValueMember)} x = default({NSTestTypes.NS.Namespace}.{nameof(NSTestTypes.C)}.{nameof(NSTestTypes.C.NestedEnumWithoutDefaultValueMember)}))",
+              ParameterWithNamespace = true,
+              ParameterWithDeclaringTypeName = true,
+              ValueWithNamespace = true,
+              ValueWithDeclaringTypeName = true,
+              ValueUseDefaultLiteral = false,
+              MethodBody = MethodBodyOption.None
+            )]
+            [MemberDeclarationTestCase(
+              $"public void M({nameof(NSTestTypes.C)}.{nameof(NSTestTypes.C.NestedEnumWithoutDefaultValueMember)} x = default({NSTestTypes.NS.Namespace}.{nameof(NSTestTypes.C)}.{nameof(NSTestTypes.C.NestedEnumWithoutDefaultValueMember)}))",
+              ParameterWithNamespace = false,
+              ParameterWithDeclaringTypeName = true,
+              ValueWithNamespace = true,
+              ValueWithDeclaringTypeName = true,
+              ValueUseDefaultLiteral = false,
+              MethodBody = MethodBodyOption.None
+            )]
+            [MemberDeclarationTestCase(
+              $"public void M({nameof(NSTestTypes.C)}.{nameof(NSTestTypes.C.NestedEnumWithoutDefaultValueMember)} x = default({nameof(NSTestTypes.C)}.{nameof(NSTestTypes.C.NestedEnumWithoutDefaultValueMember)}))",
+              ParameterWithNamespace = false,
+              ParameterWithDeclaringTypeName = true,
+              ValueWithNamespace = false,
+              ValueWithDeclaringTypeName = true,
+              ValueUseDefaultLiteral = false,
+              MethodBody = MethodBodyOption.None
+            )]
+            [MemberDeclarationTestCase(
+              $"public void M({nameof(NSTestTypes.C)}.{nameof(NSTestTypes.C.NestedEnumWithoutDefaultValueMember)} x = default({nameof(NSTestTypes.C.NestedEnumWithoutDefaultValueMember)}))",
+              ParameterWithNamespace = false,
+              ParameterWithDeclaringTypeName = true,
+              ValueWithNamespace = false,
+              ValueWithDeclaringTypeName = false,
+              ValueUseDefaultLiteral = false,
+              MethodBody = MethodBodyOption.None
+            )]
+            [MemberDeclarationTestCase(
+              $"public void M({nameof(NSTestTypes.C)}.{nameof(NSTestTypes.C.NestedEnumWithoutDefaultValueMember)} x = default({NSTestTypes.NS.Namespace}.{nameof(NSTestTypes.C.NestedEnumWithoutDefaultValueMember)}))",
+              ParameterWithNamespace = false,
+              ParameterWithDeclaringTypeName = true,
+              ValueWithNamespace = true,
+              ValueWithDeclaringTypeName = false,
+              ValueUseDefaultLiteral = false,
+              MethodBody = MethodBodyOption.None
+            )]
+            [MemberDeclarationTestCase(
+              $"public void M({nameof(NSTestTypes.C)}.{nameof(NSTestTypes.C.NestedEnumWithoutDefaultValueMember)} x = default)",
+              ParameterWithNamespace = false,
+              ParameterWithDeclaringTypeName = true,
+              ValueWithNamespace = true,
+              ValueWithDeclaringTypeName = true,
+              ValueUseDefaultLiteral = true,
+              MethodBody = MethodBodyOption.None
+            )]
+            public void M(NSTestTypes.C.NestedEnumWithoutDefaultValueMember x = default) { }
           }
 
           public class Nullables {
