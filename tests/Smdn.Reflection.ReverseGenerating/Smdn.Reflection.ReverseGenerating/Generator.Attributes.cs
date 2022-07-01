@@ -931,6 +931,119 @@ namespace Smdn.Reflection.ReverseGenerating {
           [ObjectValue(typeof(Tuple<int, Guid>))]
           public int TypeValueGenericType = 0;
         }
+
+        public class ParamArray {
+          public class ObjectParamArrayArgumentAttribute : Attribute {
+            public object[] Values { get; }
+            public ObjectParamArrayArgumentAttribute(params object[] values)
+            {
+              this.Values = values;
+            }
+          }
+
+          [AttributeTestCase(
+            "[ObjectParamArrayArgument(new object[] { 0, 1, 2 })]",
+            AttributeWithNamespace = false,
+            AttributeWithDeclaringTypeName = false
+          )]
+          [ObjectParamArrayArgument(0, 1, 2)]
+          public void ParamArrayValue() { }
+
+          [AttributeTestCase(
+            "[ObjectParamArrayArgument(new object[] { new int[] { 0 }, new string[] { \"foo\", \"bar\" }, new bool[0] })]",
+            AttributeWithNamespace = false,
+            AttributeWithDeclaringTypeName = false
+          )]
+          [ObjectParamArrayArgument(new int[] { 0 }, new string[] { "foo", "bar" }, new bool[0])]
+          public void ParamArrayOfArrays() { }
+
+          [AttributeTestCase(
+            "[ObjectParamArrayArgument(new object[] { 42, 3.14, \"str\", typeof(int) })]",
+            AttributeWithNamespace = false,
+            AttributeWithDeclaringTypeName = false
+          )]
+          [ObjectParamArrayArgument(42, 3.14, "str", typeof(int))]
+          public void MixedTypeParamArrayValue() { }
+
+          [AttributeTestCase(
+            "[ObjectParamArrayArgument(new object[0])]",
+            AttributeWithNamespace = false,
+            AttributeWithDeclaringTypeName = false
+          )]
+          [ObjectParamArrayArgument()]
+          public void EmptyArrayValue() { }
+
+          public class ParamArrayNamedArgumentAttribute : Attribute {
+            public string Value { get; }
+            public int[] Values { get; set; }
+            public ParamArrayNamedArgumentAttribute(string value, params int[] values)
+            {
+              this.Value = value;
+              this.Values = values;
+            }
+          }
+
+          [AttributeTestCase(
+            "[ParamArrayNamedArgument(\"str\", new int[] { 0, 1, 2 })]",
+            AttributeWithNamespace = false,
+            AttributeWithDeclaringTypeName = false,
+            AttributeWithNamedArguments = false
+          )]
+          [AttributeTestCase(
+            "[ParamArrayNamedArgument(value: \"str\", values: new int[] { 0, 1, 2 })]",
+            AttributeWithNamespace = false,
+            AttributeWithDeclaringTypeName = false,
+            AttributeWithNamedArguments = true
+          )]
+          [ParamArrayNamedArgument("str", 0, 1, 2)]
+          public void NamedParamArray_CtorParamArray() { }
+
+          [AttributeTestCase(
+            "[ParamArrayNamedArgument(\"str\", new int[] { 0, 1, 2 })]",
+            AttributeWithNamespace = false,
+            AttributeWithDeclaringTypeName = false
+          )]
+          [ParamArrayNamedArgument("str", new[] { 0, 1, 2 })]
+          public void NamedParamArray_CtorArray() { }
+
+          [AttributeTestCase(
+            "[ParamArrayNamedArgument(\"str\", new int[0], Values = new int[] { 0, 1, 2 })]",
+            AttributeWithNamespace = false,
+            AttributeWithDeclaringTypeName = false
+          )]
+          [ParamArrayNamedArgument("str", Values = new[] { 0, 1, 2 })]
+          public void NamedParamArray_NamedArgument() { }
+
+          [AttributeTestCase(
+            "[ParamArrayNamedArgument(\"str\", new int[0])]",
+            AttributeWithNamespace = false,
+            AttributeWithDeclaringTypeName = false,
+            AttributeWithNamedArguments = false
+          )]
+          [AttributeTestCase(
+            "[ParamArrayNamedArgument(value: \"str\", values: new int[0])]",
+            AttributeWithNamespace = false,
+            AttributeWithDeclaringTypeName = false,
+            AttributeWithNamedArguments = true
+          )]
+          [ParamArrayNamedArgument("str")]
+          public void NamedParamArray_Empty_CtorParamArray() { }
+
+          [AttributeTestCase(
+            "[ParamArrayNamedArgument(\"str\", new int[0], Values = new int[0])]",
+            AttributeWithNamespace = false,
+            AttributeWithDeclaringTypeName = false,
+            AttributeWithNamedArguments = false
+          )]
+          [AttributeTestCase(
+            "[ParamArrayNamedArgument(value: \"str\", values: new int[0], Values = new int[0])]",
+            AttributeWithNamespace = false,
+            AttributeWithDeclaringTypeName = false,
+            AttributeWithNamedArguments = true
+          )]
+          [ParamArrayNamedArgument("str", Values = new int[] { })]
+          public void NamedParamArray_Empty_NamedArgument() { }
+        }
       }
     }
   }

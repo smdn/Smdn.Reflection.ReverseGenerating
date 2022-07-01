@@ -473,22 +473,22 @@ public static partial class CSharpFormatter /* ITypeFormatter */ {
     ValueFormatOptions options
   )
   {
-    string ToString(Type t)
+    static string ToString(Type t, ValueFormatOptions opts)
       => FormatTypeName(
         t,
-        typeWithNamespace: options.WithNamespace,
-        withDeclaringTypeName: options.WithDeclaringTypeName,
-        translateLanguagePrimitiveType: options.TranslateLanguagePrimitiveType
+        typeWithNamespace: opts.WithNamespace,
+        withDeclaringTypeName: opts.WithDeclaringTypeName,
+        translateLanguagePrimitiveType: opts.TranslateLanguagePrimitiveType
       );
 
-    string ToDefaultValue(Type t)
-      => options.UseDefaultLiteral
+    static string ToDefaultValue(Type t, ValueFormatOptions opts)
+      => opts.UseDefaultLiteral
         ? "default"
-        : "default(" + ToString(t) + ")";
+        : "default(" + ToString(t, opts) + ")";
 
     if (val == null) {
       return (typeOfValue.IsValueType && Nullable.GetUnderlyingType(typeOfValue) is null)
-        ? ToDefaultValue(typeOfValue)
+        ? ToDefaultValue(typeOfValue, options)
         : "null";
     }
 
@@ -497,11 +497,11 @@ public static partial class CSharpFormatter /* ITypeFormatter */ {
       return "\"" + EscapeString((string)val, escapeDoubleQuote: true) + "\"";
     else if (string.Equals(typeOfValue.FullName, typeof(Type).FullName, StringComparison.Ordinal))
       // System.Type
-      return "typeof(" + ToString((Type)val) + ")";
+      return "typeof(" + ToString((Type)val, options) + ")";
 #if NETFRAMEWORK
     else if (val is Type t)
       // System.Type
-      return "typeof(" + ToString(t) + ")";
+      return "typeof(" + ToString(t, options) + ")";
 #endif
 
     typeOfValue = Nullable.GetUnderlyingType(typeOfValue) ?? typeOfValue;
@@ -520,20 +520,59 @@ public static partial class CSharpFormatter /* ITypeFormatter */ {
         var isConstantField = f.IsLiteral || f.IsInitOnly;
 
         if (isConstantField && f.TryGetValue(null, out var constantFieldValue) && val.Equals(constantFieldValue))
-          return ToString(typeOfValue) + "." + f.Name;
+          return ToString(typeOfValue, options) + "." + f.Name;
       }
 
       if (!typeOfValue.IsPrimitive && val.Equals(Activator.CreateInstance(typeOfValue)))
         // format as 'default'
-        return ToDefaultValue(typeOfValue);
+        return ToDefaultValue(typeOfValue, options);
     }
 
     if (typeOfValue.IsEnum)
-      return "(" + ToString(typeOfValue) + ")" + Convert.ChangeType(val, typeOfValue.GetEnumUnderlyingType(), provider: null);
+      return "(" + ToString(typeOfValue, options) + ")" + Convert.ChangeType(val, typeOfValue.GetEnumUnderlyingType(), provider: null);
+
+    if (typeOfValue.IsArray)
+      return FormatArrayValueDeclaration(val, typeOfValue, options);
 
     if (typeOfValue.IsPrimitive && typeOfValue.IsValueType)
       return val.ToString() ?? string.Empty;
 
     return string.Empty;
+
+    static string FormatArrayValueDeclaration(
+      object arr,
+      Type typeOfArray,
+      ValueFormatOptions opts
+    )
+    {
+      if (arr is not System.Collections.IEnumerable enumerable)
+        return string.Empty;
+
+      var content = new StringBuilder(capacity: 32);
+      var elementType = typeOfArray.GetElementType() ?? typeof(object);
+
+      foreach (object e in enumerable) {
+        if (0 < content.Length)
+          content.Append(", ");
+
+        var (v, t) = e switch {
+          CustomAttributeTypedArgument typedArg => (typedArg.Value, typedArg.ArgumentType),
+          _ => (e, e?.GetType() ?? elementType),
+        };
+
+        content.Append(FormatValueDeclaration(v, t, opts));
+      }
+
+      if (content.Length == 0)
+        return "new " + ToString(elementType, opts) + "[0]";
+
+      return string.Concat(
+        "new ",
+        ToString(elementType, opts),
+        "[] { ",
+        content.ToString(),
+        " }"
+      );
+    }
   }
 }
