@@ -20,7 +20,7 @@ partial class AttributeFilterTests {
     => FindTypes(static t => t.Namespace is not null && t.Namespace.StartsWith(typeof(ClassToDetermineNamespace).Namespace, StringComparison.Ordinal))
       .SelectMany(
         static type => type.GetCustomAttributes<TypeAttributeFilterTestCaseAttribute>().Select(
-          attr => new object[] { type, attr.CreateGeneratorOptions(), attr.ExpectedResult, attr.SourceLocation }
+          attr => new object[] { type, attr }
         )
       );
 
@@ -30,7 +30,7 @@ partial class AttributeFilterTests {
       .Where(static member => member is not Type) // except nested type
       .SelectMany(
         static member => member.GetCustomAttributes<MemberAttributeFilterTestCaseAttribute>().Select(
-          attr => new object[] { member, attr.CreateGeneratorOptions(), attr.ExpectedResult, attr.SourceLocation }
+          attr => new object[] { member, attr }
         )
       );
 
@@ -40,46 +40,64 @@ partial class AttributeFilterTests {
       .SelectMany(static method => method.GetParameters().Prepend(method.ReturnParameter))
       .SelectMany(
         static para => para.GetCustomAttributes<MemberAttributeFilterTestCaseAttribute>().Select(
-          attr => new object[] { para, attr.CreateGeneratorOptions(), attr.ExpectedResult, attr.SourceLocation }
+          attr => new object[] { para, attr }
         )
       );
+
+  private static void TestAttributeFilter(
+    Func<string> actual,
+    GeneratorTestCaseAttribute testCase,
+    string testTarget
+  )
+  {
+    var message = $"{testCase.SourceLocation} ({testTarget})";
+
+    if (testCase.ExpectedResultAsRegex) {
+      Assert.That(
+        actual(),
+        Does.Match(testCase.ExpectedResult),
+        message
+      );
+    }
+    else {
+      Assert.AreEqual(
+        testCase.ExpectedResult,
+        actual(),
+        message
+      );
+    }
+  }
 
   [TestCaseSource(nameof(YieldTestCases_Types))]
   public void AttributeFilter_Types(
     Type t,
-    GeneratorOptions options,
-    string expectedResult,
-    string testCaseSourceLocation
+    GeneratorTestCaseAttribute testCase
   )
-    => Assert.AreEqual(
-      expectedResult,
-      string.Join(", ", Generator.GenerateAttributeList(t, null, options)),
-      message: $"{testCaseSourceLocation} ({t.FullName})"
+    => TestAttributeFilter(
+      actual: () => string.Join(", ", Generator.GenerateAttributeList(t, null, testCase.CreateGeneratorOptions())),
+      testCase: testCase,
+      testTarget: t.FullName
     );
 
   [TestCaseSource(nameof(YieldTestCases_Members))]
   public void AttributeFilter_Members(
     MemberInfo member,
-    GeneratorOptions options,
-    string expectedResult,
-    string testCaseSourceLocation
+    GeneratorTestCaseAttribute testCase
   )
-    => Assert.AreEqual(
-      expectedResult,
-      string.Join(", ", Generator.GenerateAttributeList(member, null, options)),
-      message: $"{testCaseSourceLocation} ({member.DeclaringType!.FullName}.{member.Name})"
+    => TestAttributeFilter(
+      actual: () => string.Join(", ", Generator.GenerateAttributeList(member, null, testCase.CreateGeneratorOptions())),
+      testCase: testCase,
+      testTarget: $"{member.DeclaringType!.FullName}.{member.Name}"
     );
 
   [TestCaseSource(nameof(YieldTestCases_Parameters))]
   public void AttributeFilter_Parameters(
     ParameterInfo para,
-    GeneratorOptions options,
-    string expectedResult,
-    string testCaseSourceLocation
+    GeneratorTestCaseAttribute testCase
   )
-    => Assert.AreEqual(
-      expectedResult,
-      string.Join(", ", Generator.GenerateAttributeList(para, null, options)),
-      message: $"{testCaseSourceLocation} ({para.Member.DeclaringType!.FullName}.{para.Member.Name} {para.Name})"
+    => TestAttributeFilter(
+      actual: () => string.Join(", ", Generator.GenerateAttributeList(para, null, testCase.CreateGeneratorOptions())),
+      testCase: testCase,
+      testTarget: $"{para.Member.DeclaringType!.FullName}.{para.Member.Name} {para.Name}"
     );
 }

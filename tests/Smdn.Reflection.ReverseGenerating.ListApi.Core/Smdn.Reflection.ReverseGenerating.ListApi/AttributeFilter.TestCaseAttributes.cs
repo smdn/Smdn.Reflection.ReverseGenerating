@@ -15,6 +15,7 @@ namespace Smdn.Reflection.ReverseGenerating.ListApi;
 
 public abstract class GeneratorTestCaseAttribute : Attribute {
   public string ExpectedResult { get; }
+  public bool ExpectedResultAsRegex { get; set; } = false;
   public string SourceLocation { get; }
 
   protected GeneratorTestCaseAttribute(

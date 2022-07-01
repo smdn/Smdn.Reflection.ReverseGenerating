@@ -76,7 +76,7 @@ public class MethodAttributes {
     [MemberAttributeFilterTestCaseAttribute("", FilterType = typeof(AttributeFilter), FilterMemberName = nameof(AttributeFilter.Default))]
     public IEnumerable<int> Method() => throw null;
 
-    [MemberAttributeFilterTestCaseAttribute("[IteratorStateMachine]")]
+    [MemberAttributeFilterTestCaseAttribute(@"\[IteratorStateMachine\(typeof\(MethodAttributes\.IteratorStateMachineAttr\." + @"[^\)]+" + @"\)\)\]", ExpectedResultAsRegex = true)]
     [MemberAttributeFilterTestCaseAttribute("", FilterType = typeof(AttributeFilter), FilterMemberName = nameof(AttributeFilter.Default))]
     public IEnumerable<int> IteratorStateMachineMethod()
     {
@@ -93,15 +93,16 @@ public class MethodAttributes {
     [MemberAttributeFilterTestCaseAttribute("", FilterType = typeof(AttributeFilter), FilterMemberName = nameof(AttributeFilter.Default))]
     public ValueTask ValueTaskMethod() => throw null;
 
-    [MemberAttributeFilterTestCaseAttribute("[DebuggerStepThrough], [AsyncStateMachine]")]
+    [MemberAttributeFilterTestCaseAttribute(@"\[DebuggerStepThrough\], \[AsyncStateMachine\(typeof\(MethodAttributes\.AsyncStateMachineAttr\." + @"[^\)]+" + @"\)\)\]", ExpectedResultAsRegex = true)]
+
     [MemberAttributeFilterTestCaseAttribute("", FilterType = typeof(AttributeFilter), FilterMemberName = nameof(AttributeFilter.Default))]
     public async void VoidAsyncStateMachineMethod() => await Task.Delay(0);
 
-    [MemberAttributeFilterTestCaseAttribute("[DebuggerStepThrough], [AsyncStateMachine]")]
+    [MemberAttributeFilterTestCaseAttribute(@"\[DebuggerStepThrough\], \[AsyncStateMachine\(typeof\(MethodAttributes\.AsyncStateMachineAttr\." + @"[^\)]+" + @"\)\)\]", ExpectedResultAsRegex = true)]
     [MemberAttributeFilterTestCaseAttribute("", FilterType = typeof(AttributeFilter), FilterMemberName = nameof(AttributeFilter.Default))]
     public async Task TaskAsyncStateMachineMethod() => await Task.Delay(0);
 
-    [MemberAttributeFilterTestCaseAttribute("[DebuggerStepThrough], [AsyncStateMachine]")]
+    [MemberAttributeFilterTestCaseAttribute(@"\[DebuggerStepThrough\], \[AsyncStateMachine\(typeof\(MethodAttributes\.AsyncStateMachineAttr\." + @"[^\)]+" + @"\)\)\]", ExpectedResultAsRegex = true)]
     [MemberAttributeFilterTestCaseAttribute("", FilterType = typeof(AttributeFilter), FilterMemberName = nameof(AttributeFilter.Default))]
     public async ValueTask ValueTaskAsyncStateMachineMethod() => await Task.Delay(0);
   }
@@ -113,7 +114,7 @@ public class FieldAttributes {
     [MemberAttributeFilterTestCaseAttribute("", FilterType = typeof(AttributeFilter), FilterMemberName = nameof(AttributeFilter.Default))]
     public (int, int) Unnamed;
 
-    [MemberAttributeFilterTestCaseAttribute("[TupleElementNames]")]
+    [MemberAttributeFilterTestCaseAttribute("[TupleElementNames(new string[] { \"X\", \"Y\" })]")]
     [MemberAttributeFilterTestCaseAttribute("", FilterType = typeof(AttributeFilter), FilterMemberName = nameof(AttributeFilter.Default))]
     public (int X, int Y) Named;
   }
@@ -125,7 +126,7 @@ public class PropertyAttributes {
     [MemberAttributeFilterTestCaseAttribute("", FilterType = typeof(AttributeFilter), FilterMemberName = nameof(AttributeFilter.Default))]
     public (int, int) Unnamed => throw null;
 
-    [MemberAttributeFilterTestCaseAttribute("[TupleElementNames]")]
+    [MemberAttributeFilterTestCaseAttribute("[TupleElementNames(new string[] { \"X\", \"Y\" })]")]
     [MemberAttributeFilterTestCaseAttribute("", FilterType = typeof(AttributeFilter), FilterMemberName = nameof(AttributeFilter.Default))]
     public (int X, int Y) Named => throw null;
   }
@@ -145,7 +146,7 @@ public class ParameterAttributes {
     [MemberAttributeFilterTestCaseAttribute("")]
     [MemberAttributeFilterTestCaseAttribute("", FilterType = typeof(AttributeFilter), FilterMemberName = nameof(AttributeFilter.Default))]
     int param,
-    [MemberAttributeFilterTestCaseAttribute("[IsReadOnly], [In]")]
+    [MemberAttributeFilterTestCaseAttribute("[IsReadOnly, In]")]
     [MemberAttributeFilterTestCaseAttribute("", FilterType = typeof(AttributeFilter), FilterMemberName = nameof(AttributeFilter.Default))]
     in int paramIn
   ) => throw null;
@@ -175,7 +176,7 @@ public class ParameterAttributes {
     [MemberAttributeFilterTestCaseAttribute("")]
     [MemberAttributeFilterTestCaseAttribute("", FilterType = typeof(AttributeFilter), FilterMemberName = nameof(AttributeFilter.Default))]
     (int, int) unnamedTuple,
-    [MemberAttributeFilterTestCaseAttribute("[TupleElementNames]")]
+    [MemberAttributeFilterTestCaseAttribute("[TupleElementNames(new string[] { \"X\", \"Y\" })]")]
     [MemberAttributeFilterTestCaseAttribute("", FilterType = typeof(AttributeFilter), FilterMemberName = nameof(AttributeFilter.Default))]
     (int X, int Y) namedTuple
   ) => throw null;
@@ -184,7 +185,7 @@ public class ParameterAttributes {
   [return: MemberAttributeFilterTestCaseAttribute("", FilterType = typeof(AttributeFilter), FilterMemberName = nameof(AttributeFilter.Default))]
   public (int, int) TupleElementNamesAttr_ReturnParameter_Unnamed() => throw null;
 
-  [return: MemberAttributeFilterTestCaseAttribute("[return: TupleElementNames]")]
+  [return: MemberAttributeFilterTestCaseAttribute("[return: TupleElementNames(new string[] { \"X\", \"Y\" })]")]
   [return: MemberAttributeFilterTestCaseAttribute("", FilterType = typeof(AttributeFilter), FilterMemberName = nameof(AttributeFilter.Default))]
   public (int X, int Y) TupleElementNamesAttr_ReturnParameter_Named() => throw null;
 }
