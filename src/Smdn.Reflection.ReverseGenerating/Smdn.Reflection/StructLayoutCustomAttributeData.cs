@@ -7,7 +7,7 @@ using System.Runtime.InteropServices;
 
 namespace Smdn.Reflection;
 
-internal class StructLayoutCustomAttributeData : CustomAttributeData {
+internal sealed class StructLayoutCustomAttributeData : CustomAttributeData {
   private struct DefaultLayoutStruct { }
   private static readonly StructLayoutAttribute DefaultStructLayoutAttribute = typeof(DefaultLayoutStruct).StructLayoutAttribute!;
 
