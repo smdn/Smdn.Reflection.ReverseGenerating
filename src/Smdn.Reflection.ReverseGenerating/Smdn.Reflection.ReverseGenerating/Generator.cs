@@ -1112,8 +1112,6 @@ public static partial class Generator {
     var modifiers = new List<string?>();
     string? accessibility = null;
 
-    modifiers.Add(null); // placeholder for accessibility
-
     static IEnumerable<string> GetModifiersOfMethod(MethodBase? m)
     {
       if (m == null)
@@ -1165,6 +1163,7 @@ public static partial class Generator {
 
       case PropertyInfo p:
         var mostOpenAccessibility = p.GetAccessors(true).Select(Smdn.Reflection.MemberInfoExtensions.GetAccessibility).Max();
+        var isGetMethodReadOnly = false;
 
         accessibility = options.MemberDeclaration.WithAccessibility
           ? CSharpFormatter.FormatAccessibility(mostOpenAccessibility)
@@ -1175,6 +1174,10 @@ public static partial class Generator {
 
           if (getAccessibility < mostOpenAccessibility)
             getMethodAccessibility = CSharpFormatter.FormatAccessibility(getAccessibility);
+
+          isGetMethodReadOnly = p.GetMethod.GetCustomAttributesData().Any(
+            static d => string.Equals(d.AttributeType.FullName, "System.Runtime.CompilerServices.IsReadOnlyAttribute", StringComparison.Ordinal)
+          );
         }
 
         if (p.SetMethod != null) {
@@ -1185,6 +1188,9 @@ public static partial class Generator {
         }
 
         modifiers.AddRange(GetModifiersOfMethod(p.GetAccessors(true).FirstOrDefault()));
+
+        if (isGetMethodReadOnly)
+          modifiers.Add("readonly");
 
         break;
 
@@ -1208,15 +1214,17 @@ public static partial class Generator {
     if (member == member.DeclaringType?.TypeInitializer)
       accessibility = null;
 
-    if (accessibility == null) {
-      if (modifiers.Count <= 1)
-        return string.Empty;
+    const int maxModifierLength = 8; // "abstract".Length
+    var sb = new StringBuilder(capacity: (modifiers.Count * maxModifierLength) + (accessibility ?? string.Empty).Length);
 
-      return string.Join(" ", modifiers.Skip(1)) + " ";
+    if (accessibility is not null)
+      sb.Append(accessibility).Append(' ');
+
+    foreach (var modifier in modifiers) {
+      if (modifier is not null)
+        sb.Append(modifier).Append(' ');
     }
 
-    modifiers[0] = accessibility;
-
-    return string.Join(" ", modifiers) + " ";
+    return sb.ToString();
   }
 }

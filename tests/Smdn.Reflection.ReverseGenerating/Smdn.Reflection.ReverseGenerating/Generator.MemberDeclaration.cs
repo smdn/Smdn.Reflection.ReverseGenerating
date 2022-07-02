@@ -457,21 +457,35 @@ namespace Smdn.Reflection.ReverseGenerating {
         }
 
         public struct AccessorsStruct {
-          [MemberDeclarationTestCase("public int P1 { get; init; }")] public int P1 { get; init; }
-
-          [SkipTestCase("`readonly` modifier for property is not supported currently")]
-          [MemberDeclarationTestCase("public readonly int P2 { get; init; }")] public readonly int P2 { get; init; }
-
-          [MemberDeclarationTestCase("public int P3 { get; init; }")] public readonly int P3 { get; init; }
+          [MemberDeclarationTestCase("public int P1 { get; }")] public int P1 => 0;
         }
 
         public readonly struct AccessorsReadOnlyStruct {
-          [MemberDeclarationTestCase("public int P1 { get; init; }")] public int P1 { get; init; }
+          [MemberDeclarationTestCase("public int P1 { get; }")] public int P1 => 0;
+        }
 
-          [SkipTestCase("`readonly` modifier for property is not supported currently")]
-          [MemberDeclarationTestCase("public readonly int P2 { get; init; }")] public readonly int P2 { get; init; }
+        public struct Modifiers_ReadOnly_Struct {
+          [MemberDeclarationTestCase("public readonly int P1 { get; }")] public int P1 { get; }
+          [MemberDeclarationTestCase("public readonly int P2 { get; }")] public readonly int P2 { get; }
+          [MemberDeclarationTestCase("public int P3 { get; }")] public int P3 { get => 0; }
+          [MemberDeclarationTestCase("public readonly int P4 { get; }")] public readonly int P4 { get => 0; }
+          [MemberDeclarationTestCase("public int P5 { get; }")] public int P5 => 0;
+          [MemberDeclarationTestCase("public readonly int P6 { get; }")] public readonly int P6 => 0;
 
-          [MemberDeclarationTestCase("public int P3 { get; init; }")] public readonly int P3 { get; init; }
+          [MemberDeclarationTestCase("public static int SP0 { get; }")] public static int SP0 { get; }
+          [MemberDeclarationTestCase("public static int SP1 { get; }")] public static int SP1 { get => 0; }
+        }
+
+        public readonly struct Modifiers_ReadOnly_ReadOnlyStruct {
+          [MemberDeclarationTestCase("public int P1 { get; }")] public int P1 { get; }
+          [MemberDeclarationTestCase("public int P2 { get; }")] public readonly int P2 { get; }
+          [MemberDeclarationTestCase("public int P3 { get; }")] public int P3 { get => 0; }
+          [MemberDeclarationTestCase("public int P4 { get; }")] public readonly int P4 { get => 0; }
+          [MemberDeclarationTestCase("public int P5 { get; }")] public int P5 => 0;
+          [MemberDeclarationTestCase("public int P6 { get; }")] public readonly int P6 => 0;
+
+          [MemberDeclarationTestCase("public static int SP0 { get; }")] public static int SP0 { get; }
+          [MemberDeclarationTestCase("public static int SP1 { get; }")] public static int SP1 { get => 0; }
         }
 
         public class Modifiers1 {
