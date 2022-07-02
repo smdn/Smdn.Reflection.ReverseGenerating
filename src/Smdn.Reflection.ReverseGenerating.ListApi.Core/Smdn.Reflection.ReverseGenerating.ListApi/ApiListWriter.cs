@@ -178,7 +178,6 @@ public class ApiListWriter {
         .AppendLine();
     }
 
-    // TODO: AttributeTargets.GenericParameter
     foreach (var attr in Generator.GenerateAttributeList(t, null, options)) {
       ret.Append(indent)
          .AppendLine(attr);
@@ -303,7 +302,6 @@ public class ApiListWriter {
       if (prevOrder != null && prevOrder.Value != order)
         ret.AppendLine();
 
-      // TODO: AttributeTargets.ReturnValue, AttributeTargets.Parameter
       foreach (var attr in Generator.GenerateAttributeList(member, null, options)) {
         ret.Append(indent).AppendLine(attr);
       }
