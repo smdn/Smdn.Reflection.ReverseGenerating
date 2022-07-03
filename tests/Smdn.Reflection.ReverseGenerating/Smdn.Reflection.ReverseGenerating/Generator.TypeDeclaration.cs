@@ -409,6 +409,24 @@ namespace Smdn.Reflection.ReverseGenerating {
           }
         }
       }
+
+#if NET7_0_OR_GREATER
+#nullable enable annotations
+      namespace ConstraintsTSelf {
+        [TypeDeclarationTestCase("public interface I<TSelf> where TSelf : I<TSelf>", TypeWithNamespace = false)]
+        public interface I<TSelf> where TSelf : I<TSelf> { }
+
+        [TypeDeclarationTestCase("public class C<T> where T : I<T>", TypeWithNamespace = false)]
+        public class C<T> where T : I<T> { }
+
+        [TypeDeclarationTestCase("public class C<U, V> where U : I<U> where V : struct", TypeWithNamespace = false)]
+        public class C<U, V> where U : I<U> where V : struct { }
+
+        [TypeDeclarationTestCase("public class CParsable<TParsable> where TParsable : IParsable<TParsable>", TypeWithNamespace = false)]
+        public class CParsable<TParsable> where TParsable : IParsable<TParsable> { }
+      }
+#nullable restore
+#endif // NET7_0_OR_GREATER
     }
   }
 

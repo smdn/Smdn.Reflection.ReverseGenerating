@@ -11,6 +11,8 @@ SPDX-License-Identifier: MIT
     <Nullable>warnings</Nullable>
   </PropertyGroup>
 
+  <Import Project="..\..\src\Sdk.net7.0-preview.props" />
+
   <ItemGroup>
     <Compile Include="..\Common\**\*.cs" />
     <PackageReference
