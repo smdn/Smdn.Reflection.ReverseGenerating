@@ -603,8 +603,7 @@ namespace Smdn.Reflection.ReverseGenerating {
         }
 
         public class BackingFieldAttributes {
-          [SkipTestCase("not implemented")]
-          [MemberDeclarationTestCase("[field: System.NotSerialized] public int P")]
+          [MemberDeclarationTestCase("[field: System.NonSerialized] public int P { get; set; }")]
           [field: NonSerialized]
           public int P { get; set; }
         }
