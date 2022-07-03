@@ -602,12 +602,6 @@ namespace Smdn.Reflection.ReverseGenerating {
           [MemberDeclarationTestCase("internal protected int P8 { get; }", IgnorePrivateOrAssembly = true)] internal protected int P8 { get; private set; }
         }
 
-        public class BackingFieldAttributes {
-          [MemberDeclarationTestCase("[field: System.NonSerialized] public int P { get; set; }")]
-          [field: NonSerialized]
-          public int P { get; set; }
-        }
-
 #if false
       namespace StaticValues {
         class Accessors {
@@ -1227,6 +1221,41 @@ namespace Smdn.Reflection.ReverseGenerating {
         [MemberDeclarationTestCase("int M(int x);")] int M(int x);
       }
 
+      namespace InterfaceStaticMembers {
+#if NET7_0_OR_GREATER
+#nullable enable annotations
+        public interface IBase {
+#pragma warning disable CS0067
+          [MemberDeclarationTestCase("static void M() {}")]
+          static void M() => throw null;
+
+          [MemberDeclarationTestCase("static virtual void MVirtual() {}")]
+          static virtual void MVirtual() => throw null;
+
+          [MemberDeclarationTestCase("static abstract void MAbstract();")]
+          static abstract void MAbstract();
+
+          [MemberDeclarationTestCase("static int P { get; set; }")]
+          static int P { get; set; }
+
+          [MemberDeclarationTestCase("static event System.EventHandler? E;")]
+          static event EventHandler? E;
+#pragma warning restore CS0067
+        }
+
+        public interface IEx : IBase {
+          [SkipTestCase("modifier `new` is not supported currently")]
+          [MemberDeclarationTestCase("new static virtual void MVirtual() {}")]
+          new static virtual void MVirtual() => throw null;
+
+          [SkipTestCase("modifier `new` is not supported currently")]
+          [MemberDeclarationTestCase("new static abstract void MAbstract() {}")]
+          new static abstract void MAbstract();
+        }
+#nullable restore
+#endif // NET7_0_OR_GREATER
+      }
+
       namespace ImplementedInterfaceMembers {
         class ImplicitMethod : IDisposable, ICloneable {
           [MemberDeclarationTestCase("public void Dispose() {}")]
@@ -1574,41 +1603,6 @@ namespace Smdn.Reflection.ReverseGenerating {
           }
         }
       }
-
-#if NET7_0_OR_GREATER
-#nullable enable annotations
-      namespace StaticInterfaceMembers {
-        public interface IBase {
-#pragma warning disable CS0067
-          [MemberDeclarationTestCase("static void M() {}")]
-          static void M() => throw null;
-
-          [MemberDeclarationTestCase("static virtual void MVirtual() {}")]
-          static virtual void MVirtual() => throw null;
-
-          [MemberDeclarationTestCase("static abstract void MAbstract();")]
-          static abstract void MAbstract();
-
-          [MemberDeclarationTestCase("static int P { get; set; }")]
-          static int P { get; set; }
-
-          [MemberDeclarationTestCase("static event System.EventHandler? E;")]
-          static event EventHandler? E;
-#pragma warning restore CS0067
-        }
-
-        public interface IEx : IBase {
-          [SkipTestCase("modifier `new` is not supported currently")]
-          [MemberDeclarationTestCase("new static virtual void MVirtual() {}")]
-          new static virtual void MVirtual() => throw null;
-
-          [SkipTestCase("modifier `new` is not supported currently")]
-          [MemberDeclarationTestCase("new static abstract void MAbstract() {}")]
-          new static abstract void MAbstract();
-        }
-      }
-#nullable restore
-#endif // NET7_0_OR_GREATER
     }
   }
 

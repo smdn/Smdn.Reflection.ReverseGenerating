@@ -160,9 +160,8 @@ namespace Smdn.Reflection.ReverseGenerating {
         }
       }
 
-#if NET7_0_OR_GREATER
-#nullable enable annotations
       namespace TSelf {
+#nullable enable annotations
         [ExplicitBaseTypeAndInterfacesTestCase("", TypeWithNamespace = false, TypeWithDeclaringTypeName = false)]
         public interface I<TSelf> where TSelf : I<TSelf> { }
 
@@ -172,14 +171,15 @@ namespace Smdn.Reflection.ReverseGenerating {
         [ExplicitBaseTypeAndInterfacesTestCase("I<C<T>>", TypeWithNamespace = false, TypeWithDeclaringTypeName = false)]
         public class C<T> : I<C<T>> { }
 
+#if NET7_0_OR_GREATER
         [ExplicitBaseTypeAndInterfacesTestCase("IParsable<CParsable>", TypeWithNamespace = false, TypeWithDeclaringTypeName = false)]
         public class CParsable : IParsable<CParsable> {
           public static CParsable Parse(string s, IFormatProvider? provider) => throw null;
           public static bool TryParse(string? s, IFormatProvider? provider, out CParsable result) => throw null;
         }
-      }
-#nullable restore
 #endif // NET7_0_OR_GREATER
+#nullable restore
+      }
     }
   }
 

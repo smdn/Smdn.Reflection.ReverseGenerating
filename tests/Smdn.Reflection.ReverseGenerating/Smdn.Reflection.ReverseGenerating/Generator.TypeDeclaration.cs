@@ -366,6 +366,24 @@ namespace Smdn.Reflection.ReverseGenerating {
             where T2 : IDisposable, new() { }
         }
 
+        namespace ConstraintsTSelf {
+#nullable enable annotations
+          [TypeDeclarationTestCase("public interface I<TSelf> where TSelf : I<TSelf>", TypeWithNamespace = false)]
+          public interface I<TSelf> where TSelf : I<TSelf> { }
+
+          [TypeDeclarationTestCase("public class C<T> where T : I<T>", TypeWithNamespace = false)]
+          public class C<T> where T : I<T> { }
+
+          [TypeDeclarationTestCase("public class C<U, V> where U : I<U> where V : struct", TypeWithNamespace = false)]
+          public class C<U, V> where U : I<U> where V : struct { }
+
+#if NET7_0_OR_GREATER
+          [TypeDeclarationTestCase("public class CParsable<TParsable> where TParsable : IParsable<TParsable>", TypeWithNamespace = false)]
+          public class CParsable<TParsable> where TParsable : IParsable<TParsable> { }
+#endif // NET7_0_OR_GREATER
+#nullable restore
+        }
+
         namespace VariantTypeParameters {
           [TypeDeclarationTestCase("public interface I1<in T>")] public interface I1<in T> { }
           [TypeDeclarationTestCase("public interface I2<out T>")] public interface I2<out T> { }
@@ -409,24 +427,6 @@ namespace Smdn.Reflection.ReverseGenerating {
           }
         }
       }
-
-#if NET7_0_OR_GREATER
-#nullable enable annotations
-      namespace ConstraintsTSelf {
-        [TypeDeclarationTestCase("public interface I<TSelf> where TSelf : I<TSelf>", TypeWithNamespace = false)]
-        public interface I<TSelf> where TSelf : I<TSelf> { }
-
-        [TypeDeclarationTestCase("public class C<T> where T : I<T>", TypeWithNamespace = false)]
-        public class C<T> where T : I<T> { }
-
-        [TypeDeclarationTestCase("public class C<U, V> where U : I<U> where V : struct", TypeWithNamespace = false)]
-        public class C<U, V> where U : I<U> where V : struct { }
-
-        [TypeDeclarationTestCase("public class CParsable<TParsable> where TParsable : IParsable<TParsable>", TypeWithNamespace = false)]
-        public class CParsable<TParsable> where TParsable : IParsable<TParsable> { }
-      }
-#nullable restore
-#endif // NET7_0_OR_GREATER
     }
   }
 
