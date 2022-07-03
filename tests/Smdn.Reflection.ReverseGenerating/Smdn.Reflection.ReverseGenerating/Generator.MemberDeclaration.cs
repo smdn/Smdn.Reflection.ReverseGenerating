@@ -190,6 +190,11 @@ namespace Smdn.Reflection.ReverseGenerating {
           [MemberDeclarationTestCase("public static readonly int F9 = 0;")]  static readonly public int F9;
           [MemberDeclarationTestCase("public static readonly int F10 = 0;")] readonly public static int F10;
         }
+
+        public class ModifiersNew : Modifiers {
+          [SkipTestCase("modifier `new` is not supported currently")]
+          [MemberDeclarationTestCase("new public int F4;")] public new int F4;
+        }
 #pragma warning restore CA2211
 
         namespace StaticValues {
@@ -502,11 +507,13 @@ namespace Smdn.Reflection.ReverseGenerating {
         }
 
         public abstract class Modifiers_New : Modifiers_Abstract {
-          [MemberDeclarationTestCase("public int P2 { get; set; }")] public new int P2 { get; set; }
+          [SkipTestCase("modifier `new` is not supported currently")]
+          [MemberDeclarationTestCase("new public int P2 { get; set; }")] public new int P2 { get; set; }
         }
 
         public abstract class Modifiers_NewVirtual : Modifiers_Abstract {
-          [MemberDeclarationTestCase("public virtual int P2 { get; set; }")] public new virtual int P2 { get; set; }
+          [SkipTestCase("modifier `new` is not supported currently")]
+          [MemberDeclarationTestCase("new public virtual int P2 { get; set; }")] public new virtual int P2 { get; set; }
         }
 
         public class Indexers1 {
@@ -671,11 +678,13 @@ namespace Smdn.Reflection.ReverseGenerating {
           }
 
           public abstract class New : Virtual {
-            [MemberDeclarationTestCase("public void M() {}")] public new void M() { }
+            [SkipTestCase("modifier `new` is not supported currently")]
+            [MemberDeclarationTestCase("new public void M() {}")] public new void M() { }
           }
 
           public abstract class NewVirtual : Virtual {
-            [MemberDeclarationTestCase("public virtual void M() {}")] public new virtual void M() { }
+            [SkipTestCase("modifier `new` is not supported currently")]
+            [MemberDeclarationTestCase("new public virtual void M() {}")] public new virtual void M() { }
           }
 
           public class Unsafe {
@@ -1166,6 +1175,11 @@ namespace Smdn.Reflection.ReverseGenerating {
           [MemberDeclarationTestCase("public static event System.EventHandler E3;")] static public event EventHandler E3;
         }
 
+        public class ModifiersNew : Modifiers {
+          [SkipTestCase("modifier `new` is not supported currently")]
+          [MemberDeclarationTestCase("new public event System.EventHandler E1;")] public new event EventHandler E1;
+        }
+
         public class Accessibilities {
           [MemberDeclarationTestCase("public event System.EventHandler E1;")] public event EventHandler E1;
           [MemberDeclarationTestCase("internal event System.EventHandler E2;")] internal event EventHandler E2;
@@ -1205,6 +1219,7 @@ namespace Smdn.Reflection.ReverseGenerating {
       }
 
       public interface InterfaceMembers {
+        [MemberDeclarationTestCase("int this[int index] { get; set; }")] int this[int index] { get; set; }
         [MemberDeclarationTestCase("int P1 { get; set; }")] int P1 { get; set; }
         [MemberDeclarationTestCase("int P2 { get; }")] int P2 { get; }
         [MemberDeclarationTestCase("int P3 { set; }")] int P3 { set; }
