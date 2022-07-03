@@ -415,14 +415,15 @@ public static partial class Generator {
     GeneratorOptions options
   )
   {
-    var explicitInterface = property
+    var explicitInterfaceMethod = property
       .GetAccessors(true)
       .Select(
         a => a.FindExplicitInterfaceMethod(
           findOnlyPublicInterfaces: options.IgnorePrivateOrAssembly
-        )?.DeclaringType
+        )
       )
       .FirstOrDefault();
+    var explicitInterface = explicitInterfaceMethod?.DeclaringType;
 
     if (
       explicitInterface == null &&
@@ -467,6 +468,8 @@ public static partial class Generator {
 
     if (explicitInterface == null)
       sb.Append(modifier);
+    else if (explicitInterfaceMethod is not null && explicitInterfaceMethod.IsStatic)
+      sb.Append("static ");
 
     sb.Append(
       property.FormatTypeName(
@@ -816,7 +819,7 @@ public static partial class Generator {
       methodConstraints = null;
     }
     else if (explicitInterfaceMethod != null) {
-      methodModifiers = null;
+      methodModifiers = explicitInterfaceMethod.IsStatic ? "static " : null;
       methodName = GenerateMemberName(
         m,
         string.Concat(
@@ -943,14 +946,15 @@ public static partial class Generator {
     GeneratorOptions options
   )
   {
-    var explicitInterface = ev
+    var explicitInterfaceMethod = ev
       .GetMethods(true)
       .Select(evm =>
         evm.FindExplicitInterfaceMethod(
           findOnlyPublicInterfaces: options.IgnorePrivateOrAssembly
-        )?.DeclaringType
+        )
       )
       .FirstOrDefault();
+    var explicitInterface = explicitInterfaceMethod?.DeclaringType;
 
     if (
       explicitInterface == null &&
@@ -974,6 +978,8 @@ public static partial class Generator {
 
     if (explicitInterface == null)
       sb.Append(GetMemberModifierOf(ev.GetMethods(true).First(), options));
+    else if (explicitInterfaceMethod is not null && explicitInterfaceMethod.IsStatic)
+      sb.Append("static ");
 
     sb
       .Append("event ")
