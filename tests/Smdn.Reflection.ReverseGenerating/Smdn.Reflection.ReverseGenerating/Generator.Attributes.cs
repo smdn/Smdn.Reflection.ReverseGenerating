@@ -838,6 +838,31 @@ namespace Smdn.Reflection.ReverseGenerating {
 
         [AttributeTestCase("")]
         struct NoStructLayout { }
+
+        namespace GenericAttributes {
+#if NET7_0_OR_GREATER
+          [AttributeUsage(System.AttributeTargets.Class, AllowMultiple = true)]
+          public class GenericAttribute<T> : Attribute { }
+
+          [AttributeTestCase(
+            "[Generic<int>], [Generic<string>]",
+            AttributeWithNamespace = false,
+            TranslateLanguagePrimitiveTypeDeclaration = true
+          )]
+          [AttributeTestCase(
+            "[Generic<Int32>], [Generic<String>]",
+            AttributeWithNamespace = false,
+            TranslateLanguagePrimitiveTypeDeclaration = false
+          )]
+          [Generic<int>]
+          [Generic<string>]
+          public class CGenericAttributeOfInt32AndString {}
+
+          [AttributeTestCase("[Generic<List<int>>]", AttributeWithNamespace = false)]
+          [Generic<System.Collections.Generic.List<int>>]
+          public class CGenericAttributeOfListOfInt32 {}
+#endif // NET7_0_OR_GREATER
+        }
       }
 
       namespace AttributeArguments {

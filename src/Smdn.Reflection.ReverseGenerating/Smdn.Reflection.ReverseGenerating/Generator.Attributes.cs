@@ -221,15 +221,26 @@ partial class Generator {
           referencingNamespaces.Add(attributeTypeNamespace);
       }
 
-      var nameOfAttr = attr
-        .GetAttributeType()
-        .FormatTypeName(
-          typeWithNamespace: options.AttributeDeclaration.WithNamespace,
-          withDeclaringTypeName: options.AttributeDeclaration.WithDeclaringTypeName
-        );
+      var typeOfAttribute = attr.GetAttributeType();
+
+      var nameOfAttr = typeOfAttribute.FormatTypeName(
+        typeWithNamespace: options.AttributeDeclaration.WithNamespace,
+        withDeclaringTypeName: options.AttributeDeclaration.WithDeclaringTypeName,
+        translateLanguagePrimitiveType: options.TranslateLanguagePrimitiveTypeDeclaration // TODO: options.AttributeDeclaration.TranslateLanguagePrimitiveType
+      );
+
+      const int lengthOfAttributePrefix = 9; // "Attribute".Length
+
+      if (typeOfAttribute.IsGenericType) {
+        var typeName = typeOfAttribute.GetGenericTypeName();
+
+        if (typeName.EndsWith("Attribute", StringComparison.Ordinal))
+          // XXX: lack of considerations
+          return nameOfAttr.Replace(typeName, typeName.Substring(0, typeName.Length - lengthOfAttributePrefix));
+      }
 
       if (nameOfAttr.EndsWith("Attribute", StringComparison.Ordinal))
-        nameOfAttr = nameOfAttr.Substring(0, nameOfAttr.Length - 9);
+        return nameOfAttr.Substring(0, nameOfAttr.Length - lengthOfAttributePrefix);
 
       return nameOfAttr;
     }

@@ -279,6 +279,26 @@ namespace Smdn.Reflection.ReverseGenerating {
         [TypeDeclarationTestCase("public delegate void D2<T1, T2>(T1 x, T2 y);")] public delegate void D2<T1, T2>(T1 x, T2 y);
         [TypeDeclarationTestCase("public delegate void D3<T1, T2, T3>(T1 x, T2 y, T3 z);")] public delegate void D3<T1, T2, T3>(T1 x, T2 y, T3 z);
 
+        namespace GenericAttributes {
+#if NET7_0_OR_GREATER
+#nullable enable annotations
+          [TypeDeclarationTestCase("public class GenericAttribute<T>")]
+          public class GenericAttribute<T> : Attribute { }
+
+          [TypeDeclarationTestCase("public class GenericAttribute<T1, T2>")]
+          public class GenericAttribute<T1, T2> : Attribute { }
+
+          namespace Constraints {
+            [TypeDeclarationTestCase("public class GenericAttribute0<TStruct> where TStruct : struct")]
+            public class GenericAttribute0<TStruct> : Attribute where TStruct : struct { }
+
+            [TypeDeclarationTestCase("public class GenericAttribute1<TNew> where TNew : new()")]
+            public class GenericAttribute1<TNew> : Attribute where TNew : new() { }
+          }
+#nullable restore
+#endif // NET7_0_OR_GREATER
+        }
+
         namespace Constraints1 {
 #nullable enable annotations
           [TypeDeclarationTestCase("public class C0_NullableEnableContext<T>")] public class C0_NullableEnableContext<T> { }
