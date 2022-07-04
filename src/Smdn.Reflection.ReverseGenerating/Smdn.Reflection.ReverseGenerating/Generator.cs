@@ -345,7 +345,13 @@ public static partial class Generator {
       referencingNamespaces?.UnionWith(CSharpFormatter.ToNamespaceList(field.FieldType));
 
       sb
-        .Append(GetMemberModifierOf(field, options))
+        .Append(
+          GetMemberModifierOf(
+            field,
+            asExplicitInterfaceMember: false,
+            options: options
+          )
+        )
         .Append(
           field.FormatTypeName(
 #pragma warning disable SA1114
@@ -459,17 +465,15 @@ public static partial class Generator {
       options
     );
 
-    var modifier = GetMemberModifierOf(
-      property,
-      options,
-      out string setAccessibility,
-      out string getAccessibility
+    sb.Append(
+      GetMemberModifierOf(
+        property,
+        asExplicitInterfaceMember: explicitInterfaceMethod is not null,
+        options: options,
+        setMethodAccessibility: out string setAccessibility,
+        getMethodAccessibility: out string getAccessibility
+      )
     );
-
-    if (explicitInterface == null)
-      sb.Append(modifier);
-    else if (explicitInterfaceMethod is not null && explicitInterfaceMethod.IsStatic)
-      sb.Append("static ");
 
     sb.Append(
       property.FormatTypeName(
@@ -719,7 +723,11 @@ public static partial class Generator {
       TranslateLanguagePrimitiveType = options.TranslateLanguagePrimitiveTypeDeclaration,
     };
     var method = m as MethodInfo;
-    var methodModifiers = GetMemberModifierOf(m, options);
+    var methodModifiers = GetMemberModifierOf(
+      m,
+      asExplicitInterfaceMember: explicitInterfaceMethod is not null,
+      options: options
+    );
     var methodReturnType = method?.ReturnParameter?.FormatTypeName(
 #pragma warning disable SA1114
 #if SYSTEM_REFLECTION_NULLABILITYINFOCONTEXT
@@ -818,8 +826,7 @@ public static partial class Generator {
       methodParameterList = null;
       methodConstraints = null;
     }
-    else if (explicitInterfaceMethod != null) {
-      methodModifiers = explicitInterfaceMethod.IsStatic ? "static " : null;
+    else if (explicitInterfaceMethod is not null) {
       methodName = GenerateMemberName(
         m,
         string.Concat(
@@ -976,10 +983,13 @@ public static partial class Generator {
       options
     );
 
-    if (explicitInterface == null)
-      sb.Append(GetMemberModifierOf(ev.GetMethods(true).First(), options));
-    else if (explicitInterfaceMethod is not null && explicitInterfaceMethod.IsStatic)
-      sb.Append("static ");
+    sb.Append(
+      GetMemberModifierOf(
+        ev,
+        asExplicitInterfaceMember: explicitInterface is not null,
+        options: options
+      )
+    );
 
     sb
       .Append("event ")
@@ -1098,12 +1108,23 @@ public static partial class Generator {
     return memberName;
   }
 
-  private static string GetMemberModifierOf(MemberInfo member, GeneratorOptions options)
-    => GetMemberModifierOf(member, options, out _, out _);
+  private static string GetMemberModifierOf(
+    MemberInfo member,
+    bool asExplicitInterfaceMember,
+    GeneratorOptions options
+  )
+    => GetMemberModifierOf(
+      member,
+      asExplicitInterfaceMember,
+      options,
+      out _,
+      out _
+    );
 
   // TODO: extern, volatile
   private static string GetMemberModifierOf(
     MemberInfo member,
+    bool asExplicitInterfaceMember,
     GeneratorOptions options,
     out string setMethodAccessibility,
     out string getMethodAccessibility
@@ -1162,9 +1183,14 @@ public static partial class Generator {
       //  yield return "new";
     }
 
+SWITCH_MEMBER_TYPE:
     switch (member) {
+      case EventInfo ev:
+        member = ev.GetMethods(true).First();
+        goto SWITCH_MEMBER_TYPE;
+
       case FieldInfo f:
-        memberAccessibility = options.MemberDeclaration.WithAccessibility
+        memberAccessibility = !asExplicitInterfaceMember && options.MemberDeclaration.WithAccessibility
           ? f.GetAccessibility()
           : null;
 
@@ -1178,7 +1204,7 @@ public static partial class Generator {
         var mostOpenAccessibility = p.GetAccessors(true).Select(Smdn.Reflection.MemberInfoExtensions.GetAccessibility).Max();
         var isGetMethodReadOnly = false;
 
-        memberAccessibility = options.MemberDeclaration.WithAccessibility
+        memberAccessibility = !asExplicitInterfaceMember && options.MemberDeclaration.WithAccessibility
           ? mostOpenAccessibility
           : null;
 
@@ -1210,7 +1236,10 @@ public static partial class Generator {
       case MethodBase m:
         memberAccessibility = null;
 
-        if (m == m.DeclaringType?.TypeInitializer) {
+        if (asExplicitInterfaceMember) {
+          memberAccessibility = null;
+        }
+        else if (m == m.DeclaringType?.TypeInitializer) {
           memberAccessibility = null;
         }
         else if (m.IsDelegateSignatureMethod()) {
