@@ -344,14 +344,14 @@ public static partial class Generator {
     else {
       referencingNamespaces?.UnionWith(CSharpFormatter.ToNamespaceList(field.FieldType));
 
+      AppendMemberModifiers(
+        sb,
+        field,
+        asExplicitInterfaceMember: false,
+        options: options
+      );
+
       sb
-        .Append(
-          GetMemberModifierOf(
-            field,
-            asExplicitInterfaceMember: false,
-            options: options
-          )
-        )
         .Append(
           field.FormatTypeName(
 #pragma warning disable SA1114
@@ -465,14 +465,13 @@ public static partial class Generator {
       options
     );
 
-    sb.Append(
-      GetMemberModifierOf(
-        property,
-        asExplicitInterfaceMember: explicitInterfaceMethod is not null,
-        options: options,
-        setMethodAccessibility: out string setAccessibility,
-        getMethodAccessibility: out string getAccessibility
-      )
+    AppendMemberModifiers(
+      sb,
+      property,
+      asExplicitInterfaceMember: explicitInterfaceMethod is not null,
+      options: options,
+      setMethodAccessibility: out string setAccessibility,
+      getMethodAccessibility: out string getAccessibility
     );
 
     sb.Append(
@@ -723,11 +722,6 @@ public static partial class Generator {
       TranslateLanguagePrimitiveType = options.TranslateLanguagePrimitiveTypeDeclaration,
     };
     var method = m as MethodInfo;
-    var methodModifiers = GetMemberModifierOf(
-      m,
-      asExplicitInterfaceMember: explicitInterfaceMethod is not null,
-      options: options
-    );
     var methodReturnType = method?.ReturnParameter?.FormatTypeName(
 #pragma warning disable SA1114
 #if SYSTEM_REFLECTION_NULLABILITYINFOCONTEXT
@@ -778,6 +772,7 @@ public static partial class Generator {
             .Where(static d => !string.IsNullOrEmpty(d))
         );
     string? methodName = null;
+    var isFinalizer = false;
 
     referencingNamespaces?.UnionWith(
       m
@@ -813,6 +808,8 @@ public static partial class Generator {
       string.Equals(method.Name, "Finalize", StringComparison.Ordinal)
     ) {
       // destructors
+      isFinalizer = true;
+
       var declaringType = m.GetDeclaringTypeOrThrow();
 
       methodName = GenerateMemberName(
@@ -820,7 +817,6 @@ public static partial class Generator {
         "~" + (declaringType.IsGenericType ? declaringType.GetGenericTypeName() : declaringType.Name),
         options
       );
-      methodModifiers = null;
       methodReturnType = null;
       methodReturnTypeAttributes = null;
       methodParameterList = null;
@@ -852,7 +848,14 @@ public static partial class Generator {
     if (asDelegateDeclaration && m.GetDeclaringTypeOrThrow().IsHidingInheritedType())
       sb.Append("new ");
 
-    sb.Append(methodModifiers);
+    if (!isFinalizer) {
+      AppendMemberModifiers(
+        sb,
+        m,
+        asExplicitInterfaceMember: explicitInterfaceMethod is not null,
+        options: options
+      );
+    }
 
     if (asDelegateDeclaration)
       sb.Append("delegate ");
@@ -983,12 +986,11 @@ public static partial class Generator {
       options
     );
 
-    sb.Append(
-      GetMemberModifierOf(
-        ev,
-        asExplicitInterfaceMember: explicitInterface is not null,
-        options: options
-      )
+    AppendMemberModifiers(
+      sb,
+      ev,
+      asExplicitInterfaceMember: explicitInterface is not null,
+      options: options
     );
 
     sb
@@ -1108,12 +1110,14 @@ public static partial class Generator {
     return memberName;
   }
 
-  private static string GetMemberModifierOf(
+  private static void AppendMemberModifiers(
+    StringBuilder sb,
     MemberInfo member,
     bool asExplicitInterfaceMember,
     GeneratorOptions options
   )
-    => GetMemberModifierOf(
+    => AppendMemberModifiers(
+      sb,
       member,
       asExplicitInterfaceMember,
       options,
@@ -1122,7 +1126,8 @@ public static partial class Generator {
     );
 
   // TODO: extern, volatile
-  private static string GetMemberModifierOf(
+  private static void AppendMemberModifiers(
+    StringBuilder sb,
     MemberInfo member,
     bool asExplicitInterfaceMember,
     GeneratorOptions options,
@@ -1133,39 +1138,47 @@ public static partial class Generator {
     setMethodAccessibility = string.Empty;
     getMethodAccessibility = string.Empty;
 
-    var modifiers = new List<string?>();
     Accessibility? propertyGetMethodAccessibility = null;
     Accessibility? propertySetMethodAccessibility = null;
-    Accessibility? memberAccessibility = null;
 
-    static IEnumerable<string> GetModifiersOfMethod(MethodBase? m)
+    static void AppendAccessibility(StringBuilder sb, MemberInfo? member, Accessibility accessibility)
+    {
+      var isInterfaceMember = member is not null && member.GetDeclaringTypeOrThrow().IsInterface;
+
+      if (accessibility == Accessibility.Public && isInterfaceMember)
+        return;
+
+      sb.Append(CSharpFormatter.FormatAccessibility(accessibility)).Append(' ');
+    }
+
+    static void AppendMethodModifiers(StringBuilder sb, MethodBase? m)
     {
       if (m == null)
-        yield break;
+        return;
 
       if (!m.IsDelegateSignatureMethod()) {
         var isInterfaceMethod = m.GetDeclaringTypeOrThrow().IsInterface;
 
         if (m.IsStatic)
-          yield return "static";
+          sb.Append("static ");
 
         if (m.IsAbstract) {
           if (isInterfaceMethod) {
             if (m.IsStatic)
-              yield return "abstract";
+              sb.Append("abstract ");
           }
           else {
-            yield return "abstract";
+            sb.Append("abstract ");
           }
         }
         else if (!isInterfaceMethod && m is MethodInfo mi && mi.IsOverridden()) {
           if (m.IsFinal)
-            yield return "sealed";
+            sb.Append("sealed ");
 
-          yield return "override";
+          sb.Append("override ");
         }
         else if (m.IsVirtual && !m.IsFinal) {
-          yield return "virtual";
+          sb.Append("virtual ");
         }
       }
 
@@ -1174,14 +1187,14 @@ public static partial class Generator {
       );
 
       if (isAsyncStateMachine)
-        yield return "async";
+        sb.Append("async ");
 
       if (m is MethodInfo method && method.GetParameters().Any(static p => p.ParameterType.IsPointer))
-        yield return "unsafe";
-
-      // cannot detect 'new' modifier
-      //  yield return "new";
+        sb.Append("unsafe ");
     }
+
+    // TODO: append 'new' modifier before accessibility
+    // sb.Append("new ");
 
 SWITCH_MEMBER_TYPE:
     switch (member) {
@@ -1190,13 +1203,17 @@ SWITCH_MEMBER_TYPE:
         goto SWITCH_MEMBER_TYPE;
 
       case FieldInfo f:
-        memberAccessibility = !asExplicitInterfaceMember && options.MemberDeclaration.WithAccessibility
-          ? f.GetAccessibility()
-          : null;
+        if (!asExplicitInterfaceMember && options.MemberDeclaration.WithAccessibility)
+          AppendAccessibility(sb, f, f.GetAccessibility());
 
-        if (f.IsStatic && !f.IsLiteral) modifiers.Add("static");
-        if (f.IsInitOnly) modifiers.Add("readonly");
-        if (f.IsLiteral) modifiers.Add("const");
+        if (f.IsStatic && !f.IsLiteral)
+          sb.Append("static ");
+
+        if (f.IsInitOnly)
+          sb.Append("readonly ");
+
+        if (f.IsLiteral)
+          sb.Append("const ");
 
         break;
 
@@ -1204,9 +1221,8 @@ SWITCH_MEMBER_TYPE:
         var mostOpenAccessibility = p.GetAccessors(true).Select(Smdn.Reflection.MemberInfoExtensions.GetAccessibility).Max();
         var isGetMethodReadOnly = false;
 
-        memberAccessibility = !asExplicitInterfaceMember && options.MemberDeclaration.WithAccessibility
-          ? mostOpenAccessibility
-          : null;
+        if (!asExplicitInterfaceMember && options.MemberDeclaration.WithAccessibility)
+          AppendAccessibility(sb, p, mostOpenAccessibility);
 
         if (p.GetMethod != null) {
           var accessorAccessibility = p.GetMethod.GetAccessibility();
@@ -1226,32 +1242,26 @@ SWITCH_MEMBER_TYPE:
             propertySetMethodAccessibility = accessorAccessibility;
         }
 
-        modifiers.AddRange(GetModifiersOfMethod(p.GetAccessors(true).FirstOrDefault()));
+        AppendMethodModifiers(sb, p.GetAccessors(true).FirstOrDefault());
 
         if (isGetMethodReadOnly)
-          modifiers.Add("readonly");
+          sb.Append("readonly ");
 
         break;
 
       case MethodBase m:
-        memberAccessibility = null;
-
-        if (asExplicitInterfaceMember) {
-          memberAccessibility = null;
-        }
-        else if (m == m.DeclaringType?.TypeInitializer) {
-          memberAccessibility = null;
-        }
-        else if (m.IsDelegateSignatureMethod()) {
-          if (options.TypeDeclaration.WithAccessibility)
-            memberAccessibility = m.GetDeclaringTypeOrThrow().GetAccessibility();
-        }
-        else {
-          if (options.MemberDeclaration.WithAccessibility)
-            memberAccessibility = m.GetAccessibility();
+        if (!asExplicitInterfaceMember && m != m.DeclaringType?.TypeInitializer) {
+          if (m.IsDelegateSignatureMethod()) {
+            if (options.TypeDeclaration.WithAccessibility)
+              AppendAccessibility(sb, null, m.GetDeclaringTypeOrThrow().GetAccessibility());
+          }
+          else {
+            if (options.MemberDeclaration.WithAccessibility)
+              AppendAccessibility(sb, m, m.GetAccessibility());
+          }
         }
 
-        modifiers.AddRange(GetModifiersOfMethod(m));
+        AppendMethodModifiers(sb, m);
 
         break;
     }
@@ -1260,24 +1270,5 @@ SWITCH_MEMBER_TYPE:
       getMethodAccessibility = CSharpFormatter.FormatAccessibility(propertyGetMethodAccessibility.Value);
     if (propertySetMethodAccessibility.HasValue)
       setMethodAccessibility = CSharpFormatter.FormatAccessibility(propertySetMethodAccessibility.Value);
-
-    var accessibility = memberAccessibility.HasValue
-      ? memberAccessibility.Value == Accessibility.Public && member.GetDeclaringTypeOrThrow().IsInterface
-        ? null
-        : CSharpFormatter.FormatAccessibility(memberAccessibility.Value)
-      : null;
-
-    const int maxModifierLength = 8; // "abstract".Length
-    var sb = new StringBuilder(capacity: (modifiers.Count * maxModifierLength) + (accessibility ?? string.Empty).Length);
-
-    if (accessibility is not null)
-      sb.Append(accessibility).Append(' ');
-
-    foreach (var modifier in modifiers) {
-      if (modifier is not null)
-        sb.Append(modifier).Append(' ');
-    }
-
-    return sb.ToString();
   }
 }
