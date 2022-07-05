@@ -1180,6 +1180,13 @@ public static partial class Generator {
         else if (m.IsVirtual && !m.IsFinal) {
           sb.Append("virtual ");
         }
+        else if (
+          m is MethodInfo methodMayBeAccessor &&
+          methodMayBeAccessor.TryGetPropertyFromAccessorMethod(out var p) &&
+          p.GetAccessors(nonPublic: true).Any(static a => a.IsVirtual && !a.IsFinal)
+        ) {
+          sb.Append("virtual ");
+        }
       }
 
       var isAsyncStateMachine = m.GetCustomAttributesData().Any(

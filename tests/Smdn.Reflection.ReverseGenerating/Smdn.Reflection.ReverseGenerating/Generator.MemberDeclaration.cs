@@ -524,6 +524,33 @@ namespace Smdn.Reflection.ReverseGenerating {
           [MemberDeclarationTestCase("new protected virtual int PProtectedVirtual { private get; set; }")] new protected virtual int PProtectedVirtual { private get; set; }
         }
 
+        public class Modifiers_Virtual_WithAccessorAccessiblity {
+          [MemberDeclarationTestCase("public virtual int PVirtualWithPrivateGetter { private get; set; }")] public virtual int PVirtualWithPrivateGetter { private get; set; }
+          [MemberDeclarationTestCase("public virtual int PVirtualWithPrivateSetter { get; private set; }")] public virtual int PVirtualWithPrivateSetter { get; private set; }
+
+          [MemberDeclarationTestCase("public virtual int PVirtual { get; }")] public virtual int PVirtual { get; }
+          [MemberDeclarationTestCase("public virtual int PVirtualWithProtectedGetter { protected get; set; }")] public virtual int PVirtualWithProtectedGetter { protected get; set; }
+          [MemberDeclarationTestCase("public virtual int PVirtualWithProtectedSetter { get; protected set; }")] public virtual int PVirtualWithProtectedSetter { get; protected set; }
+        }
+
+        public class Modifiers_Override_WithAccessorAccessiblity : Modifiers_Virtual_WithAccessorAccessiblity {
+          [MemberDeclarationTestCase("public override int PVirtual { get; }")] public override int PVirtual { get => throw null; }
+          [MemberDeclarationTestCase("public override int PVirtualWithProtectedGetter { set; }")] public override int PVirtualWithProtectedGetter { set => throw null; }
+          [MemberDeclarationTestCase("public override int PVirtualWithProtectedSetter { get; }")] public override int PVirtualWithProtectedSetter { get => throw null; }
+        }
+
+        public class Modifiers_SealedOverride_WithAccessorAccessiblity : Modifiers_Virtual_WithAccessorAccessiblity {
+          [MemberDeclarationTestCase("public sealed override int PVirtual { get; }")] public sealed override int PVirtual { get => throw null; }
+          [MemberDeclarationTestCase("public sealed override int PVirtualWithProtectedGetter { protected get; set; }")] public sealed override int PVirtualWithProtectedGetter { protected get => throw null; set => throw null;  }
+          [MemberDeclarationTestCase("public sealed override int PVirtualWithProtectedSetter { get; protected set; }")] public sealed override int PVirtualWithProtectedSetter { get => throw null; protected set => throw null; }
+        }
+
+        public class Modifiers_NewVirtual_WithAccessorAccessiblity : Modifiers_Virtual_WithAccessorAccessiblity {
+          [MemberDeclarationTestCase("new public virtual int PVirtual { get; }")] public new virtual int PVirtual { get; }
+          [MemberDeclarationTestCase("new public virtual int PVirtualWithProtectedGetter { private get; set; }")] new public virtual int PVirtualWithProtectedGetter { /* changes accessibility */ private get; set; }
+          [MemberDeclarationTestCase("new public virtual int PVirtualWithProtectedSetter { get; private set; }")] public new virtual int PVirtualWithProtectedSetter { get; /* changes accessibility */ private set; }
+        }
+
         public class Indexers1 {
           [IndexerName("Indexer")]
           [MemberDeclarationTestCase("public int this[int x] { get; set; }")]
