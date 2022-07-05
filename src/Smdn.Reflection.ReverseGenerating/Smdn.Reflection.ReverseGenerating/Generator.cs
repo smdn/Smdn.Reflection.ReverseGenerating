@@ -83,7 +83,7 @@ public static partial class Generator {
     string GetSingleLineGenericArgumentConstraintsDeclaration()
       => genericArgumentConstraints.Count == 0 ? string.Empty : " " + string.Join(" ", genericArgumentConstraints);
 
-    var modifierNew = t.IsHidingInheritedType() ? "new " : null;
+    var modifierNew = t.IsHidingInheritedType(nonPublic: true) ? "new " : null;
 
     if (t.IsEnum) {
       yield return $"{modifierNew}{accessibilities}enum {typeName} : {t.GetEnumUnderlyingType().FormatTypeName()}";
@@ -845,7 +845,7 @@ public static partial class Generator {
     if (!string.IsNullOrEmpty(methodReturnTypeAttributes))
       sb.Append(methodReturnTypeAttributes).Append(' ');
 
-    if (asDelegateDeclaration && m.GetDeclaringTypeOrThrow().IsHidingInheritedType())
+    if (asDelegateDeclaration && m.GetDeclaringTypeOrThrow().IsHidingInheritedType(nonPublic: true))
       sb.Append("new ");
 
     if (!isFinalizer) {
@@ -1193,8 +1193,8 @@ public static partial class Generator {
         sb.Append("unsafe ");
     }
 
-    // TODO: append 'new' modifier before accessibility
-    // sb.Append("new ");
+    if (member.IsHidingInheritedMember(nonPublic: true))
+      sb.Append("new ");
 
 SWITCH_MEMBER_TYPE:
     switch (member) {

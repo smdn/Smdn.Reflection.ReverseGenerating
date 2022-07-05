@@ -189,11 +189,13 @@ namespace Smdn.Reflection.ReverseGenerating {
           [MemberDeclarationTestCase("public static readonly int F8 = 0;")]  public static readonly int F8;
           [MemberDeclarationTestCase("public static readonly int F9 = 0;")]  static readonly public int F9;
           [MemberDeclarationTestCase("public static readonly int F10 = 0;")] readonly public static int F10;
+
+          protected int FProtected;
         }
 
         public class ModifiersNew : Modifiers {
-          [SkipTestCase("modifier `new` is not supported currently")]
           [MemberDeclarationTestCase("new public int F4;")] public new int F4;
+          [MemberDeclarationTestCase("new public int FProtected;")] new public int FProtected;
         }
 #pragma warning restore CA2211
 
@@ -500,20 +502,26 @@ namespace Smdn.Reflection.ReverseGenerating {
         public abstract class Modifiers_Abstract {
           [MemberDeclarationTestCase("public abstract int P1 { get; set; }")] public abstract int P1 { get; set; }
           [MemberDeclarationTestCase("public virtual int P2 { get; set; }")] public virtual int P2 { get; set; }
+
+          [MemberDeclarationTestCase("protected virtual int PProtectedVirtual { get; private set; }")] protected virtual int PProtectedVirtual { get; private set; }
         }
 
         public abstract class Modifiers_Override : Modifiers_Abstract {
           [MemberDeclarationTestCase("public override int P2 { get; set; }")] public override int P2 { get; set; }
+
+          [MemberDeclarationTestCase("protected override int PProtectedVirtual { get; }")] protected override int PProtectedVirtual { get => 0; }
         }
 
         public abstract class Modifiers_New : Modifiers_Abstract {
-          [SkipTestCase("modifier `new` is not supported currently")]
           [MemberDeclarationTestCase("new public int P2 { get; set; }")] public new int P2 { get; set; }
+
+          [MemberDeclarationTestCase("new public int PProtectedVirtual { private get; set; }")] public new int PProtectedVirtual { private get; set; }
         }
 
         public abstract class Modifiers_NewVirtual : Modifiers_Abstract {
-          [SkipTestCase("modifier `new` is not supported currently")]
           [MemberDeclarationTestCase("new public virtual int P2 { get; set; }")] public new virtual int P2 { get; set; }
+
+          [MemberDeclarationTestCase("new protected virtual int PProtectedVirtual { private get; set; }")] new protected virtual int PProtectedVirtual { private get; set; }
         }
 
         public class Indexers1 {
@@ -656,14 +664,21 @@ namespace Smdn.Reflection.ReverseGenerating {
 
           public class Virtual {
             [MemberDeclarationTestCase("public virtual void M() {}")] public virtual void M() { }
+
+            [MemberDeclarationTestCase("protected virtual void MProtectedVirtual() {}")] protected virtual void MProtectedVirtual() { }
           }
 
           public class Override : Virtual {
             [MemberDeclarationTestCase("public override void M() {}")] public override void M() { }
+
+            [MemberDeclarationTestCase("protected override void MProtectedVirtual() {}")] protected override void MProtectedVirtual() { }
           }
 
           public class SealedOverride1 : Virtual {
             [MemberDeclarationTestCase("public sealed override void M() {}")] public sealed override void M() { }
+
+            [MemberDeclarationTestCase("protected sealed override void MProtectedVirtual() {}")] protected sealed override void MProtectedVirtual() { }
+
           }
 
           public class SealedOverride2 : Virtual {
@@ -671,13 +686,15 @@ namespace Smdn.Reflection.ReverseGenerating {
           }
 
           public abstract class New : Virtual {
-            [SkipTestCase("modifier `new` is not supported currently")]
             [MemberDeclarationTestCase("new public void M() {}")] public new void M() { }
+
+            [MemberDeclarationTestCase("new protected void MProtectedVirtual() {}")] protected new void MProtectedVirtual() { }
           }
 
           public abstract class NewVirtual : Virtual {
-            [SkipTestCase("modifier `new` is not supported currently")]
             [MemberDeclarationTestCase("new public virtual void M() {}")] public new virtual void M() { }
+
+            [MemberDeclarationTestCase("new protected virtual void MProtectedVirtual() {}")] protected new virtual void MProtectedVirtual() { }
           }
 
           public class Unsafe {
@@ -1166,11 +1183,22 @@ namespace Smdn.Reflection.ReverseGenerating {
           [MemberDeclarationTestCase("public event System.EventHandler E1;")] public event EventHandler E1;
           [MemberDeclarationTestCase("public static event System.EventHandler E2;")] public static event EventHandler E2;
           [MemberDeclarationTestCase("public static event System.EventHandler E3;")] static public event EventHandler E3;
+
+          [MemberDeclarationTestCase("protected virtual event System.EventHandler EProtectedVirtual;")] protected virtual event EventHandler EProtectedVirtual;
+        }
+
+        public class ModifiersOverride : Modifiers {
+          [MemberDeclarationTestCase("protected override event System.EventHandler EProtectedVirtual;")] protected override event EventHandler EProtectedVirtual;
         }
 
         public class ModifiersNew : Modifiers {
-          [SkipTestCase("modifier `new` is not supported currently")]
           [MemberDeclarationTestCase("new public event System.EventHandler E1;")] public new event EventHandler E1;
+
+          [MemberDeclarationTestCase("new public event System.EventHandler EProtectedVirtual;")] public new event EventHandler EProtectedVirtual;
+        }
+
+        public class ModifiersNewVirtual : Modifiers {
+          [MemberDeclarationTestCase("new public virtual event System.EventHandler EProtectedVirtual;")] public new virtual event EventHandler EProtectedVirtual;
         }
 
         public class Accessibilities {
@@ -1253,15 +1281,12 @@ namespace Smdn.Reflection.ReverseGenerating {
         }
 
         public interface IEx : IBase {
-          [SkipTestCase("modifier `new` is not supported currently")]
           [MemberDeclarationTestCase("new static virtual void MVirtual() {}")]
           new static virtual void MVirtual() => throw null;
 
-          [SkipTestCase("modifier `new` is not supported currently")]
-          [MemberDeclarationTestCase("new static abstract void MAbstract() {}")]
+          [MemberDeclarationTestCase("new static abstract void MAbstract();")]
           new static abstract void MAbstract();
 
-          [SkipTestCase("modifier `new` is not supported currently")]
           [MemberDeclarationTestCase("new static abstract event System.EventHandler? EAbstract;")]
           new static abstract event EventHandler? EAbstract;
         }
