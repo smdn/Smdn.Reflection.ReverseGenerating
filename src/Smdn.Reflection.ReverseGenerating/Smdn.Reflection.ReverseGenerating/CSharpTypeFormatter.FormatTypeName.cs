@@ -14,7 +14,8 @@ static partial class CSharpFormatter {
     bool TypeWithNamespace,
     bool WithDeclaringTypeName,
     bool TranslateLanguagePrimitiveType,
-    Func<Type, string, string>? GenericParameterNameModifier = null
+    Func<Type, string, string>? GenericParameterNameModifier = null,
+    bool OmitAttributeSuffix = false
 #pragma warning restore SA1313
   );
 
@@ -206,4 +207,24 @@ static partial class CSharpFormatter {
         TranslateLanguagePrimitiveType: translateLanguagePrimitiveType
       )
     );
+
+  private static string GetTypeName(Type t, FormatTypeNameOptions options)
+  {
+    var typeName = t.IsGenericType
+      ? t.GetGenericTypeName()
+      : t.Name;
+
+    if (
+      options.OmitAttributeSuffix &&
+      typeName.EndsWith("Attribute", StringComparison.Ordinal) &&
+      typeof(Attribute).IsAssignableFrom(t) &&
+      t != typeof(Attribute)
+    ) {
+      const int lengthOfAttributeSuffix = 9; // "Attribute".Length
+
+      typeName = typeName.Substring(0, typeName.Length - lengthOfAttributeSuffix);
+    }
+
+    return typeName;
+  }
 }

@@ -134,7 +134,7 @@ static partial class CSharpFormatter {
             genericArgs = genericArgs.Skip(genericArgsOfDeclaringType.Length);
           }
 
-          sb.Append(t.GetGenericTypeName());
+          sb.Append(GetTypeName(t, options));
 
           var formattedGenericArgs = string.Join(
             ", ",
@@ -158,12 +158,14 @@ static partial class CSharpFormatter {
       if (options.TranslateLanguagePrimitiveType && IsLanguagePrimitiveType(t, out var n))
         return n;
 
-      if (options.WithDeclaringTypeName && t.IsNested)
-        return FormatCore(t.GetDeclaringTypeOrThrow(), showVariance, options) + "." + t.Name;
-      if (options.TypeWithNamespace)
-        return t.Namespace + "." + t.Name;
+      var name = GetTypeName(t, options);
 
-      return t.Name;
+      if (options.WithDeclaringTypeName && t.IsNested)
+        return FormatCore(t.GetDeclaringTypeOrThrow(), showVariance, options) + "." + name;
+      if (options.TypeWithNamespace)
+        return t.Namespace + "." + name;
+
+      return name;
     }
   }
 }

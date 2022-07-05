@@ -223,26 +223,16 @@ partial class Generator {
 
       var typeOfAttribute = attr.GetAttributeType();
 
-      var nameOfAttr = typeOfAttribute.FormatTypeName(
-        typeWithNamespace: options.AttributeDeclaration.WithNamespace,
-        withDeclaringTypeName: options.AttributeDeclaration.WithDeclaringTypeName,
-        translateLanguagePrimitiveType: options.TranslateLanguagePrimitiveTypeDeclaration // TODO: options.AttributeDeclaration.TranslateLanguagePrimitiveType
+      return CSharpFormatter.FormatTypeNameCore(
+        typeOfAttribute,
+        options: new(
+          AttributeProvider: attributeProvider ?? typeOfAttribute,
+          TypeWithNamespace: options.AttributeDeclaration.WithNamespace,
+          WithDeclaringTypeName: options.AttributeDeclaration.WithDeclaringTypeName,
+          TranslateLanguagePrimitiveType: options.TranslateLanguagePrimitiveTypeDeclaration, // TODO: options.AttributeDeclaration.TranslateLanguagePrimitiveType
+          OmitAttributeSuffix: options.AttributeDeclaration.OmitAttributeSuffix
+        )
       );
-
-      const int lengthOfAttributePrefix = 9; // "Attribute".Length
-
-      if (typeOfAttribute.IsGenericType) {
-        var typeName = typeOfAttribute.GetGenericTypeName();
-
-        if (typeName.EndsWith("Attribute", StringComparison.Ordinal))
-          // XXX: lack of considerations
-          return nameOfAttr.Replace(typeName, typeName.Substring(0, typeName.Length - lengthOfAttributePrefix));
-      }
-
-      if (nameOfAttr.EndsWith("Attribute", StringComparison.Ordinal))
-        return nameOfAttr.Substring(0, nameOfAttr.Length - lengthOfAttributePrefix);
-
-      return nameOfAttr;
     }
 
     IEnumerable<string> ConvertAttributeArguments(CustomAttributeData attr)

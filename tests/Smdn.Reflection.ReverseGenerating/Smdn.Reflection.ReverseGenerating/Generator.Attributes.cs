@@ -70,6 +70,23 @@ namespace Smdn.Reflection.ReverseGenerating {
             [Method] public void M1() => throw null;
           }
         }
+
+        namespace OmitAttributeSuffix {
+          [AttributeTestCase("[System.Obsolete]", AttributeWithNamespace = true, AttributeOmitAttributeSuffix = true)]
+          [AttributeTestCase("[Obsolete]", AttributeWithNamespace = false, AttributeOmitAttributeSuffix = true)]
+          [AttributeTestCase("[System.ObsoleteAttribute]", AttributeWithNamespace = true, AttributeOmitAttributeSuffix = false)]
+          [AttributeTestCase("[ObsoleteAttribute]", AttributeWithNamespace = false, AttributeOmitAttributeSuffix = false)]
+          [Obsolete] public class AttributeName { }
+
+#if NET7_0_OR_GREATER
+          [AttributeUsage(System.AttributeTargets.Class)]
+          public class GenericAttributeNameAttribute<T> : Attribute { }
+
+          [AttributeTestCase("[GenericAttributeName<int>]", AttributeWithNamespace = false, AttributeOmitAttributeSuffix = true)]
+          [AttributeTestCase("[GenericAttributeNameAttribute<int>]", AttributeWithNamespace = false, AttributeOmitAttributeSuffix = false)]
+          [GenericAttributeName<int>] public class GenericAttributeName { }
+#endif
+        }
       }
 
       namespace AttributeTargets {

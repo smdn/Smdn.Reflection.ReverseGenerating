@@ -108,7 +108,7 @@ static partial class CSharpFormatter {
     }
 
     return builder
-      .Append(targetType.Name)
+      .Append(GetTypeName(targetType, options))
       .Append(GetNullabilityAnnotation(target))
       .Append(nullabilityAnnotationForByRefParameter);
   }
@@ -141,7 +141,7 @@ static partial class CSharpFormatter {
       genericTypeArguments = genericTypeArguments.Skip(genericArgsOfDeclaringType.Length);
     }
 
-    builder.Append(target.Type.GetGenericTypeName());
+    builder.Append(GetTypeName(target.Type, options));
 
     if (genericTypeArguments.Any()) {
       builder.Append('<');
