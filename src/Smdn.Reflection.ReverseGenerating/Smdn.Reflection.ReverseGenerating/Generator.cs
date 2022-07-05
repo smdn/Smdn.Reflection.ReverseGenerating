@@ -1183,7 +1183,11 @@ public static partial class Generator {
         else if (
           m is MethodInfo methodMayBeAccessor &&
           methodMayBeAccessor.TryGetPropertyFromAccessorMethod(out var p) &&
+#if !NULL_STATE_STATIC_ANALYSIS_ATTRIBUTES
+#pragma warning disable CS8602
+#endif
           p.GetAccessors(nonPublic: true).Any(static a => a.IsVirtual && !a.IsFinal)
+#pragma warning restore CS8602
         ) {
           sb.Append("virtual ");
         }
