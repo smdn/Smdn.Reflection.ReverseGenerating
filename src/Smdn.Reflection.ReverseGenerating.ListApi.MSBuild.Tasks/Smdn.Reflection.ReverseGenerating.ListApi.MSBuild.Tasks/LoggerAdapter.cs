@@ -8,8 +8,8 @@ using Microsoft.Extensions.Logging;
 
 namespace Smdn.Reflection.ReverseGenerating.ListApi.MSBuild.Tasks;
 
-internal class LoggerAdapter : Microsoft.Extensions.Logging.ILogger {
-  private class NullScope : IDisposable {
+internal sealed class LoggerAdapter : Microsoft.Extensions.Logging.ILogger {
+  private sealed class NullScope : IDisposable {
     public static readonly NullScope Instance = new();
 
     public void Dispose()
