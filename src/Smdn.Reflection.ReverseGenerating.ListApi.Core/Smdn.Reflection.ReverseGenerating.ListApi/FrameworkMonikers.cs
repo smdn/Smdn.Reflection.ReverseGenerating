@@ -11,7 +11,13 @@ public static class FrameworkMonikers {
   /// <remarks>
   ///   <see cref="FrameworkName.Profile"/> of <paramref name="frameworkName"/> is not supported currently.
   /// </remarks>
-  public static bool TryGetMoniker(FrameworkName frameworkName, string osSpecifier, out string frameworkMoniker)
+  public static bool TryGetMoniker(
+    FrameworkName frameworkName,
+#pragma warning disable IDE0060, SA1305
+    string osSpecifier,
+#pragma warning restore IDE0060, SA1305
+    out string frameworkMoniker
+  )
   {
     if (frameworkName is null)
       throw new ArgumentNullException(nameof(frameworkName));
