@@ -172,22 +172,38 @@ public class RootCommandImplementation {
         context: out var context,
         loadIntoReflectionOnlyContext: loadAssemblyIntoReflectionOnlyContext,
         actionWithLoadedAssembly: static (assm, arg) => {
-          var outputFilePath = GetOutputFilePathOf(assm, arg.outputDirectory);
+          try {
+#if SYSTEM_REFLECTION_NULLABILITYINFOCONTEXT
+            // assign NullabilityInfoContext to each assembly
+            var nullabilityInfoContext = new NullabilityInfoContext();
 
-          // ensure the output directory existing
-          arg.outputDirectory.Create();
+            arg.options.TypeDeclaration.NullabilityInfoContext = nullabilityInfoContext;
+            arg.options.MemberDeclaration.NullabilityInfoContext = nullabilityInfoContext;
+#endif
+            var outputFilePath = GetOutputFilePathOf(assm, arg.outputDirectory);
 
-          using var outputWriter = new StreamWriter(outputFilePath, append: false, new UTF8Encoding(false));
+            // ensure the output directory existing
+            arg.outputDirectory.Create();
 
-          var writer = new ApiListWriter(outputWriter, assm, arg.options);
+            using var outputWriter = new StreamWriter(outputFilePath, append: false, new UTF8Encoding(false));
 
-          writer.WriteAssemblyInfoHeader();
-          writer.WriteExportedTypes();
+            var writer = new ApiListWriter(outputWriter, assm, arg.options);
 
-          arg.logger?.LogDebug($"generated API list {outputFilePath}");
-          arg.logger?.LogInformation($"{assm.Location} -> {outputFilePath}");
+            writer.WriteAssemblyInfoHeader();
+            writer.WriteExportedTypes();
 
-          return outputFilePath;
+            arg.logger?.LogDebug($"generated API list {outputFilePath}");
+            arg.logger?.LogInformation($"{assm.Location} -> {outputFilePath}");
+
+            return outputFilePath;
+          }
+          finally {
+#if SYSTEM_REFLECTION_NULLABILITYINFOCONTEXT
+            // release the references held by the NullabilityInfoContext so that the assembly can be unloaded
+            arg.options.TypeDeclaration.NullabilityInfoContext = null;
+            arg.options.MemberDeclaration.NullabilityInfoContext = null;
+#endif
+          }
         }
       );
 
