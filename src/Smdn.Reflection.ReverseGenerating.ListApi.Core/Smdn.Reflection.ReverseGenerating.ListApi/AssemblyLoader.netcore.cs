@@ -45,7 +45,7 @@ partial class AssemblyLoader {
     }
   }
 
-  private class PathAssemblyDependencyResolver : PathAssemblyResolver {
+  private sealed class PathAssemblyDependencyResolver : PathAssemblyResolver {
     private readonly AssemblyDependencyResolver dependencyResolver;
     private readonly ILogger logger;
 
@@ -109,7 +109,7 @@ partial class AssemblyLoader {
     return actionWithLoadedAssembly(assm, arg);
   }
 
-  private class UnloadableAssemblyLoadContext : AssemblyLoadContext {
+  private sealed class UnloadableAssemblyLoadContext : AssemblyLoadContext {
     private readonly AssemblyDependencyResolver dependencyResolver;
     private readonly ILogger logger;
 
