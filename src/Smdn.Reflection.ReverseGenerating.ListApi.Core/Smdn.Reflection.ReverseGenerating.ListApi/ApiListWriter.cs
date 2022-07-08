@@ -46,7 +46,7 @@ public class ApiListWriter {
     var typeDeclarations = new StringBuilder(10240);
     var referencingNamespaces = new HashSet<string>(StringComparer.Ordinal);
 
-    foreach (var ns in types.Select(t => t.Namespace).Distinct().OrderBy(n => n, StringComparer.Ordinal)) {
+    foreach (var ns in types.Select(static t => t.Namespace).Distinct().OrderBy(static n => n, StringComparer.Ordinal)) {
       if (0 < typeDeclarations.Length)
         typeDeclarations.AppendLine();
 
@@ -62,7 +62,7 @@ public class ApiListWriter {
           assembly,
           types
             .Where(type => type.Namespace.Equals(ns, StringComparison.Ordinal))
-            .Where(type => !type.IsNested),
+            .Where(static type => !type.IsNested),
           referencingNamespaces,
           options
         )
@@ -80,7 +80,7 @@ public class ApiListWriter {
 
     var orderedReferencingNamespaces = referencingNamespaces
       .OrderBy(OrderOfRootNamespace)
-      .ThenBy(ns => ns, StringComparer.Ordinal);
+      .ThenBy(static ns => ns, StringComparer.Ordinal);
 
     foreach (var ns in orderedReferencingNamespaces) {
       BaseWriter.WriteLine($"using {ns};");
@@ -114,7 +114,7 @@ public class ApiListWriter {
 
     var orderedTypes = types
       .OrderBy(OrderOfType)
-      .ThenBy(type => type.FullName, StringComparer.Ordinal);
+      .ThenBy(static type => type.FullName, StringComparer.Ordinal);
 
     foreach (var type in orderedTypes) {
       var isDelegate = type.IsDelegate();
@@ -232,7 +232,7 @@ public class ApiListWriter {
 
     const BindingFlags bindingFlags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static | BindingFlags.DeclaredOnly;
 
-    var members = t.GetMembers(bindingFlags).OrderBy(f => f.Name, StringComparer.Ordinal).ToList();
+    var members = t.GetMembers(bindingFlags).OrderBy(static f => f.Name, StringComparer.Ordinal).ToList();
     var exceptingMembers = new List<MemberInfo>();
     var nestedTypes = new List<Type>();
 
@@ -293,9 +293,9 @@ public class ApiListWriter {
       : MemberInfoComparer.Default;
     var orderedMemberAndDeclarations = memberAndDeclarations
       .Select(t => (t.Member, t.Declaration, Order: memberComparer.GetOrder(t.Member)))
-      .OrderBy(t => t.Order)
-      .ThenBy(t => t.Member.Name, StringComparer.Ordinal)
-      .ThenBy(t => t.Declaration, StringComparer.Ordinal);
+      .OrderBy(static t => t.Order)
+      .ThenBy(static t => t.Member.Name, StringComparer.Ordinal)
+      .ThenBy(static t => t.Declaration, StringComparer.Ordinal);
     int? prevOrder = generatedNestedTypeDeclarations ? int.MinValue : null;
 
     foreach (var (member, declaration, order) in orderedMemberAndDeclarations) {
