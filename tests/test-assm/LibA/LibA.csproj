@@ -2,4 +2,6 @@
   <PropertyGroup>
     <TargetFrameworks>net6.0;net5.0;netstandard2.1</TargetFrameworks>
   </PropertyGroup>
+
+  <Import Project="..\..\..\src\Sdk.net7.0-preview.props" />
 </Project>

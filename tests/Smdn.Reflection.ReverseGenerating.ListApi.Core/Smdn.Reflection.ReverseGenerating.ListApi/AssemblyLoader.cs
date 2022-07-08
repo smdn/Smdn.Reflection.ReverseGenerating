@@ -41,6 +41,7 @@ class AssemblyLoaderTests {
   [TestCase(true, "netstandard2.1")]
   [TestCase(false, "netstandard2.1")]
 #endif
+#if !SDK_NET7_PREVIEW
 #if NET5_0_OR_GREATER
   [TestCase(true, "net5.0")]
   [TestCase(false, "net5.0")]
@@ -48,6 +49,11 @@ class AssemblyLoaderTests {
 #if NET6_0_OR_GREATER
   [TestCase(true, "net6.0")]
   [TestCase(false, "net6.0")]
+#endif
+#if NET7_0_OR_GREATER
+  [TestCase(true, "net7.0")]
+  [TestCase(false, "net7.0")]
+#endif
 #endif
   public void UsingAssembly(bool loadIntoReflectionOnlyContext, string targetFrameworkMoniker)
   {
@@ -102,6 +108,7 @@ class AssemblyLoaderTests {
   [TestCase(true, "netstandard2.1")]
   [TestCase(false, "netstandard2.1")]
 #endif
+#if !SDK_NET7_PREVIEW
 #if NET5_0_OR_GREATER
   [TestCase(true, "net5.0")]
   [TestCase(false, "net5.0")]
@@ -109,6 +116,11 @@ class AssemblyLoaderTests {
 #if NET6_0_OR_GREATER
   [TestCase(true, "net6.0")]
   [TestCase(false, "net6.0")]
+#endif
+#if NET7_0_OR_GREATER
+  [TestCase(true, "net7.0")]
+  [TestCase(false, "net7.0")]
+#endif
 #endif
   public void UsingAssembly_ResolveDependency(bool loadIntoReflectionOnlyContext, string targetFrameworkMoniker)
   {

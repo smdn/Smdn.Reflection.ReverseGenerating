@@ -11,6 +11,8 @@ SPDX-License-Identifier: MIT
     <PackageValidationBaselineVersion>1.0.0</PackageValidationBaselineVersion>
   </PropertyGroup>
 
+  <Import Project="..\Sdk.net7.0-preview.props" />
+
   <PropertyGroup Condition=" '$(Configuration)' == 'Release' " Label="Required properties to generate API list">
     <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
   </PropertyGroup>
@@ -26,7 +28,11 @@ SPDX-License-Identifier: MIT
 
   <ItemGroup>
     <PackageReference Include="System.Reflection.MetadataLoadContext" Version="5.0.1" Condition="$(TargetFramework.StartsWith('net5.'))" />
-    <PackageReference Include="System.Reflection.MetadataLoadContext" Version="6.0.0" Condition="$(TargetFramework.StartsWith('net6.')) Or $(TargetFramework.StartsWith('netcoreapp'))" />
+    <PackageReference Include="System.Reflection.MetadataLoadContext" Version="6.0.0" Condition="$(TargetFramework.StartsWith('net7.')) Or $(TargetFramework.StartsWith('net6.')) Or $(TargetFramework.StartsWith('netcoreapp'))" />
+    <!--
+    <PackageReference Include="System.Reflection.MetadataLoadContext" Version="6.0.0" Condition="$(TargetFramework.StartsWith('netcoreapp'))" />
+    <PackageReference Include="System.Reflection.MetadataLoadContext" Version="7.0.0" Condition="$(TargetFramework.StartsWith('net7.')) Or $(TargetFramework.StartsWith('net6.'))" />
+    -->
     <PackageReference Include="System.Runtime.Loader" Version="4.3.0" />
     <PackageReference Include="Microsoft.Extensions.Logging" Version="6.0.0" />
 
