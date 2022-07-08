@@ -1156,7 +1156,9 @@ public static partial class Generator {
       if (m == null)
         return;
 
-      if (!m.IsDelegateSignatureMethod()) {
+      var method = m as MethodInfo;
+
+      if (method is null || !method.IsDelegateSignatureMethod()) {
         var isInterfaceMethod = m.GetDeclaringTypeOrThrow().IsInterface;
 
         if (m.IsStatic)
@@ -1171,7 +1173,7 @@ public static partial class Generator {
             sb.Append("abstract ");
           }
         }
-        else if (!isInterfaceMethod && m is MethodInfo mi && mi.IsOverridden()) {
+        else if (!isInterfaceMethod && method is not null && method.IsOverride()) {
           if (m.IsFinal)
             sb.Append("sealed ");
 
@@ -1200,7 +1202,7 @@ public static partial class Generator {
       if (isAsyncStateMachine)
         sb.Append("async ");
 
-      if (m is MethodInfo method && method.GetParameters().Any(static p => p.ParameterType.IsPointer))
+      if (method is not null && method.GetParameters().Any(static p => p.ParameterType.IsPointer))
         sb.Append("unsafe ");
     }
 
@@ -1262,7 +1264,7 @@ SWITCH_MEMBER_TYPE:
 
       case MethodBase m:
         if (!asExplicitInterfaceMember && m != m.DeclaringType?.TypeInitializer) {
-          if (m.IsDelegateSignatureMethod()) {
+          if (m is MethodInfo method && method.IsDelegateSignatureMethod()) {
             if (options.TypeDeclaration.WithAccessibility)
               AppendAccessibility(sb, null, m.GetDeclaringTypeOrThrow().GetAccessibility());
           }
