@@ -98,8 +98,8 @@ public static class ProjectBuilder {
         // retrieve %(InnerOutput.Identity) / for in case of building with multiple target frameworks
         var innerOutputFullPaths = result.ProjectStateAfterBuild
           .Items
-          .Where(item => item.ItemType == "InnerOutput")
-          .Select(item => item.GetMetadataValue("Identity"));
+          .Where(static item => item.ItemType == "InnerOutput")
+          .Select(static item => item.GetMetadataValue("Identity"));
 
         foreach (var innerOutputFullPath in innerOutputFullPaths) {
           logger?.LogDebug($"build output file: {innerOutputFullPath}");
@@ -113,7 +113,7 @@ public static class ProjectBuilder {
 
           var buildOutputFullPaths = buildTargetResult
             .Items
-            .Select(item => item.GetMetadata("Identity"));
+            .Select(static item => item.GetMetadata("Identity"));
 
           foreach (var buildOutputFullPath in buildOutputFullPaths) {
             logger?.LogDebug($"build output file: {buildOutputFullPath}");

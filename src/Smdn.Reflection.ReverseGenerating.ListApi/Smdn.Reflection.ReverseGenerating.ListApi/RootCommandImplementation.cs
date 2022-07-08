@@ -31,7 +31,7 @@ public class RootCommandImplementation {
 #else
     description: "Path to an assembly file to generate the API list.",
 #endif
-    getDefaultValue: () => new DirectoryInfo(Environment.CurrentDirectory)
+    getDefaultValue: static () => new DirectoryInfo(Environment.CurrentDirectory)
   ) {
     // Arity = ArgumentArity.OneOrMore
     Arity = ArgumentArity.ExactlyOne,
@@ -40,32 +40,32 @@ public class RootCommandImplementation {
   private static readonly Option<string> optionConfiguration = new(
     aliases: new[] { "-c", "--configuration" },
     description: "The 'build configuration' option passed to `Build` target when the project will be built.",
-    getDefaultValue: () => DefaultBuildConfiguration
+    getDefaultValue: static () => DefaultBuildConfiguration
   );
   private static readonly Option<string> optionTargetFramework = new(
     aliases: new[] { "-f", "--framework" },
     description: "The 'target framework' option passed to `Build` target when the project will be built.",
-    getDefaultValue: () => null
+    getDefaultValue: static () => null
   );
   private static readonly Option<string> optionRuntimeIdentifier = new(
     aliases: new[] { "-r", "--runtime" },
     description: "The 'target runtime' option passed to `Build` target when the project will be built.",
-    getDefaultValue: () => null
+    getDefaultValue: static () => null
   );
   private static readonly Option<string> optionOS = new(
     aliases: new[] { "--os" },
     description: "The 'target operating system' option passed to `Build` target when the project will be built.",
-    getDefaultValue: () => null
+    getDefaultValue: static () => null
   );
   private static readonly Option<DirectoryInfo> optionOutputDirectory = new(
     aliases: new[] { "-o", "--output-directory" },
     description: "Path to output directory.",
-    getDefaultValue: () => new DirectoryInfo(Environment.CurrentDirectory)
+    getDefaultValue: static () => new DirectoryInfo(Environment.CurrentDirectory)
   );
   private static readonly Option<bool> optionLoadAssemblyIntoReflectionOnlyContext = new(
     aliases: new[] { "--load-reflection-only" },
     description: "Loads and processes input assemblies in the reflection-only context.",
-    getDefaultValue: () =>
+    getDefaultValue: static () =>
 #if NETFRAMEWORK
       true
 #else
@@ -75,17 +75,17 @@ public class RootCommandImplementation {
   private static readonly Option<bool> optionGenerateFullTypeName = new(
     aliases: new[] { "--generate-fulltypename" },
     description: "Generates declarations with full type name.",
-    getDefaultValue: () => false
+    getDefaultValue: static () => false
   );
   private static readonly Option<MethodBodyOption> optionGenerateMethodBody = new(
     aliases: new[] { "--generate-methodbody" },
     description: "Generates method body with specified type of implementation.",
-    getDefaultValue: () => MethodBodyOption.EmptyImplementation
+    getDefaultValue: static () => MethodBodyOption.EmptyImplementation
   );
   private static readonly Option<bool> optionGenerateStaticMembersFirst = new(
     aliases: new[] { "--generate-staticmembersfirst" },
     description: "Generates member declarations in the order of the static members first.",
-    getDefaultValue: () => false
+    getDefaultValue: static () => false
   );
 
   private readonly IServiceProvider serviceProvider;

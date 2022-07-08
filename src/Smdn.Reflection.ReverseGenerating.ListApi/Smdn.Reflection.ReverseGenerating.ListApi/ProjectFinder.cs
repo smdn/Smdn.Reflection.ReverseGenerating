@@ -19,7 +19,7 @@ public static class ProjectFinder {
 
     var solutionAndProjectFiles = directory
       .GetFiles("*.*", SearchOption.TopDirectoryOnly)
-      .Where(file =>
+      .Where(static file =>
         // *.sln, *.csproj, *.vbproj, etc
         Regex.IsMatch(file.Extension, @"\.(?i:sln|[a-z]+proj)$", RegexOptions.Singleline | RegexOptions.CultureInvariant)
       );
