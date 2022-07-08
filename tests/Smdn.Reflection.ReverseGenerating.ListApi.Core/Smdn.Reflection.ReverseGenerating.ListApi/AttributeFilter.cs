@@ -44,6 +44,28 @@ partial class AttributeFilterTests {
         )
       );
 
+  private static System.Collections.IEnumerable YieldTestCases_GenericParameters()
+  {
+    var types = FindTypes(static t => t.Namespace is not null && t.Namespace.StartsWith(typeof(ClassToDetermineNamespace).Namespace, StringComparison.Ordinal));
+
+    var genericTypeParameters = types
+      //.Where(static t => t.IsGenericType)
+      .SelectMany(static t => t.GetGenericArguments());
+
+    var genericMethodParameters = types
+      .SelectMany(static t => t.GetMethods(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static | BindingFlags.DeclaredOnly))
+      //.Where(static m => m.IsGenericMethod)
+      .SelectMany(static method => method.GetGenericArguments());
+
+    return genericTypeParameters
+      .Concat(genericMethodParameters)
+      .SelectMany(
+        static genericParam => genericParam.GetCustomAttributes<TypeAttributeFilterTestCaseAttribute>().Select(
+          attr => new object[] { genericParam, attr }
+        )
+      );
+  }
+
   private static void TestAttributeFilter(
     Func<string> actual,
     GeneratorTestCaseAttribute testCase,
@@ -99,5 +121,16 @@ partial class AttributeFilterTests {
       actual: () => string.Join(", ", Generator.GenerateAttributeList(para, null, testCase.CreateGeneratorOptions())),
       testCase: testCase,
       testTarget: $"{para.Member.DeclaringType!.FullName}.{para.Member.Name} {para.Name}"
+    );
+
+  [TestCaseSource(nameof(YieldTestCases_GenericParameters))]
+  public void AttributeFilter_GenericParameters(
+    Type genericParameter,
+    GeneratorTestCaseAttribute testCase
+  )
+    => TestAttributeFilter(
+      actual: () => string.Join(", ", Generator.GenerateAttributeList(genericParameter, null, testCase.CreateGeneratorOptions())),
+      testCase: testCase,
+      testTarget: $"{genericParameter.FullName}"
     );
 }

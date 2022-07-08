@@ -70,6 +70,27 @@ public class TypeAttributes {
   }
 }
 
+public class GenericParameterAttributes {
+  public class IsUnmanagedAttr<
+    [TypeAttributeFilterTestCaseAttribute("")]
+    [TypeAttributeFilterTestCaseAttribute("", FilterType = typeof(AttributeFilter), FilterMemberName = nameof(AttributeFilter.Default))]
+    TClass,
+    [TypeAttributeFilterTestCaseAttribute("[IsUnmanaged]")]
+    [TypeAttributeFilterTestCaseAttribute("", FilterType = typeof(AttributeFilter), FilterMemberName = nameof(AttributeFilter.Default))]
+    TUnmanaged
+  > where TClass : class where TUnmanaged : unmanaged {
+    public void M<
+      [TypeAttributeFilterTestCaseAttribute("")]
+      [TypeAttributeFilterTestCaseAttribute("", FilterType = typeof(AttributeFilter), FilterMemberName = nameof(AttributeFilter.Default))]
+      TMethodStruct,
+
+      [TypeAttributeFilterTestCaseAttribute("[IsUnmanaged]")]
+      [TypeAttributeFilterTestCaseAttribute("", FilterType = typeof(AttributeFilter), FilterMemberName = nameof(AttributeFilter.Default))]
+      TMethodUnmanaged
+    >() where TMethodStruct : struct where TMethodUnmanaged : unmanaged { }
+  }
+}
+
 public class MethodAttributes {
   public class IteratorStateMachineAttr {
     [MemberAttributeFilterTestCaseAttribute("")]
@@ -129,6 +150,70 @@ public class PropertyAttributes {
     [MemberAttributeFilterTestCaseAttribute("[TupleElementNames(new string[] { \"X\", \"Y\" })]")]
     [MemberAttributeFilterTestCaseAttribute("", FilterType = typeof(AttributeFilter), FilterMemberName = nameof(AttributeFilter.Default))]
     public (int X, int Y) Named => throw null;
+  }
+
+  public struct IsReadOnlyAttr {
+    public int P {
+      [MemberAttributeFilterTestCaseAttribute("")]
+      [MemberAttributeFilterTestCaseAttribute("", FilterType = typeof(AttributeFilter), FilterMemberName = nameof(AttributeFilter.Default))]
+      get => 0;
+    }
+
+    public int PReadOnlyImplicit {
+      [MemberAttributeFilterTestCaseAttribute("[CompilerGenerated, IsReadOnly]")]
+      [MemberAttributeFilterTestCaseAttribute("", FilterType = typeof(AttributeFilter), FilterMemberName = nameof(AttributeFilter.Default))]
+      get;
+    }
+
+    public readonly int PReadOnlyExplicit {
+      [MemberAttributeFilterTestCaseAttribute("[IsReadOnly]")]
+      [MemberAttributeFilterTestCaseAttribute("", FilterType = typeof(AttributeFilter), FilterMemberName = nameof(AttributeFilter.Default))]
+      get => 0;
+    }
+  }
+
+  public class CompilerGeneratedAttr {
+    public int P {
+      [MemberAttributeFilterTestCaseAttribute("")]
+      [MemberAttributeFilterTestCaseAttribute("", FilterType = typeof(AttributeFilter), FilterMemberName = nameof(AttributeFilter.Default))]
+      get => throw null;
+      [MemberAttributeFilterTestCaseAttribute("")]
+      [MemberAttributeFilterTestCaseAttribute("", FilterType = typeof(AttributeFilter), FilterMemberName = nameof(AttributeFilter.Default))]
+      set => throw null;
+    }
+
+    [field: MemberAttributeFilterTestCaseAttribute("[field: DebuggerBrowsable(DebuggerBrowsableState.Never), CompilerGenerated]")]
+    [field: MemberAttributeFilterTestCaseAttribute("", FilterType = typeof(AttributeFilter), FilterMemberName = nameof(AttributeFilter.Default))]
+    public int PCompilerGenerated {
+      [MemberAttributeFilterTestCaseAttribute("[CompilerGenerated]")]
+      [MemberAttributeFilterTestCaseAttribute("", FilterType = typeof(AttributeFilter), FilterMemberName = nameof(AttributeFilter.Default))]
+      get;
+
+      [MemberAttributeFilterTestCaseAttribute("[CompilerGenerated]")]
+      [MemberAttributeFilterTestCaseAttribute("", FilterType = typeof(AttributeFilter), FilterMemberName = nameof(AttributeFilter.Default))]
+      set;
+    }
+  }
+}
+
+public class EventAttributes {
+  public class CompilerGeneratedAttr {
+#pragma warning disable CS0067
+    public event EventHandler E {
+      [MemberAttributeFilterTestCaseAttribute("")]
+      [MemberAttributeFilterTestCaseAttribute("", FilterType = typeof(AttributeFilter), FilterMemberName = nameof(AttributeFilter.Default))]
+      add => throw null;
+      [MemberAttributeFilterTestCaseAttribute("")]
+      [MemberAttributeFilterTestCaseAttribute("", FilterType = typeof(AttributeFilter), FilterMemberName = nameof(AttributeFilter.Default))]
+      remove => throw null;
+    }
+
+    [field: MemberAttributeFilterTestCaseAttribute("[field: DebuggerBrowsable(DebuggerBrowsableState.Never), CompilerGenerated]")]
+    [field: MemberAttributeFilterTestCaseAttribute("", FilterType = typeof(AttributeFilter), FilterMemberName = nameof(AttributeFilter.Default))]
+    [method: MemberAttributeFilterTestCaseAttribute("[CompilerGenerated]")]
+    [method: MemberAttributeFilterTestCaseAttribute("", FilterType = typeof(AttributeFilter), FilterMemberName = nameof(AttributeFilter.Default))]
+    public event EventHandler ECompilerGenerated;
+#pragma warning restore CS0067
   }
 }
 
