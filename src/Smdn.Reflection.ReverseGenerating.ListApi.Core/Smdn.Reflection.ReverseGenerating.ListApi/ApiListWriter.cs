@@ -303,9 +303,9 @@ public class ApiListWriter {
         // remove add/remove/raise method of events
         exceptingMembers.AddRange(e.GetMethods(true));
       }
-      else if (member.MemberType == MemberTypes.NestedType) {
-        exceptingMembers.Add(member);
-        nestedTypes.Add(member as Type);
+      else if (member.MemberType == MemberTypes.NestedType && member is Type nestedType) {
+        exceptingMembers.Add(nestedType);
+        nestedTypes.Add(nestedType);
       }
     }
 
@@ -331,7 +331,7 @@ public class ApiListWriter {
     var memberAndDeclarations = new List<(MemberInfo Member, string Declaration)>();
 
     foreach (var member in members.Except(exceptingMembers)) {
-      string declaration = null;
+      string? declaration = null;
 
       try {
         declaration = Generator.GenerateMemberDeclaration(member, referencingNamespaces, options);

@@ -4,6 +4,9 @@
 
 #if NETCOREAPP3_1_OR_GREATER
 using System;
+#if NULL_STATE_STATIC_ANALYSIS_ATTRIBUTES
+using System.Diagnostics.CodeAnalysis;
+#endif
 using System.IO;
 using System.Reflection;
 using System.Runtime.CompilerServices;
@@ -17,13 +20,16 @@ namespace Smdn.Reflection.ReverseGenerating.ListApi;
 #pragma warning disable IDE0040
 partial class AssemblyLoader {
 #pragma warning restore IDE0040
+#if NULL_STATE_STATIC_ANALYSIS_ATTRIBUTES
+  [return: MaybeNull]
+#endif
   private static TResult UsingAssemblyCore<TArg, TResult>(
     FileInfo assemblyFile,
     bool loadIntoReflectionOnlyContext,
     TArg arg,
     Func<Assembly, TArg, TResult> actionWithLoadedAssembly,
-    out WeakReference context,
-    ILogger logger = null
+    out WeakReference? context,
+    ILogger? logger = null
   )
   {
     context = default;
@@ -49,9 +55,9 @@ partial class AssemblyLoader {
 
   private sealed class PathAssemblyDependencyResolver : PathAssemblyResolver {
     private readonly AssemblyDependencyResolver dependencyResolver;
-    private readonly ILogger logger;
+    private readonly ILogger? logger;
 
-    public PathAssemblyDependencyResolver(string componentAssemblyPath, ILogger logger = null)
+    public PathAssemblyDependencyResolver(string componentAssemblyPath, ILogger? logger = null)
       : base(
         Directory.GetFiles(RuntimeEnvironment.GetRuntimeDirectory(), "*.dll") // add runtime assemblies
       )
@@ -60,7 +66,7 @@ partial class AssemblyLoader {
       this.logger = logger;
     }
 
-    public override Assembly Resolve(MetadataLoadContext context, AssemblyName assemblyName)
+    public override Assembly? Resolve(MetadataLoadContext context, AssemblyName assemblyName)
     {
       logger?.LogDebug("attempting to load '{AssemblyName}'", assemblyName);
 
@@ -83,11 +89,14 @@ partial class AssemblyLoader {
     }
   }
 
+#if NULL_STATE_STATIC_ANALYSIS_ATTRIBUTES
+  [return: MaybeNull]
+#endif
   private static TResult UsingReflectionOnlyAssembly<TArg, TResult>(
     FileInfo assemblyFile,
     TArg arg,
     Func<Assembly, TArg, TResult> actionWithLoadedAssembly,
-    ILogger logger = null
+    ILogger? logger = null
   )
   {
     using var mlc = new MetadataLoadContext(
@@ -113,9 +122,9 @@ partial class AssemblyLoader {
 
   private sealed class UnloadableAssemblyLoadContext : AssemblyLoadContext {
     private readonly AssemblyDependencyResolver dependencyResolver;
-    private readonly ILogger logger;
+    private readonly ILogger? logger;
 
-    public UnloadableAssemblyLoadContext(string componentAssemblyPath, ILogger logger = null)
+    public UnloadableAssemblyLoadContext(string componentAssemblyPath, ILogger? logger = null)
       : base(
         isCollectible: true // is required to unload assembly
       )
@@ -124,7 +133,7 @@ partial class AssemblyLoader {
       this.logger = logger;
     }
 
-    protected override Assembly Load(AssemblyName name)
+    protected override Assembly? Load(AssemblyName name)
     {
       var assemblyPath = dependencyResolver.ResolveAssemblyToPath(name);
 
@@ -140,13 +149,16 @@ partial class AssemblyLoader {
     }
   }
 
+#if NULL_STATE_STATIC_ANALYSIS_ATTRIBUTES
+  [return: MaybeNull]
+#endif
   [MethodImpl(MethodImplOptions.NoInlining)]
   private static TResult UsingAssembly<TArg, TResult>(
     FileInfo assemblyFile,
     TArg arg,
     Func<Assembly, TArg, TResult> actionWithLoadedAssembly,
-    out WeakReference context,
-    ILogger logger = null
+    out WeakReference? context,
+    ILogger? logger = null
   )
   {
     context = null;

@@ -1,6 +1,9 @@
 // SPDX-FileCopyrightText: 2021 smdn <smdn@smdn.jp>
 // SPDX-License-Identifier: MIT
 using System;
+#if NULL_STATE_STATIC_ANALYSIS_ATTRIBUTES
+using System.Diagnostics.CodeAnalysis;
+#endif
 using System.Runtime.Versioning;
 
 namespace Smdn.Reflection.ReverseGenerating.ListApi;
@@ -14,9 +17,12 @@ public static class FrameworkMonikers {
   public static bool TryGetMoniker(
     FrameworkName frameworkName,
 #pragma warning disable IDE0060, SA1305
-    string osSpecifier,
+    string? osSpecifier,
 #pragma warning restore IDE0060, SA1305
-    out string frameworkMoniker
+#if NULL_STATE_STATIC_ANALYSIS_ATTRIBUTES
+    [NotNullWhen(true)]
+#endif
+    out string? frameworkMoniker
   )
   {
     if (frameworkName is null)

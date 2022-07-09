@@ -32,13 +32,14 @@ partial class AssemblyLoader {
     }
   }
 
+  [return: MaybeNull]
   private static TResult UsingAssemblyCore<TArg, TResult>(
     FileInfo assemblyFile,
     bool loadIntoReflectionOnlyContext,
     TArg arg,
     Func<Assembly, TArg, TResult> actionWithLoadedAssembly,
-    out WeakReference context,
-    ILogger logger = null
+    out WeakReference? context,
+    ILogger? logger = null
   )
   {
     context = null;

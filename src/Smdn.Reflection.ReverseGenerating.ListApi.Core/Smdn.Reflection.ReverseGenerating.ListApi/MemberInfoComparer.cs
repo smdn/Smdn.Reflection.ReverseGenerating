@@ -18,7 +18,7 @@ public class MemberInfoComparer : IComparer<MemberInfo> {
     this.orderOfInstanceMember = orderOfInstanceMember;
   }
 
-  public int Compare(MemberInfo x, MemberInfo y)
+  public int Compare(MemberInfo? x, MemberInfo? y)
   {
     var ox = GetOrder(x);
     var oy = GetOrder(y);
@@ -28,7 +28,7 @@ public class MemberInfoComparer : IComparer<MemberInfo> {
 
   private int GetStaticMemberOrder(bool isStatic) => isStatic ? orderOfStaticMember : orderOfInstanceMember;
 
-  public int GetOrder(MemberInfo member)
+  public int GetOrder(MemberInfo? member)
     => member switch {
 #pragma warning disable IDE0055
       null                  => 0,
