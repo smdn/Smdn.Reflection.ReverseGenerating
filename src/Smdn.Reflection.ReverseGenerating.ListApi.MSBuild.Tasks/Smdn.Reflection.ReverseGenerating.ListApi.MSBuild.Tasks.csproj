@@ -42,7 +42,7 @@ SPDX-License-Identifier: MIT
     <ProjectReference VersionRange="[1.1.0,2.0.0)" Include="..\Smdn.Reflection.ReverseGenerating.ListApi.Core\Smdn.Reflection.ReverseGenerating.ListApi.Core.csproj" PrivateAssets="All" />
   </ItemGroup>
 
-  <ItemGroup>
+  <ItemGroup Label="exporting tasks">
     <ExportTaskNames Include="GenerateApiList">
       <Namespace>Smdn.Reflection.ReverseGenerating.ListApi.MSBuild.Tasks</Namespace>
     </ExportTaskNames>
