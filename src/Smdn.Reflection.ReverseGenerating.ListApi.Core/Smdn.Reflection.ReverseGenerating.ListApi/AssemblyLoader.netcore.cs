@@ -60,7 +60,7 @@ partial class AssemblyLoader {
 
     public override Assembly Resolve(MetadataLoadContext context, AssemblyName assemblyName)
     {
-      logger?.LogDebug($"attempting to load '{assemblyName}'");
+      logger?.LogDebug("attempting to load '{AssemblyName}'", assemblyName);
 
       var assm = base.Resolve(context, assemblyName);
 
@@ -70,12 +70,12 @@ partial class AssemblyLoader {
       var assemblyPath = dependencyResolver.ResolveAssemblyToPath(assemblyName);
 
       if (assemblyPath is null) {
-        logger?.LogDebug($"could not resolve assembly path of '{assemblyName}'");
+        logger?.LogDebug("could not resolve assembly path of '{AssemblyName}'", assemblyName);
 
         return null;
       }
 
-      logger?.LogDebug($"attempting to load assembly from '{assemblyPath}'");
+      logger?.LogDebug("attempting to load assembly from '{AssemblyFilePath}'", assemblyPath);
 
       return context.LoadFromAssemblyPath(assemblyPath);
     }
@@ -92,19 +92,19 @@ partial class AssemblyLoader {
       new PathAssemblyDependencyResolver(assemblyFile.FullName)
     );
 
-    logger?.LogDebug($"loading assembly into reflection-only context from file '{assemblyFile.FullName}'");
+    logger?.LogDebug("loading assembly into reflection-only context from file '{AssemblyFilePath}'", assemblyFile.FullName);
 
     var assm = mlc.LoadFromAssemblyPath(assemblyFile.FullName);
 
     if (assm is null) {
-      logger?.LogCritical($"failed to load assembly from file '{assemblyFile.FullName}'");
+      logger?.LogCritical("failed to load assembly from file '{AssemblyFilePath}'", assemblyFile.FullName);
 
       return default;
     }
 
     var assemblyName = assm.FullName;
 
-    logger?.LogDebug($"loaded assembly '{assemblyName}'");
+    logger?.LogDebug("loaded assembly '{AssemblyName}'", assemblyName);
 
     return actionWithLoadedAssembly(assm, arg);
   }
@@ -127,12 +127,12 @@ partial class AssemblyLoader {
       var assemblyPath = dependencyResolver.ResolveAssemblyToPath(name);
 
       if (assemblyPath is null) {
-        logger?.LogDebug($"could not resolve assembly path of '{name}'");
+        logger?.LogDebug("could not resolve assembly path of '{AssemblyName}'", name);
 
         return null;
       }
 
-      logger?.LogDebug($"attempting to load assembly from '{assemblyPath}'");
+      logger?.LogDebug("attempting to load assembly from '{AssemblyFilePath}'", assemblyPath);
 
       return LoadFromAssemblyPath(assemblyPath);
     }
@@ -152,12 +152,12 @@ partial class AssemblyLoader {
     var alc = new UnloadableAssemblyLoadContext(assemblyFile.FullName, logger);
     var alcWeakReference = new WeakReference(alc);
 
-    logger?.LogDebug($"loading assembly from file '{assemblyFile.FullName}'");
+    logger?.LogDebug("loading assembly from file '{AssemblyFilePath}'", assemblyFile.FullName);
 
     var assm = alc.LoadFromAssemblyPath(assemblyFile.FullName);
 
     if (assm is null) {
-      logger?.LogCritical($"failed to load assembly from file '{assemblyFile.FullName}'");
+      logger?.LogCritical("failed to load assembly from file '{AssemblyFilePath}'", assemblyFile.FullName);
 
       return default;
     }
@@ -166,7 +166,7 @@ partial class AssemblyLoader {
 
     var assemblyName = assm.FullName;
 
-    logger?.LogDebug($"loaded assembly '{assemblyName}'");
+    logger?.LogDebug("loaded assembly '{AssemblyName}'", assemblyName);
 
     try {
       return actionWithLoadedAssembly(assm, arg);
@@ -174,7 +174,7 @@ partial class AssemblyLoader {
     finally {
       alc.Unload();
 
-      logger?.LogDebug($"unloaded assembly '{assemblyName}'");
+      logger?.LogDebug("unloaded assembly '{AssemblyName}'", assemblyName);
     }
   }
 }
