@@ -29,7 +29,7 @@ SPDX-License-Identifier: MIT
   </ImportGroup>
   <ImportGroup Condition=" '%24(MSBuildRuntimeType)' == 'Core' and %24([System.Runtime.InteropServices.RuntimeInformation]::FrameworkDescription.StartsWith('.NET 5.')) ">
     <!-- .NET 5.x -->
-    @(TaskFiles->WithMetadataValue('TargetFramework', 'net5.0')->'%(ImportLine)', '%0D%0A    ')
+    @(TaskFiles->WithMetadataValue('TargetFramework', 'netcoreapp3.1')->'%(ImportLine)', '%0D%0A    ')
   </ImportGroup>
   <ImportGroup Condition=" '%24(MSBuildRuntimeType)' == 'Core' and %24([System.Runtime.InteropServices.RuntimeInformation]::FrameworkDescription.StartsWith('.NET 6.')) ">
     <!-- .NET 6.x -->
