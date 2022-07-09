@@ -7,5 +7,6 @@ public class ApiListWriterOptions : GeneratorOptions {
 
   public class WriterOptions {
     public bool OrderStaticMembersFirst { get; set; } = false;
+    public bool WriteNullableAnnotationDirective { get; set; } = true;
   }
 }

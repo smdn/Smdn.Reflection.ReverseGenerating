@@ -32,7 +32,6 @@ public class ApiListWriter {
     BaseWriter.WriteLine($"//   InformationalVersion: {assembly.GetAssemblyMetadataAttributeValue<AssemblyInformationalVersionAttribute, string>()}");
     BaseWriter.WriteLine($"//   TargetFramework: {assembly.GetAssemblyMetadataAttributeValue<TargetFrameworkAttribute, string>()}");
     BaseWriter.WriteLine($"//   Configuration: {assembly.GetAssemblyMetadataAttributeValue<AssemblyConfigurationAttribute, string>()}");
-    BaseWriter.WriteLine();
   }
 
   public void WriteExportedTypes()
@@ -82,6 +81,29 @@ public class ApiListWriter {
       .OrderBy(OrderOfRootNamespace)
       .ThenBy(static ns => ns, StringComparer.Ordinal);
 
+    if (options.Writer.WriteNullableAnnotationDirective) {
+      if (
+        options.TypeDeclaration.NullabilityInfoContext is not null &&
+        options.MemberDeclaration.NullabilityInfoContext is not null
+      ) {
+        BaseWriter.WriteLine("#nullable enable annotations");
+        BaseWriter.WriteLine();
+      }
+      else if (
+        options.TypeDeclaration.NullabilityInfoContext is null &&
+        options.MemberDeclaration.NullabilityInfoContext is null
+      ) {
+        BaseWriter.WriteLine("#nullable disable annotations");
+        BaseWriter.WriteLine();
+      }
+      else {
+        BaseWriter.WriteLine();
+      }
+    }
+    else {
+      BaseWriter.WriteLine();
+    }
+
     foreach (var ns in orderedReferencingNamespaces) {
       BaseWriter.WriteLine($"using {ns};");
     }
@@ -116,6 +138,15 @@ public class ApiListWriter {
       .OrderBy(OrderOfType)
       .ThenBy(static type => type.FullName, StringComparer.Ordinal);
 
+    var enableNullableAnnotationsOnlyOnTypes =
+      options.Writer.WriteNullableAnnotationDirective &&
+      options.TypeDeclaration.NullabilityInfoContext is not null &&
+      options.MemberDeclaration.NullabilityInfoContext is null;
+    var enableNullableAnnotationsOnlyOnMembers =
+      options.Writer.WriteNullableAnnotationDirective &&
+      options.TypeDeclaration.NullabilityInfoContext is null &&
+      options.MemberDeclaration.NullabilityInfoContext is not null;
+
     foreach (var type in orderedTypes) {
       var isDelegate = type.IsDelegate();
 
@@ -129,7 +160,9 @@ public class ApiListWriter {
             assm,
             type,
             referencingNamespaces,
-            options
+            options,
+            enableNullableAnnotationsOnlyOnTypes,
+            enableNullableAnnotationsOnlyOnMembers
           )
         );
       }
@@ -149,7 +182,9 @@ public class ApiListWriter {
     Assembly assm,
     Type t,
     ISet<string> referencingNamespaces,
-    ApiListWriterOptions options
+    ApiListWriterOptions options,
+    bool enableNullableAnnotationsOnlyOnTypes,
+    bool enableNullableAnnotationsOnlyOnMembers
   )
   {
     if (options == null)
@@ -183,6 +218,9 @@ public class ApiListWriter {
          .AppendLine(attr);
     }
 
+    if (enableNullableAnnotationsOnlyOnTypes)
+      ret.AppendLine("#nullable enable annotations");
+
     var typeDeclarationLines = Generator.GenerateTypeDeclarationWithExplicitBaseTypeAndInterfaces(t, referencingNamespaces, options).ToList();
 
     for (var index = 0; index < typeDeclarationLines.Count; index++) {
@@ -200,6 +238,11 @@ public class ApiListWriter {
       else
         ret.AppendLine(" {");
 
+      if (enableNullableAnnotationsOnlyOnTypes)
+        ret.AppendLine("#nullable restore annotations");
+      if (enableNullableAnnotationsOnlyOnMembers)
+        ret.AppendLine("#nullable enable annotations");
+
       ret.Append(
         GenerateTypeContentDeclarations(
           nestLevel + 1,
@@ -209,6 +252,9 @@ public class ApiListWriter {
           options
         )
       );
+
+      if (enableNullableAnnotationsOnlyOnMembers)
+        ret.AppendLine("#nullable restore annotations");
 
       ret.Append(indent).AppendLine("}");
     }
