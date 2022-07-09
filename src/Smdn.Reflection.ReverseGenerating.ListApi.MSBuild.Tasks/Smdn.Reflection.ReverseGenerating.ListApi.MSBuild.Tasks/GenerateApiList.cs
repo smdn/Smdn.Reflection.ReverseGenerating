@@ -4,6 +4,9 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
+#if SYSTEM_REFLECTION_NULLABILITYINFOCONTEXT
+using System.Reflection;
+#endif
 using System.Text;
 
 using Microsoft.Build.Framework;
@@ -103,7 +106,8 @@ public class GenerateApiList : Task {
     if (Enum.TryParse<MethodBodyOption>(GenerateMethodBody, out var methodBody))
       options.MemberDeclaration.MethodBody = methodBody;
 
-    options.Writer.OrderStaticMembersFirst      = GenerateStaticMembersFirst;
+    options.Writer.WriteNullableAnnotationDirective = true;
+    options.Writer.OrderStaticMembersFirst          = GenerateStaticMembersFirst;
 
     options.AttributeDeclaration.TypeFilter     = AttributeFilter.Default;
 
@@ -140,12 +144,28 @@ public class GenerateApiList : Task {
           encoding: new UTF8Encoding(false) // TODO: make encoding configurable
         );
 
-        var writer = new ApiListWriter(outputWriter, assm, arg.options);
+        try {
+#if SYSTEM_REFLECTION_NULLABILITYINFOCONTEXT
+          // assign NullabilityInfoContext to each assembly
+          var nullabilityInfoContext = new NullabilityInfoContext();
 
-        writer.WriteAssemblyInfoHeader();
-        writer.WriteExportedTypes();
+          arg.options.TypeDeclaration.NullabilityInfoContext = nullabilityInfoContext;
+          arg.options.MemberDeclaration.NullabilityInfoContext = nullabilityInfoContext;
+#endif
+          var writer = new ApiListWriter(outputWriter, assm, arg.options);
 
-        return arg.outputApiListFilePath;
+          writer.WriteAssemblyInfoHeader();
+          writer.WriteExportedTypes();
+
+          return arg.outputApiListFilePath;
+        }
+        finally {
+#if SYSTEM_REFLECTION_NULLABILITYINFOCONTEXT
+          // release the references held by the NullabilityInfoContext so that the assembly can be unloaded
+          arg.options.TypeDeclaration.NullabilityInfoContext = null;
+          arg.options.MemberDeclaration.NullabilityInfoContext = null;
+#endif
+        }
       }
     );
 
