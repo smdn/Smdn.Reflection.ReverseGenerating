@@ -39,7 +39,7 @@ SPDX-License-Identifier: MIT
 
   <ItemGroup>
     <PackageReference Include="Microsoft.Build.Utilities.Core" Version="17.0.0" PrivateAssets="All" />
-    <ProjectReference VersionRange="[1.1.0,2.0.0)" Include="..\Smdn.Reflection.ReverseGenerating.ListApi.Core\Smdn.Reflection.ReverseGenerating.ListApi.Core.csproj" PrivateAssets="All" />
+    <ProjectReference VersionRange="[1.1.1,2.0.0)" Include="..\Smdn.Reflection.ReverseGenerating.ListApi.Core\Smdn.Reflection.ReverseGenerating.ListApi.Core.csproj" PrivateAssets="All" />
 
     <!-- remove this package itself from PackageReference to avoid duplicate references during the running of 'Pack' target -->
     <PackageReference Remove="$(PackageId)" />
