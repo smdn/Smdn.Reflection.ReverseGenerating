@@ -1,0 +1,57 @@
+<!--
+SPDX-FileCopyrightText: 2021 smdn <smdn@smdn.jp>
+SPDX-License-Identifier: MIT
+-->
+<Project>
+  <Target Name="GenerateTaskFiles" Condition=" '$(TargetFramework)' != '' ">
+    <GenerateTaskFile
+      TaskName="%(ExportTaskNames.Identity)"
+      TaskNamespace="%(ExportTaskNames.Namespace)"
+      TaskAssemblyFile="$(AssemblyName).dll"
+      OutputDirectory="$(OutputPath)"
+    >
+      <Output PropertyName="GeneratedTaskFile" TaskParameter="GeneratedFile" />
+    </GenerateTaskFile>
+
+    <ItemGroup>
+      <TfmSpecificPackageFile Include="$(GeneratedTaskFile)" PackagePath="$(BuildOutputTargetFolder)\$(TargetFramework)" />
+    </ItemGroup>
+  </Target>
+
+  <UsingTask
+    TaskName="GenerateTaskFile"
+    TaskFactory="RoslynCodeTaskFactory"
+    AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.Core.dll"
+  >
+    <ParameterGroup>
+      <TaskName ParameterType="System.String" Required="true" />
+      <TaskNamespace ParameterType="System.String" />
+      <TaskAssemblyFile ParameterType="System.String" Required="true" />
+      <OutputDirectory ParameterType="System.String" Required="true" />
+      <GeneratedFile ParameterType="System.String" Output="true" />
+    </ParameterGroup>
+    <Task>
+      <Using Namespace="System" />
+      <Using Namespace="System.IO" />
+      <Code Type="Fragment" Language="cs"><![CDATA[
+        const string PropertyMSBuildThisFileDirectory = "\x24(MSBuildThisFileDirectory)";
+        var path = Path.Combine(OutputDirectory, $"{TaskName}.task");
+        var taskFullName = string.IsNullOrEmpty(TaskNamespace)
+          ? TaskName
+          : $"{TaskNamespace}.{TaskName}";
+        var contents =
+ @$"<Project>
+  <UsingTask
+    TaskName=""{taskFullName}""
+    AssemblyFile=""{PropertyMSBuildThisFileDirectory}{TaskAssemblyFile}""
+  />
+</Project>
+";
+
+        File.WriteAllText(path, contents);
+
+        GeneratedFile = path;
+      ]]></Code>
+    </Task>
+  </UsingTask>
+</Project>

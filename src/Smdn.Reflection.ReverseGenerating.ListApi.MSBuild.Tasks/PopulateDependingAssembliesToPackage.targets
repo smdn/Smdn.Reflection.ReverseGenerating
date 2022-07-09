@@ -1,0 +1,23 @@
+<!--
+SPDX-FileCopyrightText: 2021 smdn <smdn@smdn.jp>
+SPDX-License-Identifier: MIT
+-->
+<Project>
+  <!--
+    alternative of nuget.exe's -IncludeReferencedProjects option
+    https://github.com/NuGet/Home/issues/3891
+
+    other workarounds:
+      https://github.com/NuGet/Home/issues/3891#issuecomment-569491001
+      https://github.com/NuGet/Home/issues/3891#issuecomment-377319939
+  -->
+  <Target Name="PopulateDependingAssembliesToPackage">
+    <ItemGroup>
+      <TfmSpecificPackageFile
+        Include="$(OutputPath)\*.dll"
+        Exclude="$(OutputPath)\$(AssemblyName).dll"
+        PackagePath="$(BuildOutputTargetFolder)\$(TargetFramework)\"
+      />
+    </ItemGroup>
+  </Target>
+</Project>

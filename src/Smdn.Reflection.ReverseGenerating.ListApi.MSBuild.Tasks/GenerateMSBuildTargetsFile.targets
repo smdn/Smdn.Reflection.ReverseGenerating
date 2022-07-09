@@ -1,0 +1,53 @@
+<!--
+SPDX-FileCopyrightText: 2021 smdn <smdn@smdn.jp>
+SPDX-License-Identifier: MIT
+-->
+<Project>
+  <Target
+    Name="GenerateMSBuildTargetsFile"
+    DependsOnTargets="GenerateTaskFiles"
+  >
+    <ItemGroup>
+      <TaskTargetFrameworks Include="$(TargetFrameworks.Split(';'))" />
+      <TaskFiles
+        Include="@(ExportTaskNames)"
+        TargetFramework="%(TaskTargetFrameworks.Identity)"
+      />
+      <TaskFiles
+        ImportLine="&lt;Import Project=&quot;..\$(BuildOutputTargetFolder)\%(TargetFramework)\%(Identity).task&quot; /&gt;"
+      />
+    </ItemGroup>
+
+    <PropertyGroup>
+      <GenerateMSBuildTargetsFileOutputPath>$(OutputPath)\$(AssemblyName).targets</GenerateMSBuildTargetsFileOutputPath>
+      <!-- TODO: MSBuildRuntimeType == Full, Mono and otherwise -->
+      <GenerateMSBuildTargetsFileLines><![CDATA[
+<Project>
+  <ImportGroup Condition=" '%24(MSBuildRuntimeType)' == 'Core' and %24([System.Runtime.InteropServices.RuntimeInformation]::FrameworkDescription.StartsWith('.NET Core 3.')) ">
+    <!-- .NET Core 3.x -->
+    @(TaskFiles->WithMetadataValue('TargetFramework', 'netcoreapp3.1')->'%(ImportLine)', '%0D%0A    ')
+  </ImportGroup>
+  <ImportGroup Condition=" '%24(MSBuildRuntimeType)' == 'Core' and %24([System.Runtime.InteropServices.RuntimeInformation]::FrameworkDescription.StartsWith('.NET 5.')) ">
+    <!-- .NET 5.x -->
+    @(TaskFiles->WithMetadataValue('TargetFramework', 'net5.0')->'%(ImportLine)', '%0D%0A    ')
+  </ImportGroup>
+  <ImportGroup Condition=" '%24(MSBuildRuntimeType)' == 'Core' and %24([System.Runtime.InteropServices.RuntimeInformation]::FrameworkDescription.StartsWith('.NET 6.')) ">
+    <!-- .NET 6.x -->
+    @(TaskFiles->WithMetadataValue('TargetFramework', 'net6.0')->'%(ImportLine)', '%0D%0A    ')
+  </ImportGroup>
+</Project>
+      ]]></GenerateMSBuildTargetsFileLines>
+    </PropertyGroup>
+
+    <WriteLinesToFile
+      File="$(GenerateMSBuildTargetsFileOutputPath)"
+      Lines="$(GenerateMSBuildTargetsFileLines)"
+      Overwrite="true"
+      Encoding="UTF-8"
+    />
+
+    <ItemGroup>
+      <None Pack="true" Include="$(GenerateMSBuildTargetsFileOutputPath)" PackagePath="buildMultitargeting" />
+    </ItemGroup>
+  </Target>
+</Project>
