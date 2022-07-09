@@ -87,7 +87,7 @@ public class ApiListWriter {
     }
 
     BaseWriter.WriteLine();
-    BaseWriter.WriteLine(typeDeclarations);
+    BaseWriter.Write(typeDeclarations);
   }
 
   private static string GenerateTypeAndMemberDeclarations(
