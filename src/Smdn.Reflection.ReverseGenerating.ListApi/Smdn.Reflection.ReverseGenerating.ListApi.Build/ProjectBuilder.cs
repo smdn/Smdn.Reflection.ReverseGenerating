@@ -53,14 +53,14 @@ public static class ProjectBuilder {
       globalProps["RuntimeIdentifier"] = options.RuntimeIdentifier;
 
     logger?.LogDebug("Build requested");
-    logger?.LogDebug($"  project: {projectFile}");
+    logger?.LogDebug("  project: {ProjectFile}", projectFile);
 
-    logger?.LogDebug($"  targets: {string.Join(";", options.TargetsToBuild)}");
+    logger?.LogDebug("  targets: {Targets}", string.Join(";", options.TargetsToBuild));
 
     logger?.LogDebug("  global properties:");
 
     foreach (var globalProp in globalProps) {
-      logger?.LogDebug($"    {globalProp.Key}: '{globalProp.Value}'");
+      logger?.LogDebug("    {GlobalPropKey}: '{GlobalPropValue}'", globalProp.Key, globalProp.Value);
     }
 
     var proj = new Project(
@@ -102,7 +102,7 @@ public static class ProjectBuilder {
           .Select(static item => item.GetMetadataValue("Identity"));
 
         foreach (var innerOutputFullPath in innerOutputFullPaths) {
-          logger?.LogDebug($"build output file: {innerOutputFullPath}");
+          logger?.LogDebug("build output file: {InnerOutputFullPath}", innerOutputFullPath);
 
           yield return new FileInfo(innerOutputFullPath);
         }
@@ -116,7 +116,7 @@ public static class ProjectBuilder {
             .Select(static item => item.GetMetadata("Identity"));
 
           foreach (var buildOutputFullPath in buildOutputFullPaths) {
-            logger?.LogDebug($"build output file: {buildOutputFullPath}");
+            logger?.LogDebug("build output file: {BuildOutputFullPath}", buildOutputFullPath);
 
             yield return new FileInfo(buildOutputFullPath);
           }

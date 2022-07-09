@@ -153,12 +153,14 @@ public class RootCommandImplementation {
 
   private void CommandMain(ParseResult parseResult, IConsole console)
   {
+#pragma warning disable CA2254
     logger?.LogDebug(parseResult.ToString());
+#pragma warning restore CA2254
 
     // ref: https://docs.microsoft.com/en-us/dotnet/core/dependency-loading/default-probing
-    logger?.LogDebug($"APP_PATHS={AppContext.GetData("APP_PATHS")}");
-    logger?.LogDebug($"APP_CONTEXT_DEPS_FILES={AppContext.GetData("APP_CONTEXT_DEPS_FILES")}");
-    logger?.LogDebug($"TRUSTED_PLATFORM_ASSEMBLIES={AppContext.GetData("TRUSTED_PLATFORM_ASSEMBLIES")}");
+    logger?.LogDebug("APP_PATHS={AppContext_APP_PATHS}", AppContext.GetData("APP_PATHS"));
+    logger?.LogDebug("APP_CONTEXT_DEPS_FILES={AppContext_APP_CONTEXT_DEPS_FILES}", AppContext.GetData("APP_CONTEXT_DEPS_FILES"));
+    logger?.LogDebug("TRUSTED_PLATFORM_ASSEMBLIES={AppContext_TRUSTED_PLATFORM_ASSEMBLIES}", AppContext.GetData("TRUSTED_PLATFORM_ASSEMBLIES"));
 
     var options = GetApiListWriterOptions(parseResult);
     var outputDirectory = GetOutputDirectory(parseResult);
@@ -192,8 +194,8 @@ public class RootCommandImplementation {
             writer.WriteAssemblyInfoHeader();
             writer.WriteExportedTypes();
 
-            arg.logger?.LogDebug($"generated API list {outputFilePath}");
-            arg.logger?.LogInformation($"{assm.Location} -> {outputFilePath}");
+            arg.logger?.LogDebug("generated API list {OutputFilePath}", outputFilePath);
+            arg.logger?.LogInformation("{AssemblyFilePath} -> {OutputFilePath}", assm.Location, outputFilePath);
 
             return outputFilePath;
           }
@@ -324,7 +326,7 @@ public class RootCommandImplementation {
       throw new CommandOperationNotSupportedException($"unsupported input: {input}");
     }
 
-    logger?.LogDebug($"input file: '{inputFile.FullName}'");
+    logger?.LogDebug("input file: '{InputFilePath}'", inputFile.FullName);
 
     IEnumerable<FileInfo> inputAssemblyFiles = null;
 
@@ -358,7 +360,7 @@ public class RootCommandImplementation {
 #endif
     }
     else {
-      logger?.LogWarning($"unknown type of file: {inputFile}");
+      logger?.LogWarning("unknown type of file: {InputFilePath}", inputFile);
 
       // try process as an assembly file
       inputAssemblyFiles = Enumerable.Repeat(inputFile, 1);

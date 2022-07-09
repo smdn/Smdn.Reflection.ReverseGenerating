@@ -140,7 +140,7 @@ public static class MSBuildExePath {
     if (string.IsNullOrEmpty(Environment.GetEnvironmentVariable(MSBUILD_EXE_PATH)))
       Environment.SetEnvironmentVariable(MSBUILD_EXE_PATH, GetMSBuildExePath(out _));
 
-    logger?.LogDebug($"{MSBUILD_EXE_PATH}: {Environment.GetEnvironmentVariable(MSBUILD_EXE_PATH)}");
+    logger?.LogDebug("{MSBUILD_EXE_PATH}: {ENVVAR_MSBUILD_EXE_PATH}", MSBUILD_EXE_PATH, Environment.GetEnvironmentVariable(MSBUILD_EXE_PATH));
   }
 }
 #endif

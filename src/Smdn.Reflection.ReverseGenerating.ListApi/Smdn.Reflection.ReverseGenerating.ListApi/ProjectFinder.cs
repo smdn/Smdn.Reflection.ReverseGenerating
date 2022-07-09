@@ -15,7 +15,7 @@ public static class ProjectFinder {
     ILogger logger = null
   )
   {
-    logger?.LogDebug($"finding project or solution from directory '{directory.FullName}'");
+    logger?.LogDebug("finding project or solution from directory '{Directory}'", directory.FullName);
 
     var solutionAndProjectFiles = directory
       .GetFiles("*.*", SearchOption.TopDirectoryOnly)
@@ -32,7 +32,7 @@ public static class ProjectFinder {
     if (first is null)
       throw new FileNotFoundException($"no solution or project file found in directory '{directory.FullName}'");
 
-    logger?.LogDebug($"found '{first.FullName}'");
+    logger?.LogDebug("found '{ProjectOrSolutionPath}'", first.FullName);
 
     return first;
   }
