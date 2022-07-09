@@ -2,11 +2,12 @@
 //   Name: Smdn.Reflection.ReverseGenerating
 //   AssemblyVersion: 1.1.0.0
 //   InformationalVersion: 1.1.0+074a83ab64ee9e829c2f3835cf0c03af8af0f59d
-//   TargetFramework: .NETStandard,Version=v2.0
+//   TargetFramework: .NETCoreApp,Version=v6.0
 //   Configuration: Release
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using Smdn.Reflection;
@@ -32,17 +33,24 @@ namespace Smdn.Reflection.ReverseGenerating {
   public static class CSharpFormatter {
     public static string EscapeString(string s, bool escapeSingleQuote = false, bool escapeDoubleQuote = false) {}
     public static string FormatAccessibility(Accessibility accessibility) {}
+    public static string FormatParameter(ParameterInfo p, [Nullable(2)] NullabilityInfoContext nullabilityInfoContext, bool typeWithNamespace = true, bool useDefaultLiteral = false) {}
     public static string FormatParameter(ParameterInfo p, bool typeWithNamespace = true, bool useDefaultLiteral = false) {}
+    public static string FormatParameterList(MethodBase m, [Nullable(2)] NullabilityInfoContext nullabilityInfoContext, bool typeWithNamespace = true, bool useDefaultLiteral = false) {}
     public static string FormatParameterList(MethodBase m, bool typeWithNamespace = true, bool useDefaultLiteral = false) {}
+    public static string FormatParameterList(ParameterInfo[] parameterList, [Nullable(2)] NullabilityInfoContext nullabilityInfoContext, bool typeWithNamespace = true, bool useDefaultLiteral = false) {}
     public static string FormatParameterList(ParameterInfo[] parameterList, bool typeWithNamespace = true, bool useDefaultLiteral = false) {}
     public static string FormatSpecialNameMethod(MethodBase methodOrConstructor, out MethodSpecialName nameType) {}
+    public static string FormatTypeName(this EventInfo ev, [Nullable(2)] NullabilityInfoContext nullabilityInfoContext, bool typeWithNamespace = true, bool withDeclaringTypeName = true, bool translateLanguagePrimitiveType = true) {}
     public static string FormatTypeName(this EventInfo ev, bool typeWithNamespace = true, bool withDeclaringTypeName = true, bool translateLanguagePrimitiveType = true) {}
+    public static string FormatTypeName(this FieldInfo f, [Nullable(2)] NullabilityInfoContext nullabilityInfoContext, bool typeWithNamespace = true, bool withDeclaringTypeName = true, bool translateLanguagePrimitiveType = true) {}
     public static string FormatTypeName(this FieldInfo f, bool typeWithNamespace = true, bool withDeclaringTypeName = true, bool translateLanguagePrimitiveType = true) {}
+    public static string FormatTypeName(this ParameterInfo p, [Nullable(2)] NullabilityInfoContext nullabilityInfoContext, bool typeWithNamespace = true, bool withDeclaringTypeName = true, bool translateLanguagePrimitiveType = true) {}
     public static string FormatTypeName(this ParameterInfo p, bool typeWithNamespace = true, bool withDeclaringTypeName = true, bool translateLanguagePrimitiveType = true) {}
+    public static string FormatTypeName(this PropertyInfo p, [Nullable(2)] NullabilityInfoContext nullabilityInfoContext, bool typeWithNamespace = true, bool withDeclaringTypeName = true, bool translateLanguagePrimitiveType = true) {}
     public static string FormatTypeName(this PropertyInfo p, bool typeWithNamespace = true, bool withDeclaringTypeName = true, bool translateLanguagePrimitiveType = true) {}
     public static string FormatTypeName(this Type t, [Nullable(2)] ICustomAttributeProvider attributeProvider = null, bool typeWithNamespace = true, bool withDeclaringTypeName = true, bool translateLanguagePrimitiveType = true) {}
     public static string FormatValueDeclaration([Nullable(2)] object val, Type typeOfValue, bool typeWithNamespace = true, bool findConstantField = false, bool useDefaultLiteral = false) {}
-    public static bool IsLanguagePrimitiveType(Type t, out string primitiveTypeName) {}
+    public static bool IsLanguagePrimitiveType(Type t, [MaybeNullWhen(false)] out string primitiveTypeName) {}
     public static IEnumerable<string> ToNamespaceList(Type t) {}
   }
 
@@ -78,12 +86,14 @@ namespace Smdn.Reflection.ReverseGenerating {
       public bool WithNamespace { get; set; }
     }
 
-    [NullableContext(byte.MinValue)]
+    [Nullable(byte.MinValue)]
+    [NullableContext(2)]
     public class MemberDeclarationOptions {
       public MemberDeclarationOptions() {}
 
       public MethodBodyOption AccessorBody { get; set; }
       public MethodBodyOption MethodBody { get; set; }
+      public NullabilityInfoContext NullabilityInfoContext { get; set; }
       public bool OmitEndOfStatement { get; set; }
       public bool WithAccessibility { get; set; }
       public bool WithDeclaringTypeName { get; set; }
@@ -98,10 +108,12 @@ namespace Smdn.Reflection.ReverseGenerating {
       public bool WithNamespace { get; set; }
     }
 
-    [NullableContext(byte.MinValue)]
+    [Nullable(byte.MinValue)]
+    [NullableContext(2)]
     public class TypeDeclarationOptions {
       public TypeDeclarationOptions() {}
 
+      public NullabilityInfoContext NullabilityInfoContext { get; set; }
       public bool OmitEndOfStatement { get; set; }
       public bool WithAccessibility { get; set; }
       public bool WithDeclaringTypeName { get; set; }
