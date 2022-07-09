@@ -1,0 +1,18 @@
+<!--
+SPDX-FileCopyrightText: 2022 smdn <smdn@smdn.jp>
+SPDX-License-Identifier: MIT
+-->
+<Project>
+  <!-- use exported tasks from the built assembly instead of from the project asset package -->
+  <PropertyGroup>
+    <UseExportedTasksFromOutputAssembly>true</UseExportedTasksFromOutputAssembly>
+    <UsingTaskAssemblyFileConfiguration>Release</UsingTaskAssemblyFileConfiguration>
+    <UsingTaskAssemblyFileTargetFramework>net6.0</UsingTaskAssemblyFileTargetFramework>
+  </PropertyGroup>
+
+  <UsingTask
+    Condition="'$(UseExportedTasksFromOutputAssembly)' == 'true'"
+    TaskName="@(ExportTaskNames->'%(Namespace).%(Identity)', ';')"
+    AssemblyFile="$(BaseOutputPath)$(UsingTaskAssemblyFileConfiguration)\$(UsingTaskAssemblyFileTargetFramework)\$(AssemblyName).dll"
+  />
+</Project>

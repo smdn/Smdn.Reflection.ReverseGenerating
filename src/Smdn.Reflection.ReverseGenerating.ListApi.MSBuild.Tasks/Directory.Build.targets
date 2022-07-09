@@ -1,0 +1,10 @@
+<!--
+SPDX-FileCopyrightText: 2022 smdn <smdn@smdn.jp>
+SPDX-License-Identifier: MIT
+-->
+<Project>
+  <ImportGroup>
+    <Import Project="$(MSBuildThisFileDirectory)..\Directory.Build.targets" />
+    <Import Project="$(MSBuildThisFileDirectory)UsingExportedTasks.targets" />
+  </ImportGroup>
+</Project>
