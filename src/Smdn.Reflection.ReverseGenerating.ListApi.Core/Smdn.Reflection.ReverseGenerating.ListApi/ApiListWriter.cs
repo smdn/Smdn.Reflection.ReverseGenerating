@@ -82,6 +82,7 @@ public class ApiListWriter {
       .ThenBy(static ns => ns, StringComparer.Ordinal);
 
     if (options.Writer.WriteNullableAnnotationDirective) {
+#if SYSTEM_REFLECTION_NULLABILITYINFOCONTEXT
       if (
         options.TypeDeclaration.NullabilityInfoContext is not null &&
         options.MemberDeclaration.NullabilityInfoContext is not null
@@ -99,6 +100,9 @@ public class ApiListWriter {
       else {
         BaseWriter.WriteLine();
       }
+#else
+      BaseWriter.WriteLine();
+#endif
     }
     else {
       BaseWriter.WriteLine();
@@ -139,13 +143,21 @@ public class ApiListWriter {
       .ThenBy(static type => type.FullName, StringComparer.Ordinal);
 
     var enableNullableAnnotationsOnlyOnTypes =
+#if SYSTEM_REFLECTION_NULLABILITYINFOCONTEXT
       options.Writer.WriteNullableAnnotationDirective &&
       options.TypeDeclaration.NullabilityInfoContext is not null &&
       options.MemberDeclaration.NullabilityInfoContext is null;
+#else
+      false;
+#endif
     var enableNullableAnnotationsOnlyOnMembers =
+#if SYSTEM_REFLECTION_NULLABILITYINFOCONTEXT
       options.Writer.WriteNullableAnnotationDirective &&
       options.TypeDeclaration.NullabilityInfoContext is null &&
       options.MemberDeclaration.NullabilityInfoContext is not null;
+#else
+      false;
+#endif
 
     foreach (var type in orderedTypes) {
       var isDelegate = type.IsDelegate();
