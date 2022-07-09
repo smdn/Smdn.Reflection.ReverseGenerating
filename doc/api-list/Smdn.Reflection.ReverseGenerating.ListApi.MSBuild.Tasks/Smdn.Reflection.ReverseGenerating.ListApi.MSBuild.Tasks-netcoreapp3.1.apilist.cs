@@ -1,30 +1,26 @@
-// Smdn.Reflection.ReverseGenerating.ListApi.MSBuild.Tasks.dll (Smdn.Reflection.ReverseGenerating.ListApi.MSBuild.Tasks-1.0.3 (netcoreapp3.1))
+// Smdn.Reflection.ReverseGenerating.ListApi.MSBuild.Tasks.dll (Smdn.Reflection.ReverseGenerating.ListApi.MSBuild.Tasks-1.1.0)
 //   Name: Smdn.Reflection.ReverseGenerating.ListApi.MSBuild.Tasks
-//   AssemblyVersion: 1.0.3.0
-//   InformationalVersion: 1.0.3 (netcoreapp3.1)
+//   AssemblyVersion: 1.1.0.0
+//   InformationalVersion: 1.1.0+64b5c72527e2ce0705ed5d9ed2328179311a4c94
 //   TargetFramework: .NETCoreApp,Version=v3.1
 //   Configuration: Release
+#nullable enable annotations
 
 using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
 
 namespace Smdn.Reflection.ReverseGenerating.ListApi.MSBuild.Tasks {
-  [Nullable(byte.MinValue)]
-  [NullableContext(2)]
   public class GenerateApiList : Task {
     public GenerateApiList() {}
 
     [Required]
-    [Nullable]
-    public ITaskItem[] Assemblies { get; set; }
+    public ITaskItem[]? Assemblies { get; set; }
     public bool GenerateFullTypeName { get; set; }
-    public string GenerateMethodBody { get; set; }
+    public string? GenerateMethodBody { get; set; }
     public bool GenerateStaticMembersFirst { get; set; }
     [Output]
-    [Nullable]
-    public ITaskItem[] GeneratedFiles { get; }
+    public ITaskItem[]? GeneratedFiles { get; }
 
     public override bool Execute() {}
   }
 }
-
