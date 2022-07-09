@@ -1,7 +1,7 @@
-// Smdn.Reflection.ReverseGenerating.ListApi.Core.dll (Smdn.Reflection.ReverseGenerating.ListApi.Core-1.0.0 (net5.0))
+// Smdn.Reflection.ReverseGenerating.ListApi.Core.dll (Smdn.Reflection.ReverseGenerating.ListApi.Core-1.1.0)
 //   Name: Smdn.Reflection.ReverseGenerating.ListApi.Core
-//   AssemblyVersion: 1.0.0.0
-//   InformationalVersion: 1.0.0 (net5.0)
+//   AssemblyVersion: 1.1.0.0
+//   InformationalVersion: 1.1.0+074a83ab64ee9e829c2f3835cf0c03af8af0f59d
 //   TargetFramework: .NETCoreApp,Version=v5.0
 //   Configuration: Release
 
@@ -29,6 +29,7 @@ namespace Smdn.Reflection.ReverseGenerating.ListApi {
       public WriterOptions() {}
 
       public bool OrderStaticMembersFirst { get; set; }
+      public bool WriteNullableAnnotationDirective { get; set; }
     }
 
     public ApiListWriterOptions() {}
