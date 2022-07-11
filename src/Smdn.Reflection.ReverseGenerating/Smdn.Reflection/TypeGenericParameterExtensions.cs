@@ -77,4 +77,16 @@ internal static class TypeGenericParameterExtensions {
       continue;
     }
   }
+
+  public static bool HasGenericParameterNoConstraints(this Type genericParameter)
+  {
+    ValidateGenericParameterArgument(genericParameter, nameof(genericParameter));
+
+    var genericParameterConstraintAttrs = genericParameter.GenericParameterAttributes & GenericParameterAttributes.SpecialConstraintMask;
+
+    if (genericParameterConstraintAttrs != GenericParameterAttributes.None)
+      return false;
+
+    return !HasGenericParameterNotNullConstraint(genericParameter);
+  }
 }

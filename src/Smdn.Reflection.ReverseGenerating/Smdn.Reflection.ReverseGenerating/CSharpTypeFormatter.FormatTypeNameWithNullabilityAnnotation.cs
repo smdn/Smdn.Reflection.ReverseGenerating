@@ -104,6 +104,10 @@ static partial class CSharpFormatter {
         .Append(nullabilityAnnotationForByRefParameter);
     }
 
+    if (targetType.IsGenericParameter && targetType.HasGenericParameterNoConstraints())
+      // generic parameter which has no constraints must not have nullability annotation
+      return builder.Append(GetTypeName(targetType, options));
+
     if (!targetType.IsGenericParameter) {
       if (targetType.IsNested && options.WithDeclaringTypeName)
         builder.Append(FormatTypeNameCore(targetType.GetDeclaringTypeOrThrow(), options)).Append('.');

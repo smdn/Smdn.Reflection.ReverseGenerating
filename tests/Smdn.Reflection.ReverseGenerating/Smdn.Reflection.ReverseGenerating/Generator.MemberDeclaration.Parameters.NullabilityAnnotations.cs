@@ -141,6 +141,38 @@ public class NullabilityAnnotations {
     [MemberDeclarationTestCase($"public void {nameof(NullableRefType)}(string p) {{}}", MemberEnableNullabilityAnnotations = false)]
     [MemberDeclarationTestCase($"public void {nameof(NullableRefType)}(string? p) {{}}", MemberEnableNullabilityAnnotations = true)]
     public void NullableRefType(string? p) { }
+
+    [MemberDeclarationTestCase($"public void {nameof(GenericType)}<T>(T p) {{}}", MemberEnableNullabilityAnnotations = false)]
+    [MemberDeclarationTestCase($"public void {nameof(GenericType)}<T>(T p) {{}}", MemberEnableNullabilityAnnotations = true)]
+    public void GenericType<T>(T p) { }
+
+    [MemberDeclarationTestCase($"public void {nameof(NullableGenericType)}<T>(T p) {{}}", MemberEnableNullabilityAnnotations = false)]
+    [MemberDeclarationTestCase($"public void {nameof(NullableGenericType)}<T>(T p) {{}}", MemberEnableNullabilityAnnotations = true)]
+    public void NullableGenericType<T>(T? p) { }
+
+    [MemberDeclarationTestCase($"public void {nameof(GenericNotNullType)}<TNotNull>(TNotNull p) where TNotNull : notnull {{}}", MemberEnableNullabilityAnnotations = false)]
+    [MemberDeclarationTestCase($"public void {nameof(GenericNotNullType)}<TNotNull>(TNotNull p) where TNotNull : notnull {{}}", MemberEnableNullabilityAnnotations = true)]
+    public void GenericNotNullType<TNotNull>(TNotNull p) where TNotNull : notnull { }
+
+    [MemberDeclarationTestCase($"public void {nameof(NullableGenericNotNullType)}<TNotNull>(TNotNull p) where TNotNull : notnull {{}}", MemberEnableNullabilityAnnotations = false)]
+    [MemberDeclarationTestCase($"public void {nameof(NullableGenericNotNullType)}<TNotNull>(TNotNull? p) where TNotNull : notnull {{}}", MemberEnableNullabilityAnnotations = true)]
+    public void NullableGenericNotNullType<TNotNull>(TNotNull? p) where TNotNull : notnull { }
+
+    [MemberDeclarationTestCase($"public void {nameof(GenericValueType)}<TValue>(TValue p) where TValue : struct {{}}", MemberEnableNullabilityAnnotations = false)]
+    [MemberDeclarationTestCase($"public void {nameof(GenericValueType)}<TValue>(TValue p) where TValue : struct {{}}", MemberEnableNullabilityAnnotations = true)]
+    public void GenericValueType<TValue>(TValue p) where TValue : struct { }
+
+    [MemberDeclarationTestCase($"public void {nameof(NullableGenericValueType)}<TValue>(TValue? p) where TValue : struct {{}}", MemberEnableNullabilityAnnotations = false)]
+    [MemberDeclarationTestCase($"public void {nameof(NullableGenericValueType)}<TValue>(TValue? p) where TValue : struct {{}}", MemberEnableNullabilityAnnotations = true)]
+    public void NullableGenericValueType<TValue>(TValue? p) where TValue : struct { }
+
+    [MemberDeclarationTestCase($"public void {nameof(GenericRefType)}<TRef>(TRef p) where TRef : class {{}}", MemberEnableNullabilityAnnotations = false)]
+    [MemberDeclarationTestCase($"public void {nameof(GenericRefType)}<TRef>(TRef p) where TRef : class {{}}", MemberEnableNullabilityAnnotations = true)]
+    public void GenericRefType<TRef>(TRef p) where TRef : class { }
+
+    [MemberDeclarationTestCase($"public void {nameof(NullableGenericRefType)}<TRef>(TRef p) where TRef : class {{}}", MemberEnableNullabilityAnnotations = false)]
+    [MemberDeclarationTestCase($"public void {nameof(NullableGenericRefType)}<TRef>(TRef? p) where TRef : class {{}}", MemberEnableNullabilityAnnotations = true)]
+    public void NullableGenericRefType<TRef>(TRef? p) where TRef : class { }
   }
 }
 #endif
