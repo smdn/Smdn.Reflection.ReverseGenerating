@@ -156,48 +156,6 @@ public static partial class Generator {
         static attr => attr.AttributeType.FullName.Equals("System.Runtime.CompilerServices.IsUnmanagedAttribute", StringComparison.Ordinal)
       );
 
-    static bool IsNullableAttribute(CustomAttributeData attr)
-      => attr.AttributeType.FullName.Equals("System.Runtime.CompilerServices.NullableAttribute", StringComparison.Ordinal);
-
-    static bool IsNullableContextAttribute(CustomAttributeData attr)
-      => attr.AttributeType.FullName.Equals("System.Runtime.CompilerServices.NullableContextAttribute", StringComparison.Ordinal);
-
-    static CustomAttributeData? TryGetNullableContextAttributeFromDeclaringTypeOrOuterType(Type type)
-    {
-      Type? t = type;
-
-      for (; ; ) {
-        if ((t = t!.DeclaringType) is null)
-          return null;
-
-        var attr = t!.CustomAttributes.FirstOrDefault(IsNullableContextAttribute);
-
-        if (attr is not null)
-          return attr;
-
-        // retry against to the outer type
-        continue;
-      }
-    }
-
-    // ref: https://github.com/dotnet/roslyn/blob/main/docs/features/nullable-metadata.md#type-parameters
-    static bool HasNotNullConstraint(Type genericParameter)
-    {
-      var attrNullable = genericParameter.CustomAttributes.FirstOrDefault(IsNullableAttribute);
-      var attrNullableContext =
-        genericParameter.DeclaringMethod?.CustomAttributes?.FirstOrDefault(IsNullableContextAttribute) ??
-        TryGetNullableContextAttributeFromDeclaringTypeOrOuterType(genericParameter);
-
-      const byte notAnnotated = 1;
-
-      if (attrNullableContext is not null && notAnnotated.Equals(attrNullableContext.ConstructorArguments[0].Value))
-        // `#nullable enable` context
-        return attrNullable is null;
-      else
-        // `#nullable disable` context
-        return attrNullable is not null && notAnnotated.Equals(attrNullable.ConstructorArguments[0].Value);
-    }
-
     static bool IsValueType(Type t) => string.Equals(t.FullName, typeof(ValueType).FullName, StringComparison.Ordinal);
     static bool IsNotValueType(Type t) => !string.Equals(t.FullName, typeof(ValueType).FullName, StringComparison.Ordinal);
 
@@ -215,7 +173,7 @@ public static partial class Generator {
 
       if (
         constraintAttrs == GenericParameterAttributes.None &&
-        HasNotNullConstraint(genericParameter)
+        genericParameter.HasGenericParameterNotNullConstraint()
       ) {
         yield return "notnull";
       }
