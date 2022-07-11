@@ -1051,16 +1051,13 @@ namespace Smdn.Reflection.ReverseGenerating {
 
           public class Constraints1 {
 #nullable enable annotations
-#if SYSTEM_REFLECTION_NULLABILITYINFO
-            [MemberDeclarationTestCase("public T? M0_NullableEnableContext<T>(T? x) {}")]
-#else
             [MemberDeclarationTestCase("public T M0_NullableEnableContext<T>(T x) {}")]
-#endif
             public T M0_NullableEnableContext<T>(T x) => throw new NotImplementedException();
-#nullable restore
 #nullable disable annotations
-            [MemberDeclarationTestCase("public T M0_NullableDisableContext<T>(T x) {}")] public T M0_NullableDisableContext<T>(T x) => throw new NotImplementedException();
+            [MemberDeclarationTestCase("public T M0_NullableDisableContext<T>(T x) {}")]
+            public T M0_NullableDisableContext<T>(T x) => throw new NotImplementedException();
 #nullable restore
+
             [MemberDeclarationTestCase("public T M1<T>(T x) where T : new() {}")] public T M1<T>(T x) where T : new() => throw new NotImplementedException();
             [MemberDeclarationTestCase("public T M2_0<T>(T x) where T : struct {}")] public T M2_0<T>(T x) where T : struct => throw new NotImplementedException();
             [MemberDeclarationTestCase("public T M2_1<T>(T x) where T : struct, System.IDisposable {}")] public T M2_1<T>(T x) where T : struct, IDisposable => throw new NotImplementedException();
@@ -1081,47 +1078,42 @@ namespace Smdn.Reflection.ReverseGenerating {
             [MemberDeclarationTestCase("public T M12<T>(T x) where T : System.Delegate {}")] public T M12<T>(T x) where T : System.Delegate => throw new NotImplementedException();
             [MemberDeclarationTestCase("public T M13<T>(T x) where T : System.MulticastDelegate {}")] public T M13<T>(T x) where T : System.MulticastDelegate => throw new NotImplementedException();
 
-#nullable enable annotations
-#if SYSTEM_REFLECTION_NULLABILITYINFO
-            [MemberDeclarationTestCase("public void M14_0_NullableEnableContext<T0, T1>(T0 t0, T1? t1) where T0 : notnull {}")]
-#else
-            [MemberDeclarationTestCase("public void M14_0_NullableEnableContext<T0, T1>(T0 t0, T1 t1) where T0 : notnull {}")]
-#endif
-            public void M14_0_NullableEnableContext<T0, T1>(T0 t0, T1 t1) where T0 : notnull => throw new NotImplementedException();
-
-#if SYSTEM_REFLECTION_NULLABILITYINFO
-            [MemberDeclarationTestCase("public T0 M14_1_NullableEnableContext<T0, T1>(T0 t0, T1? t1) where T0 : notnull {}")]
-#else
-            [MemberDeclarationTestCase("public T0 M14_1_NullableEnableContext<T0, T1>(T0 t0, T1 t1) where T0 : notnull {}")]
-#endif
-            public T0 M14_1_NullableEnableContext<T0, T1>(T0 t0, T1 t1) where T0 : notnull => throw new NotImplementedException();
-
-#if SYSTEM_REFLECTION_NULLABILITYINFO
-            [MemberDeclarationTestCase("public T1? M14_2_NullableEnableContext<T0, T1>(T0 t0, T1? t1) where T0 : notnull {}")]
-#else
-            [MemberDeclarationTestCase("public T1 M14_2_NullableEnableContext<T0, T1>(T0 t0, T1 t1) where T0 : notnull {}")]
-#endif
-            public T1 M14_2_NullableEnableContext<T0, T1>(T0 t0, T1 t1) where T0 : notnull => throw new NotImplementedException();
-
-            [MemberDeclarationTestCase("public void M14_3_NullableEnableContext<T>(T t) where T : notnull, System.IDisposable {}")]
-            public void M14_3_NullableEnableContext<T>(T t) where T : notnull, IDisposable => throw new NotImplementedException();
-#nullable restore
-#nullable disable annotations
-            [MemberDeclarationTestCase("public void M14_0_NullableDisableContext<T0, T1>(T0 t0, T1 t1) where T0 : notnull {}")]
-            public void M14_0_NullableDisableContext<T0, T1>(T0 t0, T1 t1) where T0 : notnull => throw new NotImplementedException();
-
-            [MemberDeclarationTestCase("public T0 M14_1_NullableDisableContext<T0, T1>(T0 t0, T1 t1) where T0 : notnull {}")]
-            public T0 M14_1_NullableDisableContext<T0, T1>(T0 t0, T1 t1) where T0 : notnull => throw new NotImplementedException();
-
-            [MemberDeclarationTestCase("public T1 M14_2_NullableDisableContext<T0, T1>(T0 t0, T1 t1) where T0 : notnull {}")]
-            public T1 M14_2_NullableDisableContext<T0, T1>(T0 t0, T1 t1) where T0 : notnull => throw new NotImplementedException();
-
-            [MemberDeclarationTestCase("public void M14_3_NullableDisableContext<T>(T t) where T : notnull, System.IDisposable {}")]
-            public void M14_3_NullableDisableContext<T>(T t) where T : notnull, IDisposable => throw new NotImplementedException();
-#nullable restore
-
             [MemberDeclarationTestCase("public T M15_0<T>(T x) where T : unmanaged {}")] public T M15_0<T>(T x) where T : unmanaged => throw new NotImplementedException();
             [MemberDeclarationTestCase("public T M15_1<T>(T x) where T : unmanaged, System.IDisposable {}")] public T M15_1<T>(T x) where T : unmanaged, IDisposable => throw new NotImplementedException();
+          }
+
+          public class ConstraintsNotNull {
+#nullable enable annotations
+            [MemberDeclarationTestCase($"public void {nameof(NotNull_NullableEnableContext)}<TNotNull, T>(TNotNull pNotNull, T p) where TNotNull : notnull {{}}")]
+            public void NotNull_NullableEnableContext<TNotNull, T>(TNotNull pNotNull, T p) where TNotNull : notnull => throw new NotImplementedException();
+#nullable disable annotations
+            [MemberDeclarationTestCase($"public void {nameof(NotNull_NullableDisableContext)}<TNotNull, T>(TNotNull pNotNull, T p) where TNotNull : notnull {{}}")]
+            public void NotNull_NullableDisableContext<TNotNull, T>(TNotNull pNotNull, T p) where TNotNull : notnull => throw new NotImplementedException();
+#nullable restore
+
+#nullable enable annotations
+            [MemberDeclarationTestCase($"public TNotNull {nameof(NotNull_ReturnParameter_NullableEnableContext)}<TNotNull, T>(TNotNull pNotNull, T p) where TNotNull : notnull {{}}")]
+            public TNotNull NotNull_ReturnParameter_NullableEnableContext<TNotNull, T>(TNotNull pNotNull, T p) where TNotNull : notnull => throw new NotImplementedException();
+#nullable disable annotations
+            [MemberDeclarationTestCase($"public TNotNull {nameof(NotNull_ReturnParameter_NullableDisableContext)}<TNotNull, T>(TNotNull pNotNull, T p) where TNotNull : notnull {{}}")]
+            public TNotNull NotNull_ReturnParameter_NullableDisableContext<TNotNull, T>(TNotNull pNotNull, T p) where TNotNull : notnull => throw new NotImplementedException();
+#nullable restore
+
+#nullable enable annotations
+            [MemberDeclarationTestCase($"public T {nameof(NotNull_OnlyParameter_NullableEnableContext)}<TNotNull, T>(TNotNull pNotNull, T p) where TNotNull : notnull {{}}")]
+            public T NotNull_OnlyParameter_NullableEnableContext<TNotNull, T>(TNotNull pNotNull, T p) where TNotNull : notnull => throw new NotImplementedException();
+#nullable disable annotations
+            [MemberDeclarationTestCase($"public T {nameof(NotNull_OnlyParameter_NullableDisableContext)}<TNotNull, T>(TNotNull pNotNull, T p) where TNotNull : notnull {{}}")]
+            public T NotNull_OnlyParameter_NullableDisableContext<TNotNull, T>(TNotNull pNotNull, T p) where TNotNull : notnull => throw new NotImplementedException();
+#nullable restore
+
+#nullable enable annotations
+            [MemberDeclarationTestCase($"public TNotNullDisposable {nameof(NotNullAndTypeConstraint_NullableEnableContext)}<TNotNullDisposable>(TNotNullDisposable p) where TNotNullDisposable : notnull, System.IDisposable {{}}")]
+            public TNotNullDisposable NotNullAndTypeConstraint_NullableEnableContext<TNotNullDisposable>(TNotNullDisposable p) where TNotNullDisposable : notnull, IDisposable => throw new NotImplementedException();
+#nullable disable annotations
+            [MemberDeclarationTestCase($"public TNotNullDisposable {nameof(NotNullAndTypeConstraint_NullableDisableContext)}<TNotNullDisposable>(TNotNullDisposable p) where TNotNullDisposable : notnull, System.IDisposable {{}}")]
+            public TNotNullDisposable NotNullAndTypeConstraint_NullableDisableContext<TNotNullDisposable>(TNotNullDisposable p) where TNotNullDisposable : notnull, IDisposable => throw new NotImplementedException();
+#nullable restore
           }
 
           public class ConstraintsNotNullWithNullableMetadata {

@@ -233,11 +233,7 @@ namespace Smdn.Reflection.ReverseGenerating {
 
 #nullable enable annotations
           [MemberDeclarationTestCase(
-#if SYSTEM_REFLECTION_NULLABILITYINFOCONTEXT
-            "public void GenericMethodParameter_NullableEnableContext<[Nullable(2)] T>(T? p)",
-#else
             "public void GenericMethodParameter_NullableEnableContext<[Nullable(2)] T>(T p)",
-#endif
             AttributeWithNamespace = false,
             TypeWithNamespace = false,
             MethodBody = MethodBodyOption.None
