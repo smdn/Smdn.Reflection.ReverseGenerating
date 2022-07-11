@@ -785,7 +785,7 @@ public static partial class Generator {
           " ",
           genericArguments
             .Select(
-              arg => Generator.GenerateGenericArgumentConstraintDeclaration(arg, referencingNamespaces, options)
+              arg => GenerateGenericArgumentConstraintDeclaration(arg, referencingNamespaces, options)
             )
             .Where(static d => !string.IsNullOrEmpty(d))
         );
