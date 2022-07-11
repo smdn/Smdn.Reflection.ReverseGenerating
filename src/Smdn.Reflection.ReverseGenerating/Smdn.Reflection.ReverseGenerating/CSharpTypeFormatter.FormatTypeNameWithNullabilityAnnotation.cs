@@ -80,6 +80,10 @@ static partial class CSharpFormatter {
       if (IsValueTupleType(nullableUnderlyingType))
         // special case for nullable value tuples (Nullable<ValueTuple<>>)
         return FormatValueTuple(target, builder, options).Append(nullabilityAnnotationForByRefParameter);
+      else if (isGenericTypeClosedOrDefinition)
+        // case for nullable generic value types (Nullable<GenericValueType<>>)
+        // TODO: cannot get NullabilityInfo of generic type argument from Nullable<GenericValueType<>> (ex: KeyValuePair<int?, string?>?)
+        return builder.Append(FormatTypeNameCore(targetType, options));
 
       targetType = nullableUnderlyingType;
     }
