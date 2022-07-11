@@ -162,13 +162,31 @@ public static partial class Generator {
     static bool IsNullableContextAttribute(CustomAttributeData attr)
       => attr.AttributeType.FullName.Equals("System.Runtime.CompilerServices.NullableContextAttribute", StringComparison.Ordinal);
 
+    static CustomAttributeData? TryGetNullableContextAttributeFromDeclaringTypeOrOuterType(Type type)
+    {
+      Type? t = type;
+
+      for (; ; ) {
+        if ((t = t!.DeclaringType) is null)
+          return null;
+
+        var attr = t!.CustomAttributes.FirstOrDefault(IsNullableContextAttribute);
+
+        if (attr is not null)
+          return attr;
+
+        // retry against to the outer type
+        continue;
+      }
+    }
+
     // ref: https://github.com/dotnet/roslyn/blob/main/docs/features/nullable-metadata.md#type-parameters
     static bool HasNotNullConstraint(Type genericParameter)
     {
       var attrNullable = genericParameter.CustomAttributes.FirstOrDefault(IsNullableAttribute);
       var attrNullableContext =
         genericParameter.DeclaringMethod?.CustomAttributes?.FirstOrDefault(IsNullableContextAttribute) ??
-        genericParameter.DeclaringType.CustomAttributes.FirstOrDefault(IsNullableContextAttribute);
+        TryGetNullableContextAttributeFromDeclaringTypeOrOuterType(genericParameter);
 
       const byte notAnnotated = 1;
 

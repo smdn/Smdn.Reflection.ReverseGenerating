@@ -1124,6 +1124,30 @@ namespace Smdn.Reflection.ReverseGenerating {
             [MemberDeclarationTestCase("public T M15_1<T>(T x) where T : unmanaged, System.IDisposable {}")] public T M15_1<T>(T x) where T : unmanaged, IDisposable => throw new NotImplementedException();
           }
 
+          public class ConstraintsNotNullWithNullableMetadata {
+#nullable enable annotations
+            class ClassWithOptimizedNullableMetadata {
+              // these members are required to reproduce optimized nullable metadata
+              public void RequiredToBeOptimized0(string p) { }
+              public void RequiredToBeOptimized1(string? p) { }
+
+              // this class will have no NullableContextAttribute after optimization
+              class NotNullConstraints {
+                [MemberDeclarationTestCase($"public void {nameof(NotNullConstraint)}<TNotNull>(TNotNull p) where TNotNull : notnull {{}}")]
+                public void NotNullConstraint<TNotNull>(TNotNull p) where TNotNull : notnull { }
+
+                // this member is required to reproduce optimized nullable metadata
+#if SYSTEM_REFLECTION_NULLABILITYINFO
+                [MemberDeclarationTestCase($"public void {nameof(NotNullConstraint_Nullable)}<TNotNull>(TNotNull? p) where TNotNull : notnull {{}}")]
+#else
+                [MemberDeclarationTestCase($"public void {nameof(NotNullConstraint_Nullable)}<TNotNull>(TNotNull p) where TNotNull : notnull {{}}")]
+#endif
+                public void NotNullConstraint_Nullable<TNotNull>(TNotNull? p) where TNotNull : notnull { }
+              }
+            }
+#nullable restore annotations
+          }
+
           class Constraints2 {
             [MemberDeclarationTestCase("public T1 M1<T1, T2>(T2 x) where T1 : new() where T2 : new() {}")]
             public T1 M1<T1, T2>(T2 x)
