@@ -18,9 +18,14 @@ public class GenerateApiList : Task {
   [Required]
   public ITaskItem[]? Assemblies { get; set; }
 
+  public bool GenerateLanguagePrimitiveType { get; set; } = true;
   public bool GenerateFullTypeName { get; set; }
-  public string? GenerateMethodBody { get; set; }
+  public bool GenerateTypeNameWithDeclaringTypeName { get; set; }
+  public string? GenerateMethodBody { get; set; } = nameof(MethodBodyOption.EmptyImplementation);
+  public bool GenerateAttributeWithNamedArguments { get; set; }
   public bool GenerateStaticMembersFirst { get; set; }
+  public bool GenerateNullableAnnotations { get; set; } = true;
+  public bool GenerateValueWithDefaultLiteral { get; set; } = true;
 
   [Output]
   public ITaskItem[]? GeneratedFiles { get; private set; }
@@ -66,6 +71,7 @@ public class GenerateApiList : Task {
           outputApiListFilePath,
           options,
           loadIntoReflectionOnlyContext,
+          GenerateNullableAnnotations,
           logger: new LoggerAdapter(Log)
         );
       }
@@ -96,22 +102,37 @@ public class GenerateApiList : Task {
 
   private ApiListWriterOptions BuildApiListWriterOptions()
   {
+#pragma warning disable IDE0017
     var options = new ApiListWriterOptions();
+#pragma warning restore IDE0017
 
 #pragma warning disable IDE0055
-    options.TypeDeclaration.WithNamespace       = GenerateFullTypeName;
-    options.MemberDeclaration.WithNamespace     = GenerateFullTypeName;
-    options.AttributeDeclaration.WithNamespace  = GenerateFullTypeName;
+    options.TranslateLanguagePrimitiveTypeDeclaration = GenerateLanguagePrimitiveType;
 
-    if (Enum.TryParse<MethodBodyOption>(GenerateMethodBody, out var methodBody))
+    options.TypeDeclaration.WithNamespace         = false;
+    options.MemberDeclaration.WithNamespace       = false;
+    options.AttributeDeclaration.WithNamespace    = GenerateFullTypeName;
+    options.ValueDeclaration.WithNamespace        = GenerateFullTypeName;
+    options.ParameterDeclaration.WithNamespace    = GenerateFullTypeName;
+
+    options.TypeDeclaration.WithDeclaringTypeName       = false;
+    options.MemberDeclaration.WithDeclaringTypeName     = false;
+    options.AttributeDeclaration.WithDeclaringTypeName  = GenerateTypeNameWithDeclaringTypeName;
+    options.ValueDeclaration.WithDeclaringTypeName      = GenerateTypeNameWithDeclaringTypeName;
+    options.ParameterDeclaration.WithDeclaringTypeName  = GenerateTypeNameWithDeclaringTypeName;
+
+    if (Enum.TryParse<MethodBodyOption>(GenerateMethodBody, out var methodBody)) {
       options.MemberDeclaration.MethodBody = methodBody;
+      options.MemberDeclaration.AccessorBody = methodBody;
+    }
 
-    options.Writer.WriteNullableAnnotationDirective = true;
+    options.Writer.WriteNullableAnnotationDirective = GenerateNullableAnnotations;
     options.Writer.OrderStaticMembersFirst          = GenerateStaticMembersFirst;
 
-    options.AttributeDeclaration.TypeFilter     = AttributeFilter.Default;
+    options.AttributeDeclaration.TypeFilter         = AttributeFilter.Default;
+    options.AttributeDeclaration.WithNamedArguments = GenerateAttributeWithNamedArguments;
 
-    options.ValueDeclaration.UseDefaultLiteral  = true;
+    options.ValueDeclaration.UseDefaultLiteral = GenerateValueWithDefaultLiteral;
 #pragma warning restore IDE0055
 
     return options;
@@ -122,6 +143,7 @@ public class GenerateApiList : Task {
     [NotNull] string outputApiListFilePath,
     [NotNull] ApiListWriterOptions options,
     bool loadIntoReflectionOnlyContext,
+    bool generateNullableAnnotations,
     Microsoft.Extensions.Logging.ILogger? logger
   )
   {
@@ -129,7 +151,8 @@ public class GenerateApiList : Task {
       new FileInfo(inputAssemblyFilePath ?? throw new ArgumentNullException(nameof(inputAssemblyFilePath))),
       arg: (
         outputApiListFilePath: outputApiListFilePath ?? throw new ArgumentNullException(nameof(outputApiListFilePath)),
-        options: options ?? throw new ArgumentNullException(nameof(options))
+        options: options ?? throw new ArgumentNullException(nameof(options)),
+        generateNullableAnnotations
       ),
       logger: logger,
       context: out var context,
@@ -146,9 +169,11 @@ public class GenerateApiList : Task {
 
         try {
 #if SYSTEM_REFLECTION_NULLABILITYINFOCONTEXT
-          // assign NullabilityInfoContext to each assembly
-          var nullabilityInfoContext = new NullabilityInfoContext();
+          var nullabilityInfoContext = arg.generateNullableAnnotations
+            ? new NullabilityInfoContext()
+            : null;
 
+          // assign NullabilityInfoContext to each assembly
           arg.options.TypeDeclaration.NullabilityInfoContext = nullabilityInfoContext;
           arg.options.MemberDeclaration.NullabilityInfoContext = nullabilityInfoContext;
 #endif
