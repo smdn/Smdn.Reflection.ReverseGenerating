@@ -1,5 +1,9 @@
 // SPDX-FileCopyrightText: 2022 smdn <smdn@smdn.jp>
 // SPDX-License-Identifier: MIT
+#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP2_1_OR_GREATER || NET5_0_OR_GREATER
+#define SYSTEM_TYPE_ISGENERICMETHODPARAMETER
+#endif
+
 using System;
 #if NULL_STATE_STATIC_ANALYSIS_ATTRIBUTES
 using System.Diagnostics.CodeAnalysis;
@@ -58,9 +62,13 @@ internal static class TypeGenericParameterExtensions {
   private static CustomAttributeData? FindNullableContextAttribute(Type genericParameter)
   {
     if (
+#if SYSTEM_TYPE_ISGENERICMETHODPARAMETER
       genericParameter.IsGenericMethodParameter &&
+#else
       genericParameter.DeclaringMethod is not null &&
-      TryGetNullableContextAttribute(genericParameter.DeclaringMethod, out var methodAttr)
+      genericParameter.IsGenericParameter &&
+#endif
+      TryGetNullableContextAttribute(genericParameter.DeclaringMethod!, out var methodAttr)
     ) {
       return methodAttr;
     }
