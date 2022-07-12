@@ -61,7 +61,7 @@ public static class MSBuildExePath {
     RegexOptions.Multiline | RegexOptions.CultureInvariant | RegexOptions.Compiled
   );
 
-  private static string GetSdkBasePath(out string sdkVersion)
+  private static string? GetSdkBasePath(out string? sdkVersion)
   {
     sdkVersion = default;
 
@@ -78,7 +78,7 @@ public static class MSBuildExePath {
     return null;
   }
 
-  private static string GetMSBuildExePath(out string sdkVersion)
+  private static string GetMSBuildExePath(out string? sdkVersion)
   {
 #if true
     sdkVersion = default;
@@ -134,7 +134,7 @@ public static class MSBuildExePath {
 #endif
   }
 
-  public static void EnsureSetEnvVar(ILogger logger = null)
+  public static void EnsureSetEnvVar(ILogger? logger = null)
   {
     const string MSBUILD_EXE_PATH = nameof(MSBUILD_EXE_PATH);
 

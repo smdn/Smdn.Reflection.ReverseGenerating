@@ -21,18 +21,18 @@ public static class ProjectBuilder {
   public class Options {
     public const string DefaultConfiguration = "Debug";
 
-    public string Configuration { get; init; } = DefaultConfiguration;
-    public string TargetFramework { get; init; } = null;
-    // public string OS { get; init; }
-    public string RuntimeIdentifier { get; init; } = null;
-    public string[] TargetsToBuild { get; init; } = new[] { "Restore", "Build" };
+    public string? Configuration { get; init; } = DefaultConfiguration;
+    public string? TargetFramework { get; init; } = null;
+    // public string? OS { get; init; }
+    public string? RuntimeIdentifier { get; init; } = null;
+    public string[]? TargetsToBuild { get; init; } = new[] { "Restore", "Build" };
     public LoggerVerbosity LoggerVerbosity { get; init; } = LoggerVerbosity.Minimal;
   }
 
   public static IEnumerable<FileInfo> Build(
     FileInfo projectFile,
-    Options options = null,
-    Microsoft.Extensions.Logging.ILogger logger = null
+    Options? options = null,
+    Microsoft.Extensions.Logging.ILogger? logger = null
   )
   {
     if (projectFile is null)
@@ -56,7 +56,7 @@ public static class ProjectBuilder {
     logger?.LogDebug("Build requested");
     logger?.LogDebug("  project: {ProjectFile}", projectFile);
 
-    logger?.LogDebug("  targets: {Targets}", string.Join(";", options.TargetsToBuild));
+    logger?.LogDebug("  targets: {Targets}", string.Join(";", options.TargetsToBuild ?? Array.Empty<string>()));
 
     logger?.LogDebug("  global properties:");
 

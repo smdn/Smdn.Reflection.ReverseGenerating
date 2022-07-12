@@ -12,7 +12,7 @@ using Microsoft.Extensions.Logging;
 namespace Smdn.Reflection.ReverseGenerating.ListApi;
 
 internal class Program {
-  internal static string LoggerCategoryName => typeof(Program).Assembly.GetName().Name;
+  internal static string LoggerCategoryName => typeof(Program).Assembly.GetName().Name!;
 
   private static int Main(string[] args)
   {
@@ -30,13 +30,23 @@ internal class Program {
       .UseDefaults()
       .UseExceptionHandler(
         onException: static (ex, context) => {
-          if (ex is TargetInvocationException exTargetInvocation)
-            ex = exTargetInvocation.InnerException;
+          Exception? _ex = ex;
 
-          switch (ex) {
-            case InvalidCommandOperationException exInvalidCommandOperation: Console.Error.WriteLine(ex.Message); break;
-            case CommandOperationNotSupportedException exCommandOperationNotSupported: Console.Error.WriteLine(ex.Message); break;
-            default: Console.Error.WriteLine(ex); break;
+          if (ex is TargetInvocationException exTargetInvocation)
+            _ex = exTargetInvocation.InnerException;
+
+          switch (_ex) {
+            case InvalidCommandOperationException exInvalidCommandOperation:
+              Console.Error.WriteLine(exInvalidCommandOperation.Message);
+              break;
+
+            case CommandOperationNotSupportedException exCommandOperationNotSupported:
+              Console.Error.WriteLine(exCommandOperationNotSupported.Message);
+              break;
+
+            default:
+              Console.Error.WriteLine(_ex);
+              break;
           }
         },
         errorExitCode: -1

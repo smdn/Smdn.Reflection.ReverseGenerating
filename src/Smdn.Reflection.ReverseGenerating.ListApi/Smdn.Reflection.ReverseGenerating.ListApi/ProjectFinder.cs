@@ -14,7 +14,7 @@ namespace Smdn.Reflection.ReverseGenerating.ListApi;
 public static class ProjectFinder {
   public static FileInfo FindSingleProjectOrSolution(
     DirectoryInfo directory,
-    ILogger logger = null
+    ILogger? logger = null
   )
   {
     logger?.LogDebug("finding project or solution from directory '{Directory}'", directory.FullName);

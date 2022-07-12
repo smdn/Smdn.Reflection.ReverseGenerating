@@ -8,6 +8,9 @@ using System.CommandLine;
 using System.CommandLine.Builder;
 using System.CommandLine.Invocation;
 using System.CommandLine.Parsing;
+#if NULL_STATE_STATIC_ANALYSIS_ATTRIBUTES
+using System.Diagnostics.CodeAnalysis;
+#endif
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -39,22 +42,22 @@ public class RootCommandImplementation {
     Arity = ArgumentArity.ExactlyOne,
   };
 
-  private static readonly Option<string> optionConfiguration = new(
+  private static readonly Option<string?> optionConfiguration = new(
     aliases: new[] { "-c", "--configuration" },
     description: "The 'build configuration' option passed to `Build` target when the project will be built.",
     getDefaultValue: static () => DefaultBuildConfiguration
   );
-  private static readonly Option<string> optionTargetFramework = new(
+  private static readonly Option<string?> optionTargetFramework = new(
     aliases: new[] { "-f", "--framework" },
     description: "The 'target framework' option passed to `Build` target when the project will be built.",
     getDefaultValue: static () => null
   );
-  private static readonly Option<string> optionRuntimeIdentifier = new(
+  private static readonly Option<string?> optionRuntimeIdentifier = new(
     aliases: new[] { "-r", "--runtime" },
     description: "The 'target runtime' option passed to `Build` target when the project will be built.",
     getDefaultValue: static () => null
   );
-  private static readonly Option<string> optionOS = new(
+  private static readonly Option<string?> optionOS = new(
     aliases: new[] { "--os" },
     description: "The 'target operating system' option passed to `Build` target when the project will be built.",
     getDefaultValue: static () => null
@@ -90,10 +93,10 @@ public class RootCommandImplementation {
     getDefaultValue: static () => false
   );
 
-  private readonly IServiceProvider serviceProvider;
-  private readonly Microsoft.Extensions.Logging.ILogger logger;
+  private readonly IServiceProvider? serviceProvider;
+  private readonly Microsoft.Extensions.Logging.ILogger? logger;
 
-  public RootCommandImplementation(IServiceProvider serviceProvider = null)
+  public RootCommandImplementation(IServiceProvider? serviceProvider = null)
   {
     this.serviceProvider = serviceProvider;
     this.logger = serviceProvider?.GetService<ILoggerFactory>()?.CreateLogger(Program.LoggerCategoryName);
@@ -236,7 +239,7 @@ public class RootCommandImplementation {
         logger: logger,
         context: out var context,
         actionWithLoadedAssembly: static (assm, outdir) => GetOutputFilePathOf(assm, outdir)
-      );
+      )!;
 
       // wait for the context to be collected
       if (context is null)
@@ -263,7 +266,7 @@ public class RootCommandImplementation {
 
     static string GetOutputFileName(Assembly a)
     {
-      var prefix = a.GetName().Name;
+      var prefix = a.GetName().Name!;
       var targetFramework = a.GetAssemblyMetadataAttributeValue<TargetFrameworkAttribute, string>();
 
       if (targetFramework is null)
@@ -280,7 +283,13 @@ public class RootCommandImplementation {
       return $"{prefix}-{targetFramework}";
     }
 
-    static bool TryParseFrameworkName(string name, out FrameworkName frameworkName)
+    static bool TryParseFrameworkName(
+      string name,
+#if NULL_STATE_STATIC_ANALYSIS_ATTRIBUTES
+      [NotNullWhen(true)]
+#endif
+      out FrameworkName? frameworkName
+    )
     {
       frameworkName = default;
 
@@ -304,7 +313,7 @@ public class RootCommandImplementation {
   private IEnumerable<FileInfo> GetInputAssemblyFiles(ParseResult parseResult)
   {
     var input = parseResult.ValueForArgument(argumentInput);
-    FileInfo inputFile = null;
+    FileInfo inputFile;
 
     if (input is null)
       throw new CommandOperationNotSupportedException("input file or directory not specified");
@@ -330,7 +339,7 @@ public class RootCommandImplementation {
 
     logger?.LogDebug("input file: '{InputFilePath}'", inputFile.FullName);
 
-    IEnumerable<FileInfo> inputAssemblyFiles = null;
+    IEnumerable<FileInfo> inputAssemblyFiles = Enumerable.Empty<FileInfo>();
 
     if (
       string.Equals(".dll", inputFile.Extension, StringComparison.OrdinalIgnoreCase) ||
