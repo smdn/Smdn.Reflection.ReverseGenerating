@@ -92,6 +92,11 @@ public class RootCommandImplementation {
     description: "Generates member declarations in the order of the static members first.",
     getDefaultValue: static () => false
   );
+  private static readonly Option<bool> optionGenerateNullableAnnotations = new(
+    aliases: new[] { "--generate-nullableanotations" },
+    description: "Generates declarations with nullable annotations.",
+    getDefaultValue: static () => true
+  );
 
   private readonly IServiceProvider? serviceProvider;
   private readonly Microsoft.Extensions.Logging.ILogger? logger;
@@ -118,6 +123,7 @@ public class RootCommandImplementation {
       optionGenerateFullTypeName,
       optionGenerateMethodBody,
       optionGenerateStaticMembersFirst,
+      optionGenerateNullableAnnotations,
     };
 
     rootCommand.Handler = CommandHandler.Create<ParseResult, IConsole>(CommandMain);
@@ -141,9 +147,13 @@ public class RootCommandImplementation {
     options.MemberDeclaration.WithNamespace     = parseResult.ValueForOption(optionGenerateFullTypeName);
     options.AttributeDeclaration.WithNamespace  = parseResult.ValueForOption(optionGenerateFullTypeName);
 
-    options.MemberDeclaration.MethodBody        = parseResult.ValueForOption(optionGenerateMethodBody);
+    var methodBody = parseResult.ValueForOption(optionGenerateMethodBody);
 
-    options.Writer.OrderStaticMembersFirst      = parseResult.ValueForOption(optionGenerateStaticMembersFirst);
+    options.MemberDeclaration.MethodBody        = methodBody;
+    options.MemberDeclaration.AccessorBody      = methodBody;
+
+    options.Writer.OrderStaticMembersFirst          = parseResult.ValueForOption(optionGenerateStaticMembersFirst);
+    options.Writer.WriteNullableAnnotationDirective = parseResult.ValueForOption(optionGenerateNullableAnnotations);
 
     options.AttributeDeclaration.TypeFilter     = AttributeFilter.Default;
 
@@ -170,20 +180,28 @@ public class RootCommandImplementation {
     var options = GetApiListWriterOptions(parseResult);
     var outputDirectory = GetOutputDirectory(parseResult);
     var loadAssemblyIntoReflectionOnlyContext = parseResult.ValueForOption(optionLoadAssemblyIntoReflectionOnlyContext);
+    var enableNullabilityAnnotations = parseResult.ValueForOption(optionGenerateNullableAnnotations);
 
     foreach (var inputAssemblyFile in GetInputAssemblyFiles(parseResult)) {
       AssemblyLoader.UsingAssembly(
         inputAssemblyFile,
-        arg: (outputDirectory, options, logger),
+        arg: (
+          outputDirectory,
+          options,
+          enableNullabilityAnnotations,
+          logger
+        ),
         logger: logger,
         context: out var context,
         loadIntoReflectionOnlyContext: loadAssemblyIntoReflectionOnlyContext,
         actionWithLoadedAssembly: static (assm, arg) => {
           try {
 #if SYSTEM_REFLECTION_NULLABILITYINFOCONTEXT
-            // assign NullabilityInfoContext to each assembly
-            var nullabilityInfoContext = new NullabilityInfoContext();
+            var nullabilityInfoContext = arg.enableNullabilityAnnotations
+              ? new NullabilityInfoContext()
+              : null;
 
+            // assign NullabilityInfoContext to each assembly
             arg.options.TypeDeclaration.NullabilityInfoContext = nullabilityInfoContext;
             arg.options.MemberDeclaration.NullabilityInfoContext = nullabilityInfoContext;
 #endif
