@@ -58,4 +58,15 @@ class RootCommandImplementationGetApiListWriterOptionsTests {
 
     Assert.AreEqual(expected, options.Writer.OrderStaticMembersFirst, $"args='{args}'");
   }
+
+  [TestCase("--generate-nullableannotations", true)]
+  [TestCase("--generate-nullableannotations=true", true)]
+  [TestCase("--generate-nullableannotations=false", false)]
+  [TestCase("", true)]
+  public void GetApiListWriterOptions_GenerateNullableAnnotations(string args, bool expected)
+  {
+    var options = GetApiListWriterOptions(args);
+
+    Assert.AreEqual(expected, options.Writer.WriteNullableAnnotationDirective, $"args='{args}'");
+  }
 }
