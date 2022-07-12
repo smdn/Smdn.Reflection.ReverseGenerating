@@ -93,7 +93,7 @@ public class RootCommandImplementation {
     getDefaultValue: static () => false
   );
   private static readonly Option<bool> optionGenerateNullableAnnotations = new(
-    aliases: new[] { "--generate-nullableanotations" },
+    aliases: new[] { "--generate-nullableannotations" },
     description: "Generates declarations with nullable annotations.",
     getDefaultValue: static () => true
   );
