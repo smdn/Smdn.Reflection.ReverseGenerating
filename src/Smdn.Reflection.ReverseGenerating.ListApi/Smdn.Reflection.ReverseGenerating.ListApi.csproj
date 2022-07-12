@@ -13,6 +13,7 @@ SPDX-License-Identifier: MIT
     <VersionSuffix></VersionSuffix>
     <Nullable>enable</Nullable>
     <EnableFeature_BuildProjectFile Condition=" '$(Configuration)' != 'Release' ">true</EnableFeature_BuildProjectFile>
+    <APIListEnableGenerating>false</APIListEnableGenerating>
     <GeneratePackageReadmeFile>false</GeneratePackageReadmeFile>
     <DefineConstants
       Condition=" '$(EnableFeature_BuildProjectFile)' == 'True' "
