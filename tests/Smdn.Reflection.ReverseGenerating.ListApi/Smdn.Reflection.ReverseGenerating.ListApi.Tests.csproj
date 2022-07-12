@@ -4,7 +4,7 @@ SPDX-License-Identifier: MIT
 -->
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks>net6.0;net5.0<!-- ;net472 --></TargetFrameworks>
+    <TargetFrameworks>net6.0<!-- ;net472 --></TargetFrameworks>
     <RootNamespace>Smdn.Reflection.ReverseGenerating.ListApi</RootNamespace>
     <NoWarn>CS2002;$(NoWarn)</NoWarn>
 
