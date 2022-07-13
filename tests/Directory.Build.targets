@@ -34,4 +34,9 @@ SPDX-License-Identifier: MIT
   >
     <Warning Text="cannot test with released package"/>
   </Target>
+
+  <!-- deploy project assets before building test projects and its referencing projects -->
+  <Target Name="DeployProjectAssets" BeforeTargets="BeforeBuild">
+    <MSBuild Projects="$(MSBuildThisFileDirectory)..\src\DeployProjectAssets.proj" />
+  </Target>
 </Project>
