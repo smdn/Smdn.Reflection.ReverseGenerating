@@ -13,7 +13,7 @@ This package provides `GenerateApiList` MSBuild task.
     <!-- Add package reference of Smdn.Reflection.ReverseGenerating.ListApi.MSBuild.Tasks. -->
     <PackageReference
       Include="Smdn.Reflection.ReverseGenerating.ListApi.MSBuild.Tasks"
-      Version="1.0.3"
+      Version="1.1.1"
       PrivateAssets="all"
       IncludeAssets="build"
     />
@@ -44,7 +44,33 @@ This package provides `GenerateApiList` MSBuild task.
 
 This package provides `list-api` command line tool.
 
-This tool does not provide any code-formatting options.
+## Installation
+Use `dotnet tool` to install or update `list-api` command.
+
+```sh
+# install
+dotnet tool install -g Smdn.Reflection.ReverseGenerating.ListApi
+
+# update
+dotnet tool update -g Smdn.Reflection.ReverseGenerating.ListApi
+```
+
+## Usage
+```sh
+# The file 'Program-net6.0.apilist.cs' will be generated.
+list-api Program/bin/Release/net6.0/Program.dll
+```
+
+Type `list-api --help` to show usage about command line arguments and options.
+
+## Limitations
+This tool does not provide any options for code styles including spaces, indents, and new lines. Use `dotnet format` after generating to format such code styles.
 
 # Smdn.Reflection.ReverseGenerating
 [![NuGet Smdn.Reflection.ReverseGenerating](https://img.shields.io/nuget/v/Smdn.Reflection.ReverseGenerating.svg)](https://www.nuget.org/packages/Smdn.Reflection.ReverseGenerating/)
+
+This package provides APIs common to reverse generating. See [API list of Smdn.Reflection.ReverseGenerating](doc/api-list/Smdn.Reflection.ReverseGenerating/).
+
+# Example of output
+The files in [API list directory](/doc/api-list/) is generated using the artifacts of this repository.
+
