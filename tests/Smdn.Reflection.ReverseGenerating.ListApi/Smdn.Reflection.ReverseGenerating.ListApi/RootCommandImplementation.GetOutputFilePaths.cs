@@ -35,10 +35,9 @@ class RootCommandImplementationGetOutputFilePathsTests {
 
   static string GetCurrentDirectory() => TestContext.CurrentContext.WorkDirectory;
 
-  [TestCase("Lib.dll", "net5.0", "Lib-net5.0.apilist.cs")]
-  [TestCase("Exe.dll", "net5.0", "Exe-net5.0.apilist.cs")]
+  [TestCase("Lib.dll", "net6.0", "Lib-net6.0.apilist.cs")]
+  [TestCase("Exe.dll", "net6.0", "Exe-net6.0.apilist.cs")]
   [TestCase("LibA.dll", "netstandard2.1", "LibA-netstandard2.1.apilist.cs")]
-  [TestCase("LibA.dll", "net5.0", "LibA-net5.0.apilist.cs")]
   [TestCase("LibA.dll", "net6.0", "LibA-net6.0.apilist.cs")]
   public void GetOutputFilePaths(string filename, string targetFrameworkMoniker, string expectedOutputFileName)
   {
@@ -66,7 +65,7 @@ class RootCommandImplementationGetOutputFilePathsTests {
   public void GetOutputFilePaths_WithOutputDirectoryOption(string optionName, string outputDirectory)
   {
     var assemblyFile = new FileInfo(
-      TestAssemblyInfo.TestAssemblyPaths.First(f => f.Contains("net5.0") && f.Contains("Lib.dll"))
+      TestAssemblyInfo.TestAssemblyPaths.First(f => f.Contains("net6.0") && f.Contains("Lib.dll"))
     );
 
     var impl = new RootCommandImplementation(serviceProvider);
@@ -76,7 +75,7 @@ class RootCommandImplementationGetOutputFilePathsTests {
     }).First();
 
     Assert.AreEqual(
-      "Lib-net5.0.apilist.cs",
+      "Lib-net6.0.apilist.cs",
       Path.GetFileName(outputFilePath)
     );
     Assert.AreEqual(
@@ -95,7 +94,7 @@ class RootCommandImplementationGetOutputFilePathsTests {
     }).First();
 
     Assert.AreEqual(
-      "Exe-net5.0.apilist.cs",
+      "Exe-net6.0.apilist.cs",
       Path.GetFileName(outputFilePath)
     );
     Assert.AreEqual(
@@ -119,7 +118,7 @@ class RootCommandImplementationGetOutputFilePathsTests {
     }).First();
 
     Assert.AreEqual(
-      "Exe-net5.0.apilist.cs",
+      "Exe-net6.0.apilist.cs",
       Path.GetFileName(outputFilePath)
     );
     Assert.AreEqual(
@@ -147,7 +146,7 @@ class RootCommandImplementationGetOutputFilePathsTests {
     CollectionAssert.AreEquivalent(
       new[] {
         "LibA-netstandard2.1.apilist.cs",
-        "LibA-net5.0.apilist.cs",
+        "LibA-net6.0.apilist.cs",
       },
       outputFilePaths.Select(f => Path.GetFileName(f))
     );
@@ -156,9 +155,9 @@ class RootCommandImplementationGetOutputFilePathsTests {
 #endif
   }
 
-  [TestCase("-f", "net5.0")]
-  [TestCase("-f", "net5.0")]
-  [TestCase("--framework", "netstandard2.1")]
+  [TestCase("-f", "net6.0")]
+  [TestCase("-f", "netstandard2.1")]
+  [TestCase("--framework", "net6.0")]
   [TestCase("--framework", "netstandard2.1")]
   public void GetOutputFilePaths_FromProjFile_WithTargetFrameworkOption(string optionName, string targetFramework)
   {
@@ -196,7 +195,7 @@ class RootCommandImplementationGetOutputFilePathsTests {
     CollectionAssert.AreEquivalent(
       new[] {
         "LibA-netstandard2.1.apilist.cs",
-        "LibA-net5.0.apilist.cs",
+        "LibA-net6.0.apilist.cs",
       },
       outputFilePaths.Select(f => Path.GetFileName(f))
     );

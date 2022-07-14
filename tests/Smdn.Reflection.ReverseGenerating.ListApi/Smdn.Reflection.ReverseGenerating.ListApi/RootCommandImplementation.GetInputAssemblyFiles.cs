@@ -36,10 +36,9 @@ class RootCommandImplementationGetInputAssemblyFilesTests {
     serviceProvider = services.BuildServiceProvider();
   }
 
-  [TestCase("Lib.dll", "net5.0")]
-  [TestCase("Exe.dll", "net5.0")]
+  [TestCase("Lib.dll", "net6.0")]
+  [TestCase("Exe.dll", "net6.0")]
   [TestCase("LibA.dll", "netstandard2.1")]
-  [TestCase("LibA.dll", "net5.0")]
   [TestCase("LibA.dll", "net6.0")]
   public void GetInputAssemblyFiles_File_Assembly(string filename, string targetFrameworkMoniker)
   {
@@ -130,7 +129,7 @@ class RootCommandImplementationGetInputAssemblyFilesTests {
 
     CollectionAssert.AreEquivalent(
       new[] {
-        PathJoiner.Join(TestAssemblyInfo.RootDirectory.FullName, "LibA", "bin", configuration, "net5.0", "LibA.dll"),
+        PathJoiner.Join(TestAssemblyInfo.RootDirectory.FullName, "LibA", "bin", configuration, "net6.0", "LibA.dll"),
         PathJoiner.Join(TestAssemblyInfo.RootDirectory.FullName, "LibA", "bin", configuration, "netstandard2.1", "LibA.dll"),
       },
       impl.GetInputAssemblyFiles(new[] { optionName, configuration, proj }).Select(f => f.FullName)
@@ -174,7 +173,7 @@ class RootCommandImplementationGetInputAssemblyFilesTests {
 
     CollectionAssert.AreEquivalent(
       new[] {
-        PathJoiner.Join(TestAssemblyInfo.RootDirectory.FullName, "Exe", "bin", RootCommandImplementation.DefaultBuildConfiguration, "net5.0", runtime, expectedBuildOutputFileName),
+        PathJoiner.Join(TestAssemblyInfo.RootDirectory.FullName, "Exe", "bin", RootCommandImplementation.DefaultBuildConfiguration, "net6.0", runtime, expectedBuildOutputFileName),
       },
       impl.GetInputAssemblyFiles(new[] { optionName, runtime, proj }).Select(f => f.FullName)
     );
@@ -193,7 +192,7 @@ class RootCommandImplementationGetInputAssemblyFilesTests {
 
     CollectionAssert.AreEquivalent(
       new[] {
-        PathJoiner.Join(TestAssemblyInfo.RootDirectory.FullName, "Lib", "bin", RootCommandImplementation.DefaultBuildConfiguration, "net5.0", "Lib.dll"),
+        PathJoiner.Join(TestAssemblyInfo.RootDirectory.FullName, "Lib", "bin", RootCommandImplementation.DefaultBuildConfiguration, "net6.0", "Lib.dll"),
       },
       impl.GetInputAssemblyFiles(new[] { dirProj }).Select(f => f.FullName)
     );
@@ -213,7 +212,7 @@ class RootCommandImplementationGetInputAssemblyFilesTests {
 
     CollectionAssert.AreEquivalent(
       new[] {
-        PathJoiner.Join(TestAssemblyInfo.RootDirectory.FullName, "Exe", "bin", RootCommandImplementation.DefaultBuildConfiguration, "net5.0", expectedBuildOutputFileName),
+        PathJoiner.Join(TestAssemblyInfo.RootDirectory.FullName, "Exe", "bin", RootCommandImplementation.DefaultBuildConfiguration, "net6.0", expectedBuildOutputFileName),
       },
       impl.GetInputAssemblyFiles(new[] { dirProj }).Select(f => f.FullName)
     );

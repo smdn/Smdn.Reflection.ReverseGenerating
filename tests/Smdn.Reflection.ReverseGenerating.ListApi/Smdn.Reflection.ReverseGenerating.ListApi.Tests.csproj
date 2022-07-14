@@ -21,11 +21,11 @@ SPDX-License-Identifier: MIT
       <_TestProjectBuildTargets>Restore;Build</_TestProjectBuildTargets>
     </PropertyGroup>
 
-    <MSBuild Projects="$(TestAssemblyRootDirectory)\Exe\Exe.csproj" Targets="$(_TestProjectBuildTargets)" Properties="Configuration=Release;TargetFramework=net5.0">
-      <Output TaskParameter="TargetOutputs" ItemName="TestAssembliesExeNet50" />
+    <MSBuild Projects="$(TestAssemblyRootDirectory)\Exe\Exe.csproj" Targets="$(_TestProjectBuildTargets)" Properties="Configuration=Release;TargetFramework=net6.0">
+      <Output TaskParameter="TargetOutputs" ItemName="TestAssembliesExeNet60" />
     </MSBuild>
-    <MSBuild Projects="$(TestAssemblyRootDirectory)\Lib\Lib.csproj" Targets="$(_TestProjectBuildTargets)" Properties="Configuration=Release;TargetFramework=net5.0">
-      <Output TaskParameter="TargetOutputs" ItemName="TestAssembliesLibNet50" />
+    <MSBuild Projects="$(TestAssemblyRootDirectory)\Lib\Lib.csproj" Targets="$(_TestProjectBuildTargets)" Properties="Configuration=Release;TargetFramework=net6.0">
+      <Output TaskParameter="TargetOutputs" ItemName="TestAssembliesLibNet60" />
     </MSBuild>
 
     <ItemGroup>
@@ -35,18 +35,14 @@ SPDX-License-Identifier: MIT
     <MSBuild Projects="@(TestProjects)" Targets="$(_TestProjectBuildTargets)" Properties="Configuration=Release;TargetFramework=netstandard2.1">
       <Output TaskParameter="TargetOutputs" ItemName="TestAssembliesNetStandard21" />
     </MSBuild>
-    <MSBuild Projects="@(TestProjects)" Targets="$(_TestProjectBuildTargets)" Properties="Configuration=Release;TargetFramework=net5.0">
-      <Output TaskParameter="TargetOutputs" ItemName="TestAssembliesNet50" />
-    </MSBuild>
     <MSBuild Projects="@(TestProjects)" Targets="$(_TestProjectBuildTargets)" Properties="Configuration=Release;TargetFramework=net6.0">
       <Output TaskParameter="TargetOutputs" ItemName="TestAssembliesNet60" />
     </MSBuild>
 
     <ItemGroup>
-      <TestAssemblies Include="@(TestAssembliesExeNet50)" />
-      <TestAssemblies Include="@(TestAssembliesLibNet50)" />
+      <TestAssemblies Include="@(TestAssembliesExeNet60)" />
+      <TestAssemblies Include="@(TestAssembliesLibNet60)" />
       <TestAssemblies Include="@(TestAssembliesNetStandard21)" />
-      <TestAssemblies Include="@(TestAssembliesNet50)" />
       <TestAssemblies Include="@(TestAssembliesNet60)" />
     </ItemGroup>
 

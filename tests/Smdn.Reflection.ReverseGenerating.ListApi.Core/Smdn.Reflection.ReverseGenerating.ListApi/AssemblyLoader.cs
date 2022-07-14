@@ -37,15 +37,11 @@ class AssemblyLoaderTests {
     logger = services.BuildServiceProvider().GetService<ILoggerFactory>()?.CreateLogger("test");
   }
 
-#if NETCOREAPP3_1_OR_GREATER
+#if NETCOREAPP3_1_OR_GREATER || NET6_0_OR_GREATER
   [TestCase(true, "netstandard2.1")]
   [TestCase(false, "netstandard2.1")]
 #endif
 #if !SDK_NET7_PREVIEW
-#if NET5_0_OR_GREATER
-  [TestCase(true, "net5.0")]
-  [TestCase(false, "net5.0")]
-#endif
 #if NET6_0_OR_GREATER
   [TestCase(true, "net6.0")]
   [TestCase(false, "net6.0")]
@@ -104,15 +100,11 @@ class AssemblyLoaderTests {
     Assert.IsTrue(unloaded, nameof(unloaded));
   }
 
-#if NETCOREAPP3_1_OR_GREATER
+#if NETCOREAPP3_1_OR_GREATER || NET6_0_OR_GREATER
   [TestCase(true, "netstandard2.1")]
   [TestCase(false, "netstandard2.1")]
 #endif
 #if !SDK_NET7_PREVIEW
-#if NET5_0_OR_GREATER
-  [TestCase(true, "net5.0")]
-  [TestCase(false, "net5.0")]
-#endif
 #if NET6_0_OR_GREATER
   [TestCase(true, "net6.0")]
   [TestCase(false, "net6.0")]

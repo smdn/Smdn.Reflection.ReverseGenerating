@@ -108,7 +108,7 @@ class ProjectBuilderTests {
     Assert.That(assemblyFiles[1].FullName, Does.EndWith("LibB.dll"));
   }
 
-  [TestCase("net5.0")]
+  [TestCase("net6.0")]
   [TestCase("netstandard2.1")]
   public void Build_WithTargetFramework(string targetFramework)
   {
