@@ -1,9 +1,5 @@
 // SPDX-FileCopyrightText: 2020 smdn <smdn@smdn.jp>
 // SPDX-License-Identifier: MIT
-#if NETCOREAPP3_0_OR_GREATER || NET5_0_OR_GREATER
-#define SYSTEM_STRING_CONCAT_READONLYSPAN_OF_CHAR
-#endif
-
 using System;
 using System.Collections.Generic;
 using System.Globalization;

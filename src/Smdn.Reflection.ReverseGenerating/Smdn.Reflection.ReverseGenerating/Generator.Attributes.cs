@@ -1,9 +1,5 @@
 // SPDX-FileCopyrightText: 2020 smdn <smdn@smdn.jp>
 // SPDX-License-Identifier: MIT
-#if NET7_0_OR_GREATER
-#define SYSTEM_DIAGNOSTICS_UNREACHABLEEXCEPTION
-#endif
-
 using System;
 using System.Collections.Generic;
 #if SYSTEM_DIAGNOSTICS_UNREACHABLEEXCEPTION

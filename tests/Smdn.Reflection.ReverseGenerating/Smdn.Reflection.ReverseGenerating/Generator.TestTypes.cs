@@ -1,9 +1,5 @@
 // SPDX-FileCopyrightText: 2022 smdn <smdn@smdn.jp>
 // SPDX-License-Identifier: MIT
-#if NET5_0_OR_GREATER
-#define SYSTEM_RUNTIME_COMPILERSERVICES_MODULEINITIALIZERATTRIBUTE
-#endif
-
 using System;
 #if SYSTEM_RUNTIME_COMPILERSERVICES_MODULEINITIALIZERATTRIBUTE
 using System.Runtime.CompilerServices;

@@ -1,9 +1,5 @@
 // SPDX-FileCopyrightText: 2022 smdn <smdn@smdn.jp>
 // SPDX-License-Identifier: MIT
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP2_1_OR_GREATER || NET5_0_OR_GREATER
-#define SYSTEM_TYPE_ISGENERICMETHODPARAMETER
-#endif
-
 using System;
 #if NULL_STATE_STATIC_ANALYSIS_ATTRIBUTES
 using System.Diagnostics.CodeAnalysis;
