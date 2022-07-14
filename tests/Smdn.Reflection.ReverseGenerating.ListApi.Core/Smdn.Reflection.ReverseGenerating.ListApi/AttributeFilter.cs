@@ -17,7 +17,7 @@ partial class AttributeFilterTests {
     => Assembly.GetExecutingAssembly().GetTypes().Where(predicate);
 
   private static System.Collections.IEnumerable YieldTestCases_Types()
-    => FindTypes(static t => t.Namespace is not null && t.Namespace.StartsWith(typeof(ClassToDetermineNamespace).Namespace, StringComparison.Ordinal))
+    => FindTypes(static t => t.Namespace is not null && t.Namespace.StartsWith(typeof(ClassToDetermineNamespace).Namespace!, StringComparison.Ordinal))
       .SelectMany(
         static type => type.GetCustomAttributes<TypeAttributeFilterTestCaseAttribute>().Select(
           attr => new object[] { type, attr }
@@ -25,7 +25,7 @@ partial class AttributeFilterTests {
       );
 
   private static System.Collections.IEnumerable YieldTestCases_Members()
-    => FindTypes(static t => t.Namespace is not null && t.Namespace.StartsWith(typeof(ClassToDetermineNamespace).Namespace, StringComparison.Ordinal))
+    => FindTypes(static t => t.Namespace is not null && t.Namespace.StartsWith(typeof(ClassToDetermineNamespace).Namespace!, StringComparison.Ordinal))
       .SelectMany(static t => t.GetMembers(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static | BindingFlags.DeclaredOnly))
       .Where(static member => member is not Type) // except nested type
       .SelectMany(
@@ -35,7 +35,7 @@ partial class AttributeFilterTests {
       );
 
   private static System.Collections.IEnumerable YieldTestCases_Parameters()
-    => FindTypes(static t => t.Namespace is not null && t.Namespace.StartsWith(typeof(ClassToDetermineNamespace).Namespace, StringComparison.Ordinal))
+    => FindTypes(static t => t.Namespace is not null && t.Namespace.StartsWith(typeof(ClassToDetermineNamespace).Namespace!, StringComparison.Ordinal))
       .SelectMany(static t => t.GetMethods(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static | BindingFlags.DeclaredOnly))
       .SelectMany(static method => method.GetParameters().Prepend(method.ReturnParameter))
       .SelectMany(
@@ -46,7 +46,7 @@ partial class AttributeFilterTests {
 
   private static System.Collections.IEnumerable YieldTestCases_GenericParameters()
   {
-    var types = FindTypes(static t => t.Namespace is not null && t.Namespace.StartsWith(typeof(ClassToDetermineNamespace).Namespace, StringComparison.Ordinal));
+    var types = FindTypes(static t => t.Namespace is not null && t.Namespace.StartsWith(typeof(ClassToDetermineNamespace).Namespace!, StringComparison.Ordinal));
 
     var genericTypeParameters = types
       //.Where(static t => t.IsGenericType)

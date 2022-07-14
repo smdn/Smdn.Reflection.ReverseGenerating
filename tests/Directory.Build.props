@@ -10,6 +10,7 @@ SPDX-License-Identifier: MIT
     <LangVersion>latest</LangVersion>
     <Deterministic>true</Deterministic>
     <IsPackable>false</IsPackable>
+    <Nullable>warnings</Nullable>
     <TestAssemblyRootDirectory>$(MSBuildThisFileDirectory)\test-assm</TestAssemblyRootDirectory>
 
     <!-- configure code analysis mode -->

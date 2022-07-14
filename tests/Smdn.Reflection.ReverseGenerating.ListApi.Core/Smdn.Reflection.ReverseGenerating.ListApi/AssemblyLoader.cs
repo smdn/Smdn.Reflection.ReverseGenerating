@@ -92,7 +92,7 @@ class AssemblyLoaderTests {
     var unloaded = false;
 
     for (var i = 0; i < 10; i++) {
-      if (!context.IsAlive) {
+      if (!context!.IsAlive) {
         unloaded = true;
         break;
       }
@@ -159,7 +159,7 @@ class AssemblyLoaderTests {
     var unloaded = false;
 
     for (var i = 0; i < 10; i++) {
-      if (!context.IsAlive) {
+      if (!context!.IsAlive) {
         unloaded = true;
         break;
       }
