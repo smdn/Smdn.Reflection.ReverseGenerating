@@ -15,19 +15,19 @@ namespace Smdn.Reflection.ReverseGenerating;
 #pragma warning disable IDE0040
 static partial class CSharpFormatter {
 #pragma warning restore IDE0040
-  private static readonly string NullableAnnotationSyntaxString = "?";
-
-  private static string GetNullabilityAnnotation(NullabilityInfo target)
-    => target.ReadState == NullabilityState.Nullable || target.WriteState == NullabilityState.Nullable
-      ? NullableAnnotationSyntaxString
-      : string.Empty;
-
   private static StringBuilder FormatTypeNameWithNullabilityAnnotation(
     NullabilityInfo target,
     StringBuilder builder,
     FormatTypeNameOptions options
   )
   {
+    const string NullableAnnotationSyntaxString = "?";
+
+    static string GetNullabilityAnnotation(NullabilityInfo target)
+      => target.ReadState == NullabilityState.Nullable || target.WriteState == NullabilityState.Nullable
+        ? NullableAnnotationSyntaxString
+        : string.Empty;
+
     Type? byRefParameterType = null;
 
     if (target.Type.IsByRef && options.AttributeProvider is ParameterInfo p) {
@@ -62,7 +62,8 @@ static partial class CSharpFormatter {
         return builder.Append(FormatTypeNameCore(targetType, options));
 
       // special case for value tuples (ValueTuple<>)
-      return FormatValueTuple(target, builder, options);
+      return FormatValueTupleType(target, builder, options)
+        .Append(GetNullabilityAnnotation(target));
     }
 
     var isGenericTypeClosedOrDefinition =
@@ -79,7 +80,9 @@ static partial class CSharpFormatter {
       // nullable value types (Nullable<>)
       if (IsValueTupleType(nullableUnderlyingType)) {
         // special case for nullable value tuples (Nullable<ValueTuple<>>)
-        return FormatValueTuple(target, builder, options).Append(nullabilityAnnotationForByRefParameter);
+        return FormatValueTupleType(target, builder, options)
+          .Append(GetNullabilityAnnotation(target))
+          .Append(nullabilityAnnotationForByRefParameter);
       }
       else if (nullableUnderlyingType.IsGenericType) {
         // case for nullable generic value types (Nullable<GenericValueType<>>)
@@ -92,11 +95,15 @@ static partial class CSharpFormatter {
     }
     else if (isGenericTypeClosedOrDefinition) {
       // other generic types
-      if (targetType == byRefParameterType)
+      if (targetType == byRefParameterType) {
         // TODO: cannot get NullabilityInfo of generic type arguments from by-ref parameter type
         return builder.Append(FormatTypeNameCore(targetType, options));
-      else
-        return FormatGenericTypeClosedOrDefinition(target, builder, options);
+      }
+      else {
+        return FormatClosedGenericTypeOrGenericTypeDefinition(target, builder, options)
+          .Append(GetNullabilityAnnotation(target))
+          .Append(nullabilityAnnotationForByRefParameter);
+      }
     }
 
     if (options.TranslateLanguagePrimitiveType && IsLanguagePrimitiveType(targetType, out var n)) {
@@ -124,7 +131,7 @@ static partial class CSharpFormatter {
       .Append(nullabilityAnnotationForByRefParameter);
   }
 
-  private static StringBuilder FormatGenericTypeClosedOrDefinition(
+  private static StringBuilder FormatClosedGenericTypeOrGenericTypeDefinition(
     NullabilityInfo target,
     StringBuilder builder,
     FormatTypeNameOptions options
@@ -167,10 +174,10 @@ static partial class CSharpFormatter {
       builder.Append('>');
     }
 
-    return builder.Append(GetNullabilityAnnotation(target));
+    return builder;
   }
 
-  private static StringBuilder FormatValueTuple(
+  private static StringBuilder FormatValueTupleType(
     NullabilityInfo target,
     StringBuilder builder,
     FormatTypeNameOptions options
@@ -203,7 +210,7 @@ static partial class CSharpFormatter {
         builder.Append(' ').Append(tupleItemNames[i].Value);
     }
 
-    return builder.Append(')').Append(GetNullabilityAnnotation(target));
+    return builder.Append(')');
   }
 
   private static StringBuilder FormatNullableGenericValueType(
@@ -216,7 +223,12 @@ static partial class CSharpFormatter {
       builder.Append(target.Type.Namespace).Append('.');
 
     builder
-      .Append(target.Type.GenericTypeArguments[0].GetGenericTypeName()) // the name of GenericValueType of Nullable<GenericValueType<>>
+      .Append(
+        GetTypeName(
+          target.Type.GenericTypeArguments[0], // the type of GenericValueType of Nullable<GenericValueType<>>
+          options
+        )
+      )
       .Append('<');
 
     for (var i = 0; i < target.GenericTypeArguments.Length; i++) {
