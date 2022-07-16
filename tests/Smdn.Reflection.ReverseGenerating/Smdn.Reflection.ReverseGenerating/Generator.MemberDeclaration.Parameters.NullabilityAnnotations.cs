@@ -48,6 +48,32 @@ public class NullabilityAnnotations {
   [MemberDeclarationTestCase($"public void {nameof(NullableValueTupleOfRefType)}((int, string)? p) {{}}")] public void NullableValueTupleOfRefType((int, string)? p) { }
   [MemberDeclarationTestCase($"public void {nameof(NullableValueTupleOfNullableRefType)}((int, string?)? p) {{}}")] public void NullableValueTupleOfNullableRefType((int, string?)? p) { }
 
+  [MemberDeclarationTestCase($"public void {nameof(ValueTupleOfValueTupleOfValueType)}((int, (int, int)) p) {{}}")] public void ValueTupleOfValueTupleOfValueType((int, (int, int)) p) { }
+  [MemberDeclarationTestCase($"public void {nameof(ValueTupleOfValueTupleOfNullableValueType)}((int, (int, int?)) p) {{}}")] public void ValueTupleOfValueTupleOfNullableValueType((int, (int, int?)) p) { }
+  [MemberDeclarationTestCase($"public void {nameof(ValueTupleOfNullableValueTupleOfValueType)}((int, (int, int)?) p) {{}}")] public void ValueTupleOfNullableValueTupleOfValueType((int, (int, int)?) p) { }
+  [MemberDeclarationTestCase($"public void {nameof(ValueTupleOfNullableValueTupleOfNullableValueType)}((int, (int, int?)?) p) {{}}")] public void ValueTupleOfNullableValueTupleOfNullableValueType((int, (int, int?)?) p) { }
+  [MemberDeclarationTestCase($"public void {nameof(NullableValueTupleOfNullableValueTupleOfNullableValueType)}((int, (int, int?)?)? p) {{}}")] public void NullableValueTupleOfNullableValueTupleOfNullableValueType((int, (int, int?)?)? p) { }
+
+  [MemberDeclarationTestCase($"public void {nameof(ValueTupleOfValueTupleOfRefType)}((int, (int, string)) p) {{}}")] public void ValueTupleOfValueTupleOfRefType((int, (int, string)) p) { }
+  [MemberDeclarationTestCase($"public void {nameof(ValueTupleOfValueTupleOfNullableRefType)}((int, (int, string?)) p) {{}}")] public void ValueTupleOfValueTupleOfNullableRefType((int, (int, string?)) p) { }
+  [MemberDeclarationTestCase($"public void {nameof(ValueTupleOfNullableValueTupleOfRefType)}((int, (int, string)?) p) {{}}")] public void ValueTupleOfNullableValueTupleOfRefType((int, (int, string)?) p) { }
+  [MemberDeclarationTestCase($"public void {nameof(ValueTupleOfNullableValueTupleOfNullableRefType)}((int, (int, string?)?) p) {{}}")] public void ValueTupleOfNullableValueTupleOfNullableRefType((int, (int, string?)?) p) { }
+  [MemberDeclarationTestCase($"public void {nameof(NullableValueTupleOfNullableValueTupleOfNullableRefType)}((int, (int, string?)?)? p) {{}}")] public void NullableValueTupleOfNullableValueTupleOfNullableRefType((int, (int, string?)?)? p) { }
+
+  [MemberDeclarationTestCase($"public void {nameof(ValueTupleOfKeyValuePairOfValueTypeValue)}((int, System.Collections.Generic.KeyValuePair<int, int>) p) {{}}", ParameterWithNamespace = true)]
+  [MemberDeclarationTestCase($"public void {nameof(ValueTupleOfKeyValuePairOfValueTypeValue)}((int, KeyValuePair<int, int>) p) {{}}", ParameterWithNamespace = false)] public void ValueTupleOfKeyValuePairOfValueTypeValue((int, KeyValuePair<int, int>) p) { }
+  [MemberDeclarationTestCase($"public void {nameof(ValueTupleOfKeyValuePairOfNullableValueTypeValue)}((int, KeyValuePair<int, int?>) p) {{}}", ParameterWithNamespace = false)] public void ValueTupleOfKeyValuePairOfNullableValueTypeValue((int, KeyValuePair<int, int?>) p) { }
+  [MemberDeclarationTestCase($"public void {nameof(ValueTupleOfNullableKeyValuePairOfValueTypeValue)}((int, KeyValuePair<int, int>?) p) {{}}", ParameterWithNamespace = false)] public void ValueTupleOfNullableKeyValuePairOfValueTypeValue((int, KeyValuePair<int, int>?) p) { }
+  [MemberDeclarationTestCase($"public void {nameof(ValueTupleOfNullableKeyValuePairOfNullableValueTypeValue)}((int, KeyValuePair<int, int?>?) p) {{}}", ParameterWithNamespace = false)] public void ValueTupleOfNullableKeyValuePairOfNullableValueTypeValue((int, KeyValuePair<int, int?>?) p) { }
+  [MemberDeclarationTestCase($"public void {nameof(NullableValueTupleOfNullableKeyValuePairOfNullableValueTypeValue)}((int, KeyValuePair<int, int?>?)? p) {{}}", ParameterWithNamespace = false)] public void NullableValueTupleOfNullableKeyValuePairOfNullableValueTypeValue((int, KeyValuePair<int, int?>?)? p) { }
+
+  [MemberDeclarationTestCase($"public void {nameof(ValueTupleOfKeyValuePairOfRefTypeValue)}((int, KeyValuePair<int, string>) p) {{}}", ParameterWithNamespace = false)] public void ValueTupleOfKeyValuePairOfRefTypeValue((int, KeyValuePair<int, string>) p) { }
+  [MemberDeclarationTestCase($"public void {nameof(ValueTupleOfKeyValuePairOfNullableRefTypeValue)}((int, KeyValuePair<int, string?>) p) {{}}", ParameterWithNamespace = false)] public void ValueTupleOfKeyValuePairOfNullableRefTypeValue((int, KeyValuePair<int, string?>) p) { }
+  [MemberDeclarationTestCase($"public void {nameof(ValueTupleOfNullableKeyValuePairOfRefTypeValue)}((int, KeyValuePair<int, string>?) p) {{}}", ParameterWithNamespace = false)] public void ValueTupleOfNullableKeyValuePairOfRefTypeValue((int, KeyValuePair<int, string>?) p) { }
+  [MemberDeclarationTestCase($"public void {nameof(ValueTupleOfNullableKeyValuePairOfNullableRefTypeValue)}((int, KeyValuePair<int, string?>?) p) {{}}", ParameterWithNamespace = false)] public void ValueTupleOfNullableKeyValuePairOfNullableRefTypeValue((int, KeyValuePair<int, string?>?) p) { }
+  [MemberDeclarationTestCase($"public void {nameof(NullableValueTupleOfNullableKeyValuePairOfNullableRefTypeValue)}((int, KeyValuePair<int, string?>?)? p) {{}}", ParameterWithNamespace = false)] public void NullableValueTupleOfNullableKeyValuePairOfNullableRefTypeValue((int, KeyValuePair<int, string?>?)? p) { }
+
+  [MemberDeclarationTestCase($"public void {nameof(ListOfValueType)}(System.Collections.Generic.List<int> p) {{}}", ParameterWithNamespace = true)]
   [MemberDeclarationTestCase($"public void {nameof(ListOfValueType)}(List<int> p) {{}}", ParameterWithNamespace = false)] public void ListOfValueType(List<int> p) { }
   [MemberDeclarationTestCase($"public void {nameof(ListOfNullableValueType)}(List<int?> p) {{}}", ParameterWithNamespace = false)] public void ListOfNullableValueType(List<int?> p) { }
   [MemberDeclarationTestCase($"public void {nameof(NullableListOfValueType)}(List<int>? p) {{}}", ParameterWithNamespace = false)] public void NullableListOfValueType(List<int>? p) { }

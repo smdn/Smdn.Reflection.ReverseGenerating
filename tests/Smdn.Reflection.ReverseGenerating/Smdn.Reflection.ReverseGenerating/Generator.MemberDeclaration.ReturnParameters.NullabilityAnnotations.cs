@@ -38,6 +38,20 @@ public class NullabilityAnnotations {
   [MemberDeclarationTestCase($"public (int, string)? {nameof(NullableValueTupleOfRefType)}() {{}}")] public (int, string)? NullableValueTupleOfRefType() => throw null;
   [MemberDeclarationTestCase($"public (int, string?)? {nameof(NullableValueTupleOfNullableRefType)}() {{}}")] public (int, string?)? NullableValueTupleOfNullableRefType() => throw null;
 
+  [MemberDeclarationTestCase($"public (int, System.Collections.Generic.KeyValuePair<int, int>) {nameof(ValueTupleOfKeyValuePairOfValueTypeValue)}() {{}}", MemberWithNamespace = true)]
+  [MemberDeclarationTestCase($"public (int, KeyValuePair<int, int>) {nameof(ValueTupleOfKeyValuePairOfValueTypeValue)}() {{}}", MemberWithNamespace = false)] public (int, KeyValuePair<int, int>) ValueTupleOfKeyValuePairOfValueTypeValue() => throw null;
+  [MemberDeclarationTestCase($"public (int, KeyValuePair<int, int?>) {nameof(ValueTupleOfKeyValuePairOfNullableValueTypeValue)}() {{}}", MemberWithNamespace = false)] public (int, KeyValuePair<int, int?>) ValueTupleOfKeyValuePairOfNullableValueTypeValue() => throw null;
+  [MemberDeclarationTestCase($"public (int, KeyValuePair<int, int>?) {nameof(ValueTupleOfNullableKeyValuePairOfValueTypeValue)}() {{}}", MemberWithNamespace = false)] public (int, KeyValuePair<int, int>?) ValueTupleOfNullableKeyValuePairOfValueTypeValue() => throw null;
+  [MemberDeclarationTestCase($"public (int, KeyValuePair<int, int?>?) {nameof(ValueTupleOfNullableKeyValuePairOfNullableValueTypeValue)}() {{}}", MemberWithNamespace = false)] public (int, KeyValuePair<int, int?>?) ValueTupleOfNullableKeyValuePairOfNullableValueTypeValue() => throw null;
+  [MemberDeclarationTestCase($"public (int, KeyValuePair<int, int?>?)? {nameof(NullableValueTupleOfNullableKeyValuePairOfNullableValueTypeValue)}() {{}}", MemberWithNamespace = false)] public (int, KeyValuePair<int, int?>?)? NullableValueTupleOfNullableKeyValuePairOfNullableValueTypeValue() => throw null;
+
+  [MemberDeclarationTestCase($"public (int, KeyValuePair<int, string>) {nameof(ValueTupleOfKeyValuePairOfRefTypeValue)}() {{}}", MemberWithNamespace = false)] public (int, KeyValuePair<int, string>) ValueTupleOfKeyValuePairOfRefTypeValue() => throw null;
+  [MemberDeclarationTestCase($"public (int, KeyValuePair<int, string?>) {nameof(ValueTupleOfKeyValuePairOfNullableRefTypeValue)}() {{}}", MemberWithNamespace = false)] public (int, KeyValuePair<int, string?>) ValueTupleOfKeyValuePairOfNullableRefTypeValue() => throw null;
+  [MemberDeclarationTestCase($"public (int, KeyValuePair<int, string>?) {nameof(ValueTupleOfNullableKeyValuePairOfRefTypeValue)}() {{}}", MemberWithNamespace = false)] public (int, KeyValuePair<int, string>?) ValueTupleOfNullableKeyValuePairOfRefTypeValue() => throw null;
+  [MemberDeclarationTestCase($"public (int, KeyValuePair<int, string?>?) {nameof(ValueTupleOfNullableKeyValuePairOfNullableRefTypeValue)}() {{}}", MemberWithNamespace = false)] public (int, KeyValuePair<int, string?>?) ValueTupleOfNullableKeyValuePairOfNullableRefTypeValue() => throw null;
+  [MemberDeclarationTestCase($"public (int, KeyValuePair<int, string?>?)? {nameof(NullableValueTupleOfNullableKeyValuePairOfNullableRefTypeValue)}() {{}}", MemberWithNamespace = false)] public (int, KeyValuePair<int, string?>?)? NullableValueTupleOfNullableKeyValuePairOfNullableRefTypeValue() => throw null;
+
+  [MemberDeclarationTestCase($"public System.Collections.Generic.List<int> {nameof(ListOfValueType)}() {{}}", MemberWithNamespace = true)]
   [MemberDeclarationTestCase($"public List<int> {nameof(ListOfValueType)}() {{}}", MemberWithNamespace = false)] public List<int> ListOfValueType() => throw null;
   [MemberDeclarationTestCase($"public List<int?> {nameof(ListOfNullableValueType)}() {{}}", MemberWithNamespace = false)] public List<int?> ListOfNullableValueType() => throw null;
   [MemberDeclarationTestCase($"public List<int>? {nameof(NullableListOfValueType)}() {{}}", MemberWithNamespace = false)] public List<int>? NullableListOfValueType() => throw null;
