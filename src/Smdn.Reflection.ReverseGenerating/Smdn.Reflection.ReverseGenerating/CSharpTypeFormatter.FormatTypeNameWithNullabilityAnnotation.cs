@@ -77,13 +77,16 @@ static partial class CSharpFormatter {
         nullabilityAnnotationForByRefParameter = NullableAnnotationSyntaxString;
 
       // nullable value types (Nullable<>)
-      if (IsValueTupleType(nullableUnderlyingType))
+      if (IsValueTupleType(nullableUnderlyingType)) {
         // special case for nullable value tuples (Nullable<ValueTuple<>>)
         return FormatValueTuple(target, builder, options).Append(nullabilityAnnotationForByRefParameter);
-      else if (isGenericTypeClosedOrDefinition)
+      }
+      else if (nullableUnderlyingType.IsGenericType) {
         // case for nullable generic value types (Nullable<GenericValueType<>>)
-        // TODO: cannot get NullabilityInfo of generic type argument from Nullable<GenericValueType<>> (ex: KeyValuePair<int?, string?>?)
-        return builder.Append(FormatTypeNameCore(targetType, options));
+        return FormatNullableGenericValueType(target, builder, options)
+          .Append(GetNullabilityAnnotation(target))
+          .Append(nullabilityAnnotationForByRefParameter);
+      }
 
       targetType = nullableUnderlyingType;
     }
@@ -201,6 +204,29 @@ static partial class CSharpFormatter {
     }
 
     return builder.Append(')').Append(GetNullabilityAnnotation(target));
+  }
+
+  private static StringBuilder FormatNullableGenericValueType(
+    NullabilityInfo target,
+    StringBuilder builder,
+    FormatTypeNameOptions options
+  )
+  {
+    if (options.TypeWithNamespace && !target.Type.IsNested)
+      builder.Append(target.Type.Namespace).Append('.');
+
+    builder
+      .Append(target.Type.GenericTypeArguments[0].GetGenericTypeName()) // the name of GenericValueType of Nullable<GenericValueType<>>
+      .Append('<');
+
+    for (var i = 0; i < target.GenericTypeArguments.Length; i++) {
+      if (0 < i)
+        builder.Append(", ");
+
+      FormatTypeNameWithNullabilityAnnotation(target.GenericTypeArguments[i], builder, options);
+    }
+
+    return builder.Append('>');
   }
 }
 #endif // SYSTEM_REFLECTION_NULLABILITYINFO
