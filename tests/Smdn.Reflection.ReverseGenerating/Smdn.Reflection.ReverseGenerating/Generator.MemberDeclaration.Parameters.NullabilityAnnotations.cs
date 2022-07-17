@@ -142,12 +142,12 @@ public class NullabilityAnnotations {
     class GenericTypes {
       [MemberDeclarationTestCase($"public void {nameof(ValueTupleOfValueTypeAndRefType)}(out (int X, string Y) p) {{}}")] public void ValueTupleOfValueTypeAndRefType(out (int X, string Y) p) => throw null;
       [MemberDeclarationTestCase($"public void {nameof(ValueTupleOfNullableValueTypeAndRefType)}(out (int? X, string Y) p) {{}}")] public void ValueTupleOfNullableValueTypeAndRefType(out (int? X, string Y) p) => throw null;
-      [SkipTestCase("cannot get NullabilityInfo of generic type arguments from by-ref parameter type")][MemberDeclarationTestCase($"public void {nameof(ValueTupleOfValueTypeAndNullableRefType)}(out (int X, string? Y) p) {{}}")] public void ValueTupleOfValueTypeAndNullableRefType(out (int X, string? Y) p) => throw null;
+      [MemberDeclarationTestCase($"public void {nameof(ValueTupleOfValueTypeAndNullableRefType)}(out (int X, string? Y) p) {{}}")] public void ValueTupleOfValueTypeAndNullableRefType(out (int X, string? Y) p) => throw null;
 
       [MemberDeclarationTestCase($"public void {nameof(IEnumerableOfValueType)}(out IEnumerable<int> p) {{}}", ParameterWithNamespace = false)] public void IEnumerableOfValueType(out IEnumerable<int> p) => throw null;
       [MemberDeclarationTestCase($"public void {nameof(IEnumerableOfNullableValueType)}(out IEnumerable<int?> p) {{}}", ParameterWithNamespace = false)] public void IEnumerableOfNullableValueType(out IEnumerable<int?> p) => throw null;
       [MemberDeclarationTestCase($"public void {nameof(IEnumerableOfRefType)}(out IEnumerable<string> p) {{}}", ParameterWithNamespace = false)] public void IEnumerableOfRefType(out IEnumerable<string> p) => throw null;
-      [SkipTestCase("cannot get NullabilityInfo of generic type arguments from by-ref parameter type")][MemberDeclarationTestCase($"public void {nameof(IEnumerableOfNullableRefType)}(out IEnumerable<string?> p) {{}}", ParameterWithNamespace = false)] public void IEnumerableOfNullableRefType(out IEnumerable<string?> p) => throw null;
+      [MemberDeclarationTestCase($"public void {nameof(IEnumerableOfNullableRefType)}(out IEnumerable<string?> p) {{}}", ParameterWithNamespace = false)] public void IEnumerableOfNullableRefType(out IEnumerable<string?> p) => throw null;
     }
   }
 

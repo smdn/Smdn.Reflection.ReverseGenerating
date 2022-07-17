@@ -89,12 +89,12 @@ public class NullabilityAnnotations {
       class GenericTypes {
         [MemberDeclarationTestCase($"public ref (int X, string Y) {nameof(ValueTupleOfValueTypeAndRefType)}() {{}}")] public ref (int X, string Y) ValueTupleOfValueTypeAndRefType() => throw null;
         [MemberDeclarationTestCase($"public ref (int? X, string Y) {nameof(ValueTupleOfNullableValueTypeAndRefType)}() {{}}")] public ref (int? X, string Y) ValueTupleOfNullableValueTypeAndRefType() => throw null;
-        [SkipTestCase("cannot get NullabilityInfo of generic type arguments from by-ref parameter type")][MemberDeclarationTestCase($"public ref (int X, string? Y) {nameof(ValueTupleOfValueTypeAndNullableRefType)}() {{}}")] public ref (int X, string? Y) ValueTupleOfValueTypeAndNullableRefType() => throw null;
+        [MemberDeclarationTestCase($"public ref (int X, string? Y) {nameof(ValueTupleOfValueTypeAndNullableRefType)}() {{}}")] public ref (int X, string? Y) ValueTupleOfValueTypeAndNullableRefType() => throw null;
 
         [MemberDeclarationTestCase($"public ref IEnumerable<int> {nameof(IEnumerableOfValueType)}() {{}}", MemberWithNamespace = false)] public ref IEnumerable<int> IEnumerableOfValueType() => throw null;
         [MemberDeclarationTestCase($"public ref IEnumerable<int?> {nameof(IEnumerableOfNullableValueType)}() {{}}", MemberWithNamespace = false)] public ref IEnumerable<int?> IEnumerableOfNullableValueType() => throw null;
         [MemberDeclarationTestCase($"public ref IEnumerable<string> {nameof(IEnumerableOfRefType)}() {{}}", MemberWithNamespace = false)] public ref IEnumerable<string> IEnumerableOfRefType() => throw null;
-        [SkipTestCase("cannot get NullabilityInfo of generic type arguments from by-ref parameter type")][MemberDeclarationTestCase($"public ref IEnumerable<string?> {nameof(IEnumerableOfNullableRefType)}() {{}}", MemberWithNamespace = false)] public ref IEnumerable<string?> IEnumerableOfNullableRefType() => throw null;
+        [MemberDeclarationTestCase($"public ref IEnumerable<string?> {nameof(IEnumerableOfNullableRefType)}() {{}}", MemberWithNamespace = false)] public ref IEnumerable<string?> IEnumerableOfNullableRefType() => throw null;
       }
     }
   }
