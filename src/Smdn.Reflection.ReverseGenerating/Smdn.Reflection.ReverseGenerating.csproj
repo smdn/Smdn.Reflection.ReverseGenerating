@@ -18,6 +18,9 @@ SPDX-License-Identifier: MIT
         $(TargetFramework.StartsWith('netstandard2'))
       )
     ">$(DefineConstants);CAN_OVERRIDE_CUSTOMATTRIBUTEDATA_ATTRIBUTETYPE</DefineConstants>
+    <DefineConstants Condition="
+      $(TargetFramework.StartsWith('net6.0'))
+    ">$(DefineConstants);WORKAROUND_NULLABILITYINFO_BYREFTYPE</DefineConstants>
   </PropertyGroup>
 
   <Import Project="..\Sdk.net7.0-preview.props" />

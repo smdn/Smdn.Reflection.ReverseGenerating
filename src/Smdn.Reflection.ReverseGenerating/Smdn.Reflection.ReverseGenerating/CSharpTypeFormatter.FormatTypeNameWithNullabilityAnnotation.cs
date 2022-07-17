@@ -15,6 +15,8 @@ namespace Smdn.Reflection.ReverseGenerating;
 #pragma warning disable IDE0040
 static partial class CSharpFormatter {
 #pragma warning restore IDE0040
+
+#if WORKAROUND_NULLABILITYINFO_BYREFTYPE
   // Workaround: The pseudo ParameterInfo type which unwraps 'ByRef' type to its element type
   // See https://github.com/dotnet/runtime/issues/72320
   private sealed class ByRefElementTypeParameterInfo : ParameterInfo {
@@ -30,6 +32,7 @@ static partial class CSharpFormatter {
     public override IList<CustomAttributeData> GetCustomAttributesData()
       => BaseParameter.GetCustomAttributesData();
   }
+#endif
 
   private static StringBuilder FormatTypeNameWithNullabilityAnnotation(
     NullabilityInfo target,
@@ -45,7 +48,9 @@ static partial class CSharpFormatter {
         : string.Empty;
 
     if (target.Type.IsByRef) {
+#if WORKAROUND_NULLABILITYINFO_BYREFTYPE
       var elementTypeNullabilityInfo = target.ElementType;
+#endif
 
       if (options.AttributeProvider is ParameterInfo p) {
         // retval/parameter modifiers
@@ -56,13 +61,16 @@ static partial class CSharpFormatter {
         else /*if (p.IsRetval)*/
           builder.Append("ref ");
 
+#if WORKAROUND_NULLABILITYINFO_BYREFTYPE
         // [.net6.0] Currently, NullabilityInfo.ElementType is always null if the type is ByRef.
         // Uses the workaround implementation instead in that case.
         // See https://github.com/dotnet/runtime/issues/72320
-        if (target.ElementType is null && p.ParameterType.HasElementType)
-          elementTypeNullabilityInfo = new NullabilityInfoContext().Create(new ByRefElementTypeParameterInfo(p)); // TODO: context
+        if (options.NullabilityInfoContext is not null && target.ElementType is null && p.ParameterType.HasElementType)
+          elementTypeNullabilityInfo = options.NullabilityInfoContext.Create(new ByRefElementTypeParameterInfo(p));
+#endif
       }
 
+#if WORKAROUND_NULLABILITYINFO_BYREFTYPE
       if (elementTypeNullabilityInfo is not null) {
         return FormatTypeNameWithNullabilityAnnotation(
           elementTypeNullabilityInfo,
@@ -70,6 +78,13 @@ static partial class CSharpFormatter {
           options
         );
       }
+#else
+      return FormatTypeNameWithNullabilityAnnotation(
+        target.ElementType!,
+        builder,
+        options
+      );
+#endif
     }
 
     if (target.Type.IsArray) {
@@ -115,8 +130,12 @@ static partial class CSharpFormatter {
     else if (isGenericTypeClosedOrDefinition) {
       // other generic types
       if (targetType.IsByRef) {
+#if WORKAROUND_NULLABILITYINFO_BYREFTYPE
         // TODO: cannot get NullabilityInfo of generic type arguments from by-ref parameter type
         return builder.Append(FormatTypeNameCore(targetType, options));
+#else
+        return FormatTypeNameWithNullabilityAnnotation(target.ElementType!, builder, options);
+#endif
       }
       else {
         return FormatClosedGenericTypeOrGenericTypeDefinition(target, builder, options)

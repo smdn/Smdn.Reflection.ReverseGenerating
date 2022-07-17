@@ -14,6 +14,9 @@ static partial class CSharpFormatter {
     bool TypeWithNamespace,
     bool WithDeclaringTypeName,
     bool TranslateLanguagePrimitiveType,
+#if SYSTEM_REFLECTION_NULLABILITYINFOCONTEXT && WORKAROUND_NULLABILITYINFO_BYREFTYPE
+    NullabilityInfoContext? NullabilityInfoContext = null,
+#endif
     Func<Type, string, string>? GenericParameterNameModifier = null,
     bool OmitAttributeSuffix = false
 #pragma warning restore SA1313
@@ -58,6 +61,9 @@ static partial class CSharpFormatter {
           AttributeProvider: f,
           TypeWithNamespace: typeWithNamespace,
           WithDeclaringTypeName: withDeclaringTypeName,
+#if WORKAROUND_NULLABILITYINFO_BYREFTYPE
+          NullabilityInfoContext: nullabilityInfoContext,
+#endif
           TranslateLanguagePrimitiveType: translateLanguagePrimitiveType
         )
       ).ToString();
@@ -101,6 +107,9 @@ static partial class CSharpFormatter {
           AttributeProvider: p,
           TypeWithNamespace: typeWithNamespace,
           WithDeclaringTypeName: withDeclaringTypeName,
+#if WORKAROUND_NULLABILITYINFO_BYREFTYPE
+          NullabilityInfoContext: nullabilityInfoContext,
+#endif
           TranslateLanguagePrimitiveType: translateLanguagePrimitiveType
         )
       ).ToString();
@@ -144,6 +153,9 @@ static partial class CSharpFormatter {
           AttributeProvider: p,
           TypeWithNamespace: typeWithNamespace,
           WithDeclaringTypeName: withDeclaringTypeName,
+#if WORKAROUND_NULLABILITYINFO_BYREFTYPE
+          NullabilityInfoContext: nullabilityInfoContext,
+#endif
           TranslateLanguagePrimitiveType: translateLanguagePrimitiveType
         )
       ).ToString();
@@ -187,6 +199,9 @@ static partial class CSharpFormatter {
           AttributeProvider: ev,
           TypeWithNamespace: typeWithNamespace,
           WithDeclaringTypeName: withDeclaringTypeName,
+#if WORKAROUND_NULLABILITYINFO_BYREFTYPE
+          NullabilityInfoContext: nullabilityInfoContext,
+#endif
           TranslateLanguagePrimitiveType: translateLanguagePrimitiveType
         )
       ).ToString();
