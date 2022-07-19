@@ -151,6 +151,26 @@ public class NullabilityAnnotations {
     }
   }
 
+  class PointerTypes {
+    [MemberDeclarationTestCase($"public unsafe void {nameof(PointerOfValueType)}(int* p) {{}}")] public unsafe void PointerOfValueType(int* p) { }
+    [MemberDeclarationTestCase($"public unsafe void {nameof(PointerOfNullableValueType)}(int?* p) {{}}")] public unsafe void PointerOfNullableValueType(int?* p) { }
+
+    [MemberDeclarationTestCase($"public unsafe void {nameof(PointerOfValueTupleOfValueType)}((int, int)* p) {{}}")] public unsafe void PointerOfValueTupleOfValueType((int, int)* p) { }
+    [MemberDeclarationTestCase($"public unsafe void {nameof(PointerOfValueTupleOfNullableValueType)}((int, int?)* p) {{}}")] public unsafe void PointerOfValueTupleOfNullableValueType((int, int?)* p) { }
+    [MemberDeclarationTestCase($"public unsafe void {nameof(PointerOfNullableValueTupleOfValueType)}((int, int)?* p) {{}}")] public unsafe void PointerOfNullableValueTupleOfValueType((int, int)?* p) { }
+    [MemberDeclarationTestCase($"public unsafe void {nameof(PointerOfNullableValueTupleOfNullableValueType)}((int, int?)?* p) {{}}")] public unsafe void PointerOfNullableValueTupleOfNullableValueType((int, int?)?* p) { }
+
+    class ByRef {
+      [MemberDeclarationTestCase($"public unsafe void {nameof(PointerOfValueType)}(out int* p) {{}}")] public unsafe void PointerOfValueType(out int* p) => throw null;
+      [MemberDeclarationTestCase($"public unsafe void {nameof(PointerOfNullableValueType)}(out int?* p) {{}}")] public unsafe void PointerOfNullableValueType(out int?* p) => throw null;
+
+      [MemberDeclarationTestCase($"public unsafe void {nameof(PointerOfValueTupleOfValueType)}(out (int, int)* p) {{}}")] public unsafe void PointerOfValueTupleOfValueType(out (int, int)* p) => throw null;
+      [MemberDeclarationTestCase($"public unsafe void {nameof(PointerOfValueTupleOfNullableValueType)}(out (int, int?)* p) {{}}")] public unsafe void PointerOfValueTupleOfNullableValueType(out (int, int?)* p) => throw null;
+      [MemberDeclarationTestCase($"public unsafe void {nameof(PointerOfNullableValueTupleOfValueType)}(out (int, int)?* p) {{}}")] public unsafe void PointerOfNullableValueTupleOfValueType(out (int, int)?* p) => throw null;
+      [MemberDeclarationTestCase($"public unsafe void {nameof(PointerOfNullableValueTupleOfNullableValueType)}(out (int, int?)?* p) {{}}")] public unsafe void PointerOfNullableValueTupleOfNullableValueType(out (int, int?)?* p) => throw null;
+    }
+  }
+
   class NullabilityAnnotationOptions {
     [MemberDeclarationTestCase($"public void {nameof(ValueType)}(int p) {{}}", MemberEnableNullabilityAnnotations = false)]
     [MemberDeclarationTestCase($"public void {nameof(ValueType)}(int p) {{}}", MemberEnableNullabilityAnnotations = true)]

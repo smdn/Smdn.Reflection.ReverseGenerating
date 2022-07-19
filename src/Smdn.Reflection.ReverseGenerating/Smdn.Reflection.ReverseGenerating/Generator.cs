@@ -1174,8 +1174,18 @@ public static partial class Generator {
       if (isAsyncStateMachine)
         sb.Append("async ");
 
-      if (method is not null && method.GetParameters().Any(static p => p.ParameterType.IsPointer))
+      if (method is not null && method.GetParameters().Any(IsParameterUnsafe))
         sb.Append("unsafe ");
+    }
+
+    static bool IsParameterUnsafe(ParameterInfo p)
+    {
+      if (p.ParameterType.IsPointer)
+        return true;
+      if (p.ParameterType.IsByRef && p.ParameterType.HasElementType && p.ParameterType.GetElementType()!.IsPointer)
+        return true;
+
+      return false;
     }
 
     if (member.IsHidingInheritedMember(nonPublic: true))
