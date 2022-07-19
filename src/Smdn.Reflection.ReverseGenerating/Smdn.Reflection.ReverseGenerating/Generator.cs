@@ -1072,7 +1072,12 @@ public static partial class Generator {
     GeneratorOptions options
   )
   {
-    if (options.MemberDeclaration.WithDeclaringTypeName) {
+    var withDeclaringTypeName = options.MemberDeclaration.WithDeclaringTypeName;
+
+    if (member is FieldInfo field && field.GetDeclaringTypeOrThrow().IsEnum)
+      withDeclaringTypeName = options.MemberDeclaration.WithEnumTypeName;
+
+    if (withDeclaringTypeName) {
       return member.GetDeclaringTypeOrThrow().FormatTypeName(
         typeWithNamespace: options.MemberDeclaration.WithNamespace,
         translateLanguagePrimitiveType: options.TranslateLanguagePrimitiveTypeDeclaration

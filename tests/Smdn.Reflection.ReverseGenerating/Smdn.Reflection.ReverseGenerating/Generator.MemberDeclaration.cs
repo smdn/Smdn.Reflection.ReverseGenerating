@@ -122,8 +122,9 @@ namespace Smdn.Reflection.ReverseGenerating {
           public enum Ints : int {
             [MemberDeclarationTestCase("A = 0,")]
             [MemberDeclarationTestCase("A = 0", MemberOmitEndOfStatement = true)]
-            [MemberDeclarationTestCase("Ints.A = 0,", MemberWithDeclaringTypeName = true, MemberWithNamespace = false)]
-            [MemberDeclarationTestCase("Smdn.Reflection.ReverseGenerating.TestCases.MemberDeclaration.Fields.EnumFields.Ints.A = 0,", MemberWithDeclaringTypeName = true, MemberWithNamespace = true)]
+            [MemberDeclarationTestCase("A = 0,", MemberWithDeclaringTypeName = true, MemberWithEnumTypeName = false, MemberWithNamespace = false)]
+            [MemberDeclarationTestCase("Ints.A = 0,", MemberWithDeclaringTypeName = true, MemberWithEnumTypeName = true, MemberWithNamespace = false)]
+            [MemberDeclarationTestCase("Smdn.Reflection.ReverseGenerating.TestCases.MemberDeclaration.Fields.EnumFields.Ints.A = 0,", MemberWithEnumTypeName = true, MemberWithNamespace = true)]
             A = 0,
 
             [MemberDeclarationTestCase("B = 1,")] B = 1,

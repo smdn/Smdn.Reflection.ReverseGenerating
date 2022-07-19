@@ -20,6 +20,7 @@ public abstract class GeneratorTestCaseAttribute : Attribute, ITestCaseAttribute
   public bool TranslateLanguagePrimitiveTypeDeclaration { get; set; } = true;
   public bool MemberWithNamespace { get; set; } = true;
   public bool MemberWithDeclaringTypeName { get; set; } = false;
+  public bool MemberWithEnumTypeName { get; set; } = false;
   public bool MemberWithAccessibility { get; set; } = true;
   public bool MemberOmitEndOfStatement { get; set; } = false;
   public bool MemberEnableNullabilityAnnotations { get; set; } = true;
@@ -123,6 +124,7 @@ public partial class GeneratorTests {
 
     memberDeclarationOptions.WithNamespace = testCaseAttribute.MemberWithNamespace;
     memberDeclarationOptions.WithDeclaringTypeName = testCaseAttribute.MemberWithDeclaringTypeName;
+    memberDeclarationOptions.WithEnumTypeName = testCaseAttribute.MemberWithEnumTypeName;
     memberDeclarationOptions.WithAccessibility = testCaseAttribute.MemberWithAccessibility;
     memberDeclarationOptions.MethodBody = testCaseAttribute.MethodBody;
     memberDeclarationOptions.AccessorBody = testCaseAttribute.AccessorBody;

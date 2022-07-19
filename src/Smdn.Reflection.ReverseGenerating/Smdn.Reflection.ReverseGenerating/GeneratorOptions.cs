@@ -47,6 +47,7 @@ public class GeneratorOptions : ICloneable {
   public class MemberDeclarationOptions {
     public bool WithNamespace { get; set; } = false;
     public bool WithDeclaringTypeName { get; set; } = false;
+    public bool WithEnumTypeName { get; set; } = false;
     public bool WithAccessibility { get; set; } = true;
     public bool OmitEndOfStatement { get; set; } = false;
     public MethodBodyOption MethodBody { get; set; } = MethodBodyOption.EmptyImplementation;
