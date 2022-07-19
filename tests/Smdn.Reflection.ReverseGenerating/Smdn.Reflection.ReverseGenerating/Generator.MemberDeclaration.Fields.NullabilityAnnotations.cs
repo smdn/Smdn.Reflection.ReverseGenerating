@@ -108,6 +108,16 @@ public class NullabilityAnnotations {
   [MemberDeclarationTestCase($"public Dictionary<string, string>? {nameof(DictionaryOfRefTypeValueNullable)};", MemberWithNamespace = false)] public Dictionary<string, string>? DictionaryOfRefTypeValueNullable;
   [MemberDeclarationTestCase($"public Dictionary<string, string?>? {nameof(NullableDictionaryOfNullableRefTypeValue)};", MemberWithNamespace = false)] public Dictionary<string, string?>? NullableDictionaryOfNullableRefTypeValue;
 
+  public unsafe struct PointerTypes {
+    [MemberDeclarationTestCase($"public int* {nameof(PointerOfValueType)};")] public int* PointerOfValueType;
+    [MemberDeclarationTestCase($"public int?* {nameof(PointerOfNullableValueType)};")] public int?* PointerOfNullableValueType;
+
+    [MemberDeclarationTestCase($"public (int, int)* {nameof(PointerOfValueTupleOfValueType)};")] public (int, int)* PointerOfValueTupleOfValueType;
+    [MemberDeclarationTestCase($"public (int, int?)* {nameof(PointerOfValueTupleOfNullableValueType)};")] public (int, int?)* PointerOfValueTupleOfNullableValueType;
+    [MemberDeclarationTestCase($"public (int, int)?* {nameof(PointerOfNullableValueTupleOfValueType)};")] public (int, int)?* PointerOfNullableValueTupleOfValueType;
+    [MemberDeclarationTestCase($"public (int, int?)?* {nameof(PointerOfNullableValueTupleOfNullableValueType)};")] public (int, int?)?* PointerOfNullableValueTupleOfNullableValueType;
+  }
+
   class NullabilityAnnotationOptions {
     [MemberDeclarationTestCase($"public int {nameof(ValueType)};", MemberEnableNullabilityAnnotations = false)]
     [MemberDeclarationTestCase($"public int {nameof(ValueType)};", MemberEnableNullabilityAnnotations = true)]
