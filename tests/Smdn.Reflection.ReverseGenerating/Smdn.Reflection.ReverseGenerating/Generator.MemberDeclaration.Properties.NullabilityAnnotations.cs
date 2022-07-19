@@ -108,6 +108,24 @@ public class NullabilityAnnotations {
   [MemberDeclarationTestCase($"public Dictionary<string, string>? {nameof(DictionaryOfRefTypeValueNullable)} {{ get; }}", MemberWithNamespace = false)] public Dictionary<string, string>? DictionaryOfRefTypeValueNullable => throw null;
   [MemberDeclarationTestCase($"public Dictionary<string, string?>? {nameof(NullableDictionaryOfNullableRefTypeValue)} {{ get; }}", MemberWithNamespace = false)] public Dictionary<string, string?>? NullableDictionaryOfNullableRefTypeValue => throw null;
 
+  public class RefReturnTypes {
+    [MemberDeclarationTestCase($"public ref int {nameof(ValueType)} {{ get; }}")] public ref int ValueType => throw null;
+    [MemberDeclarationTestCase($"public ref int? {nameof(NullableValueType)} {{ get; }}")] public ref int? NullableValueType => throw null;
+
+    [MemberDeclarationTestCase($"public ref string {nameof(RefType)} {{ get; }}")] public ref string RefType => throw null;
+    [MemberDeclarationTestCase($"public ref string? {nameof(NullableRefType)} {{ get; }}")] public ref string? NullableRefType => throw null;
+
+    [MemberDeclarationTestCase($"public ref (int, int) {nameof(ValueTupleOfValueType)} {{ get; }}")] public ref (int, int) ValueTupleOfValueType => throw null;
+    [MemberDeclarationTestCase($"public ref (int, int?) {nameof(ValueTupleOfNullableValueType)} {{ get; }}")] public ref (int, int?) ValueTupleOfNullableValueType => throw null;
+    [MemberDeclarationTestCase($"public ref (int, int)? {nameof(NullableValueTupleOfValueType)} {{ get; }}")] public ref (int, int)? NullableValueTupleOfValueType => throw null;
+    [MemberDeclarationTestCase($"public ref (int, int?)? {nameof(NullableValueTupleOfNullableValueType)} {{ get; }}")] public ref (int, int?)? NullableValueTupleOfNullableValueType => throw null;
+
+    [MemberDeclarationTestCase($"public ref (int, string) {nameof(ValueTupleOfRefType)} {{ get; }}")] public ref (int, string) ValueTupleOfRefType => throw null;
+    [MemberDeclarationTestCase($"public ref (int, string?) {nameof(ValueTupleOfNullableRefType)} {{ get; }}")] public ref (int, string?) ValueTupleOfNullableRefType => throw null;
+    [MemberDeclarationTestCase($"public ref (int, string)? {nameof(NullableValueTupleOfRefType)} {{ get; }}")] public ref (int, string)? NullableValueTupleOfRefType => throw null;
+    [MemberDeclarationTestCase($"public ref (int, string?)? {nameof(NullableValueTupleOfNullableRefType)} {{ get; }}")] public ref (int, string?)? NullableValueTupleOfNullableRefType => throw null;
+  }
+
   public class Indexers {
     public class IndexTypes {
       public abstract class ValueType {

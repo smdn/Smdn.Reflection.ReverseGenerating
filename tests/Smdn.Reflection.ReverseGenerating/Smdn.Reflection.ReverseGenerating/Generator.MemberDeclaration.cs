@@ -456,6 +456,11 @@ namespace Smdn.Reflection.ReverseGenerating {
           [MemberDeclarationTestCase("public System.ValueTuple<int> P4 { get; }")] public ValueTuple<int> P4 => throw null;
         }
 
+        public class RefReturnTypes {
+          [MemberDeclarationTestCase($"public ref int {nameof(PRefInt)} {{ get; }}")] public ref int PRefInt => throw null;
+          [MemberDeclarationTestCase($"public ref string {nameof(PRefString)} {{ get; }}")] public ref string PRefString => throw null;
+        }
+
         public class Accessors {
           [MemberDeclarationTestCase("public int P1 { get; set; }")] public int P1 { get; set; }
           [MemberDeclarationTestCase("public int P2 { get; }")] public int P2 { get; }

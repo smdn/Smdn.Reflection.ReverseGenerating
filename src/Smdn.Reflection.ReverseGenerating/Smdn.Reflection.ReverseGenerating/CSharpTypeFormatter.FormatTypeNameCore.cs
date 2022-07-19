@@ -42,18 +42,22 @@ static partial class CSharpFormatter {
       if (t.IsByRef) {
         var typeName = FormatCore(t.GetElementTypeOrThrow(), showVariance: false, options);
 
-        if (options.AttributeProvider is ParameterInfo p) {
-          // if (p.IsRetval)
-          //  return "ref " + typeName;
-          if (p.IsIn)
-            return "in " + typeName;
-          else if (p.IsOut)
-            return "out " + typeName;
-          else
+        switch (options.AttributeProvider) {
+          case ParameterInfo para:
+            // if (para.IsRetval)
+            //  return "ref " + typeName;
+            if (para.IsIn)
+              return "in " + typeName;
+            else if (para.IsOut)
+              return "out " + typeName;
+            else
+              return "ref " + typeName;
+
+          case PropertyInfo p:
             return "ref " + typeName;
-        }
-        else {
-          return typeName + "&";
+
+          default:
+            return typeName + "&";
         }
       }
 

@@ -3,6 +3,9 @@
 #if SYSTEM_REFLECTION_NULLABILITYINFO
 using System;
 using System.Collections.Generic;
+#if WORKAROUND_NULLABILITYINFO_BYREFTYPE
+using System.Globalization;
+#endif
 using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
@@ -32,6 +35,35 @@ static partial class CSharpFormatter {
     public override IList<CustomAttributeData> GetCustomAttributesData()
       => BaseParameter.GetCustomAttributesData();
   }
+
+  private sealed class ByRefElementTypePropertyInfo : PropertyInfo {
+    public PropertyInfo BaseProperty { get; }
+
+    public ByRefElementTypePropertyInfo(PropertyInfo baseProperty)
+    {
+      BaseProperty = baseProperty;
+    }
+
+    public override string Name => BaseProperty.Name;
+    public override PropertyAttributes Attributes => BaseProperty.Attributes;
+    public override bool CanRead => BaseProperty.CanRead;
+    public override bool CanWrite => BaseProperty.CanWrite;
+    public override Type PropertyType => BaseProperty.PropertyType.GetElementType()!;
+    public override Type? DeclaringType => BaseProperty.DeclaringType;
+    public override Type? ReflectedType => BaseProperty.ReflectedType;
+    public override IList<CustomAttributeData> GetCustomAttributesData() => BaseProperty.GetCustomAttributesData();
+    public override object[] GetCustomAttributes(bool inherit) => BaseProperty.GetCustomAttributes(inherit);
+    public override object[] GetCustomAttributes(Type attributeType, bool inherit) => BaseProperty.GetCustomAttributes(attributeType, inherit);
+    public override bool IsDefined(Type attributeType, bool inherit) => BaseProperty.IsDefined(attributeType, inherit);
+    public override MethodInfo[] GetAccessors(bool nonPublic) => BaseProperty.GetAccessors(nonPublic);
+    public override MethodInfo? GetGetMethod(bool nonPublic) => BaseProperty.GetGetMethod(nonPublic);
+    public override MethodInfo? GetSetMethod(bool nonPublic) => BaseProperty.GetSetMethod(nonPublic);
+    public override ParameterInfo[] GetIndexParameters() => BaseProperty.GetIndexParameters();
+    public override object? GetValue(object? obj, BindingFlags invokeAttr, Binder? binder, object?[]? index, CultureInfo? culture)
+      => BaseProperty.GetValue(obj, invokeAttr, binder, index, culture);
+    public override void SetValue(object? obj, object? value, BindingFlags invokeAttr, Binder? binder, object?[]? index, CultureInfo? culture)
+      => BaseProperty.SetValue(obj, value, invokeAttr, binder, index, culture);
+  }
 #endif
 
   private static StringBuilder FormatTypeNameWithNullabilityAnnotation(
@@ -52,22 +84,33 @@ static partial class CSharpFormatter {
       var elementTypeNullabilityInfo = target.ElementType;
 #endif
 
-      if (options.AttributeProvider is ParameterInfo p) {
-        // retval/parameter modifiers
-        if (p.IsIn)
-          builder.Append("in ");
-        else if (p.IsOut)
-          builder.Append("out ");
-        else /*if (p.IsRetval)*/
+      switch (options.AttributeProvider) {
+        case ParameterInfo para:
+          // retval/parameter modifiers
+          if (para.IsIn)
+            builder.Append("in ");
+          else if (para.IsOut)
+            builder.Append("out ");
+          else /*if (para.IsRetval)*/
+            builder.Append("ref ");
+
+#if WORKAROUND_NULLABILITYINFO_BYREFTYPE
+          // [.net6.0] Currently, NullabilityInfo.ElementType is always null if the type is ByRef.
+          // Uses the workaround implementation instead in that case.
+          // See https://github.com/dotnet/runtime/issues/72320
+          if (options.NullabilityInfoContext is not null && target.ElementType is null && para.ParameterType.HasElementType)
+            elementTypeNullabilityInfo = options.NullabilityInfoContext.Create(new ByRefElementTypeParameterInfo(para));
+#endif
+          break;
+
+        case PropertyInfo p:
           builder.Append("ref ");
 
 #if WORKAROUND_NULLABILITYINFO_BYREFTYPE
-        // [.net6.0] Currently, NullabilityInfo.ElementType is always null if the type is ByRef.
-        // Uses the workaround implementation instead in that case.
-        // See https://github.com/dotnet/runtime/issues/72320
-        if (options.NullabilityInfoContext is not null && target.ElementType is null && p.ParameterType.HasElementType)
-          elementTypeNullabilityInfo = options.NullabilityInfoContext.Create(new ByRefElementTypeParameterInfo(p));
+          if (options.NullabilityInfoContext is not null && target.ElementType is null && p.PropertyType.HasElementType)
+            elementTypeNullabilityInfo = options.NullabilityInfoContext.Create(new ByRefElementTypePropertyInfo(p));
 #endif
+          break;
       }
 
 #if WORKAROUND_NULLABILITYINFO_BYREFTYPE
@@ -97,7 +140,7 @@ static partial class CSharpFormatter {
     }
 
     if (target.Type.IsPointer || target.Type.IsByRef)
-      // pointer types or ByRef types (exclude ParameterInfo)
+      // pointer types or ByRef types (exclude ParameterInfo and PropertyInfo)
       return builder.Append(FormatTypeNameCore(target.Type, options));
 
     if (IsValueTupleType(target.Type)) {
