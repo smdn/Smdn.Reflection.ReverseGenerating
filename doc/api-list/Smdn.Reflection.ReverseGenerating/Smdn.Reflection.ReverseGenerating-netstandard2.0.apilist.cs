@@ -1,7 +1,7 @@
-// Smdn.Reflection.ReverseGenerating.dll (Smdn.Reflection.ReverseGenerating-1.1.1)
+// Smdn.Reflection.ReverseGenerating.dll (Smdn.Reflection.ReverseGenerating-1.1.2)
 //   Name: Smdn.Reflection.ReverseGenerating
-//   AssemblyVersion: 1.1.1.0
-//   InformationalVersion: 1.1.1+9c1ed7379f1b7fe2562a51f0283b02332d84584f
+//   AssemblyVersion: 1.1.2.0
+//   InformationalVersion: 1.1.2+775287448dc58ab1c9fb7f0618d8c8bb6de9e775
 //   TargetFramework: .NETStandard,Version=v2.0
 //   Configuration: Release
 #nullable enable annotations
@@ -78,6 +78,7 @@ namespace Smdn.Reflection.ReverseGenerating {
       public bool OmitEndOfStatement { get; set; }
       public bool WithAccessibility { get; set; }
       public bool WithDeclaringTypeName { get; set; }
+      public bool WithEnumTypeName { get; set; }
       public bool WithNamespace { get; set; }
     }
 
