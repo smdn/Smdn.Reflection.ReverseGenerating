@@ -6,6 +6,7 @@ SPDX-License-Identifier: MIT
   <PropertyGroup>
     <SmdnBuildAssetRootDirectory>$(MSBuildThisFileDirectory)..\</SmdnBuildAssetRootDirectory>
     <APIListOutputBaseDirectory>$(MSBuildThisFileDirectory)..\doc\api-list\</APIListOutputBaseDirectory>
+    <APIListPackageVersion>1.1.2</APIListPackageVersion>
   </PropertyGroup>
 
   <ImportGroup Label="project assets">
