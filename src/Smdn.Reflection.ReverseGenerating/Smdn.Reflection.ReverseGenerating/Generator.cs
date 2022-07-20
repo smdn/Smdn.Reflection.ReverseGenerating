@@ -1196,7 +1196,7 @@ public static partial class Generator {
     if (member.IsHidingInheritedMember(nonPublic: true))
       sb.Append("new ");
 
-SWITCH_MEMBER_TYPE:
+    SWITCH_MEMBER_TYPE:
     switch (member) {
       case EventInfo ev:
         member = ev.GetMethods(true).First();

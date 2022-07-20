@@ -10,8 +10,6 @@ using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Text;
 
-using Smdn.Reflection.Attributes;
-
 namespace Smdn.Reflection.ReverseGenerating;
 
 public static partial class CSharpFormatter /* ITypeFormatter */ {
