@@ -116,6 +116,7 @@ public class GenerateApiList : Task {
     options.ParameterDeclaration.WithNamespace    = GenerateFullTypeName;
 
     options.TypeDeclaration.WithDeclaringTypeName       = false;
+    options.MemberDeclaration.WithEnumTypeName          = false;
     options.MemberDeclaration.WithDeclaringTypeName     = false;
     options.AttributeDeclaration.WithDeclaringTypeName  = GenerateTypeNameWithDeclaringTypeName;
     options.ValueDeclaration.WithDeclaringTypeName      = GenerateTypeNameWithDeclaringTypeName;
