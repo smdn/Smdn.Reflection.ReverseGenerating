@@ -71,7 +71,7 @@ public static partial class Generator {
     var genericParameterConstraints = t
       .GetGenericArguments()
       .Select(
-        param => GenerateGenericArgumentConstraintDeclaration(param, referencingNamespaces, options)
+        param => GenerateGenericParameterConstraintDeclaration(param, referencingNamespaces, options)
       )
       .Where(static d => !string.IsNullOrEmpty(d))
       .ToList();
@@ -141,8 +141,20 @@ public static partial class Generator {
     }
   }
 
+  [Obsolete($"Use {nameof(GenerateGenericParameterConstraintDeclaration)} instead.")]
   public static string GenerateGenericArgumentConstraintDeclaration(
     Type genericArgument,
+    ISet<string>? referencingNamespaces,
+    GeneratorOptions options
+  )
+    => GenerateGenericParameterConstraintDeclaration(
+      genericParameter: genericArgument,
+      referencingNamespaces: referencingNamespaces,
+      options: options
+    );
+
+  public static string GenerateGenericParameterConstraintDeclaration(
+    Type genericParameter,
     ISet<string>? referencingNamespaces,
     GeneratorOptions options
   )
@@ -212,16 +224,16 @@ public static partial class Generator {
     var constraints = string.Join(
       ", ",
       GetGenericParameterConstraintsOf(
-        genericArgument,
+        genericParameter,
         referencingNamespaces,
-        genericArgument.DeclaringMethod == null
+        genericParameter.DeclaringMethod == null
           ? options.TypeDeclaration.WithNamespace
           : options.MemberDeclaration.WithNamespace
       )
     );
 
     if (0 < constraints.Length)
-      return $"where {genericArgument.FormatTypeName(typeWithNamespace: false)} : {constraints}";
+      return $"where {genericParameter.FormatTypeName(typeWithNamespace: false)} : {constraints}";
 
     return string.Empty;
   }
@@ -739,7 +751,7 @@ public static partial class Generator {
           " ",
           genericParameters
             .Select(
-              param => GenerateGenericArgumentConstraintDeclaration(param, referencingNamespaces, options)
+              param => GenerateGenericParameterConstraintDeclaration(param, referencingNamespaces, options)
             )
             .Where(static d => !string.IsNullOrEmpty(d))
         );
