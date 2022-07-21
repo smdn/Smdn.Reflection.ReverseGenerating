@@ -68,16 +68,16 @@ public static partial class Generator {
       yield break;
     }
 
-    var genericArgumentConstraints = t
+    var genericParameterConstraints = t
       .GetGenericArguments()
       .Select(
-        arg => GenerateGenericArgumentConstraintDeclaration(arg, referencingNamespaces, options)
+        param => GenerateGenericArgumentConstraintDeclaration(param, referencingNamespaces, options)
       )
       .Where(static d => !string.IsNullOrEmpty(d))
       .ToList();
 
-    string GetSingleLineGenericArgumentConstraintsDeclaration()
-      => genericArgumentConstraints.Count == 0 ? string.Empty : " " + string.Join(" ", genericArgumentConstraints);
+    string GetSingleLineGenericParameterConstraintsDeclaration()
+      => genericParameterConstraints.Count == 0 ? string.Empty : " " + string.Join(" ", genericParameterConstraints);
 
     var modifierNew = t.IsHidingInheritedType(nonPublic: true) ? "new " : null;
 
@@ -111,7 +111,7 @@ public static partial class Generator {
     }
 
     if (!generateExplicitBaseTypeAndInterfaces) {
-      yield return typeDeclaration + GetSingleLineGenericArgumentConstraintsDeclaration();
+      yield return typeDeclaration + GetSingleLineGenericParameterConstraintsDeclaration();
       yield break;
     }
 
@@ -121,9 +121,9 @@ public static partial class Generator {
       var baseTypeDeclaration = baseTypeList.Count == 0
         ? string.Empty
         : " : " + baseTypeList[0];
-      var genericArgumentConstraintDeclaration = GetSingleLineGenericArgumentConstraintsDeclaration();
+      var genericParameterConstraintsDeclaration = GetSingleLineGenericParameterConstraintsDeclaration();
 
-      yield return typeDeclaration + baseTypeDeclaration + genericArgumentConstraintDeclaration;
+      yield return typeDeclaration + baseTypeDeclaration + genericParameterConstraintsDeclaration;
     }
     else {
       yield return typeDeclaration + " :";
@@ -135,7 +135,7 @@ public static partial class Generator {
           yield return options.Indent + baseTypeList[index] + ",";
       }
 
-      foreach (var constraint in genericArgumentConstraints) {
+      foreach (var constraint in genericParameterConstraints) {
         yield return options.Indent + constraint;
       }
     }
@@ -155,7 +155,7 @@ public static partial class Generator {
     static bool IsValueType(Type t) => string.Equals(t.FullName, typeof(ValueType).FullName, StringComparison.Ordinal);
     static bool IsNotValueType(Type t) => !string.Equals(t.FullName, typeof(ValueType).FullName, StringComparison.Ordinal);
 
-    static IEnumerable<string> GetGenericArgumentConstraintsOf(
+    static IEnumerable<string> GetGenericParameterConstraintsOf(
       Type genericParameter,
       ISet<string>? referencingNns,
       bool typeWithNamespace
@@ -211,7 +211,7 @@ public static partial class Generator {
 
     var constraints = string.Join(
       ", ",
-      GetGenericArgumentConstraintsOf(
+      GetGenericParameterConstraintsOf(
         genericArgument,
         referencingNamespaces,
         genericArgument.DeclaringMethod == null
@@ -728,18 +728,18 @@ public static partial class Generator {
         p => GenerateParameterDeclaration(p, referencingNamespaces, options)
       )
     );
-    var genericArguments = method is null
+    var genericParameters = method is null
       ? null
       : asDelegateDeclaration
         ? m.GetDeclaringTypeOrThrow().GetGenericArguments()
         : method.GetGenericArguments();
-    var methodConstraints = genericArguments is null
+    var methodConstraints = genericParameters is null
       ? null
       : string.Join(
           " ",
-          genericArguments
+          genericParameters
             .Select(
-              arg => GenerateGenericArgumentConstraintDeclaration(arg, referencingNamespaces, options)
+              param => GenerateGenericArgumentConstraintDeclaration(param, referencingNamespaces, options)
             )
             .Where(static d => !string.IsNullOrEmpty(d))
         );
