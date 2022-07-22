@@ -1,7 +1,7 @@
-// Smdn.Reflection.ReverseGenerating.dll (Smdn.Reflection.ReverseGenerating-1.1.2)
+// Smdn.Reflection.ReverseGenerating.dll (Smdn.Reflection.ReverseGenerating-1.1.3)
 //   Name: Smdn.Reflection.ReverseGenerating
-//   AssemblyVersion: 1.1.2.0
-//   InformationalVersion: 1.1.2+775287448dc58ab1c9fb7f0618d8c8bb6de9e775
+//   AssemblyVersion: 1.1.3.0
+//   InformationalVersion: 1.1.3+f6167551bdfd2449c464509449137c454604db0f
 //   TargetFramework: .NETStandard,Version=v2.0
 //   Configuration: Release
 #nullable enable annotations
@@ -47,7 +47,9 @@ namespace Smdn.Reflection.ReverseGenerating {
   public static class Generator {
     public static IEnumerable<string> GenerateAttributeList(ICustomAttributeProvider attributeProvider, ISet<string>? referencingNamespaces, GeneratorOptions options) {}
     public static IEnumerable<string> GenerateExplicitBaseTypeAndInterfaces(Type t, ISet<string>? referencingNamespaces, GeneratorOptions options) {}
+    [Obsolete("Use GenerateGenericParameterConstraintDeclaration instead.")]
     public static string GenerateGenericArgumentConstraintDeclaration(Type genericArgument, ISet<string>? referencingNamespaces, GeneratorOptions options) {}
+    public static string GenerateGenericParameterConstraintDeclaration(Type genericParameter, ISet<string>? referencingNamespaces, GeneratorOptions options) {}
     public static string? GenerateMemberDeclaration(MemberInfo member, ISet<string>? referencingNamespaces, GeneratorOptions options) {}
     public static string GenerateTypeDeclaration(Type t, ISet<string>? referencingNamespaces, GeneratorOptions options) {}
     public static IEnumerable<string> GenerateTypeDeclarationWithExplicitBaseTypeAndInterfaces(Type t, ISet<string>? referencingNamespaces, GeneratorOptions options) {}
