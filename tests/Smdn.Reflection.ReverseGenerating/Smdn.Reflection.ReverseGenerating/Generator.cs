@@ -248,4 +248,12 @@ public partial class GeneratorTests {
   [Test]
   public void GenerateExplicitBaseTypeAndInterfaces_ArgumentTypeNull()
     => Assert.Throws<ArgumentNullException>(() => Generator.GenerateExplicitBaseTypeAndInterfaces(t: null!, null, options: new()));
+
+  [Test]
+  public void GenerateAttributeList_ArgumentOptionsNull()
+    => Assert.Throws<ArgumentNullException>(() => Generator.GenerateAttributeList(attributeProvider: typeof(int), null, options: null!));
+
+  [Test]
+  public void GenerateAttributeList_ArgumentAttributeProviderNull()
+    => Assert.Throws<ArgumentNullException>(() => Generator.GenerateAttributeList(attributeProvider: null!, null, options: new()));
 }

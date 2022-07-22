@@ -39,6 +39,8 @@ partial class Generator {
   {
     if (attributeProvider is null)
       throw new ArgumentNullException(nameof(attributeProvider));
+    if (options is null)
+      throw new ArgumentNullException(nameof(options));
 
     const string attributeSectionPrefixDefault = "[";
     const string attributeSectionPrefixField = "[field: ";
