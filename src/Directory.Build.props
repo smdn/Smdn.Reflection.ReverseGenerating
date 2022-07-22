@@ -25,7 +25,7 @@ SPDX-License-Identifier: MIT
 
   <PropertyGroup Label="package properties">
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <PackageProjectUrl>https://smdn.jp/works/tools/list-api/</PackageProjectUrl>
+    <PackageProjectUrl>https://smdn.jp/works/libs/Smdn.Reflection.ReverseGenerating/</PackageProjectUrl>
   </PropertyGroup>
 
   <PropertyGroup Label="repository properties" Condition="'$(GITHUB_ACTIONS)' != 'true'">
