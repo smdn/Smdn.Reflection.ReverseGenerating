@@ -176,4 +176,76 @@ public partial class GeneratorTests {
 
     return options;
   }
+
+  [Test]
+  public void GenerateTypeDeclaration_ArgumentOptionsNull()
+    => Assert.Throws<ArgumentNullException>(() => Generator.GenerateTypeDeclaration(t: typeof(int), null, options: null!));
+
+  [Test]
+  public void GenerateTypeDeclaration_ArgumentTypeNull()
+    => Assert.Throws<ArgumentNullException>(() => Generator.GenerateTypeDeclaration(t: null!, null, options: new()));
+
+  [TestCase(typeof(List<int>))]
+  [TestCase(typeof(IEnumerable<int>))]
+  [TestCase(typeof(Action<int>))]
+  [TestCase(typeof(int?))]
+  [TestCase(typeof((int, int)))]
+  public void GenerateTypeDeclaration_ArgumentTypeIsConstructedGenericType(Type type)
+    => Assert.Throws<ArgumentException>(() => Generator.GenerateTypeDeclaration(t: type, null, options: new()));
+
+  [Test]
+  public void GenerateTypeDeclarationWithExplicitBaseTypeAndInterfaces_ArgumentOptionsNull()
+    => Assert.Throws<ArgumentNullException>(() => Generator.GenerateTypeDeclarationWithExplicitBaseTypeAndInterfaces(t: typeof(int), null, options: null!));
+
+  [Test]
+  public void GenerateTypeDeclarationWithExplicitBaseTypeAndInterfaces_ArgumentTypeNull()
+    => Assert.Throws<ArgumentNullException>(() => Generator.GenerateTypeDeclarationWithExplicitBaseTypeAndInterfaces(t: null!, null, options: new()));
+
+  [TestCase(typeof(List<int>))]
+  [TestCase(typeof(IEnumerable<int>))]
+  [TestCase(typeof(Action<int>))]
+  [TestCase(typeof(int?))]
+  [TestCase(typeof((int, int)))]
+  public void GenerateTypeDeclarationWithExplicitBaseTypeAndInterfaces_ArgumentTypeIsConstructedGenericType(Type type)
+    => Assert.Throws<ArgumentException>(() => Generator.GenerateTypeDeclarationWithExplicitBaseTypeAndInterfaces(t: type, null, options: new()));
+
+  [Test]
+  public void GenerateMemberDeclaration_ArgumentOptionsNull()
+    => Assert.Throws<ArgumentNullException>(() => Generator.GenerateMemberDeclaration(member: typeof(int).GetMembers().First(), null, options: null!));
+
+  [Test]
+  public void GenerateMemberDeclaration_ArgumentTypeNull()
+    => Assert.Throws<ArgumentNullException>(() => Generator.GenerateMemberDeclaration(member: null!, null, options: new()));
+
+  [Test]
+  public void GenerateGenericParameterConstraintDeclaration_ArgumentOptionsNull()
+  {
+    var genericParameter = typeof(List<>).GetGenericArguments()[0];
+
+    Assert.Throws<ArgumentNullException>(() => Generator.GenerateGenericParameterConstraintDeclaration(genericParameter: genericParameter, null, options: null!));
+  }
+
+  [Test]
+  public void GenerateGenericParameterConstraintDeclaration_ArgumentGenericParameterNull()
+    => Assert.Throws<ArgumentNullException>(() => Generator.GenerateGenericParameterConstraintDeclaration(genericParameter: null!, null, options: new()));
+
+  [TestCase(typeof(int))]
+  [TestCase(typeof(List<>))]
+  public void GenerateGenericParameterConstraintDeclaration_ArgumentGenericParameterIsType(Type type)
+    => Assert.Throws<ArgumentException>(() => Generator.GenerateGenericParameterConstraintDeclaration(genericParameter: type, null, options: new()));
+
+  [TestCase(typeof(List<int>))]
+  [TestCase(typeof(Action<int>))]
+  [TestCase(typeof(int?))]
+  [TestCase(typeof((int, int)))]
+  public void GenerateGenericParameterConstraintDeclaration_ArgumentGenericParameterIsGenericArgument(Type type)
+    => Assert.Throws<ArgumentException>(() => Generator.GenerateGenericParameterConstraintDeclaration(genericParameter: type.GetGenericArguments()[0], null, options: new()));
+
+  [Test]
+  public void GenerateExplicitBaseTypeAndInterfaces_ArgumentOptionsNull()
+    => Assert.Throws<ArgumentNullException>(() => Generator.GenerateExplicitBaseTypeAndInterfaces(t: typeof(int), null, options: null!));
+
+  [Test]
+  public void GenerateExplicitBaseTypeAndInterfaces_ArgumentTypeNull()
+    => Assert.Throws<ArgumentNullException>(() => Generator.GenerateExplicitBaseTypeAndInterfaces(t: null!, null, options: new()));
 }

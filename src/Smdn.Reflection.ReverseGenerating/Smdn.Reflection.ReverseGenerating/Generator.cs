@@ -12,13 +12,33 @@ using System.Text;
 namespace Smdn.Reflection.ReverseGenerating;
 
 public static partial class Generator {
+  private static Type GenerateDeclarationValidateTypeArgument(Type? t, string paramName)
+  {
+    if (t is null)
+      throw new ArgumentNullException(paramName);
+    if (t.IsConstructedGenericType)
+      throw new ArgumentException($"can not generate declaration of constructed generic types (type: {t})");
+
+    return t;
+  }
+
+  private static Type GenerateDeclarationValidateGenericParameterArgument(Type? genericParameter, string paramName)
+  {
+    if (genericParameter is null)
+      throw new ArgumentNullException(paramName);
+    if (!genericParameter.IsGenericParameter)
+      throw new ArgumentException($"can not generate declaration of types which does not represent generic parameter ({genericParameter.FullName})");
+
+    return genericParameter;
+  }
+
   public static string GenerateTypeDeclaration(
     Type t,
     ISet<string>? referencingNamespaces,
     GeneratorOptions options
   ) =>
     GenerateTypeDeclaration(
-      t,
+      GenerateDeclarationValidateTypeArgument(t, nameof(t)),
       false,
       referencingNamespaces,
       options ?? throw new ArgumentNullException(nameof(options))
@@ -30,7 +50,7 @@ public static partial class Generator {
     GeneratorOptions options
   ) =>
     GenerateTypeDeclaration(
-      t,
+      GenerateDeclarationValidateTypeArgument(t, nameof(t)),
       true,
       referencingNamespaces,
       options ?? throw new ArgumentNullException(nameof(options))
@@ -148,7 +168,7 @@ public static partial class Generator {
     GeneratorOptions options
   )
     => GenerateGenericParameterConstraintDeclaration(
-      genericParameter: genericArgument,
+      genericParameter: GenerateDeclarationValidateGenericParameterArgument(genericArgument, nameof(genericArgument)),
       referencingNamespaces: referencingNamespaces,
       options: options
     );
@@ -159,6 +179,11 @@ public static partial class Generator {
     GeneratorOptions options
   )
   {
+    GenerateDeclarationValidateGenericParameterArgument(genericParameter, nameof(genericParameter));
+
+    if (options is null)
+      throw new ArgumentNullException(nameof(options));
+
     static bool HasUnmanagedConstraint(Type genericParameter)
       => genericParameter.CustomAttributes.Any(
         static attr => attr.AttributeType.FullName.Equals("System.Runtime.CompilerServices.IsUnmanagedAttribute", StringComparison.Ordinal)
@@ -244,6 +269,8 @@ public static partial class Generator {
     GeneratorOptions options
   )
   {
+    if (t is null)
+      throw new ArgumentNullException(nameof(t));
     if (options == null)
       throw new ArgumentNullException(nameof(options));
 
@@ -678,7 +705,10 @@ public static partial class Generator {
   {
     MethodInfo? explicitInterfaceMethod = null;
 
-    if (!asDelegateDeclaration) {
+    if (asDelegateDeclaration) {
+      GenerateDeclarationValidateTypeArgument(m.GetDeclaringTypeOrThrow(), nameof(m));
+    }
+    else {
       var isExplicitInterfaceMethod = m.TryFindExplicitInterfaceMethod(
         out explicitInterfaceMethod,
         findOnlyPublicInterfaces: options.IgnorePrivateOrAssembly
@@ -744,7 +774,9 @@ public static partial class Generator {
       ? null
       : asDelegateDeclaration
         ? m.GetDeclaringTypeOrThrow().GetGenericArguments()
-        : method.GetGenericArguments();
+        : method.IsGenericMethodDefinition
+          ? method.GetGenericArguments()
+          : null;
     var methodConstraints = genericParameters is null
       ? null
       : string.Join(
