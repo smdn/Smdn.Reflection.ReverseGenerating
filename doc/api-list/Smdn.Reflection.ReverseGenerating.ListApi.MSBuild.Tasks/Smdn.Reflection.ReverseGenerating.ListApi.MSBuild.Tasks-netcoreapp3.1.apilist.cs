@@ -1,7 +1,7 @@
-// Smdn.Reflection.ReverseGenerating.ListApi.MSBuild.Tasks.dll (Smdn.Reflection.ReverseGenerating.ListApi.MSBuild.Tasks-1.1.2)
+// Smdn.Reflection.ReverseGenerating.ListApi.MSBuild.Tasks.dll (Smdn.Reflection.ReverseGenerating.ListApi.MSBuild.Tasks-1.1.2.1)
 //   Name: Smdn.Reflection.ReverseGenerating.ListApi.MSBuild.Tasks
-//   AssemblyVersion: 1.1.2.0
-//   InformationalVersion: 1.1.2+2aea6159ebc902a97981020b839b6a5fd056489e
+//   AssemblyVersion: 1.1.2.1
+//   InformationalVersion: 1.1.2.1+59722f8c92dea887d08ff8f5e1066a73abebbcfd
 //   TargetFramework: .NETCoreApp,Version=v3.1
 //   Configuration: Release
 #nullable enable annotations
