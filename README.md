@@ -69,7 +69,7 @@ This tool does not provide any options for code styles including spaces, indents
 # Smdn.Reflection.ReverseGenerating
 [![NuGet Smdn.Reflection.ReverseGenerating](https://img.shields.io/nuget/v/Smdn.Reflection.ReverseGenerating.svg)](https://www.nuget.org/packages/Smdn.Reflection.ReverseGenerating/)
 
-This package provides APIs common to reverse generating. See [API list of Smdn.Reflection.ReverseGenerating](doc/api-list/Smdn.Reflection.ReverseGenerating/).
+This package provides APIs common to reverse generating. See [examples](examples/Smdn.Reflection.ReverseGenerating/) or [API list of Smdn.Reflection.ReverseGenerating](doc/api-list/Smdn.Reflection.ReverseGenerating/).
 
 # Example of output
 The files in [API list directory](/doc/api-list/) is generated using the artifacts of this repository.
