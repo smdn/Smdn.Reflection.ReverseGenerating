@@ -1,7 +1,7 @@
-// Smdn.Reflection.ReverseGenerating.ListApi.Core.dll (Smdn.Reflection.ReverseGenerating.ListApi.Core-1.1.2)
+// Smdn.Reflection.ReverseGenerating.ListApi.Core.dll (Smdn.Reflection.ReverseGenerating.ListApi.Core-1.1.2.1)
 //   Name: Smdn.Reflection.ReverseGenerating.ListApi.Core
-//   AssemblyVersion: 1.1.2.0
-//   InformationalVersion: 1.1.2+3059a983a624895dd6329f952eac8aad840a581f
+//   AssemblyVersion: 1.1.2.1
+//   InformationalVersion: 1.1.2.1+59722f8c92dea887d08ff8f5e1066a73abebbcfd
 //   TargetFramework: .NETCoreApp,Version=v3.1
 //   Configuration: Release
 #nullable enable annotations
