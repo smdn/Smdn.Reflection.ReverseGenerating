@@ -1,0 +1,28 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <LangVersion>latest</LangVersion>
+    <Nullable>enable</Nullable>
+    <ApiListOutputBaseDirectory>$(MSBuildThisFileDirectory)api-list</ApiListOutputBaseDirectory>
+
+    <!-- This is required to import 'Smdn.Reflection.ReverseGenerating.ListApi.MSBuild.Tasks.targets' even if the build target is `pack`. -->
+    <ExcludeRestorePackageImports>false</ExcludeRestorePackageImports>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="$(ApiListOutputBaseDirectory)\**\*.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference
+      Include="Smdn.Reflection.ReverseGenerating.ListApi.MSBuild.Tasks"
+      Version="*"
+      PrivateAssets="all"
+      IncludeAssets="build"
+    />
+  </ItemGroup>
+
+  <Import Project="GenerateApiListBeforeGenerateNuspecTask.targets" />
+
+</Project>

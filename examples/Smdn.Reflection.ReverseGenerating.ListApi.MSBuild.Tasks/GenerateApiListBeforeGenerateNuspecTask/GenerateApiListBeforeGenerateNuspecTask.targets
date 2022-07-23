@@ -1,0 +1,30 @@
+<!--
+SPDX-FileCopyrightText: 2022 smdn <smdn@smdn.jp>
+SPDX-License-Identifier: MIT
+-->
+<Project>
+  <Target
+    Name="GenerateApiListOfOutputAssemblies"
+    BeforeTargets="GenerateNuspec"
+  >
+    <ItemGroup>
+      <GenerateApiListTargetAssemblies Include="%(NuGetPackInput.Identity)" Condition="
+        '%(NuGetPackInput.MSBuildSourceProjectFile)' == '$(MSBuildProjectFullPath)' and
+        '' != '%(NuGetPackInput.TargetFramework)' and
+        $([System.String]::new('%(NuGetPackInput.TargetPath)').EndsWith('.dll'))
+      ">
+        <OutputFilePath>$(ApiListOutputBaseDirectory)\$(AssemblyName)-%(NuGetPackInput.TargetFramework).apilist.cs</OutputFilePath>
+      </GenerateApiListTargetAssemblies>
+    </ItemGroup>
+
+    <GenerateApiList
+      Assemblies="@(GenerateApiListTargetAssemblies)"
+      GenerateLanguagePrimitiveType="true"
+      GenerateNullableAnnotations="true"
+    >
+      <Output TaskParameter="GeneratedFiles" ItemName="GeneratedApiListFiles" />
+    </GenerateApiList>
+
+    <Message Text="Generated API list '%(GeneratedApiListFiles.Identity)' from '%(GeneratedApiListFiles.SourceAssembly)'" Importance="high" />
+  </Target>
+</Project>

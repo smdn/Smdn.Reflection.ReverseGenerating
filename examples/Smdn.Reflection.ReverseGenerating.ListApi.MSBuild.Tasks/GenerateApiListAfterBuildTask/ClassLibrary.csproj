@@ -1,0 +1,25 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <LangVersion>latest</LangVersion>
+    <Nullable>enable</Nullable>
+    <ApiListOutputBaseDirectory>$(MSBuildThisFileDirectory)api-list</ApiListOutputBaseDirectory>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="$(ApiListOutputBaseDirectory)\**\*.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference
+      Include="Smdn.Reflection.ReverseGenerating.ListApi.MSBuild.Tasks"
+      Version="*"
+      PrivateAssets="all"
+      IncludeAssets="build"
+    />
+  </ItemGroup>
+
+  <Import Project="GenerateApiListAfterBuildTask.targets" />
+
+</Project>

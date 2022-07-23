@@ -8,6 +8,8 @@
 This package provides `GenerateApiList` MSBuild task.
 
 ## Usage
+See [examples](examples/Smdn.Reflection.ReverseGenerating.ListApi.MSBuild.Tasks/) for details and more usage examples.
+
 ```xml
   <ItemGroup>
     <!-- Add package reference of Smdn.Reflection.ReverseGenerating.ListApi.MSBuild.Tasks. -->
