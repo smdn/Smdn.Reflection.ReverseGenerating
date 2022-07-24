@@ -23,63 +23,12 @@ internal static class TypeGenericParameterExtensions {
   {
     ValidateGenericParameterArgument(genericParameter, nameof(genericParameter));
 
-    var attrNullable = genericParameter.CustomAttributes.FirstOrDefault(IsNullableAttribute);
-    var attrNullableContext = FindNullableContextAttribute(genericParameter);
-
-    const byte notAnnotated = 1;
-
-    if (attrNullableContext is not null && notAnnotated.Equals(attrNullableContext.ConstructorArguments[0].Value))
+    if (genericParameter.GetNullableContextAttributeMetadataValue() == NullableMetadataValue.NotAnnotated)
       // `#nullable enable` context
-      return attrNullable is null;
+      return genericParameter.GetNullableAttributeMetadataValue() == null;
     else
       // `#nullable disable` context
-      return attrNullable is not null && notAnnotated.Equals(attrNullable.ConstructorArguments[0].Value);
-  }
-
-  private static bool IsNullableAttribute(CustomAttributeData attr)
-    => "System.Runtime.CompilerServices.NullableAttribute".Equals(attr.AttributeType.FullName, StringComparison.Ordinal);
-
-  private static bool IsNullableContextAttribute(CustomAttributeData attr)
-    => "System.Runtime.CompilerServices.NullableContextAttribute".Equals(attr.AttributeType.FullName, StringComparison.Ordinal);
-
-  private static bool TryGetNullableContextAttribute(
-    MemberInfo member,
-#if NULL_STATE_STATIC_ANALYSIS_ATTRIBUTES
-    [NotNullWhen(true)]
-#endif
-    out CustomAttributeData? attrNullableContext
-  )
-  {
-    attrNullableContext = member.CustomAttributes.FirstOrDefault(IsNullableContextAttribute);
-
-    return attrNullableContext is not null;
-  }
-
-  private static CustomAttributeData? FindNullableContextAttribute(Type genericParameter)
-  {
-    if (
-#if SYSTEM_TYPE_ISGENERICMETHODPARAMETER
-      genericParameter.IsGenericMethodParameter &&
-#else
-      genericParameter.DeclaringMethod is not null &&
-      genericParameter.IsGenericParameter &&
-#endif
-      TryGetNullableContextAttribute(genericParameter.DeclaringMethod!, out var methodAttr)
-    ) {
-      return methodAttr;
-    }
-
-    Type? t = genericParameter;
-
-    for (; ; ) {
-      if ((t = t!.DeclaringType) is null)
-        return null;
-      if (TryGetNullableContextAttribute(t, out var typeAttr))
-        return typeAttr;
-
-      // retry against to the outer type
-      continue;
-    }
+      return genericParameter.GetNullableAttributeMetadataValue() == NullableMetadataValue.NotAnnotated;
   }
 
   public static bool HasGenericParameterNoConstraints(this Type genericParameter)
