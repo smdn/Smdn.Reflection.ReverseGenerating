@@ -18,6 +18,15 @@ internal static class TypeGenericParameterExtensions {
       throw new InvalidOperationException($"{paramName} must be a generic parameter or generic argument");
   }
 
+  public static bool HasGenericParameterUnmanagedConstraint(this Type genericParameter)
+  {
+    ValidateGenericParameterArgument(genericParameter, nameof(genericParameter));
+
+    return genericParameter.CustomAttributes.Any(
+      static attr => string.Equals("System.Runtime.CompilerServices.IsUnmanagedAttribute", attr.AttributeType.FullName, StringComparison.Ordinal)
+    );
+  }
+
   // ref: https://github.com/dotnet/roslyn/blob/main/docs/features/nullable-metadata.md#type-parameters
   public static bool HasGenericParameterNotNullConstraint(this Type genericParameter)
   {

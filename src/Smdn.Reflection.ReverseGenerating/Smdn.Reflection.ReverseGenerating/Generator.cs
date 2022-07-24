@@ -184,13 +184,26 @@ public static partial class Generator {
     if (options is null)
       throw new ArgumentNullException(nameof(options));
 
-    static bool HasUnmanagedConstraint(Type genericParameter)
-      => genericParameter.CustomAttributes.Any(
-        static attr => attr.AttributeType.FullName.Equals("System.Runtime.CompilerServices.IsUnmanagedAttribute", StringComparison.Ordinal)
+    static bool ConstraintTypesContainsValueType(Type genericParameter, out IEnumerable<Type> constraintTypesExceptForValueType)
+    {
+      var constraintTypes = genericParameter.GetGenericParameterConstraints();
+
+      var indexOfValueType = Array.FindIndex(
+        constraintTypes,
+        static t => string.Equals(t.FullName, typeof(ValueType).FullName, StringComparison.Ordinal)
       );
 
-    static bool IsValueType(Type t) => string.Equals(t.FullName, typeof(ValueType).FullName, StringComparison.Ordinal);
-    static bool IsNotValueType(Type t) => !string.Equals(t.FullName, typeof(ValueType).FullName, StringComparison.Ordinal);
+      if (indexOfValueType < 0) {
+        constraintTypesExceptForValueType = constraintTypes;
+        return false;
+      }
+
+      constraintTypesExceptForValueType = constraintTypes
+        .Take(indexOfValueType)
+        .Concat(constraintTypes.Skip(indexOfValueType + 1));
+
+      return true;
+    }
 
     static IEnumerable<string> GetGenericParameterConstraintsOf(
       Type genericParameter,
@@ -199,53 +212,40 @@ public static partial class Generator {
     )
     {
       var constraintAttrs = genericParameter.GenericParameterAttributes & GenericParameterAttributes.SpecialConstraintMask;
-      IEnumerable<Type> constraintTypes = genericParameter.GetGenericParameterConstraints();
-      IEnumerable<Type> constraintTypesExceptValueType = constraintTypes;
+      var hasDefaultConstructorConstraint = constraintAttrs.HasFlag(GenericParameterAttributes.DefaultConstructorConstraint);
+      IEnumerable<Type>? constraintTypes = null;
 
-      referencingNns?.UnionWith(constraintTypes.Where(IsNotValueType).SelectMany(CSharpFormatter.ToNamespaceList));
-
-      if (
-        constraintAttrs == GenericParameterAttributes.None &&
-        genericParameter.HasGenericParameterNotNullConstraint()
-      ) {
-        yield return "notnull";
+      if (constraintAttrs == GenericParameterAttributes.None) {
+        if (genericParameter.HasGenericParameterNotNullConstraint())
+          yield return "notnull";
       }
+      else if (constraintAttrs.HasFlag(GenericParameterAttributes.NotNullableValueTypeConstraint)) {
+        yield return genericParameter.HasGenericParameterUnmanagedConstraint()
+          ? "unmanaged"
+          : "struct";
 
-      if (
-        constraintAttrs.HasFlag(GenericParameterAttributes.NotNullableValueTypeConstraint) &&
-        constraintAttrs.HasFlag(GenericParameterAttributes.DefaultConstructorConstraint) &&
-        constraintTypes.Any(IsValueType)
-      ) {
-        constraintAttrs &= ~GenericParameterAttributes.NotNullableValueTypeConstraint;
-        constraintAttrs &= ~GenericParameterAttributes.DefaultConstructorConstraint;
-        constraintTypesExceptValueType = constraintTypes.Where(IsNotValueType);
-
-        if (HasUnmanagedConstraint(genericParameter))
-          yield return "unmanaged";
-        else
-          yield return "struct";
+        if (hasDefaultConstructorConstraint && ConstraintTypesContainsValueType(genericParameter, out constraintTypes))
+          hasDefaultConstructorConstraint = false; // contraint type of System.ValueType implies `new()`
       }
       else if (constraintAttrs.HasFlag(GenericParameterAttributes.ReferenceTypeConstraint)) {
         yield return genericParameter.GetNullableAttributeMetadataValue() == NullableMetadataValue.Annotated
           ? "class?"
           : "class";
       }
-      else if (constraintAttrs.HasFlag(GenericParameterAttributes.NotNullableValueTypeConstraint)) {
-        if (HasUnmanagedConstraint(genericParameter))
-          yield return "unmanaged";
-        else
-          yield return "struct";
-      }
 
-      var orderedConstraintTypeNames = constraintTypesExceptValueType
+      constraintTypes ??= genericParameter.GetGenericParameterConstraints();
+
+      var orderedConstraintTypeNames = constraintTypes
         .Select(constraintType => constraintType.FormatTypeName(typeWithNamespace: typeWithNamespace))
         .OrderBy(static name => name, StringComparer.Ordinal);
 
       foreach (var ctn in orderedConstraintTypeNames)
         yield return ctn;
 
-      if (constraintAttrs.HasFlag(GenericParameterAttributes.DefaultConstructorConstraint))
+      if (hasDefaultConstructorConstraint)
         yield return "new()";
+
+      referencingNns?.UnionWith(constraintTypes.SelectMany(CSharpFormatter.ToNamespaceList));
     }
 
     var constraints = string.Join(
