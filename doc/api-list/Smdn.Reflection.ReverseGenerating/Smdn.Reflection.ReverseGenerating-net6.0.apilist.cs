@@ -1,7 +1,7 @@
-// Smdn.Reflection.ReverseGenerating.dll (Smdn.Reflection.ReverseGenerating-1.1.3)
+// Smdn.Reflection.ReverseGenerating.dll (Smdn.Reflection.ReverseGenerating-1.1.4)
 //   Name: Smdn.Reflection.ReverseGenerating
-//   AssemblyVersion: 1.1.3.0
-//   InformationalVersion: 1.1.3+f6167551bdfd2449c464509449137c454604db0f
+//   AssemblyVersion: 1.1.4.0
+//   InformationalVersion: 1.1.4+474aa1799ff8a98167dc9760f2acafaa15b81d4c
 //   TargetFramework: .NETCoreApp,Version=v6.0
 //   Configuration: Release
 #nullable enable annotations
