@@ -307,6 +307,44 @@ namespace Smdn.Reflection.ReverseGenerating {
           [TypeDeclarationTestCase("public class C0_NullableDisableContext<T>")] public class C0_NullableDisableContext<T> { }
 #nullable restore
 
+#nullable enable annotations
+          [TypeDeclarationTestCase("public class RefType<T> where T : class")]
+          public class RefType<T> where T : class { }
+
+          [TypeDeclarationTestCase("public class NullableRefType<T> where T : class?")]
+          public class NullableRefType<T> where T : class? { }
+
+          [TypeDeclarationTestCase("public class RefTypeAndNullableRefType<TRef, TNullableRef> where TRef : class where TNullableRef : class?")]
+          public class RefTypeAndNullableRefType<TRef, TNullableRef> where TRef : class where TNullableRef : class? { }
+
+          [TypeDeclarationTestCase("public class NullableRefTypeAndRefType<TNullableRef, TRef> where TNullableRef : class? where TRef : class")]
+          public class NullableRefTypeAndRefType<TNullableRef, TRef> where TNullableRef : class? where TRef : class { }
+
+          [TypeDeclarationTestCase("public class RefTypeWithDefaultConstructor<T> where T : class, new()")]
+          public class RefTypeWithDefaultConstructor<T> where T : class, new() { }
+
+          [TypeDeclarationTestCase("public class NullableRefTypeWithDefaultConstructor<T> where T : class?, new()")]
+          public class NullableRefTypeWithDefaultConstructor<T> where T : class?, new() { }
+
+          [TypeDeclarationTestCase("public class RefTypeWithIDisposable<T> where T : class, System.IDisposable")]
+          public class RefTypeWithIDisposable<T> where T : class, IDisposable { }
+
+          [TypeDeclarationTestCase("public class NullableRefTypeWithIDisposable<T> where T : class?, System.IDisposable")]
+          public class NullableRefTypeWithIDisposable<T> where T : class?, IDisposable { }
+
+          [TypeDeclarationTestCase("public class RefTypeWithNullableIDisposable<T> where T : class, System.IDisposable")]
+          public class RefTypeWithNullableIDisposable<T> where T : class, IDisposable? { } // ? nullability annotation will be erased
+
+          [TypeDeclarationTestCase("public class NullableRefTypeWithNullableIDisposable<T> where T : class, System.IDisposable")]
+          public class NullableRefTypeWithNullableIDisposable<T> where T : class?, IDisposable? { } // ? nullability annotation will be erased
+
+          [TypeDeclarationTestCase("public class IDisposable<T> where T : System.IDisposable")]
+          public class IDisposable<T> where T : IDisposable { }
+
+          [TypeDeclarationTestCase("public class NullableIDisposable<T> where T : System.IDisposable")]
+          public class NullableIDisposable<T> where T : IDisposable? { } // ? nullability annotation will be erased
+#nullable restore
+
           [TypeDeclarationTestCase("public class C1<T> where T : new()")] public class C1<T> where T : new() { }
           [TypeDeclarationTestCase("public class C2_0<T> where T : struct")] public class C2_0<T> where T : struct { }
           [TypeDeclarationTestCase("public class C2_1<T> where T : struct, System.IDisposable")] public class C2_1<T> where T : struct, IDisposable { }
@@ -322,6 +360,11 @@ namespace Smdn.Reflection.ReverseGenerating {
           [TypeDeclarationTestCase("public class C10<T> where T : CBase", TypeWithNamespace = false)]
           public class C10<T> where T : CBase { }
           public class CBase { }
+
+#nullable enable annotations
+          [TypeDeclarationTestCase("public class NullableConstraintType<T> where T : CBase", TypeWithNamespace = false)]
+          public class NullableConstraintType<T> where T : CBase? { } // ? nullability annotation will be erased
+#nullable restore
 
           [TypeDeclarationTestCase("public class C11<T> where T : System.Enum")] public class C11<T> where T : System.Enum { }
           [TypeDeclarationTestCase("public class C12<T> where T : System.Delegate")] public class C12<T> where T : System.Delegate { }
@@ -342,6 +385,9 @@ namespace Smdn.Reflection.ReverseGenerating {
 
           [TypeDeclarationTestCase("public class C15_3_NullableEnableContext<T> where T : notnull, System.IDisposable")]
           public class C15_3_NullableEnableContext<T> where T : notnull, IDisposable { }
+
+          [TypeDeclarationTestCase("public class C15_4_NullableEnableContext<T> where T : notnull, System.IDisposable")]
+          public class C15_4_NullableEnableContext<T> where T : notnull, IDisposable? { } // ? nullability annotation will be erased
 #nullable restore
 #nullable disable annotations
           [TypeDeclarationTestCase("public class C15_0_NullableDisableContext<T> where T : notnull")]

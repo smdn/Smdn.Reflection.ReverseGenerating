@@ -226,7 +226,9 @@ public static partial class Generator {
           yield return "struct";
       }
       else if (constraintAttrs.HasFlag(GenericParameterAttributes.ReferenceTypeConstraint)) {
-        yield return "class";
+        yield return genericParameter.GetNullableAttributeMetadataValue() == NullableMetadataValue.Annotated
+          ? "class?"
+          : "class";
       }
       else if (constraintAttrs.HasFlag(GenericParameterAttributes.NotNullableValueTypeConstraint)) {
         if (HasUnmanagedConstraint(genericParameter))
@@ -236,7 +238,7 @@ public static partial class Generator {
       }
 
       var orderedConstraintTypeNames = constraintTypesExceptValueType
-        .Select(i => i.FormatTypeName(typeWithNamespace: typeWithNamespace))
+        .Select(constraintType => constraintType.FormatTypeName(typeWithNamespace: typeWithNamespace))
         .OrderBy(static name => name, StringComparer.Ordinal);
 
       foreach (var ctn in orderedConstraintTypeNames)
