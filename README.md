@@ -15,7 +15,7 @@ See [examples](examples/Smdn.Reflection.ReverseGenerating.ListApi.MSBuild.Tasks/
     <!-- Add package reference of Smdn.Reflection.ReverseGenerating.ListApi.MSBuild.Tasks. -->
     <PackageReference
       Include="Smdn.Reflection.ReverseGenerating.ListApi.MSBuild.Tasks"
-      Version="1.1.1"
+      Version="*"
       PrivateAssets="all"
       IncludeAssets="build"
     />
