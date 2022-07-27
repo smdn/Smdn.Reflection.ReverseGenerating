@@ -8,9 +8,8 @@
 using System;
 using System.ComponentModel;
 using System.Collections.Generic;
-using NUnit.Framework;
 
-namespace Smdn.Reflection.ReverseGenerating.TestCases.MemberDeclaration.Events;
+namespace Smdn.Reflection.ReverseGenerating.GeneratorTestCases.MemberDeclaration.Events;
 
 public class NullabilityAnnotations {
   [MemberDeclarationTestCase($"public event System.EventHandler {nameof(EventHandler)};")] public event EventHandler EventHandler;

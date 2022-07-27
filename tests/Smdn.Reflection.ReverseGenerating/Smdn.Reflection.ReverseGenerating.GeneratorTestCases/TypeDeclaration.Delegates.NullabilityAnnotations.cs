@@ -5,9 +5,8 @@
 #nullable enable annotations
 
 using System;
-using NUnit.Framework;
 
-namespace Smdn.Reflection.ReverseGenerating.TestCases.TypeDeclaration.Delegates;
+namespace Smdn.Reflection.ReverseGenerating.GeneratorTestCases.TypeDeclaration.Delegates;
 
 public class NullabilityAnnotations {
   class Parameters {

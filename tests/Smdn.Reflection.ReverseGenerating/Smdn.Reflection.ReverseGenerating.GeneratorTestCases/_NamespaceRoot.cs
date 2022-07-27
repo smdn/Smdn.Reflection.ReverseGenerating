@@ -5,10 +5,10 @@ using System;
 using System.Runtime.CompilerServices;
 #endif
 
-namespace Smdn.Reflection.ReverseGenerating.TestTypes;
+namespace Smdn.Reflection.ReverseGenerating.GeneratorTestCases;
 
 public static class NS {
-  public const string Namespace = "Smdn.Reflection.ReverseGenerating.TestTypes";
+  public const string Namespace = "Smdn.Reflection.ReverseGenerating.GeneratorTestCases";
 
 #if SYSTEM_RUNTIME_COMPILERSERVICES_MODULEINITIALIZERATTRIBUTE
   [ModuleInitializer]
@@ -20,8 +20,8 @@ public static class NS {
 #endif
 }
 
-public class C {
-  public enum NestedEnumWithoutDefaultValueMember {
+public class CNestedEnumWithoutDefaultValueMember {
+  public enum E {
     // Default = default,
     NonDefault = 1
   }

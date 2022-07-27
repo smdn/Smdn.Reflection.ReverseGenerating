@@ -7,9 +7,8 @@
 
 using System;
 using System.Collections.Generic;
-using NUnit.Framework;
 
-namespace Smdn.Reflection.ReverseGenerating.TestCases.MemberDeclaration.Fields;
+namespace Smdn.Reflection.ReverseGenerating.GeneratorTestCases.MemberDeclaration.Fields;
 
 public class NullabilityAnnotations {
   [MemberDeclarationTestCase($"public int {nameof(ValueType)};")] public int ValueType;
