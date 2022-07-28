@@ -19,7 +19,8 @@ SPDX-License-Identifier: MIT
       )
     ">$(DefineConstants);CAN_OVERRIDE_CUSTOMATTRIBUTEDATA_ATTRIBUTETYPE</DefineConstants>
     <DefineConstants Condition="
-      $(TargetFramework.StartsWith('net6.0'))
+      $(TargetFramework.StartsWith('net6.0')) or
+      $(TargetFramework.StartsWith('net7.0'))
     ">$(DefineConstants);WORKAROUND_NULLABILITYINFO_BYREFTYPE</DefineConstants>
   </PropertyGroup>
 
