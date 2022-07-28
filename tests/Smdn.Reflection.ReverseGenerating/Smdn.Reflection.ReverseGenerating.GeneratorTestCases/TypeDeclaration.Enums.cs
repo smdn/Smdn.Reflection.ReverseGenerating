@@ -4,6 +4,18 @@ namespace Smdn.Reflection.ReverseGenerating.GeneratorTestCases.TypeDeclaration.E
   [TypeDeclarationTestCase("internal enum E0 : int")] internal enum E0 { };
   [TypeDeclarationTestCase("public enum E1 : int")] public enum E1 { };
 
+  class UnderlyingTypes {
+    [TypeDeclarationTestCase($"public enum {nameof(EInt)} : int", TranslateLanguagePrimitiveTypeDeclaration = true)]
+    [TypeDeclarationTestCase($"public enum {nameof(EInt)} : Int32", TranslateLanguagePrimitiveTypeDeclaration = false, TypeWithNamespace = false)]
+    [TypeDeclarationTestCase($"public enum {nameof(EInt)} : System.Int32", TranslateLanguagePrimitiveTypeDeclaration = false, TypeWithNamespace = true)]
+    public enum EInt : int { }
+
+    [TypeDeclarationTestCase($"public enum {nameof(EInt32)} : int", TranslateLanguagePrimitiveTypeDeclaration = true)]
+    [TypeDeclarationTestCase($"public enum {nameof(EInt32)} : Int32", TranslateLanguagePrimitiveTypeDeclaration = false, TypeWithNamespace = false)]
+    [TypeDeclarationTestCase($"public enum {nameof(EInt32)} : System.Int32", TranslateLanguagePrimitiveTypeDeclaration = false, TypeWithNamespace = true)]
+    public enum EInt32 : System.Int32 { }
+  }
+
   class Accessibilities {
     [TypeDeclarationTestCase("public enum E1 : int")] public enum E1 { }
     [TypeDeclarationTestCase("internal enum E2 : int")] internal enum E2 { }
