@@ -16,6 +16,41 @@ namespace Smdn.Reflection.ReverseGenerating.GeneratorTestCases.TypeDeclaration.E
     [TypeDeclarationTestCase($"public enum {nameof(EInt32)} : Int32", TranslateLanguagePrimitiveTypeDeclaration = false, TypeWithNamespace = false)]
     [TypeDeclarationTestCase($"public enum {nameof(EInt32)} : System.Int32", TranslateLanguagePrimitiveTypeDeclaration = false, TypeWithNamespace = true)]
     public enum EInt32 : System.Int32 { }
+
+    [TypeDeclarationTestCase($"public enum {nameof(EByte)} : byte", TypeOmitEnumUnderlyingTypeIfPossible = true)]
+    [TypeDeclarationTestCase($"public enum {nameof(EByte)} : byte", TypeOmitEnumUnderlyingTypeIfPossible = false)]
+    [TypeDeclarationTestCase($"public enum {nameof(EByte)} : Byte", TranslateLanguagePrimitiveTypeDeclaration = false, TypeWithNamespace = false)]
+    public enum EByte : byte { }
+
+    [TypeDeclarationTestCase($"public enum {nameof(ESByte)} : sbyte", TypeOmitEnumUnderlyingTypeIfPossible = true)]
+    [TypeDeclarationTestCase($"public enum {nameof(ESByte)} : sbyte", TypeOmitEnumUnderlyingTypeIfPossible = false)]
+    [TypeDeclarationTestCase($"public enum {nameof(ESByte)} : SByte", TranslateLanguagePrimitiveTypeDeclaration = false, TypeWithNamespace = false)]
+    public enum ESByte : sbyte { }
+
+    [TypeDeclarationTestCase($"public enum {nameof(EShort)} : short", TypeOmitEnumUnderlyingTypeIfPossible = true)]
+    [TypeDeclarationTestCase($"public enum {nameof(EShort)} : short", TypeOmitEnumUnderlyingTypeIfPossible = false)]
+    [TypeDeclarationTestCase($"public enum {nameof(EShort)} : Int16", TranslateLanguagePrimitiveTypeDeclaration = false, TypeWithNamespace = false)]
+    public enum EShort : short { }
+
+    [TypeDeclarationTestCase($"public enum {nameof(EUShort)} : ushort", TypeOmitEnumUnderlyingTypeIfPossible = true)]
+    [TypeDeclarationTestCase($"public enum {nameof(EUShort)} : ushort", TypeOmitEnumUnderlyingTypeIfPossible = false)]
+    [TypeDeclarationTestCase($"public enum {nameof(EUShort)} : UInt16", TranslateLanguagePrimitiveTypeDeclaration = false, TypeWithNamespace = false)]
+    public enum EUShort : ushort { }
+
+    [TypeDeclarationTestCase($"public enum {nameof(EUInt)} : uint", TypeOmitEnumUnderlyingTypeIfPossible = true)]
+    [TypeDeclarationTestCase($"public enum {nameof(EUInt)} : uint", TypeOmitEnumUnderlyingTypeIfPossible = false)]
+    [TypeDeclarationTestCase($"public enum {nameof(EUInt)} : UInt32", TranslateLanguagePrimitiveTypeDeclaration = false, TypeWithNamespace = false)]
+    public enum EUInt : uint { }
+
+    [TypeDeclarationTestCase($"public enum {nameof(ELong)} : long", TypeOmitEnumUnderlyingTypeIfPossible = true)]
+    [TypeDeclarationTestCase($"public enum {nameof(ELong)} : long", TypeOmitEnumUnderlyingTypeIfPossible = false)]
+    [TypeDeclarationTestCase($"public enum {nameof(ELong)} : Int64", TranslateLanguagePrimitiveTypeDeclaration = false, TypeWithNamespace = false)]
+    public enum ELong : long { }
+
+    [TypeDeclarationTestCase($"public enum {nameof(EULong)} : ulong", TypeOmitEnumUnderlyingTypeIfPossible = true)]
+    [TypeDeclarationTestCase($"public enum {nameof(EULong)} : ulong", TypeOmitEnumUnderlyingTypeIfPossible = false)]
+    [TypeDeclarationTestCase($"public enum {nameof(EULong)} : UInt64", TranslateLanguagePrimitiveTypeDeclaration = false, TypeWithNamespace = false)]
+    public enum EULong : ulong { }
   }
 
   class Accessibilities {
