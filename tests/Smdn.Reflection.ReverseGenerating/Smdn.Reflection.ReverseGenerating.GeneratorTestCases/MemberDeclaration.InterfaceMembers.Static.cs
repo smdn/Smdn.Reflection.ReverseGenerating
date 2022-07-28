@@ -64,7 +64,7 @@ public class ImplicitlyImplementedMembers : IBase {
 }
 
 public class ExplicitlyImplementedMembers : IBase {
-  [MemberDeclarationTestCase("static void Smdn.Reflection.ReverseGenerating.GeneratorTestCases.MemberDeclaration.InterfaceMembers.StaticMembers.IBase.MVirtual() {}", TypeWithNamespace = true)]
+  [MemberDeclarationTestCase("static void Smdn.Reflection.ReverseGenerating.GeneratorTestCases.MemberDeclaration.InterfaceMembers.Static.IBase.MVirtual() {}", TypeWithNamespace = true)]
   [MemberDeclarationTestCase("static void IBase.MVirtual() {}", MemberWithNamespace = false)]
   static void IBase.MVirtual() => throw null;
 

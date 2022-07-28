@@ -1,6 +1,9 @@
 // SPDX-FileCopyrightText: 2020 smdn <smdn@smdn.jp>
 // SPDX-License-Identifier: MIT
+#pragma warning disable CS8597
 #nullable enable annotations
+
+using System;
 
 namespace Smdn.Reflection.ReverseGenerating.GeneratorTestCases.ExplicitBaseTypeAndInterfaces.TSelf;
 
