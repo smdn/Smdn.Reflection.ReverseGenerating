@@ -102,11 +102,21 @@ public static partial class Generator {
     var modifierNew = t.IsHidingInheritedType(nonPublic: true) ? "new " : null;
 
     if (t.IsEnum) {
-      var underlyingTypeName = t.GetEnumUnderlyingType().FormatTypeName(
-        typeWithNamespace: options.TypeDeclaration.WithNamespace,
-        translateLanguagePrimitiveType: options.TranslateLanguagePrimitiveTypeDeclaration
-      );
-      var underlyingTypeDeclaration = $" : {underlyingTypeName}";
+      string? underlyingTypeDeclaration = null;
+      var underlyingType = t.GetEnumUnderlyingType();
+      var omitEnumUnderlyingType =
+        options.TypeDeclaration.OmitEnumUnderlyingTypeIfPossible &&
+        string.Equals(underlyingType.FullName, "System.Int32", StringComparison.Ordinal);
+
+      if (!omitEnumUnderlyingType) {
+        underlyingTypeDeclaration = string.Concat(
+          " : ",
+          underlyingType.FormatTypeName(
+            typeWithNamespace: options.TypeDeclaration.WithNamespace,
+            translateLanguagePrimitiveType: options.TranslateLanguagePrimitiveTypeDeclaration
+          )
+        );
+      }
 
       yield return $"{modifierNew}{accessibilities}enum {typeName}{underlyingTypeDeclaration}";
       yield break;

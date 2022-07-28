@@ -5,6 +5,8 @@ namespace Smdn.Reflection.ReverseGenerating.GeneratorTestCases.TypeDeclaration.E
   [TypeDeclarationTestCase("public enum E1 : int")] public enum E1 { };
 
   class UnderlyingTypes {
+    [TypeDeclarationTestCase($"public enum {nameof(EInt)}", TypeOmitEnumUnderlyingTypeIfPossible = true, TranslateLanguagePrimitiveTypeDeclaration = true)]
+    [TypeDeclarationTestCase($"public enum {nameof(EInt)}", TypeOmitEnumUnderlyingTypeIfPossible = true, TranslateLanguagePrimitiveTypeDeclaration = false)]
     [TypeDeclarationTestCase($"public enum {nameof(EInt)} : int", TranslateLanguagePrimitiveTypeDeclaration = true)]
     [TypeDeclarationTestCase($"public enum {nameof(EInt)} : Int32", TranslateLanguagePrimitiveTypeDeclaration = false, TypeWithNamespace = false)]
     [TypeDeclarationTestCase($"public enum {nameof(EInt)} : System.Int32", TranslateLanguagePrimitiveTypeDeclaration = false, TypeWithNamespace = true)]

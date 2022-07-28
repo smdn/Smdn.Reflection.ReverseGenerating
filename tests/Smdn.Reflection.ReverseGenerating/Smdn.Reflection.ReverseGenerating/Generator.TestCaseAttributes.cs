@@ -24,6 +24,7 @@ partial class GeneratorTests {
     typeDeclarationOptions.WithDeclaringTypeName = testCaseAttribute.TypeWithDeclaringTypeName;
     typeDeclarationOptions.WithAccessibility = testCaseAttribute.TypeWithAccessibility;
     typeDeclarationOptions.OmitEndOfStatement = testCaseAttribute.TypeOmitEndOfStatement;
+    typeDeclarationOptions.OmitEnumUnderlyingTypeIfPossible = testCaseAttribute.TypeOmitEnumUnderlyingTypeIfPossible;
 #if SYSTEM_REFLECTION_NULLABILITYINFOCONTEXT
     typeDeclarationOptions.NullabilityInfoContext = testCaseAttribute.TypeEnableNullabilityAnnotations
       ? typeDeclarationOptions.NullabilityInfoContext ?? new()
@@ -105,6 +106,7 @@ public abstract class GeneratorTestCaseAttribute : Attribute, ITestCaseAttribute
   public bool TypeWithDeclaringTypeName { get; set; } = false;
   public bool TypeWithAccessibility { get; set; } = true;
   public bool TypeOmitEndOfStatement { get; set; } = false;
+  public bool TypeOmitEnumUnderlyingTypeIfPossible { get; set; } = false;
   public bool TypeEnableNullabilityAnnotations { get; set; } = true;
   public bool AttributeWithNamespace { get; set; } = true;
   public bool AttributeWithNamedArguments { get; set; } = false;
