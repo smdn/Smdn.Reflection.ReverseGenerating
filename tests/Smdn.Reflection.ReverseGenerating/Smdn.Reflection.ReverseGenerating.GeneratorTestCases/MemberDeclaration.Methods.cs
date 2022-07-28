@@ -136,7 +136,10 @@ namespace Smdn.Reflection.ReverseGenerating.GeneratorTestCases.MemberDeclaration
   }
 
   public static class ReferenceReturnValues {
-    [MemberDeclarationTestCase("public static ref int M() {}")] public static ref int M() => throw new NotImplementedException();
+    [MemberDeclarationTestCase($"public static ref int {nameof(MRefInt)}() {{}}")] public static ref int MRefInt() => throw new NotImplementedException();
+    [MemberDeclarationTestCase($"public static ref int? {nameof(MRefNullableInt)}() {{}}")] public static ref int? MRefNullableInt() => throw new NotImplementedException();
+    [MemberDeclarationTestCase($"public static ref string {nameof(MRefString)}() {{}}")] public static ref string MRefString() => throw new NotImplementedException();
+    [MemberDeclarationTestCase($"public static ref System.Collections.Generic.KeyValuePair<int, int> {nameof(MRefKeyValuePairOfIntInt)}() {{}}")] public static ref KeyValuePair<int, int> MRefKeyValuePairOfIntInt() => throw new NotImplementedException();
   }
 
   public static class ValueTupleReturnValues {

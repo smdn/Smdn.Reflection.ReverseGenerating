@@ -14,4 +14,8 @@ namespace Smdn.Reflection.ReverseGenerating.GeneratorTestCases.TypeDeclaration.E
     [TypeDeclarationTestCase("private protected enum E7 : int")] protected private enum E7 { }
     [TypeDeclarationTestCase("private enum E8 : int")] private enum E8 { }
   }
+
+  class ModifierNew : Accessibilities {
+    [TypeDeclarationTestCase("new public enum E3 : int")] new public enum E3 { }
+  }
 }

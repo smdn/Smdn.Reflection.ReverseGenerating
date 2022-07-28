@@ -40,7 +40,9 @@ public class ValueTupleTypes {
 
 public class RefReturnTypes {
   [MemberDeclarationTestCase($"public ref int {nameof(PRefInt)} {{ get; }}")] public ref int PRefInt => throw null;
+  [MemberDeclarationTestCase($"public ref int? {nameof(PRefNullableInt)} {{ get; }}")] public ref int? PRefNullableInt => throw null;
   [MemberDeclarationTestCase($"public ref string {nameof(PRefString)} {{ get; }}")] public ref string PRefString => throw null;
+  [MemberDeclarationTestCase($"public ref System.Collections.Generic.KeyValuePair<int, int> {nameof(PRefKeyValuePairOfIntInt)} {{ get; }}")] public ref System.Collections.Generic.KeyValuePair<int, int> PRefKeyValuePairOfIntInt => throw null;
 }
 
 public class Accessors {

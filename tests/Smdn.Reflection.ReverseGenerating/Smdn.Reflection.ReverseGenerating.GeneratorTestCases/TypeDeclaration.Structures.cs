@@ -16,6 +16,10 @@ namespace Smdn.Reflection.ReverseGenerating.GeneratorTestCases.TypeDeclaration.S
   }
 
   namespace Modifiers {
+    class New : Accessibilities {
+      [TypeDeclarationTestCase("new public struct S3")] new public struct S3 { }
+    }
+
     namespace Ref {
       [TypeDeclarationTestCase("public ref struct S0")] public ref struct S0 { }
     }

@@ -26,6 +26,10 @@ namespace Smdn.Reflection.ReverseGenerating.GeneratorTestCases.TypeDeclaration.D
     [TypeDeclarationTestCase("private delegate void D8();")] private delegate void D8();
   }
 
+  class ModifierNew : Accessibilities {
+    [TypeDeclarationTestCase("new public delegate int D3(int x);")] new public delegate int D3(int x);
+  }
+
   namespace DelegateClasses {
 #if false
     // CS0644

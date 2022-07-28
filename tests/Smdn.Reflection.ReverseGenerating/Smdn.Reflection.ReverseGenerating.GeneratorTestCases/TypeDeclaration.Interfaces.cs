@@ -14,4 +14,8 @@ namespace Smdn.Reflection.ReverseGenerating.GeneratorTestCases.TypeDeclaration.I
     [TypeDeclarationTestCase("private protected interface I7")] protected private interface I7 { }
     [TypeDeclarationTestCase("private interface I8")] private interface I8 { }
   }
+
+  class ModifierNew : Accessibilities {
+    [TypeDeclarationTestCase("new public interface I3")] new public interface I3 { }
+  }
 }
