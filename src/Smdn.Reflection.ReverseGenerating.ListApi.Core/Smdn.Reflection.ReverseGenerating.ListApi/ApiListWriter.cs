@@ -32,6 +32,24 @@ public class ApiListWriter {
     BaseWriter.WriteLine($"//   InformationalVersion: {assembly.GetAssemblyMetadataAttributeValue<AssemblyInformationalVersionAttribute, string>()}");
     BaseWriter.WriteLine($"//   TargetFramework: {assembly.GetAssemblyMetadataAttributeValue<TargetFrameworkAttribute, string>()}");
     BaseWriter.WriteLine($"//   Configuration: {assembly.GetAssemblyMetadataAttributeValue<AssemblyConfigurationAttribute, string>()}");
+
+    var manifestResourceNames = assembly.GetManifestResourceNames();
+
+    if (options.Writer.WriteEmbeddedResources && 0 < manifestResourceNames.Length) {
+      BaseWriter.WriteLine("//   Embedded resources:");
+
+      foreach (var name in manifestResourceNames) {
+        var info = assembly.GetManifestResourceInfo(name);
+
+        if (info is not null && info.ResourceLocation.HasFlag(ResourceLocation.Embedded)) {
+          using var stream = assembly.GetManifestResourceStream(name);
+
+          var length = stream?.Length ?? 0L;
+
+          BaseWriter.WriteLine($"//     {name} ({length:N0} bytes, {info.ResourceLocation})");
+        }
+      }
+    }
   }
 
   public void WriteExportedTypes()
