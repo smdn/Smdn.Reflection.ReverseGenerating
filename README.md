@@ -1,5 +1,5 @@
 [![GitHub license](https://img.shields.io/github/license/smdn/Smdn.Reflection.ReverseGenerating)](https://github.com/smdn/Smdn.Reflection.ReverseGenerating/blob/main/LICENSE.txt)
-[![tests/main](https://img.shields.io/github/workflow/status/smdn/Smdn.Reflection.ReverseGenerating/Run%20tests/main?label=tests%2Fmain)](https://github.com/smdn/Smdn.Reflection.ReverseGenerating/actions/workflows/test.yml)
+[![tests/main](https://img.shields.io/github/actions/workflow/status/smdn/Smdn.Reflection.ReverseGenerating/test.yml?branch=main&label=tests%2Fmain)](https://github.com/smdn/Smdn.Reflection.ReverseGenerating/actions/workflows/test.yml)
 [![CodeQL](https://github.com/smdn/Smdn.Reflection.ReverseGenerating/actions/workflows/codeql-analysis.yml/badge.svg?branch=main)](https://github.com/smdn/Smdn.Reflection.ReverseGenerating/actions/workflows/codeql-analysis.yml)
 
 # Smdn.Reflection.ReverseGenerating.ListApi.MSBuild.Tasks
