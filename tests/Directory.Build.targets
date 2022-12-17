@@ -11,17 +11,20 @@ SPDX-License-Identifier: MIT
     <When Condition=" '$(TestReleasedPackage)' == 'true' and '$(CanTestReleasedPackage)' == 'true' ">
       <ItemGroup Label="add test target package reference">
         <PackageReference
-          Condition=" '$(TestTargetProjectName)' != '' "
-          Include="$(TestTargetProjectName)"
+          Condition=" '$(SmdnTestTargetProjectName)' != '' "
+          Include="$(SmdnTestTargetProjectName)"
           Version="*-*"
         />
       </ItemGroup>
     </When>
     <Otherwise>
-      <ItemGroup Label="add test target project reference">
+      <ItemGroup
+        Label="add test target project reference"
+        Condition=" '$(SmdnTestTargetProjectReferenceManuallyIncluded)' != 'true' "
+      >
         <ProjectReference
-          Condition=" '$(TestTargetProjectName)' != '' and Exists('$(TestTargetProjectDirectory)') "
-          Include="$(TestTargetProjectDirectory)$(TestTargetProjectName).csproj"
+          Condition=" '$(SmdnTestTargetProjectFullPath)' != '' and Exists('$(SmdnTestTargetProjectFullPath)') "
+          Include="$(SmdnTestTargetProjectFullPath)"
         />
       </ItemGroup>
     </Otherwise>
@@ -33,10 +36,5 @@ SPDX-License-Identifier: MIT
     Condition=" '$(TestReleasedPackage)' == 'true' and '$(CanTestReleasedPackage)' != 'true' "
   >
     <Warning Text="cannot test with released package"/>
-  </Target>
-
-  <!-- deploy project assets before building test projects and its referencing projects -->
-  <Target Name="DeployProjectAssets" BeforeTargets="BeforeBuild">
-    <MSBuild Projects="$(MSBuildThisFileDirectory)..\src\DeployProjectAssets.proj" />
   </Target>
 </Project>

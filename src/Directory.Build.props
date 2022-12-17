@@ -5,19 +5,21 @@ SPDX-License-Identifier: MIT
 <Project>
   <PropertyGroup>
     <SmdnBuildAssetRootDirectory>$(MSBuildThisFileDirectory)..\</SmdnBuildAssetRootDirectory>
-    <APIListOutputBaseDirectory>$(MSBuildThisFileDirectory)..\doc\api-list\</APIListOutputBaseDirectory>
-    <APIListPackageVersion>1.1.4</APIListPackageVersion>
   </PropertyGroup>
 
   <ImportGroup Label="project assets">
     <Import Project="$(MSBuildThisFileDirectory)ProjectAssets.props" />
-    <Import Project="$(SmdnProjectAssets_PropsImports)" />
   </ImportGroup>
+
+  <PropertyGroup Label="API list generator configurations">
+    <APIListOutputBaseDirectory>$(MSBuildThisFileDirectory)..\doc\api-list\</APIListOutputBaseDirectory>
+    <APIListPackageVersion>1.1.4</APIListPackageVersion>
+  </PropertyGroup>
 
   <ItemGroup>
     <PackageReference
       Include="Smdn.MSBuild.DefineConstants.NETSdkApi"
-      Version="[1.3.4]"
+      Version="[1.3.6]"
       PrivateAssets="all"
       IncludeAssets="build"
     />
