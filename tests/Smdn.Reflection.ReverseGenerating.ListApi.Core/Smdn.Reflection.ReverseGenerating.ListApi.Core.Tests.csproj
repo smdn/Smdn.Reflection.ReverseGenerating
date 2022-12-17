@@ -30,17 +30,20 @@ SPDX-License-Identifier: MIT
       <TestProjects Include="$(TestAssemblyRootDirectory)\LibB\LibB.csproj" />
     </ItemGroup>
 
-    <PropertyGroup>
-      <_TestProjectBuildTargets>Restore;Build</_TestProjectBuildTargets>
-    </PropertyGroup>
+    <!--
+      run `dotnet restore` instead of calling target 'Restore'
+      ref: https://github.com/dotnet/msbuild/issues/2811
+    -->
+    <!--<MSBuild Projects="@(TestProjects)" Targets="Restore"/>-->
+    <Exec Command="dotnet restore %(TestProjects.Identity)" />
 
-    <MSBuild Projects="@(TestProjects)" Targets="$(_TestProjectBuildTargets)" Properties="Configuration=Release;TargetFramework=netstandard2.1">
+    <MSBuild Projects="@(TestProjects)" Targets="Build" Properties="Configuration=Release;TargetFramework=netstandard2.1">
       <Output TaskParameter="TargetOutputs" ItemName="TestAssembliesNetStandard21" />
     </MSBuild>
-    <MSBuild Projects="@(TestProjects)" Targets="$(_TestProjectBuildTargets)" Properties="Configuration=Release;TargetFramework=net6.0" Condition="'$(RunningOnNet7PreviewSdk)' != 'true'">
+    <MSBuild Projects="@(TestProjects)" Targets="Build" Properties="Configuration=Release;TargetFramework=net6.0" Condition="'$(RunningOnNet7PreviewSdk)' != 'true'">
       <Output TaskParameter="TargetOutputs" ItemName="TestAssembliesNet60" />
     </MSBuild>
-    <MSBuild Projects="@(TestProjects)" Targets="$(_TestProjectBuildTargets)" Properties="Configuration=Release;TargetFramework=net7.0" Condition="'$(RunningOnNet7PreviewSdk)' != 'true' and $(TargetFrameworks.Contains('net7.0'))">
+    <MSBuild Projects="@(TestProjects)" Targets="Build" Properties="Configuration=Release;TargetFramework=net7.0" Condition="'$(RunningOnNet7PreviewSdk)' != 'true' and $(TargetFrameworks.Contains('net7.0'))">
       <Output TaskParameter="TargetOutputs" ItemName="TestAssembliesNet70" />
     </MSBuild>
 
