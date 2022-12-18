@@ -1,7 +1,7 @@
-// Smdn.Reflection.ReverseGenerating.ListApi.MSBuild.Tasks.dll (Smdn.Reflection.ReverseGenerating.ListApi.MSBuild.Tasks-1.1.4)
+// Smdn.Reflection.ReverseGenerating.ListApi.MSBuild.Tasks.dll (Smdn.Reflection.ReverseGenerating.ListApi.MSBuild.Tasks-1.1.5)
 //   Name: Smdn.Reflection.ReverseGenerating.ListApi.MSBuild.Tasks
-//   AssemblyVersion: 1.1.4.0
-//   InformationalVersion: 1.1.4+474aa1799ff8a98167dc9760f2acafaa15b81d4c
+//   AssemblyVersion: 1.1.5.0
+//   InformationalVersion: 1.1.5+cb2486f3b59557763321714652e8d0095aad4d5c
 //   TargetFramework: .NETCoreApp,Version=v6.0
 //   Configuration: Release
 #nullable enable annotations
@@ -16,6 +16,7 @@ namespace Smdn.Reflection.ReverseGenerating.ListApi.MSBuild.Tasks {
     [Required]
     public ITaskItem[]? Assemblies { get; set; }
     public bool GenerateAttributeWithNamedArguments { get; set; }
+    public bool GenerateEmbeddedResources { get; set; }
     public bool GenerateFullTypeName { get; set; }
     public bool GenerateLanguagePrimitiveType { get; set; }
     public string? GenerateMethodBody { get; set; }
