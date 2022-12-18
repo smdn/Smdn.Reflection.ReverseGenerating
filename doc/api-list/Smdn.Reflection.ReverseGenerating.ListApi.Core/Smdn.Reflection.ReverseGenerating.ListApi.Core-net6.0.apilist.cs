@@ -1,7 +1,7 @@
-// Smdn.Reflection.ReverseGenerating.ListApi.Core.dll (Smdn.Reflection.ReverseGenerating.ListApi.Core-1.1.2.1)
+// Smdn.Reflection.ReverseGenerating.ListApi.Core.dll (Smdn.Reflection.ReverseGenerating.ListApi.Core-1.1.3)
 //   Name: Smdn.Reflection.ReverseGenerating.ListApi.Core
-//   AssemblyVersion: 1.1.2.1
-//   InformationalVersion: 1.1.2.1+59722f8c92dea887d08ff8f5e1066a73abebbcfd
+//   AssemblyVersion: 1.1.3.0
+//   InformationalVersion: 1.1.3+838f22ef3a8aec668070f1ca9e1e4688974dad9c
 //   TargetFramework: .NETCoreApp,Version=v6.0
 //   Configuration: Release
 #nullable enable annotations
@@ -31,6 +31,7 @@ namespace Smdn.Reflection.ReverseGenerating.ListApi {
       public WriterOptions() {}
 
       public bool OrderStaticMembersFirst { get; set; }
+      public bool WriteEmbeddedResources { get; set; }
       public bool WriteNullableAnnotationDirective { get; set; }
     }
 
