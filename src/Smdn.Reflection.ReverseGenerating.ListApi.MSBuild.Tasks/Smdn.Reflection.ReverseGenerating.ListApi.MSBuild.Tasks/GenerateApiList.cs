@@ -26,6 +26,7 @@ public class GenerateApiList : Task {
   public bool GenerateStaticMembersFirst { get; set; }
   public bool GenerateNullableAnnotations { get; set; } = true;
   public bool GenerateValueWithDefaultLiteral { get; set; } = true;
+  public bool GenerateEmbeddedResources { get; set; } = true;
 
   [Output]
   public ITaskItem[]? GeneratedFiles { get; private set; }
@@ -129,6 +130,7 @@ public class GenerateApiList : Task {
 
     options.Writer.WriteNullableAnnotationDirective = GenerateNullableAnnotations;
     options.Writer.OrderStaticMembersFirst          = GenerateStaticMembersFirst;
+    options.Writer.WriteEmbeddedResources           = GenerateEmbeddedResources;
 
     options.AttributeDeclaration.TypeFilter         = AttributeFilter.Default;
     options.AttributeDeclaration.WithNamedArguments = GenerateAttributeWithNamedArguments;
