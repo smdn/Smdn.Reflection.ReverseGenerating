@@ -9,5 +9,6 @@ public class ApiListWriterOptions : GeneratorOptions {
     public bool OrderStaticMembersFirst { get; set; } = false;
     public bool WriteNullableAnnotationDirective { get; set; } = true;
     public bool WriteEmbeddedResources { get; set; } = true;
+    public bool WriteReferencedAssemblies { get; set; } = true;
   }
 }

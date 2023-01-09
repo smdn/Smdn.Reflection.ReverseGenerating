@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Reflection.Metadata;
 using System.Runtime.CompilerServices;
 using System.Runtime.Versioning;
 using System.Text;
@@ -33,6 +34,9 @@ public class ApiListWriter {
     BaseWriter.WriteLine($"//   TargetFramework: {assembly.GetAssemblyMetadataAttributeValue<TargetFrameworkAttribute, string>()}");
     BaseWriter.WriteLine($"//   Configuration: {assembly.GetAssemblyMetadataAttributeValue<AssemblyConfigurationAttribute, string>()}");
 
+    if (options.Writer.WriteReferencedAssemblies)
+      WriteReferencedAssemblies();
+
     var manifestResourceNames = assembly.GetManifestResourceNames();
 
     if (options.Writer.WriteEmbeddedResources && 0 < manifestResourceNames.Length) {
@@ -49,6 +53,37 @@ public class ApiListWriter {
           BaseWriter.WriteLine($"//     {name} ({length:N0} bytes, {info.ResourceLocation})");
         }
       }
+    }
+  }
+
+  private unsafe void WriteReferencedAssemblies()
+  {
+    if (!assembly.TryGetRawMetadata(out var blobPtr, out var blobLength))
+      return;
+
+    BaseWriter.WriteLine("//   Referenced assemblies:");
+
+    var reader = new MetadataReader(blobPtr, blobLength);
+    var assemblyReferences = reader
+      .AssemblyReferences
+      .Select(handle => reader.GetAssemblyReference(handle))
+      .ToDictionary(
+        assmRef => reader.GetString(assmRef.Name),
+        assmRef => assmRef
+      );
+
+    foreach (var (name, assmRef) in assemblyReferences.OrderBy(static pair => pair.Key, StringComparer.Ordinal)) {
+      var culture = reader.GetString(assmRef.Culture);
+
+      if (string.IsNullOrEmpty(culture))
+        culture = "neutral";
+
+      var publicKeyOrToken = reader.GetBlobBytes(assmRef.PublicKeyOrToken);
+      var publicKeyOrTokenString = publicKeyOrToken is null || publicKeyOrToken.Length == 0
+        ? string.Empty
+        : $", PublicKeyToken={string.Concat(publicKeyOrToken.Select(static b => b.ToString("x2", provider: null)))}";
+
+      BaseWriter.WriteLine($"//     {name}, Version={assmRef.Version}, Culture={culture}{publicKeyOrTokenString}");
     }
   }
 
