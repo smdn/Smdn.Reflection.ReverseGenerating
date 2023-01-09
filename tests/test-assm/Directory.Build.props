@@ -6,6 +6,7 @@ SPDX-License-Identifier: MIT
   <Import Project="$(MSBuildThisFileDirectory)..\Directory.Build.props" />
 
   <PropertyGroup>
+    <NoWarn>CA1716;CA1711;$(NoWarn)</NoWarn>
     <RepositoryType>git</RepositoryType>
   </PropertyGroup>
 
