@@ -3,14 +3,7 @@ SPDX-FileCopyrightText: 2022 smdn <smdn@smdn.jp>
 SPDX-License-Identifier: MIT
 -->
 <Project>
-  <Import Project="$(MSBuildThisFileDirectory)..\Directory.Build.props" />
-
   <PropertyGroup>
     <NoWarn>CA1716;CA1711;$(NoWarn)</NoWarn>
-    <RepositoryType>git</RepositoryType>
   </PropertyGroup>
-
-  <ItemGroup>
-    <PackageReference Remove="*" />
-  </ItemGroup>
 </Project>
