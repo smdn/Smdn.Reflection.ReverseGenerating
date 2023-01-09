@@ -56,7 +56,7 @@ jobs:
         fi
 
   run-test:
-    uses: smdn/Smdn.Fundamentals/.github/workflows/test.yml@workflows/test-v1.1.2
+    uses: smdn/Smdn.Fundamentals/.github/workflows/test.yml@workflows/test-v1.1.4
     needs: prerequisites
     with:
       project:              ${{ github.event.inputs.project }}
@@ -64,6 +64,7 @@ jobs:
       extra_options_common: '/p:TestReleasedPackage=true'
       verbose:              ${{ fromJSON(needs.prerequisites.outputs.verbose) }}
       dotnet_sdk_version:   '6.0.200'
+      timeout_minutes_test_job:   10
       timeout_hang:               "[ {'OS':'windows','Timeout':'6min'}, {'OS':'macos','Timeout':'3min'}, {'OS':'','Timeout':'1min'} ]"
       timeout_vstest_connection:  "[ {'OS':'windows','Timeout':360}, {'OS':'macos','Timeout':180}, {'OS':'','Timeout':60} ]"
     secrets:
