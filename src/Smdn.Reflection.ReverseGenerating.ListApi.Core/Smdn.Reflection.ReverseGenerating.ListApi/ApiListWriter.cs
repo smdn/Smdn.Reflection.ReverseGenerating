@@ -37,23 +37,8 @@ public class ApiListWriter {
     if (options.Writer.WriteReferencedAssemblies)
       WriteReferencedAssemblies();
 
-    var manifestResourceNames = assembly.GetManifestResourceNames();
-
-    if (options.Writer.WriteEmbeddedResources && 0 < manifestResourceNames.Length) {
-      BaseWriter.WriteLine("//   Embedded resources:");
-
-      foreach (var name in manifestResourceNames) {
-        var info = assembly.GetManifestResourceInfo(name);
-
-        if (info is not null && info.ResourceLocation.HasFlag(ResourceLocation.Embedded)) {
-          using var stream = assembly.GetManifestResourceStream(name);
-
-          var length = stream?.Length ?? 0L;
-
-          BaseWriter.WriteLine($"//     {name} ({length:N0} bytes, {info.ResourceLocation})");
-        }
-      }
-    }
+    if (options.Writer.WriteEmbeddedResources)
+      WriteEmbeddedResources();
   }
 
   private unsafe void WriteReferencedAssemblies()
@@ -84,6 +69,30 @@ public class ApiListWriter {
         : $", PublicKeyToken={string.Concat(publicKeyOrToken.Select(static b => b.ToString("x2", provider: null)))}";
 
       BaseWriter.WriteLine($"//     {name}, Version={assmRef.Version}, Culture={culture}{publicKeyOrTokenString}");
+    }
+  }
+
+  private void WriteEmbeddedResources()
+  {
+    var manifestResourceNames = assembly.GetManifestResourceNames();
+
+    if (manifestResourceNames.Length <= 0) {
+      System.Console.WriteLine("not embedded resources");
+      return;
+    }
+
+    BaseWriter.WriteLine("//   Embedded resources:");
+
+    foreach (var name in manifestResourceNames) {
+      var info = assembly.GetManifestResourceInfo(name);
+
+      if (info is not null && info.ResourceLocation.HasFlag(ResourceLocation.Embedded)) {
+        using var stream = assembly.GetManifestResourceStream(name);
+
+        var length = stream?.Length ?? 0L;
+
+        BaseWriter.WriteLine($"//     {name} ({length:N0} bytes, {info.ResourceLocation})");
+      }
     }
   }
 
