@@ -51,7 +51,7 @@ public class ApiListWriter {
     var reader = new MetadataReader(blobPtr, blobLength);
     var assemblyReferences = reader
       .AssemblyReferences
-      .Select(handle => reader.GetAssemblyReference(handle))
+      .Select(reader.GetAssemblyReference)
       .ToDictionary(
         assmRef => reader.GetString(assmRef.Name),
         assmRef => assmRef
