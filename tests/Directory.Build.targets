@@ -37,4 +37,8 @@ SPDX-License-Identifier: MIT
   >
     <Warning Text="cannot test with released package"/>
   </Target>
+
+  <ImportGroup>
+    <Import Project="$(SmdnProjectAssets_TargetsImports)" />
+  </ImportGroup>
 </Project>
