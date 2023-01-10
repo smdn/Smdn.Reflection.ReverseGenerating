@@ -20,8 +20,8 @@ public class ApiListWriter {
 
   public ApiListWriter(TextWriter baseWriter, Assembly assembly, ApiListWriterOptions options)
   {
-    this.BaseWriter = baseWriter;
-    this.assembly = assembly;
+    this.BaseWriter = baseWriter ?? throw new ArgumentNullException(nameof(baseWriter));
+    this.assembly = assembly ?? throw new ArgumentNullException(nameof(assembly));
     this.options = options ?? new();
   }
 

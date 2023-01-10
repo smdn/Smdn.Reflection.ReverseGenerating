@@ -19,6 +19,14 @@ namespace Smdn.Reflection.ReverseGenerating.ListApi;
 
 [TestFixture]
 class ApiListWriterTests {
+  [Test]
+  public void Ctor_BaseWriterNull()
+    => Assert.Throws<ArgumentNullException>(() => new ApiListWriter(baseWriter: null!, Assembly.GetExecutingAssembly(), new()));
+
+  [Test]
+  public void Ctor_AssemblyNull()
+    => Assert.Throws<ArgumentNullException>(() => new ApiListWriter(TextWriter.Null, assembly: null!, new()));
+
   private static void CreateAssemblyFromSourceCode(
     Stream outputAssemblyStream,
     string csharpSourceCode,
