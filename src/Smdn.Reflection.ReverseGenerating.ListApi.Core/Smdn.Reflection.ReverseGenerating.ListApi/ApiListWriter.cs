@@ -111,15 +111,19 @@ public class ApiListWriter {
       if (0 < typeDeclarations.Length)
         typeDeclarations.AppendLine();
 
-      typeDeclarations
-        .Append("namespace ")
-        .Append(ns)
-        .Append(" {")
-        .AppendLine();
+      var noNamespace = string.IsNullOrEmpty(ns);
+
+      if (!noNamespace) {
+        typeDeclarations
+          .Append("namespace ")
+          .Append(ns)
+          .Append(" {")
+          .AppendLine();
+      }
 
       typeDeclarations.Append(
         GenerateTypeAndMemberDeclarations(
-          nestLevel: 1,
+          nestLevel: noNamespace ? 0 : 1,
           assembly,
           types
             .Where(type => string.Equals(type.Namespace, ns, StringComparison.Ordinal))
@@ -129,7 +133,8 @@ public class ApiListWriter {
         )
       );
 
-      typeDeclarations.AppendLine("}");
+      if (!noNamespace)
+        typeDeclarations.AppendLine("}");
     }
 
     static int OrderOfRootNamespace(string ns)
