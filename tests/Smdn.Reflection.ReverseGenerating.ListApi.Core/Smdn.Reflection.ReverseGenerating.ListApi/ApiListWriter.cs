@@ -260,8 +260,8 @@ public static class C {
 }",
         new string[0],
         true,
-        contextForType,
-        contextForMember,
+        contextForType!,
+        contextForMember!,
         $@"{(directiveEnableOnAssembly ? "#nullable enable annotations\n" : string.Empty)}{(directiveDisableOnAssembly ? "#nullable disable annotations\n" : string.Empty)}
 {(directiveOnType ? "#nullable enable annotations\n" : string.Empty)}public static class C {{{(directiveOnType ? "\n#nullable restore annotations" : string.Empty)}
 {(directiveOnMember ? "#nullable enable annotations\n" : string.Empty)}  public static void M(string{(contextForMember is null ? "" : "?")} p) {{}}{(directiveOnMember ? "\n#nullable restore annotations" : string.Empty)}
@@ -282,8 +282,8 @@ public static class C {
 }",
         new string[0],
         false,
-        contextForType,
-        contextForMember,
+        contextForType!,
+        contextForMember!,
         @$"
 public static class C {{
   public static void M(string{(contextForMember is null ? "" : "?")} p) {{}}
