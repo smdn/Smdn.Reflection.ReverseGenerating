@@ -89,42 +89,6 @@ partial class AssemblyLoader {
     }
   }
 
-  private sealed class PathAssemblyDependencyResolver : PathAssemblyResolver {
-    private readonly AssemblyDependencyResolver dependencyResolver;
-    private readonly ILogger? logger;
-
-    public PathAssemblyDependencyResolver(string componentAssemblyPath, ILogger? logger = null)
-      : base(
-        Directory.GetFiles(RuntimeEnvironment.GetRuntimeDirectory(), "*.dll") // add runtime assemblies
-      )
-    {
-      this.dependencyResolver = new(componentAssemblyPath);
-      this.logger = logger;
-    }
-
-    public override Assembly? Resolve(MetadataLoadContext context, AssemblyName assemblyName)
-    {
-      logger?.LogDebug("attempting to load '{AssemblyName}'", assemblyName);
-
-      var assm = base.Resolve(context, assemblyName);
-
-      if (assm is not null)
-        return assm;
-
-      var assemblyPath = dependencyResolver.ResolveAssemblyToPath(assemblyName);
-
-      if (assemblyPath is null) {
-        logger?.LogDebug("could not resolve assembly path of '{AssemblyName}'", assemblyName);
-
-        return null;
-      }
-
-      logger?.LogDebug("attempting to load assembly from '{AssemblyFilePath}'", assemblyPath);
-
-      return context.LoadFromAssemblyPath(assemblyPath);
-    }
-  }
-
 #if NULL_STATE_STATIC_ANALYSIS_ATTRIBUTES
   [return: MaybeNull]
 #endif
@@ -186,35 +150,6 @@ partial class AssemblyLoader {
     logger?.LogDebug("loaded assembly '{AssemblyName}'", assemblyName);
 
     return actionWithLoadedAssembly(assm, arg);
-  }
-
-  private sealed class UnloadableAssemblyLoadContext : AssemblyLoadContext {
-    private readonly AssemblyDependencyResolver dependencyResolver;
-    private readonly ILogger? logger;
-
-    public UnloadableAssemblyLoadContext(string componentAssemblyPath, ILogger? logger = null)
-      : base(
-        isCollectible: true // is required to unload assembly
-      )
-    {
-      this.dependencyResolver = new(componentAssemblyPath);
-      this.logger = logger;
-    }
-
-    protected override Assembly? Load(AssemblyName name)
-    {
-      var assemblyPath = dependencyResolver.ResolveAssemblyToPath(name);
-
-      if (assemblyPath is null) {
-        logger?.LogDebug("could not resolve assembly path of '{AssemblyName}'", name);
-
-        return null;
-      }
-
-      logger?.LogDebug("attempting to load assembly from '{AssemblyFilePath}'", assemblyPath);
-
-      return LoadFromAssemblyPath(assemblyPath);
-    }
   }
 
 #if NULL_STATE_STATIC_ANALYSIS_ATTRIBUTES
