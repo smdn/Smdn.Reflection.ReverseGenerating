@@ -18,7 +18,7 @@ public class ApiListWriter {
   private readonly Assembly assembly;
   private readonly ApiListWriterOptions options;
 
-  public ApiListWriter(TextWriter baseWriter, Assembly assembly, ApiListWriterOptions options)
+  public ApiListWriter(TextWriter baseWriter, Assembly assembly, ApiListWriterOptions? options)
   {
     this.BaseWriter = baseWriter ?? throw new ArgumentNullException(nameof(baseWriter));
     this.assembly = assembly ?? throw new ArgumentNullException(nameof(assembly));
