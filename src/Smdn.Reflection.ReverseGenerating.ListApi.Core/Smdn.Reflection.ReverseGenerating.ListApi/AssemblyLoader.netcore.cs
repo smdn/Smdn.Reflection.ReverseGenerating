@@ -53,6 +53,42 @@ partial class AssemblyLoader {
     }
   }
 
+#if NULL_STATE_STATIC_ANALYSIS_ATTRIBUTES
+  [return: MaybeNull]
+#endif
+  private static TResult UsingAssemblyCore<TArg, TResult>(
+    Stream assemblyStream,
+    string componentAssemblyPath,
+    bool loadIntoReflectionOnlyContext,
+    TArg arg,
+    Func<Assembly, TArg, TResult> actionWithLoadedAssembly,
+    out WeakReference? context,
+    ILogger? logger = null
+  )
+  {
+    context = default;
+
+    if (loadIntoReflectionOnlyContext) {
+      return UsingReflectionOnlyAssembly(
+        assemblyStream,
+        componentAssemblyPath,
+        arg,
+        actionWithLoadedAssembly,
+        logger
+      );
+    }
+    else {
+      return UsingAssembly(
+        assemblyStream,
+        componentAssemblyPath,
+        arg,
+        actionWithLoadedAssembly,
+        out context,
+        logger
+      );
+    }
+  }
+
   private sealed class PathAssemblyDependencyResolver : PathAssemblyResolver {
     private readonly AssemblyDependencyResolver dependencyResolver;
     private readonly ILogger? logger;
@@ -120,6 +156,38 @@ partial class AssemblyLoader {
     return actionWithLoadedAssembly(assm, arg);
   }
 
+#if NULL_STATE_STATIC_ANALYSIS_ATTRIBUTES
+  [return: MaybeNull]
+#endif
+  private static TResult UsingReflectionOnlyAssembly<TArg, TResult>(
+    Stream assemblyStream,
+    string componentAssemblyPath,
+    TArg arg,
+    Func<Assembly, TArg, TResult> actionWithLoadedAssembly,
+    ILogger? logger = null
+  )
+  {
+    using var mlc = new MetadataLoadContext(
+      new PathAssemblyDependencyResolver(componentAssemblyPath)
+    );
+
+    logger?.LogDebug("loading assembly into reflection-only context from stream with component assembly path '{ComponentAssemblyPath}'", componentAssemblyPath);
+
+    var assm = mlc.LoadFromStream(assemblyStream);
+
+    if (assm is null) {
+      logger?.LogCritical("failed to load assembly from stream");
+
+      return default;
+    }
+
+    var assemblyName = assm.FullName;
+
+    logger?.LogDebug("loaded assembly '{AssemblyName}'", assemblyName);
+
+    return actionWithLoadedAssembly(assm, arg);
+  }
+
   private sealed class UnloadableAssemblyLoadContext : AssemblyLoadContext {
     private readonly AssemblyDependencyResolver dependencyResolver;
     private readonly ILogger? logger;
@@ -172,6 +240,50 @@ partial class AssemblyLoader {
 
     if (assm is null) {
       logger?.LogCritical("failed to load assembly from file '{AssemblyFilePath}'", assemblyFile.FullName);
+
+      return default;
+    }
+
+    context = alcWeakReference;
+
+    var assemblyName = assm.FullName;
+
+    logger?.LogDebug("loaded assembly '{AssemblyName}'", assemblyName);
+
+    try {
+      return actionWithLoadedAssembly(assm, arg);
+    }
+    finally {
+      alc.Unload();
+
+      logger?.LogDebug("unloaded assembly '{AssemblyName}'", assemblyName);
+    }
+  }
+
+#if NULL_STATE_STATIC_ANALYSIS_ATTRIBUTES
+  [return: MaybeNull]
+#endif
+  [MethodImpl(MethodImplOptions.NoInlining)]
+  private static TResult UsingAssembly<TArg, TResult>(
+    Stream assemblyStream,
+    string componentAssemblyPath,
+    TArg arg,
+    Func<Assembly, TArg, TResult> actionWithLoadedAssembly,
+    out WeakReference? context,
+    ILogger? logger = null
+  )
+  {
+    context = null;
+
+    var alc = new UnloadableAssemblyLoadContext(componentAssemblyPath, logger);
+    var alcWeakReference = new WeakReference(alc);
+
+    logger?.LogDebug("loading assembly from stream with component assembly path '{ComponentAssemblyPath}'", componentAssemblyPath);
+
+    var assm = alc.LoadFromStream(assemblyStream);
+
+    if (assm is null) {
+      logger?.LogCritical("failed to load assembly from stream");
 
       return default;
     }

@@ -88,5 +88,17 @@ partial class AssemblyLoader {
       logger?.LogDebug($"unloaded assembly '{assemblyName}'");
     }
   }
+
+  [return: MaybeNull]
+  private static TResult UsingAssemblyCore<TArg, TResult>(
+    Stream assemblyStream,
+    string componentAssemblyPath,
+    bool loadIntoReflectionOnlyContext,
+    TArg arg,
+    Func<Assembly, TArg, TResult> actionWithLoadedAssembly,
+    out WeakReference? context,
+    ILogger? logger = null
+  )
+    => throw new NotImplementedException();
 }
 #endif

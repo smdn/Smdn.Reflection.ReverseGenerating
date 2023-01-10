@@ -114,6 +114,73 @@ class AssemblyLoaderTests {
   [TestCase(false, "net7.0")]
 #endif
 #endif
+  public void UsingAssembly_FromStream(bool loadIntoReflectionOnlyContext, string targetFrameworkMoniker)
+  {
+    var assemblyFile = new FileInfo(
+      TestAssemblyInfo.TestAssemblyPaths.First(f => f.Contains(targetFrameworkMoniker) && f.Contains("LibA.dll"))
+    );
+    using var assemblyStream = File.OpenRead(assemblyFile.FullName);
+
+    var result = AssemblyLoader.UsingAssembly(
+      assemblyStream,
+      componentAssemblyPath: assemblyFile.FullName,
+      loadIntoReflectionOnlyContext: loadIntoReflectionOnlyContext,
+      arg: assemblyFile,
+      (assm, arg) => {
+        Assert.IsNotNull(assm, nameof(assm));
+
+        if (loadIntoReflectionOnlyContext)
+          Assert.AreEqual(arg.FullName, assm.Location, nameof(assm.Location));
+        else
+          Assert.IsEmpty(assm.Location, nameof(assm.Location));
+
+        Assert.DoesNotThrow(() => assm.GetExportedTypes(), nameof(assm.GetExportedTypes));
+
+        return assm.GetType("Lib.LibA.CBase")?.FullName;
+      },
+      context: out var context,
+      logger: logger
+    );
+
+    Assert.IsNotNull(result, nameof(result));
+    Assert.AreEqual(result, "Lib.LibA.CBase", nameof(result));
+
+    if (loadIntoReflectionOnlyContext) {
+      Assert.IsNull(context, nameof(context));
+      return;
+    }
+
+    Assert.IsNotNull(context, nameof(context));
+
+    var unloaded = false;
+
+    for (var i = 0; i < 10; i++) {
+      if (!context!.IsAlive) {
+        unloaded = true;
+        break;
+      }
+
+      GC.Collect();
+      GC.WaitForPendingFinalizers();
+    }
+
+    Assert.IsTrue(unloaded, nameof(unloaded));
+  }
+
+#if NETCOREAPP3_1_OR_GREATER || NET6_0_OR_GREATER
+  [TestCase(true, "netstandard2.1")]
+  [TestCase(false, "netstandard2.1")]
+#endif
+#if !SDK_NET7_PREVIEW
+#if NET6_0_OR_GREATER
+  [TestCase(true, "net6.0")]
+  [TestCase(false, "net6.0")]
+#endif
+#if NET7_0_OR_GREATER
+  [TestCase(true, "net7.0")]
+  [TestCase(false, "net7.0")]
+#endif
+#endif
   public void UsingAssembly_ResolveDependency(bool loadIntoReflectionOnlyContext, string targetFrameworkMoniker)
   {
     var assemblyFile = new FileInfo(
@@ -129,6 +196,73 @@ class AssemblyLoaderTests {
 
         Assert.IsNotNull(assm, nameof(assm));
         Assert.AreEqual(arg.FullName, assm.Location, nameof(assm.Location));
+
+        Assert.DoesNotThrow(() => assm.GetExportedTypes(), nameof(assm.GetExportedTypes));
+
+        return assm.GetType("Lib.LibB.CEx")?.FullName;
+      },
+      context: out var context,
+      logger: logger
+    );
+
+    Assert.IsNotNull(result, nameof(result));
+    Assert.AreEqual(result, "Lib.LibB.CEx", nameof(result));
+
+    if (loadIntoReflectionOnlyContext) {
+      Assert.IsNull(context, nameof(context));
+      return;
+    }
+
+    Assert.IsNotNull(context, nameof(context));
+
+    var unloaded = false;
+
+    for (var i = 0; i < 10; i++) {
+      if (!context!.IsAlive) {
+        unloaded = true;
+        break;
+      }
+
+      GC.Collect();
+      GC.WaitForPendingFinalizers();
+    }
+
+    Assert.IsTrue(unloaded, nameof(unloaded));
+  }
+
+#if NETCOREAPP3_1_OR_GREATER || NET6_0_OR_GREATER
+  [TestCase(true, "netstandard2.1")]
+  [TestCase(false, "netstandard2.1")]
+#endif
+#if !SDK_NET7_PREVIEW
+#if NET6_0_OR_GREATER
+  [TestCase(true, "net6.0")]
+  [TestCase(false, "net6.0")]
+#endif
+#if NET7_0_OR_GREATER
+  [TestCase(true, "net7.0")]
+  [TestCase(false, "net7.0")]
+#endif
+#endif
+  public void UsingAssembly_FromStream_ResolveDependency(bool loadIntoReflectionOnlyContext, string targetFrameworkMoniker)
+  {
+    var assemblyFile = new FileInfo(
+      TestAssemblyInfo.TestAssemblyPaths.First(f => f.Contains(targetFrameworkMoniker) && f.Contains("LibB.dll"))
+    );
+    using var assemblyStream = File.OpenRead(assemblyFile.FullName);
+
+    var result = AssemblyLoader.UsingAssembly(
+      assemblyStream,
+      componentAssemblyPath: assemblyFile.FullName,
+      loadIntoReflectionOnlyContext: loadIntoReflectionOnlyContext,
+      arg: assemblyFile,
+      (assm, arg) => {
+        Assert.IsNotNull(assm, nameof(assm));
+
+        if (loadIntoReflectionOnlyContext)
+          Assert.AreEqual(arg.FullName, assm.Location, nameof(assm.Location));
+        else
+          Assert.IsEmpty(assm.Location, nameof(assm.Location));
 
         Assert.DoesNotThrow(() => assm.GetExportedTypes(), nameof(assm.GetExportedTypes));
 

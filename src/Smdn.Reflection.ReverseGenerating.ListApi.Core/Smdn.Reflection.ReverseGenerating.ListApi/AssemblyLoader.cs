@@ -33,4 +33,28 @@ public static partial class AssemblyLoader {
       logger
     );
   }
+
+#if NULL_STATE_STATIC_ANALYSIS_ATTRIBUTES
+  [return: MaybeNull]
+#endif
+  public static TResult UsingAssembly<TArg, TResult>(
+    Stream assemblyStream,
+    string componentAssemblyPath,
+    bool loadIntoReflectionOnlyContext,
+    TArg arg,
+    Func<Assembly, TArg, TResult> actionWithLoadedAssembly,
+    out WeakReference? context,
+    ILogger? logger = null
+  )
+  {
+    return UsingAssemblyCore(
+      assemblyStream,
+      componentAssemblyPath ?? throw new ArgumentNullException(nameof(componentAssemblyPath)),
+      loadIntoReflectionOnlyContext,
+      arg,
+      actionWithLoadedAssembly,
+      out context,
+      logger
+    );
+  }
 }
