@@ -122,7 +122,7 @@ public class ApiListWriter {
           nestLevel: 1,
           assembly,
           types
-            .Where(type => type.Namespace.Equals(ns, StringComparison.Ordinal))
+            .Where(type => string.Equals(type.Namespace, ns, StringComparison.Ordinal))
             .Where(static type => !type.IsNested),
           referencingNamespaces,
           options

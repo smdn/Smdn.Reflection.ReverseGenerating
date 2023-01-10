@@ -65,7 +65,7 @@ class AssemblyLoaderTests {
         Assert.AreSame(arg, assemblyFile, nameof(arg));
 
         Assert.IsNotNull(assm, nameof(assm));
-        Assert.AreEqual(assm.Location, arg.FullName, nameof(assm.Location));
+        Assert.AreEqual(arg.FullName, assm.Location, nameof(assm.Location));
 
         Assert.DoesNotThrow(() => assm.GetExportedTypes(), nameof(assm.GetExportedTypes));
 
@@ -128,7 +128,7 @@ class AssemblyLoaderTests {
         Assert.AreSame(arg, assemblyFile, nameof(arg));
 
         Assert.IsNotNull(assm, nameof(assm));
-        Assert.AreEqual(assm.Location, arg.FullName, nameof(assm.Location));
+        Assert.AreEqual(arg.FullName, assm.Location, nameof(assm.Location));
 
         Assert.DoesNotThrow(() => assm.GetExportedTypes(), nameof(assm.GetExportedTypes));
 
