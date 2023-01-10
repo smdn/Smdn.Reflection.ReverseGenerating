@@ -170,11 +170,14 @@ public class ApiListWriter {
       BaseWriter.WriteLine();
     }
 
-    foreach (var ns in orderedReferencingNamespaces) {
-      BaseWriter.WriteLine($"using {ns};");
+    if (orderedReferencingNamespaces.Any()) {
+      foreach (var ns in orderedReferencingNamespaces) {
+        BaseWriter.WriteLine($"using {ns};");
+      }
+
+      BaseWriter.WriteLine();
     }
 
-    BaseWriter.WriteLine();
     BaseWriter.Write(typeDeclarations);
   }
 
