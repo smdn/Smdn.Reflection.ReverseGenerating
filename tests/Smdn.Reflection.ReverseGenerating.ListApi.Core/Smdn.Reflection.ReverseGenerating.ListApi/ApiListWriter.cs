@@ -91,7 +91,7 @@ class ApiListWriterTests {
       var span = diag.Location.GetLineSpan();
       var location = $"{span.Path}({span.StartLinePosition.Line + 1},{span.StartLinePosition.Character + 1})";
 
-      TestContext.WriteLine($"{location}: {diag.Severity} {diag.Id}: {diag.GetMessage()}");
+      TestContext.WriteLine($"{TestContext.CurrentContext.Test.FullName} {location}: {diag.Severity} {diag.Id}: {diag.GetMessage()}");
     }
 
     if (!emitResult.Success)
