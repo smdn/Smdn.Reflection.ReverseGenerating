@@ -12,6 +12,9 @@ using System.Runtime.Loader;
 using System.Text;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Console;
 using NUnit.Framework;
 using Smdn.IO;
 
@@ -19,6 +22,22 @@ namespace Smdn.Reflection.ReverseGenerating.ListApi;
 
 [TestFixture]
 class ApiListWriterTests {
+  private ILogger logger = null;
+
+  [OneTimeSetUp]
+  public void Init()
+  {
+    var services = new ServiceCollection();
+
+    services.AddLogging(
+      builder => builder
+        .AddSimpleConsole(static options => options.SingleLine = true)
+        .AddFilter(level => LogLevel.Debug <= level)
+    );
+
+    logger = services.BuildServiceProvider().GetService<ILoggerFactory>()?.CreateLogger("test");
+  }
+
   [Test]
   public void Ctor()
     => Assert.DoesNotThrow(() => new ApiListWriter(TextWriter.Null, Assembly.GetExecutingAssembly(), new()));
@@ -79,7 +98,7 @@ class ApiListWriterTests {
       throw new InvalidOperationException("Compilation failed");
   }
 
-  private static string WriteApiListFromSourceCode(
+  private string WriteApiListFromSourceCode(
     string csharpSourceCode,
     ApiListWriterOptions apiListWriterOptions,
     string? assemblyName = null,
@@ -102,7 +121,8 @@ class ApiListWriterTests {
       componentAssemblyPath: ".",
       loadIntoReflectionOnlyContext: true,
       arg: apiListWriterOptions,
-      static (assm, arg) => {
+      logger: logger,
+      actionWithLoadedAssembly: static (assm, arg) => {
         var sb = new StringBuilder();
         var writer = new ApiListWriter(new StringWriter(sb), assm, arg);
 
@@ -111,7 +131,7 @@ class ApiListWriterTests {
 
         return sb.ToString();
       },
-      out var context
+      context: out var context
     );
 
     // wait for the context to be collected
