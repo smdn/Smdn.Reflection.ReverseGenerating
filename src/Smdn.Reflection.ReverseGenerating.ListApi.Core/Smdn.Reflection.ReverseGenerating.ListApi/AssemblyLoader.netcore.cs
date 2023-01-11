@@ -114,8 +114,13 @@ partial class AssemblyLoader {
     }
 
     var assemblyName = assm.FullName;
+    var assemblyTypeFullName = assm.GetType().FullName;
 
-    logger?.LogDebug("loaded assembly '{AssemblyName}'", assemblyName);
+    logger?.LogDebug(
+      "loaded assembly '{AssemblyName}' ({AssemblyTypeFullName})",
+      assemblyName,
+      assemblyTypeFullName
+    );
 
     return actionWithLoadedAssembly(assm, arg);
   }
@@ -146,8 +151,13 @@ partial class AssemblyLoader {
     }
 
     var assemblyName = assm.FullName;
+    var assemblyTypeFullName = assm.GetType().FullName;
 
-    logger?.LogDebug("loaded assembly '{AssemblyName}'", assemblyName);
+    logger?.LogDebug(
+      "loaded assembly '{AssemblyName}' ({AssemblyTypeFullName})",
+      assemblyName,
+      assemblyTypeFullName
+    );
 
     return actionWithLoadedAssembly(assm, arg);
   }
@@ -182,8 +192,13 @@ partial class AssemblyLoader {
     context = alcWeakReference;
 
     var assemblyName = assm.FullName;
+    var assemblyTypeFullName = assm.GetType().FullName;
 
-    logger?.LogDebug("loaded assembly '{AssemblyName}'", assemblyName);
+    logger?.LogDebug(
+      "loaded assembly '{AssemblyName}' ({AssemblyTypeFullName})",
+      assemblyName,
+      assemblyTypeFullName
+    );
 
     try {
       return actionWithLoadedAssembly(assm, arg);
@@ -226,8 +241,13 @@ partial class AssemblyLoader {
     context = alcWeakReference;
 
     var assemblyName = assm.FullName;
+    var assemblyTypeFullName = assm.GetType().FullName;
 
-    logger?.LogDebug("loaded assembly '{AssemblyName}'", assemblyName);
+    logger?.LogDebug(
+      "loaded assembly '{AssemblyName}' ({AssemblyTypeFullName})",
+      assemblyName,
+      assemblyTypeFullName
+    );
 
     try {
       return actionWithLoadedAssembly(assm, arg);
