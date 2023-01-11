@@ -11,11 +11,7 @@ SPDX-License-Identifier: MIT
     <NoWarn>CS2002;$(NoWarn)</NoWarn>
   </PropertyGroup>
 
-  <Import Project="..\..\src\Sdk.net7.0-preview.props" />
-
-  <PropertyGroup>
-    <DefineConstants Condition="'$(RunningOnNet7PreviewSdk)' == 'true'">$(DefineConstants);SDK_NET7_PREVIEW</DefineConstants>
-  </PropertyGroup>
+  <Import Project="..\..\src\Sdk.net7.0.props" />
 
   <ItemGroup>
     <Compile Include="..\Common\**\*.cs" />
@@ -25,8 +21,6 @@ SPDX-License-Identifier: MIT
   </ItemGroup>
 
   <Target Name="WriteTestAssemblyInfo" BeforeTargets="BeforeBuild">
-    <Warning Condition="'$(RunningOnNet7PreviewSdk)' == 'true'" Text="running on .NET 7 preview SDK" />
-
     <ItemGroup>
       <TestProjects Include="$(TestAssemblyRootDirectory)\LibA\LibA.csproj" />
       <TestProjects Include="$(TestAssemblyRootDirectory)\LibB\LibB.csproj" />
@@ -43,10 +37,10 @@ SPDX-License-Identifier: MIT
     <MSBuild Projects="@(TestProjects)" Targets="Build" Properties="Configuration=Release;TargetFramework=netstandard2.1">
       <Output TaskParameter="TargetOutputs" ItemName="TestAssembliesNetStandard21" />
     </MSBuild>
-    <MSBuild Projects="@(TestProjects)" Targets="Build" Properties="Configuration=Release;TargetFramework=net6.0" Condition="'$(RunningOnNet7PreviewSdk)' != 'true'">
+    <MSBuild Projects="@(TestProjects)" Targets="Build" Properties="Configuration=Release;TargetFramework=net6.0">
       <Output TaskParameter="TargetOutputs" ItemName="TestAssembliesNet60" />
     </MSBuild>
-    <MSBuild Projects="@(TestProjects)" Targets="Build" Properties="Configuration=Release;TargetFramework=net7.0" Condition="'$(RunningOnNet7PreviewSdk)' != 'true' and $(TargetFrameworks.Contains('net7.0'))">
+    <MSBuild Projects="@(TestProjects)" Targets="Build" Properties="Configuration=Release;TargetFramework=net7.0" Condition="$(TargetFrameworks.Contains('net7.0'))">
       <Output TaskParameter="TargetOutputs" ItemName="TestAssembliesNet70" />
     </MSBuild>
 

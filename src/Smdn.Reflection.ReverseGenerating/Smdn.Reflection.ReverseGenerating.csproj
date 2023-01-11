@@ -11,6 +11,11 @@ SPDX-License-Identifier: MIT
     <PackageValidationBaselineVersion>1.0.0</PackageValidationBaselineVersion>
     <Nullable>enable</Nullable>
     <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
+  </PropertyGroup>
+
+  <Import Project="..\Sdk.net7.0.props" />
+
+  <PropertyGroup>
     <DefineConstants Condition="
       !(
         $(TargetFramework.StartsWith('net4')) Or
@@ -23,8 +28,6 @@ SPDX-License-Identifier: MIT
       $(TargetFramework.StartsWith('net7.0'))
     ">$(DefineConstants);WORKAROUND_NULLABILITYINFO_BYREFTYPE</DefineConstants>
   </PropertyGroup>
-
-  <Import Project="..\Sdk.net7.0-preview.props" />
 
   <PropertyGroup Condition=" '$(Configuration)' == 'Release' " Label="Required properties to generate API list">
     <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
