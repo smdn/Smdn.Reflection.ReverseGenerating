@@ -22,7 +22,7 @@ namespace Smdn.Reflection.ReverseGenerating.ListApi;
 
 [TestFixture]
 class ApiListWriterTests {
-  private ILogger logger = null;
+  private ILogger? logger = null;
 
   [OneTimeSetUp]
   public void Init()
