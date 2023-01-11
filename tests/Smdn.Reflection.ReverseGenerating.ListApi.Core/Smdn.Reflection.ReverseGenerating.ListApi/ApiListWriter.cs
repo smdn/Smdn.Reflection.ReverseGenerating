@@ -58,14 +58,20 @@ class ApiListWriterTests {
     Stream outputAssemblyStream,
     string csharpSourceCode,
     string? assemblyName = null,
-    IEnumerable<string>? referenceAssemblyFileNames = null
+    IEnumerable<string>? referenceAssemblyFileNames = null,
+    IEnumerable<ResourceDescription>? manifestResources = null
   )
   {
     const string defaultAssemblyName = "TestAssembly";
 
     var references = (referenceAssemblyFileNames ?? Enumerable.Repeat(typeof(object).Assembly.GetName().Name + ".dll", 1))
       .Distinct()
-      .Select(name => MetadataReference.CreateFromFile(Path.Combine(RuntimeEnvironment.GetRuntimeDirectory(), name)));
+      .Select(static name =>
+        MetadataReference.CreateFromFile(
+          Path.Combine(RuntimeEnvironment.GetRuntimeDirectory(), name),
+          MetadataReferenceProperties.Assembly
+        )
+      );
 
     var parseOptions = CSharpParseOptions.Default
       .WithLanguageVersion(LanguageVersion.Latest);
@@ -85,7 +91,15 @@ class ApiListWriterTests {
       options: compilationOptions
     );
 
-    var emitResult = compilation.Emit(peStream: outputAssemblyStream);
+    var emitResult = compilation.Emit(
+      peStream: outputAssemblyStream,
+      manifestResources: manifestResources
+#if false
+      options: new Microsoft.CodeAnalysis.Emit.EmitOptions(
+        runtimeMetadataVersion: "v4.0.30319" // ??? ref: https://learn.microsoft.com/ja-jp/dotnet/standard/assembly/view-contents
+      )
+#endif
+    );
 
     foreach (var diag in emitResult.Diagnostics) {
       var span = diag.Location.GetLineSpan();
@@ -102,7 +116,8 @@ class ApiListWriterTests {
     string csharpSourceCode,
     ApiListWriterOptions apiListWriterOptions,
     string? assemblyName = null,
-    IEnumerable<string>? referenceAssemblyFileNames = null
+    IEnumerable<string>? referenceAssemblyFileNames = null,
+    IEnumerable<ResourceDescription>? manifestResources = null
   )
   {
     using var assemblyStream = new MemoryStream();
@@ -111,7 +126,8 @@ class ApiListWriterTests {
       assemblyStream,
       csharpSourceCode,
       assemblyName,
-      referenceAssemblyFileNames
+      referenceAssemblyFileNames,
+      manifestResources
     );
 
     assemblyStream.Position = 0L;
@@ -389,7 +405,7 @@ public static class C {{
     yield return new object[] {
       @"// empty assembly",
       "TestCase2Assembly",
-      new string[0],
+      null!,
       "//  ()\n" +
       "//   Name: TestCase2Assembly\n" +
       "//   AssemblyVersion: 0.0.0.0\n" +
@@ -415,7 +431,107 @@ public static class C {{
 
     Assert.AreEqual(
       expectedOutput.Replace("\r\n", "\n").Replace("\r", "\n").TrimEnd(),
-      new StringReader(WriteApiListFromSourceCode(sourceCode, options, assemblyName: assemblyName)).ReadToEnd().Replace("\r\n", "\n").Replace("\r", "\n").TrimEnd()
+      new StringReader(
+        WriteApiListFromSourceCode(
+          sourceCode,
+          options,
+          assemblyName: assemblyName,
+          referenceAssemblyFileNames: referenceAssemblyFileNames
+        )
+      ).ReadToEnd().Replace("\r\n", "\n").Replace("\r", "\n").TrimEnd()
+    );
+  }
+
+  private static System.Collections.IEnumerable YieldTestCases_WriteEmbeddedResources()
+  {
+    foreach (var writeEmbeddedResources in new[] { true, false }) {
+      yield return new object[] {
+        writeEmbeddedResources,
+        new[] {
+          new ResourceDescription(
+            resourceName: "resource-1.txt",
+            dataProvider: static () => new MemoryStream(new byte[] { 0, 1, 2, 3 }),
+            isPublic: true
+          ),
+          new ResourceDescription(
+            resourceName: "resource-2.txt",
+            dataProvider: static () => Stream.Null,
+            isPublic: true
+          ),
+          new ResourceDescription(
+            resourceName: "resource-3.txt",
+            dataProvider: static () => new MemoryStream(new byte[1024]),
+            isPublic: true
+          ),
+        },
+        @"//   Embedded resources:
+//     resource-1.txt (4 bytes, Embedded, ContainedInManifestFile)
+//     resource-2.txt (0 bytes, Embedded, ContainedInManifestFile)
+//     resource-3.txt (1,024 bytes, Embedded, ContainedInManifestFile)
+"
+      };
+    }
+  }
+
+  [TestCaseSource(nameof(YieldTestCases_WriteEmbeddedResources))]
+  public void WriteEmbeddedResources(
+    bool writeEmbeddedResources,
+    IEnumerable<ResourceDescription> manifestResources,
+    string expectedEmbeddedResourcesOutput
+  )
+  {
+    var options = new ApiListWriterOptions();
+
+    options.Writer.WriteNullableAnnotationDirective = false;
+    options.Writer.WriteEmbeddedResources = writeEmbeddedResources;
+    options.Writer.WriteReferencedAssemblies = false;
+
+    if (writeEmbeddedResources) {
+      StringAssert.Contains(
+        expectedEmbeddedResourcesOutput.Replace("\r\n", "\n").Replace("\r", "\n").TrimEnd(),
+        new StringReader(
+          WriteApiListFromSourceCode(
+            csharpSourceCode: "//",
+            options,
+            manifestResources: manifestResources
+          )
+        ).ReadToEnd().Replace("\r\n", "\n").Replace("\r", "\n").TrimEnd()
+      );
+    }
+    else {
+      StringAssert.DoesNotContain(
+        "//   Embedded resources:",
+        new StringReader(
+          WriteApiListFromSourceCode(
+            csharpSourceCode: "//",
+            options,
+            manifestResources: null
+          )
+        ).ReadToEnd()
+      );
+    }
+  }
+
+  [Test]
+  public void WriteEmbeddedResources_HasNoEmbeddedResources(
+    [Values(true, false)] bool writeEmbeddedResources
+  )
+  {
+    var options = new ApiListWriterOptions();
+
+    options.Writer.WriteNullableAnnotationDirective = false;
+    options.Writer.WriteEmbeddedResources = writeEmbeddedResources;
+    options.Writer.WriteReferencedAssemblies = false;
+
+    StringAssert.DoesNotContain(
+      "//   Embedded resources:",
+      new StringReader(
+        WriteApiListFromSourceCode(
+          csharpSourceCode: "//",
+          options,
+          manifestResources: null
+        )
+      ).ReadToEnd()
     );
   }
 }
