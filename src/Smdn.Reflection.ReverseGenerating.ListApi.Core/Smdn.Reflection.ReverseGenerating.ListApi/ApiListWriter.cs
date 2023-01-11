@@ -76,10 +76,8 @@ public class ApiListWriter {
   {
     var manifestResourceNames = assembly.GetManifestResourceNames();
 
-    if (manifestResourceNames.Length <= 0) {
-      System.Console.WriteLine("not embedded resources");
+    if (manifestResourceNames.Length <= 0)
       return;
-    }
 
     BaseWriter.WriteLine("//   Embedded resources:");
 
