@@ -11,7 +11,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Smdn.Reflection.ReverseGenerating.ListApi;
 
-internal class Program {
+internal sealed class Program {
   internal static string LoggerCategoryName => typeof(Program).Assembly.GetName().Name!;
 
   private static int Main(string[] args)
