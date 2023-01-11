@@ -216,6 +216,7 @@ public class RootCommandImplementation {
 
             writer.WriteAssemblyInfoHeader();
             writer.WriteExportedTypes();
+            writer.WriteFooter();
 
             arg.logger?.LogDebug("generated API list {OutputFilePath}", outputFilePath);
             arg.logger?.LogInformation("{AssemblyFilePath} -> {OutputFilePath}", assm.Location, outputFilePath);

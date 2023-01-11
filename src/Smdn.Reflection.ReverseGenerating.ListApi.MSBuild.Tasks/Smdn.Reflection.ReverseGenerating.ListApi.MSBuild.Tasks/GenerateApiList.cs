@@ -186,6 +186,7 @@ public class GenerateApiList : Task {
 
           writer.WriteAssemblyInfoHeader();
           writer.WriteExportedTypes();
+          writer.WriteFooter();
 
           return arg.outputApiListFilePath;
         }

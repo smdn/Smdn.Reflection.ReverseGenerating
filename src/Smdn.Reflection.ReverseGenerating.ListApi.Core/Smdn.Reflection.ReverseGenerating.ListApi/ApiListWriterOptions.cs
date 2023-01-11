@@ -10,5 +10,6 @@ public class ApiListWriterOptions : GeneratorOptions {
     public bool WriteNullableAnnotationDirective { get; set; } = true;
     public bool WriteEmbeddedResources { get; set; } = true;
     public bool WriteReferencedAssemblies { get; set; } = true;
+    public bool WriteFooter { get; set; } = true;
   }
 }
