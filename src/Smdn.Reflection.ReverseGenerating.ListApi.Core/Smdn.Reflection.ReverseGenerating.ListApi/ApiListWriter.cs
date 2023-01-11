@@ -43,11 +43,27 @@ public class ApiListWriter {
 
   private unsafe void WriteReferencedAssemblies()
   {
-    if (!assembly.TryGetRawMetadata(out var blobPtr, out var blobLength))
-      return;
-
     BaseWriter.WriteLine("//   Referenced assemblies:");
 
+    if (assembly.TryGetRawMetadata(out var blobPtr, out var blobLength))
+      WriteReferencedAssembliesFromRawMetadata(blobPtr, blobLength);
+    else
+      WriteReferencedAssembliesUsingGetReferencedAssemblies();
+  }
+
+  private void WriteReferencedAssembliesUsingGetReferencedAssemblies()
+  {
+    var orderedReferencedAssemblies = assembly
+      .GetReferencedAssemblies()
+      .OrderBy(static refassm => refassm.Name, StringComparer.Ordinal);
+
+    foreach (var referencedAssembly in orderedReferencedAssemblies) {
+      BaseWriter.WriteLine($"//     {referencedAssembly.FullName}");
+    }
+  }
+
+  private unsafe void WriteReferencedAssembliesFromRawMetadata(byte* blobPtr, int blobLength)
+  {
     var reader = new MetadataReader(blobPtr, blobLength);
     var assemblyReferences = reader
       .AssemblyReferences
