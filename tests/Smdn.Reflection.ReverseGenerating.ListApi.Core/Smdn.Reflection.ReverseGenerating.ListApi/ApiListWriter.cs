@@ -530,102 +530,103 @@ public static class C {{
 
   private static System.Collections.IEnumerable YieldTestCases_WriteReferencedAssemblies()
   {
-    foreach (var loadIntoReflectionOnlyContext in new[] {true, false} ) {
+    static IEnumerable<(
+      string AssemblyName,
+      string TargetFrameworkMoniker,
+      string[] ExpectedReferencedAssemblies
+    )> YieldTestCases()
+    {
+#if NETCOREAPP3_1_OR_GREATER || NET6_0_OR_GREATER
+      yield return (
+        "Lib",
+        "netstandard2.1",
+        new[] {
+          "netstandard, Version=2.1.",
+        }
+      );
+#endif
+#if NET6_0_OR_GREATER
+      yield return (
+        "Lib",
+        "net6.0",
+        new[] {
+          "System.Runtime, Version=6.0.",
+        }
+      );
+#endif
+#if NET7_0_OR_GREATER
+      yield return (
+        "Lib",
+        "net7.0",
+        new[] {
+          "System.Runtime, Version=7.0.",
+        }
+      );
+#endif
+#if NETCOREAPP3_1_OR_GREATER || NET6_0_OR_GREATER
+      yield return (
+        "LibB",
+        "netstandard2.1",
+        new[] {
+          "netstandard, Version=2.1.",
+          "LibA, Version=",
+        }
+      );
+#endif
+#if NET6_0_OR_GREATER
+      yield return (
+        "LibB",
+        "net6.0",
+        new[] {
+          "System.Runtime, Version=6.0.",
+          "LibA, Version=",
+        }
+      );
+#endif
+#if NETCOREAPP3_1_OR_GREATER || NET6_0_OR_GREATER
+      yield return (
+        "LibReferencedAssemblies1",
+        "netstandard2.1",
+        new[] {
+          "netstandard, Version=2.1.",
+        }
+      );
+#endif
+#if NET6_0_OR_GREATER
+      yield return (
+        "LibReferencedAssemblies1",
+        "net6.0",
+        new[] {
+          "System.Runtime, Version=6.0.",
+          "System.Threading, Version=6.0.",
+          "System.Xml.ReaderWriter, Version=6.0.",
+        }
+      );
+#endif
+#if NET7_0_OR_GREATER
+      yield return (
+        "LibReferencedAssemblies1",
+        "net7.0",
+        new[] {
+          "System.Runtime, Version=7.0.",
+          "System.Threading, Version=7.0.",
+          "System.Xml.ReaderWriter, Version=7.0.",
+        }
+      );
+#endif
+    }
+
+    foreach (var loadIntoReflectionOnlyContext in new[] { true, false }) {
       foreach (var writeReferencedAssemblies in new[] { true, false }) {
-#if NETCOREAPP3_1_OR_GREATER || NET6_0_OR_GREATER
-        yield return new object[] {
-          "Lib",
-          "netstandard2.1",
-          writeReferencedAssemblies,
-          loadIntoReflectionOnlyContext,
-          new[] {
-            "netstandard, Version=2.1.",
-          }
-        };
-#endif
-#if NET6_0_OR_GREATER
-        yield return new object[] {
-          "Lib",
-          "net6.0",
-          writeReferencedAssemblies,
-          loadIntoReflectionOnlyContext,
-          new[] {
-            "System.Runtime, Version=6.0.",
-          }
-        };
-#endif
-#if NET7_0_OR_GREATER
-        yield return new object[] {
-          "Lib",
-          "net7.0",
-          writeReferencedAssemblies,
-          loadIntoReflectionOnlyContext,
-          new[] {
-            "System.Runtime, Version=7.0.",
-          }
-        };
-#endif
-#if NETCOREAPP3_1_OR_GREATER || NET6_0_OR_GREATER
-        yield return new object[] {
-          "LibB",
-          "netstandard2.1",
-          writeReferencedAssemblies,
-          loadIntoReflectionOnlyContext,
-          new[] {
-            "netstandard, Version=2.1.",
-            "LibA, Version=",
-          }
-        };
-#endif
-#if NET6_0_OR_GREATER
-        yield return new object[] {
-          "LibB",
-          "net6.0",
-          writeReferencedAssemblies,
-          loadIntoReflectionOnlyContext,
-          new[] {
-            "System.Runtime, Version=6.0.",
-            "LibA, Version=",
-          }
-        };
-#endif
-#if NETCOREAPP3_1_OR_GREATER || NET6_0_OR_GREATER
-        yield return new object[] {
-          "LibReferencedAssemblies1",
-          "netstandard2.1",
-          writeReferencedAssemblies,
-          loadIntoReflectionOnlyContext,
-          new[] {
-            "netstandard, Version=2.1.",
-          }
-        };
-#endif
-#if NET6_0_OR_GREATER
-        yield return new object[] {
-          "LibReferencedAssemblies1",
-          "net6.0",
-          writeReferencedAssemblies,
-          loadIntoReflectionOnlyContext,
-          new[] {
-            "System.Runtime, Version=6.0.",
-            "System.Threading, Version=6.0.",
-            "System.Xml.ReaderWriter, Version=6.0.",
-          }
-        };
-#endif
-#if NET7_0_OR_GREATER
-        yield return new object[] {
-          "LibReferencedAssemblies1",
-          "net7.0",
-          writeReferencedAssemblies,
-          loadIntoReflectionOnlyContext,
-          new[] {
-            "System.Runtime, Version=7.0.",
-            "System.Threading, Version=7.0.",
-            "System.Xml.ReaderWriter, Version=7.0.",
-          }
-        };
-#endif
+        foreach (var (assemblyName, targetFrameworkMoniker, expectedReferencedAssemblies) in YieldTestCases()) {
+          yield return new object[] {
+            assemblyName,
+            targetFrameworkMoniker,
+            writeReferencedAssemblies,
+            loadIntoReflectionOnlyContext,
+            expectedReferencedAssemblies
+          };
+        }
       }
     }
   }
