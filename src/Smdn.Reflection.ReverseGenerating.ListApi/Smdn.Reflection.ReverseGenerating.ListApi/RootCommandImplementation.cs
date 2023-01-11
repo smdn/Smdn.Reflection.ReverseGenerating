@@ -214,7 +214,7 @@ public class RootCommandImplementation {
 
             var writer = new ApiListWriter(outputWriter, assm, arg.options);
 
-            writer.WriteAssemblyInfoHeader();
+            writer.WriteHeader();
             writer.WriteExportedTypes();
             writer.WriteFooter();
 

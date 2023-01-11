@@ -184,7 +184,7 @@ public class GenerateApiList : Task {
 #endif
           var writer = new ApiListWriter(outputWriter, assm, arg.options);
 
-          writer.WriteAssemblyInfoHeader();
+          writer.WriteHeader();
           writer.WriteExportedTypes();
           writer.WriteFooter();
 

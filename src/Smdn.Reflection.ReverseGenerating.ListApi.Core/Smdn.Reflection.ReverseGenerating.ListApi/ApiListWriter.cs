@@ -25,7 +25,26 @@ public class ApiListWriter {
     this.options = options ?? new();
   }
 
+  public void WriteHeader()
+  {
+    if (!options.Writer.WriteHeader)
+      return;
+
+    if (options.Writer.WriteAssemblyInfo)
+      WriteAssemblyInfo();
+
+    if (options.Writer.WriteReferencedAssemblies)
+      WriteReferencedAssemblies();
+
+    if (options.Writer.WriteEmbeddedResources)
+      WriteEmbeddedResources();
+  }
+
+  [Obsolete($"Use {nameof(WriteHeader)}")]
   public void WriteAssemblyInfoHeader()
+    => WriteAssemblyInfo();
+
+  private void WriteAssemblyInfo()
   {
     BaseWriter.WriteLine($"// {Path.GetFileName(assembly.Location)} ({assembly.GetAssemblyMetadataAttributeValue<AssemblyProductAttribute, string>()})");
     BaseWriter.WriteLine($"//   Name: {assembly.GetName().Name}");
@@ -33,12 +52,6 @@ public class ApiListWriter {
     BaseWriter.WriteLine($"//   InformationalVersion: {assembly.GetAssemblyMetadataAttributeValue<AssemblyInformationalVersionAttribute, string>()}");
     BaseWriter.WriteLine($"//   TargetFramework: {assembly.GetAssemblyMetadataAttributeValue<TargetFrameworkAttribute, string>()}");
     BaseWriter.WriteLine($"//   Configuration: {assembly.GetAssemblyMetadataAttributeValue<AssemblyConfigurationAttribute, string>()}");
-
-    if (options.Writer.WriteReferencedAssemblies)
-      WriteReferencedAssemblies();
-
-    if (options.Writer.WriteEmbeddedResources)
-      WriteEmbeddedResources();
   }
 
   private unsafe void WriteReferencedAssemblies()

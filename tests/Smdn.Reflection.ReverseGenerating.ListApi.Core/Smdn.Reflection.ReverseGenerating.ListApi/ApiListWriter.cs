@@ -143,7 +143,7 @@ class ApiListWriterTests {
         var sb = new StringBuilder();
         var writer = new ApiListWriter(new StringWriter(sb), assm, arg);
 
-        writer.WriteAssemblyInfoHeader();
+        writer.WriteHeader();
         writer.WriteExportedTypes();
         writer.WriteFooter();
 
@@ -225,8 +225,8 @@ namespace Microsoft {
     var options = new ApiListWriterOptions();
 
     options.Writer.WriteNullableAnnotationDirective = false;
-    options.Writer.WriteEmbeddedResources = false;
-    options.Writer.WriteReferencedAssemblies = false;
+    options.Writer.WriteHeader = false;
+    options.Writer.WriteFooter = false;
 
     var usingDirectives = new StringReader(WriteApiListFromSourceCode(sourceCode, options))
       .ReadAllLines()
@@ -276,15 +276,13 @@ public static class C {
     var options = new ApiListWriterOptions();
 
     options.Writer.WriteNullableAnnotationDirective = false;
-    options.Writer.WriteEmbeddedResources = false;
-    options.Writer.WriteReferencedAssemblies = false;
+    options.Writer.WriteHeader = false;
+    options.Writer.WriteFooter = false;
 
     var output =
       string.Join(
         "\n",
-        new StringReader(WriteApiListFromSourceCode(sourceCode, options))
-          .ReadAllLines()
-          .Where(static line => !line.StartsWith("// ", StringComparison.Ordinal)) // remove header
+        new StringReader(WriteApiListFromSourceCode(sourceCode, options)).ReadAllLines()
       );
 
     Assert.AreEqual(
@@ -359,8 +357,8 @@ public static class C {{
     var options = new ApiListWriterOptions();
 
     options.Writer.WriteNullableAnnotationDirective = writeNullableAnnotationDirective;
-    options.Writer.WriteEmbeddedResources = false;
-    options.Writer.WriteReferencedAssemblies = false;
+    options.Writer.WriteHeader = false;
+    options.Writer.WriteFooter = false;
 
     options.TypeDeclaration.NullabilityInfoContext = typeDeclarationNullabilityInfoContext;
     options.MemberDeclaration.NullabilityInfoContext = memberDeclarationNullabilityInfoContext;
@@ -369,9 +367,7 @@ public static class C {{
     var output =
       string.Join(
         "\n",
-        new StringReader(WriteApiListFromSourceCode(sourceCode, options))
-          .ReadAllLines()
-          .Where(static line => !line.StartsWith("// ", StringComparison.Ordinal)) // remove header
+        new StringReader(WriteApiListFromSourceCode(sourceCode, options)).ReadAllLines()
       );
 
     Assert.AreEqual(
@@ -381,7 +377,7 @@ public static class C {{
   }
 #endif // SYSTEM_REFLECTION_NULLABILITYINFOCONTEXT
 
-  private static System.Collections.IEnumerable YieldTestCases_WriteAssemblyInfoHeader()
+  private static System.Collections.IEnumerable YieldTestCases_WriteHeader_WriteAssemblyInfo()
   {
     yield return new object[] {
       @"
@@ -396,6 +392,7 @@ public static class C {{
         typeof(AssemblyInformationalVersionAttribute).Assembly.GetName().Name + ".dll",
         typeof(System.Runtime.Versioning.TargetFrameworkAttribute).Assembly.GetName().Name + ".dll",
       },
+      true,
       @"//  (Product)
 //   Name: TestCase1Assembly
 //   AssemblyVersion: 1.2.3.4
@@ -408,6 +405,7 @@ public static class C {{
       @"// empty assembly",
       "TestCase2Assembly",
       null!,
+      true,
       "//  ()\n" +
       "//   Name: TestCase2Assembly\n" +
       "//   AssemblyVersion: 0.0.0.0\n" +
@@ -415,19 +413,30 @@ public static class C {{
       "//   TargetFramework: \n" +
       "//   Configuration: \n"
     };
+
+    yield return new object[] {
+      @"// empty assembly",
+      "TestCase3Assembly",
+      null!,
+      false,
+      string.Empty
+    };
   }
 
-  [TestCaseSource(nameof(YieldTestCases_WriteAssemblyInfoHeader))]
-  public void WriteAssemblyInfoHeader(
+  [TestCaseSource(nameof(YieldTestCases_WriteHeader_WriteAssemblyInfo))]
+  public void WriteHeader_WriteAssemblyInfo(
     string sourceCode,
     string assemblyName,
     string[] referenceAssemblyFileNames,
+    bool writeAssemblyInfo,
     string expectedOutput
   )
   {
     var options = new ApiListWriterOptions();
 
     options.Writer.WriteNullableAnnotationDirective = false;
+    options.Writer.WriteHeader = true;
+    options.Writer.WriteAssemblyInfo = writeAssemblyInfo;
     options.Writer.WriteEmbeddedResources = false;
     options.Writer.WriteReferencedAssemblies = false;
     options.Writer.WriteFooter = false;
@@ -443,7 +452,7 @@ public static class C {{
     );
   }
 
-  private static System.Collections.IEnumerable YieldTestCases_WriteEmbeddedResources()
+  private static System.Collections.IEnumerable YieldTestCases_WriteHeader_WriteEmbeddedResources()
   {
     foreach (var writeEmbeddedResources in new[] { true, false }) {
       yield return new object[] {
@@ -474,8 +483,8 @@ public static class C {{
     }
   }
 
-  [TestCaseSource(nameof(YieldTestCases_WriteEmbeddedResources))]
-  public void WriteEmbeddedResources(
+  [TestCaseSource(nameof(YieldTestCases_WriteHeader_WriteEmbeddedResources))]
+  public void WriteHeader_WriteEmbeddedResources(
     bool writeEmbeddedResources,
     IEnumerable<ResourceDescription> manifestResources,
     string expectedEmbeddedResourcesOutput
@@ -484,6 +493,8 @@ public static class C {{
     var options = new ApiListWriterOptions();
 
     options.Writer.WriteNullableAnnotationDirective = false;
+    options.Writer.WriteHeader = true;
+    options.Writer.WriteAssemblyInfo = false;
     options.Writer.WriteEmbeddedResources = writeEmbeddedResources;
     options.Writer.WriteReferencedAssemblies = false;
 
@@ -510,13 +521,15 @@ public static class C {{
   }
 
   [Test]
-  public void WriteEmbeddedResources_HasNoEmbeddedResources(
+  public void WriteHeader_WriteEmbeddedResources_HasNoEmbeddedResources(
     [Values(true, false)] bool writeEmbeddedResources
   )
   {
     var options = new ApiListWriterOptions();
 
     options.Writer.WriteNullableAnnotationDirective = false;
+    options.Writer.WriteHeader = true;
+    options.Writer.WriteAssemblyInfo = false;
     options.Writer.WriteEmbeddedResources = writeEmbeddedResources;
     options.Writer.WriteReferencedAssemblies = false;
 
@@ -530,7 +543,7 @@ public static class C {{
     );
   }
 
-  private static System.Collections.IEnumerable YieldTestCases_WriteReferencedAssemblies()
+  private static System.Collections.IEnumerable YieldTestCases_WriteHeader_WriteReferencedAssemblies()
   {
     static IEnumerable<(
       string AssemblyName,
@@ -637,7 +650,7 @@ public static class C {{
   // The type of the assembly generated by CSharpCompilation.Emit and loaded by AssemblyLoader, will be System.Reflection.TypeLoading.Ecma.EcmaAssembly.
   // And Assembly.TryGetRawMetadata returns false if the type of input assembl is System.Reflection.TypeLoading.Ecma.EcmaAssembly.
   // Therefore, the referenced assemblies cannot be read from the assembly generated and loaded with WriteApiListFromSourceCode.
-  [TestCaseSource(nameof(YieldTestCases_WriteReferencedAssemblies))]
+  [TestCaseSource(nameof(YieldTestCases_WriteHeader_WriteReferencedAssemblies))]
   public void WriteReferencedAssemblies(
     string assemblyFileName,
     string targetFrameworkMoniker,
@@ -653,6 +666,8 @@ public static class C {{
     var options = new ApiListWriterOptions();
 
     options.Writer.WriteNullableAnnotationDirective = false;
+    options.Writer.WriteHeader = true;
+    options.Writer.WriteAssemblyInfo = false;
     options.Writer.WriteEmbeddedResources = false;
     options.Writer.WriteReferencedAssemblies = writeReferencedAssemblies;
 
@@ -693,7 +708,7 @@ public static class C {{
           var sb = new StringBuilder();
           var writer = new ApiListWriter(new StringWriter(sb), assm, options);
 
-          writer.WriteAssemblyInfoHeader();
+          writer.WriteHeader();
           writer.WriteExportedTypes();
 
           return sb.ToString();
@@ -721,9 +736,7 @@ public static class C {{
   {
     var options = new ApiListWriterOptions();
 
-    options.Writer.WriteNullableAnnotationDirective = false;
-    options.Writer.WriteEmbeddedResources = false;
-    options.Writer.WriteReferencedAssemblies = false;
+    options.Writer.WriteHeader = false;
     options.Writer.WriteFooter = writeFooter;
 
     var output = WriteApiListFromSourceCode("//", options).TrimEnd();
