@@ -39,12 +39,12 @@ class ApiListWriterTests {
     Stream outputAssemblyStream,
     string csharpSourceCode,
     string? assemblyName = null,
-    IEnumerable<string>? referenceAssemblyFileName = null
+    IEnumerable<string>? referenceAssemblyFileNames = null
   )
   {
     const string defaultAssemblyName = "TestAssembly";
 
-    var references = (referenceAssemblyFileName ?? Enumerable.Repeat(typeof(object).Assembly.GetName().Name + ".dll", 1))
+    var references = (referenceAssemblyFileNames ?? Enumerable.Repeat(typeof(object).Assembly.GetName().Name + ".dll", 1))
       .Distinct()
       .Select(name => MetadataReference.CreateFromFile(Path.Combine(RuntimeEnvironment.GetRuntimeDirectory(), name)));
 
@@ -83,7 +83,7 @@ class ApiListWriterTests {
     string csharpSourceCode,
     ApiListWriterOptions apiListWriterOptions,
     string? assemblyName = null,
-    IEnumerable<string>? referenceAssemblyFileName = null
+    IEnumerable<string>? referenceAssemblyFileNames = null
   )
   {
     using var assemblyStream = new MemoryStream();
@@ -92,7 +92,7 @@ class ApiListWriterTests {
       assemblyStream,
       csharpSourceCode,
       assemblyName,
-      referenceAssemblyFileName
+      referenceAssemblyFileNames
     );
 
     assemblyStream.Position = 0L;
@@ -180,7 +180,7 @@ namespace Microsoft {
   [TestCaseSource(nameof(YieldTestCases_WriteExportedTypes_ReferencingNamespaces))]
   public void WriteExportedTypes_ReferencingNamespaces(
     string sourceCode,
-    string[] referenceAssemblyFileName,
+    string[] referenceAssemblyFileNames,
     string[] expectedUsingDirectives
   )
   {
@@ -231,7 +231,7 @@ public static class C {
   [TestCaseSource(nameof(YieldTestCases_WriteExportedTypes_ReferencingNamespaces_NewLine))]
   public void WriteExportedTypes_ReferencingNamespaces_NewLine(
     string sourceCode,
-    string[] referenceAssemblyFileName,
+    string[] referenceAssemblyFileNames,
     string expectedOutput
   )
   {
@@ -311,7 +311,7 @@ public static class C {{
   [TestCaseSource(nameof(YieldTestCases_WriteExportedTypes_NullableAnnotationDirective))]
   public void WriteExportedTypes_NullableAnnotationDirective(
     string sourceCode,
-    string[] referenceAssemblyFileName,
+    string[] referenceAssemblyFileNames,
     bool writeNullableAnnotationDirective,
     NullabilityInfoContext typeDeclarationNullabilityInfoContext,
     NullabilityInfoContext memberDeclarationNullabilityInfoContext,
@@ -383,7 +383,7 @@ public static class C {{
   public void WriteAssemblyInfoHeader(
     string sourceCode,
     string assemblyName,
-    string[] referenceAssemblyFileName,
+    string[] referenceAssemblyFileNames,
     string expectedOutput
   )
   {
