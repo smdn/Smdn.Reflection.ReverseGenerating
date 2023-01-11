@@ -431,14 +431,12 @@ public static class C {{
 
     Assert.AreEqual(
       expectedOutput.Replace("\r\n", "\n").Replace("\r", "\n").TrimEnd(),
-      new StringReader(
-        WriteApiListFromSourceCode(
-          sourceCode,
-          options,
-          assemblyName: assemblyName,
-          referenceAssemblyFileNames: referenceAssemblyFileNames
-        )
-      ).ReadToEnd().Replace("\r\n", "\n").Replace("\r", "\n").TrimEnd()
+      WriteApiListFromSourceCode(
+        sourceCode,
+        options,
+        assemblyName: assemblyName,
+        referenceAssemblyFileNames: referenceAssemblyFileNames
+      ).Replace("\r\n", "\n").Replace("\r", "\n").TrimEnd()
     );
   }
 
@@ -489,25 +487,21 @@ public static class C {{
     if (writeEmbeddedResources) {
       StringAssert.Contains(
         expectedEmbeddedResourcesOutput.Replace("\r\n", "\n").Replace("\r", "\n").TrimEnd(),
-        new StringReader(
-          WriteApiListFromSourceCode(
-            csharpSourceCode: "//",
-            options,
-            manifestResources: manifestResources
-          )
-        ).ReadToEnd().Replace("\r\n", "\n").Replace("\r", "\n").TrimEnd()
+        WriteApiListFromSourceCode(
+          csharpSourceCode: "//",
+          options,
+          manifestResources: manifestResources
+        ).Replace("\r\n", "\n").Replace("\r", "\n").TrimEnd()
       );
     }
     else {
       StringAssert.DoesNotContain(
         "//   Embedded resources:",
-        new StringReader(
-          WriteApiListFromSourceCode(
-            csharpSourceCode: "//",
-            options,
-            manifestResources: null
-          )
-        ).ReadToEnd()
+        WriteApiListFromSourceCode(
+          csharpSourceCode: "//",
+          options,
+          manifestResources: null
+        )
       );
     }
   }
@@ -525,13 +519,11 @@ public static class C {{
 
     StringAssert.DoesNotContain(
       "//   Embedded resources:",
-      new StringReader(
-        WriteApiListFromSourceCode(
-          csharpSourceCode: "//",
-          options,
-          manifestResources: null
-        )
-      ).ReadToEnd()
+      WriteApiListFromSourceCode(
+        csharpSourceCode: "//",
+        options,
+        manifestResources: null
+      )
     );
   }
 }
