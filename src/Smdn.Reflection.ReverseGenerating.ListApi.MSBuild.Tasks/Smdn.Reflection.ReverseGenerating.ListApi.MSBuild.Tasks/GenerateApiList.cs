@@ -26,6 +26,7 @@ public class GenerateApiList : Task {
   public bool GenerateStaticMembersFirst { get; set; }
   public bool GenerateNullableAnnotations { get; set; } = true;
   public bool GenerateValueWithDefaultLiteral { get; set; } = true;
+  public bool GenerateAssemblyInfo { get; set; } = true;
   public bool GenerateEmbeddedResources { get; set; } = true;
   public bool GenerateReferencedAssemblies { get; set; } = true;
 
@@ -131,6 +132,8 @@ public class GenerateApiList : Task {
 
     options.Writer.WriteNullableAnnotationDirective = GenerateNullableAnnotations;
     options.Writer.OrderStaticMembersFirst          = GenerateStaticMembersFirst;
+    options.Writer.WriteHeader                      = true;
+    options.Writer.WriteAssemblyInfo                = GenerateAssemblyInfo;
     options.Writer.WriteEmbeddedResources           = GenerateEmbeddedResources;
     options.Writer.WriteReferencedAssemblies        = GenerateReferencedAssemblies;
 
