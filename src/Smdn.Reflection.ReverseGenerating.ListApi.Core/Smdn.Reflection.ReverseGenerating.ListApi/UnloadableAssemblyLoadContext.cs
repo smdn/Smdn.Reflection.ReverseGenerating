@@ -13,6 +13,7 @@ namespace Smdn.Reflection.ReverseGenerating.ListApi;
 
 internal sealed class UnloadableAssemblyLoadContext : AssemblyLoadContext {
   private readonly AssemblyDependencyResolver dependencyResolver;
+  private readonly PackageDependencyAssemblyResolver packageDependencyResolver;
   private readonly ILogger? logger;
 
   public UnloadableAssemblyLoadContext(string componentAssemblyPath, ILogger? logger = null)
@@ -21,22 +22,27 @@ internal sealed class UnloadableAssemblyLoadContext : AssemblyLoadContext {
     )
   {
     this.dependencyResolver = new(componentAssemblyPath);
+    this.packageDependencyResolver = new(componentAssemblyPath, logger);
     this.logger = logger;
   }
 
   protected override Assembly? Load(AssemblyName name)
   {
+    logger?.LogDebug("attempting to load '{AssemblyName}'", name);
+
     var assemblyPath = dependencyResolver.ResolveAssemblyToPath(name);
 
-    if (assemblyPath is null) {
-      logger?.LogDebug("could not resolve assembly path of '{AssemblyName}'", name);
-
-      return null;
+    if (assemblyPath is not null) {
+      logger?.LogDebug("attempting to load assembly from '{AssemblyFilePath}'", assemblyPath);
+      return LoadFromAssemblyPath(assemblyPath);
     }
 
-    logger?.LogDebug("attempting to load assembly from '{AssemblyFilePath}'", assemblyPath);
+    var assm = packageDependencyResolver.Resolve(name, this.LoadFromAssemblyPath);
 
-    return LoadFromAssemblyPath(assemblyPath);
+    if (assm is null)
+      logger?.LogWarning("could not resolve assembly '{AssemblyName}'", name);
+
+    return assm;
   }
 }
 #endif

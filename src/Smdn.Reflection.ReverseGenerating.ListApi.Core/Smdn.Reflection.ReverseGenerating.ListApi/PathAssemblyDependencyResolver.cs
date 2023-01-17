@@ -15,6 +15,7 @@ namespace Smdn.Reflection.ReverseGenerating.ListApi;
 
 internal sealed class PathAssemblyDependencyResolver : PathAssemblyResolver {
   private readonly AssemblyDependencyResolver dependencyResolver;
+  private readonly PackageDependencyAssemblyResolver packageDependencyResolver;
   private readonly ILogger? logger;
 
   public PathAssemblyDependencyResolver(string componentAssemblyPath, ILogger? logger = null)
@@ -23,6 +24,7 @@ internal sealed class PathAssemblyDependencyResolver : PathAssemblyResolver {
     )
   {
     this.dependencyResolver = new(componentAssemblyPath);
+    this.packageDependencyResolver = new(componentAssemblyPath, logger);
     this.logger = logger;
   }
 
@@ -37,15 +39,17 @@ internal sealed class PathAssemblyDependencyResolver : PathAssemblyResolver {
 
     var assemblyPath = dependencyResolver.ResolveAssemblyToPath(assemblyName);
 
-    if (assemblyPath is null) {
-      logger?.LogDebug("could not resolve assembly path of '{AssemblyName}'", assemblyName);
-
-      return null;
+    if (assemblyPath is not null) {
+      logger?.LogDebug("attempting to load assembly from '{AssemblyFilePath}'", assemblyPath);
+      return context.LoadFromAssemblyPath(assemblyPath);
     }
 
-    logger?.LogDebug("attempting to load assembly from '{AssemblyFilePath}'", assemblyPath);
+    assm = packageDependencyResolver.Resolve(assemblyName, context.LoadFromAssemblyPath);
 
-    return context.LoadFromAssemblyPath(assemblyPath);
+    if (assm is null)
+      logger?.LogWarning("could not resolve assembly '{AssemblyName}'", assemblyName);
+
+    return assm;
   }
 }
 #endif
