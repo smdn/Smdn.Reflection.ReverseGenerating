@@ -24,7 +24,7 @@ public class ApiListWriter {
     TextWriter baseWriter,
     Assembly assembly,
     ApiListWriterOptions? options,
-    ILogger? logger
+    ILogger? logger = null
   )
   {
     this.BaseWriter = baseWriter ?? throw new ArgumentNullException(nameof(baseWriter));
