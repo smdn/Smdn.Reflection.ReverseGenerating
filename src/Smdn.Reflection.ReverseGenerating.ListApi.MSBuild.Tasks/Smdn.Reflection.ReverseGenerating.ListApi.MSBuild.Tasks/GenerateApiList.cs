@@ -160,7 +160,8 @@ public class GenerateApiList : Task {
       arg: (
         outputApiListFilePath: outputApiListFilePath ?? throw new ArgumentNullException(nameof(outputApiListFilePath)),
         options: options ?? throw new ArgumentNullException(nameof(options)),
-        generateNullableAnnotations
+        generateNullableAnnotations,
+        logger
       ),
       logger: logger,
       context: out var context,
@@ -185,7 +186,12 @@ public class GenerateApiList : Task {
           arg.options.TypeDeclaration.NullabilityInfoContext = nullabilityInfoContext;
           arg.options.MemberDeclaration.NullabilityInfoContext = nullabilityInfoContext;
 #endif
-          var writer = new ApiListWriter(outputWriter, assm, arg.options);
+          var writer = new ApiListWriter(
+            outputWriter,
+            assm,
+            arg.options,
+            arg.logger
+          );
 
           writer.WriteHeader();
           writer.WriteExportedTypes();

@@ -9,6 +9,7 @@ using System.Reflection.Metadata;
 using System.Runtime.CompilerServices;
 using System.Runtime.Versioning;
 using System.Text;
+using Microsoft.Extensions.Logging;
 
 namespace Smdn.Reflection.ReverseGenerating.ListApi;
 
@@ -17,12 +18,19 @@ public class ApiListWriter {
 
   private readonly Assembly assembly;
   private readonly ApiListWriterOptions options;
+  private readonly ILogger? logger;
 
-  public ApiListWriter(TextWriter baseWriter, Assembly assembly, ApiListWriterOptions? options)
+  public ApiListWriter(
+    TextWriter baseWriter,
+    Assembly assembly,
+    ApiListWriterOptions? options,
+    ILogger? logger
+  )
   {
     this.BaseWriter = baseWriter ?? throw new ArgumentNullException(nameof(baseWriter));
     this.assembly = assembly ?? throw new ArgumentNullException(nameof(assembly));
     this.options = options ?? new();
+    this.logger = logger;
   }
 
   public void WriteHeader()
@@ -175,7 +183,8 @@ public class ApiListWriter {
             .Where(type => string.Equals(type.Namespace, ns, StringComparison.Ordinal))
             .Where(static type => !type.IsNested),
           referencingNamespaces,
-          options
+          options,
+          logger
         )
       );
 
@@ -237,7 +246,8 @@ public class ApiListWriter {
     Assembly assm,
     IEnumerable<Type> types,
     ISet<string> referencingNamespaces,
-    ApiListWriterOptions options
+    ApiListWriterOptions options,
+    ILogger? logger
   )
   {
     var ret = new StringBuilder(10240);
@@ -290,7 +300,8 @@ public class ApiListWriter {
             referencingNamespaces,
             options,
             enableNullableAnnotationsOnlyOnTypes,
-            enableNullableAnnotationsOnlyOnMembers
+            enableNullableAnnotationsOnlyOnMembers,
+            logger
           )
         );
       }
@@ -312,7 +323,8 @@ public class ApiListWriter {
     ISet<string> referencingNamespaces,
     ApiListWriterOptions options,
     bool enableNullableAnnotationsOnlyOnTypes,
-    bool enableNullableAnnotationsOnlyOnMembers
+    bool enableNullableAnnotationsOnlyOnMembers,
+    ILogger? logger
   )
   {
     if (options == null)
@@ -377,7 +389,8 @@ public class ApiListWriter {
           assm,
           t,
           referencingNamespaces,
-          options
+          options,
+          logger
         )
       );
 
@@ -398,7 +411,8 @@ public class ApiListWriter {
     Assembly assm,
     Type t,
     ISet<string> referencingNamespaces,
-    ApiListWriterOptions options
+    ApiListWriterOptions options,
+    ILogger? logger
   )
   {
     if (options == null)
@@ -435,7 +449,8 @@ public class ApiListWriter {
           assm,
           nestedTypes.Where(nestedType => !(options.IgnorePrivateOrAssembly && (nestedType.IsNestedPrivate || nestedType.IsNestedAssembly))),
           referencingNamespaces,
-          options
+          options,
+          logger
         )
       );
 

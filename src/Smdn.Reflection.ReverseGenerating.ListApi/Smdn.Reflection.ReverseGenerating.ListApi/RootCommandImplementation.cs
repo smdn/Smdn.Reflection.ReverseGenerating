@@ -212,7 +212,12 @@ public class RootCommandImplementation {
 
             using var outputWriter = new StreamWriter(outputFilePath, append: false, new UTF8Encoding(false));
 
-            var writer = new ApiListWriter(outputWriter, assm, arg.options);
+            var writer = new ApiListWriter(
+              outputWriter,
+              assm,
+              arg.options,
+              arg.logger
+            );
 
             writer.WriteHeader();
             writer.WriteExportedTypes();
