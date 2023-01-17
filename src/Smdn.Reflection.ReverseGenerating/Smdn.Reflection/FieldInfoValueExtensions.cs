@@ -19,5 +19,9 @@ internal static class FieldInfoValueExtensions {
       // InvalidOperationException will be thrown in case of loading with MetadataLoadContext.
       return false;
     }
+    catch (TargetInvocationException) {
+      // TargetInvocationException will be thrown in case of the reference assembly could not be loaded.
+      return false;
+    }
   }
 }
