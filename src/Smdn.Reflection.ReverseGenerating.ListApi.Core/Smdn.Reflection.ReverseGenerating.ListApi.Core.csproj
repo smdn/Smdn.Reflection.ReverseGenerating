@@ -37,4 +37,8 @@ SPDX-License-Identifier: MIT
 
     <ProjectReference VersionRange="[1.1.1,2.0.0)" Include="..\Smdn.Reflection.ReverseGenerating\Smdn.Reflection.ReverseGenerating.csproj" />
   </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="..\Common\System.Runtime.CompilerServices\IsExternalInit.cs" />
+  </ItemGroup>
 </Project>
