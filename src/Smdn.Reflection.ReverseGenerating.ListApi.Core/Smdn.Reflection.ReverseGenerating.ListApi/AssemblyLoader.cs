@@ -32,6 +32,9 @@ public static partial class AssemblyLoader {
     ILogger? logger = null
   )
   {
+    if (assemblyFile is null)
+       throw new ArgumentNullException(nameof(assemblyFile));
+
     return UsingAssemblyCore(
       new(
         ComponentAssemblyPath: assemblyFile.FullName,
@@ -61,7 +64,7 @@ public static partial class AssemblyLoader {
     return UsingAssemblyCore(
       new(
         ComponentAssemblyPath: componentAssemblyPath ?? throw new ArgumentNullException(nameof(componentAssemblyPath)),
-        Stream: assemblyStream
+        Stream: assemblyStream ?? throw new ArgumentNullException(nameof(assemblyStream))
       ),
       loadIntoReflectionOnlyContext,
       arg,

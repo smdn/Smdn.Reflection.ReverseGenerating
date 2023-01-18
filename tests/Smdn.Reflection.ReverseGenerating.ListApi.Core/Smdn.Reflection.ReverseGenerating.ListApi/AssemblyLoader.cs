@@ -38,6 +38,59 @@ class AssemblyLoaderTests {
     logger = services.BuildServiceProvider().GetService<ILoggerFactory>()?.CreateLogger("test");
   }
 
+  [Test]
+  public void UsingAssembly_ArgumentNull_AssemblyFile(
+    [Values(true, false)] bool loadIntoReflectionOnlyContext
+  )
+  {
+    Assert.Throws<ArgumentNullException>(() => {
+      AssemblyLoader.UsingAssembly(
+        assemblyFile: null!,
+        loadIntoReflectionOnlyContext: loadIntoReflectionOnlyContext,
+        arg: 0,
+        (assm, arg) => arg,
+        context: out _,
+        logger: null
+      );
+    });
+  }
+
+  [Test]
+  public void UsingAssembly_ArgumentNull_AssemblyStream(
+    [Values(true, false)] bool loadIntoReflectionOnlyContext
+  )
+  {
+    Assert.Throws<ArgumentNullException>(() => {
+      AssemblyLoader.UsingAssembly(
+        assemblyStream: null!,
+        componentAssemblyPath: string.Empty,
+        loadIntoReflectionOnlyContext: loadIntoReflectionOnlyContext,
+        arg: 0,
+        (assm, arg) => arg,
+        context: out _,
+        logger: null
+      );
+    });
+  }
+
+  [Test]
+  public void UsingAssembly_ArgumentNull_ComponentAssemblyPath(
+    [Values(true, false)] bool loadIntoReflectionOnlyContext
+  )
+  {
+    Assert.Throws<ArgumentNullException>(() => {
+      AssemblyLoader.UsingAssembly(
+        assemblyStream: Stream.Null,
+        componentAssemblyPath: null!,
+        loadIntoReflectionOnlyContext: loadIntoReflectionOnlyContext,
+        arg: 0,
+        (assm, arg) => arg,
+        context: out _,
+        logger: null
+      );
+    });
+  }
+
 #if NETCOREAPP3_1_OR_GREATER || NET6_0_OR_GREATER
   [TestCase(true, "netstandard2.1")]
   [TestCase(false, "netstandard2.1")]
