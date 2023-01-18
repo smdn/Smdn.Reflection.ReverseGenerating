@@ -24,7 +24,7 @@ partial class AssemblyLoader {
   [return: MaybeNull]
 #endif
   private static TResult UsingAssemblyCore<TArg, TResult>(
-    FileInfo assemblyFile,
+    AssemblySource assemblySource,
     bool loadIntoReflectionOnlyContext,
     TArg arg,
     Func<Assembly, TArg, TResult> actionWithLoadedAssembly,
@@ -36,7 +36,7 @@ partial class AssemblyLoader {
 
     if (loadIntoReflectionOnlyContext) {
       return UsingReflectionOnlyAssembly(
-        assemblyFile,
+        assemblySource,
         arg,
         actionWithLoadedAssembly,
         logger
@@ -44,43 +44,7 @@ partial class AssemblyLoader {
     }
     else {
       return UsingAssembly(
-        assemblyFile,
-        arg,
-        actionWithLoadedAssembly,
-        out context,
-        logger
-      );
-    }
-  }
-
-#if NULL_STATE_STATIC_ANALYSIS_ATTRIBUTES
-  [return: MaybeNull]
-#endif
-  private static TResult UsingAssemblyCore<TArg, TResult>(
-    Stream assemblyStream,
-    string componentAssemblyPath,
-    bool loadIntoReflectionOnlyContext,
-    TArg arg,
-    Func<Assembly, TArg, TResult> actionWithLoadedAssembly,
-    out WeakReference? context,
-    ILogger? logger = null
-  )
-  {
-    context = default;
-
-    if (loadIntoReflectionOnlyContext) {
-      return UsingReflectionOnlyAssembly(
-        assemblyStream,
-        componentAssemblyPath,
-        arg,
-        actionWithLoadedAssembly,
-        logger
-      );
-    }
-    else {
-      return UsingAssembly(
-        assemblyStream,
-        componentAssemblyPath,
+        assemblySource,
         arg,
         actionWithLoadedAssembly,
         out context,
@@ -93,22 +57,32 @@ partial class AssemblyLoader {
   [return: MaybeNull]
 #endif
   private static TResult UsingReflectionOnlyAssembly<TArg, TResult>(
-    FileInfo assemblyFile,
+    AssemblySource assemblySource,
     TArg arg,
     Func<Assembly, TArg, TResult> actionWithLoadedAssembly,
     ILogger? logger = null
   )
   {
     using var mlc = new MetadataLoadContext(
-      new PathAssemblyDependencyResolver(assemblyFile.FullName)
+      new PathAssemblyDependencyResolver(assemblySource.ComponentAssemblyPath)
     );
 
-    logger?.LogDebug("loading assembly into reflection-only context from file '{AssemblyFilePath}'", assemblyFile.FullName);
+    logger?.LogDebug(
+      "loading assembly into reflection-only context (ComponentAssemblyPath: '{ComponentAssemblyPath}')",
+      assemblySource.ComponentAssemblyPath
+    );
 
-    var assm = mlc.LoadFromAssemblyPath(assemblyFile.FullName);
+    var assm = assemblySource.File is not null
+      ? mlc.LoadFromAssemblyPath(assemblySource.File.FullName)
+      : assemblySource.Stream is not null
+        ? mlc.LoadFromStream(assemblySource.Stream)
+        : throw new InvalidOperationException($"either {nameof(AssemblySource.File)} or {nameof(AssemblySource.Stream)} must be specified");
 
     if (assm is null) {
-      logger?.LogCritical("failed to load assembly from file '{AssemblyFilePath}'", assemblyFile.FullName);
+      logger?.LogCritical(
+        "failed to load assembly into reflection-only context (ComponentAssemblyPath: '{ComponentAssemblyPath}')",
+        assemblySource.ComponentAssemblyPath
+      );
 
       return default;
     }
@@ -117,44 +91,7 @@ partial class AssemblyLoader {
     var assemblyTypeFullName = assm.GetType().FullName;
 
     logger?.LogDebug(
-      "loaded assembly '{AssemblyName}' ({AssemblyTypeFullName})",
-      assemblyName,
-      assemblyTypeFullName
-    );
-
-    return actionWithLoadedAssembly(assm, arg);
-  }
-
-#if NULL_STATE_STATIC_ANALYSIS_ATTRIBUTES
-  [return: MaybeNull]
-#endif
-  private static TResult UsingReflectionOnlyAssembly<TArg, TResult>(
-    Stream assemblyStream,
-    string componentAssemblyPath,
-    TArg arg,
-    Func<Assembly, TArg, TResult> actionWithLoadedAssembly,
-    ILogger? logger = null
-  )
-  {
-    using var mlc = new MetadataLoadContext(
-      new PathAssemblyDependencyResolver(componentAssemblyPath)
-    );
-
-    logger?.LogDebug("loading assembly into reflection-only context from stream with component assembly path '{ComponentAssemblyPath}'", componentAssemblyPath);
-
-    var assm = mlc.LoadFromStream(assemblyStream);
-
-    if (assm is null) {
-      logger?.LogCritical("failed to load assembly from stream");
-
-      return default;
-    }
-
-    var assemblyName = assm.FullName;
-    var assemblyTypeFullName = assm.GetType().FullName;
-
-    logger?.LogDebug(
-      "loaded assembly '{AssemblyName}' ({AssemblyTypeFullName})",
+      "loaded reflection-only assembly '{AssemblyName}' ({AssemblyTypeFullName})",
       assemblyName,
       assemblyTypeFullName
     );
@@ -167,7 +104,7 @@ partial class AssemblyLoader {
 #endif
   [MethodImpl(MethodImplOptions.NoInlining)]
   private static TResult UsingAssembly<TArg, TResult>(
-    FileInfo assemblyFile,
+    AssemblySource assemblySource,
     TArg arg,
     Func<Assembly, TArg, TResult> actionWithLoadedAssembly,
     out WeakReference? context,
@@ -176,64 +113,25 @@ partial class AssemblyLoader {
   {
     context = null;
 
-    var alc = new UnloadableAssemblyLoadContext(assemblyFile.FullName, logger);
+    var alc = new UnloadableAssemblyLoadContext(assemblySource.ComponentAssemblyPath, logger);
     var alcWeakReference = new WeakReference(alc);
-
-    logger?.LogDebug("loading assembly from file '{AssemblyFilePath}'", assemblyFile.FullName);
-
-    var assm = alc.LoadFromAssemblyPath(assemblyFile.FullName);
-
-    if (assm is null) {
-      logger?.LogCritical("failed to load assembly from file '{AssemblyFilePath}'", assemblyFile.FullName);
-
-      return default;
-    }
-
-    context = alcWeakReference;
-
-    var assemblyName = assm.FullName;
-    var assemblyTypeFullName = assm.GetType().FullName;
 
     logger?.LogDebug(
-      "loaded assembly '{AssemblyName}' ({AssemblyTypeFullName})",
-      assemblyName,
-      assemblyTypeFullName
+      "loading assembly (ComponentAssemblyPath: '{ComponentAssemblyPath}')",
+      assemblySource.ComponentAssemblyPath
     );
 
-    try {
-      return actionWithLoadedAssembly(assm, arg);
-    }
-    finally {
-      alc.Unload();
-
-      logger?.LogDebug("unloaded assembly '{AssemblyName}'", assemblyName);
-    }
-  }
-
-#if NULL_STATE_STATIC_ANALYSIS_ATTRIBUTES
-  [return: MaybeNull]
-#endif
-  [MethodImpl(MethodImplOptions.NoInlining)]
-  private static TResult UsingAssembly<TArg, TResult>(
-    Stream assemblyStream,
-    string componentAssemblyPath,
-    TArg arg,
-    Func<Assembly, TArg, TResult> actionWithLoadedAssembly,
-    out WeakReference? context,
-    ILogger? logger = null
-  )
-  {
-    context = null;
-
-    var alc = new UnloadableAssemblyLoadContext(componentAssemblyPath, logger);
-    var alcWeakReference = new WeakReference(alc);
-
-    logger?.LogDebug("loading assembly from stream with component assembly path '{ComponentAssemblyPath}'", componentAssemblyPath);
-
-    var assm = alc.LoadFromStream(assemblyStream);
+    var assm = assemblySource.File is not null
+      ? alc.LoadFromAssemblyPath(assemblySource.File.FullName)
+      : assemblySource.Stream is not null
+        ? alc.LoadFromStream(assemblySource.Stream)
+        : throw new InvalidOperationException($"either {nameof(AssemblySource.File)} or {nameof(AssemblySource.Stream)} must be specified");
 
     if (assm is null) {
-      logger?.LogCritical("failed to load assembly from stream");
+      logger?.LogCritical(
+        "failed to load assembly (ComponentAssemblyPath: '{ComponentAssemblyPath}')",
+        assemblySource.ComponentAssemblyPath
+      );
 
       return default;
     }

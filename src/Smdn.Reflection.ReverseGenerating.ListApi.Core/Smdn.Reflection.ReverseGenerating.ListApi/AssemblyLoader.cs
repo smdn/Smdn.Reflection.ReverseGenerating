@@ -12,6 +12,14 @@ using Microsoft.Extensions.Logging;
 namespace Smdn.Reflection.ReverseGenerating.ListApi;
 
 public static partial class AssemblyLoader {
+  private readonly record struct AssemblySource(
+#pragma warning disable SA1313
+    string ComponentAssemblyPath,
+    FileInfo? File = null,
+    Stream? Stream = null
+#pragma warning restore SA1313
+  );
+
 #if NULL_STATE_STATIC_ANALYSIS_ATTRIBUTES
   [return: MaybeNull]
 #endif
@@ -25,7 +33,10 @@ public static partial class AssemblyLoader {
   )
   {
     return UsingAssemblyCore(
-      assemblyFile,
+      new(
+        ComponentAssemblyPath: assemblyFile.FullName,
+        File: assemblyFile
+      ),
       loadIntoReflectionOnlyContext,
       arg,
       actionWithLoadedAssembly,
@@ -48,8 +59,10 @@ public static partial class AssemblyLoader {
   )
   {
     return UsingAssemblyCore(
-      assemblyStream,
-      componentAssemblyPath ?? throw new ArgumentNullException(nameof(componentAssemblyPath)),
+      new(
+        ComponentAssemblyPath: componentAssemblyPath ?? throw new ArgumentNullException(nameof(componentAssemblyPath)),
+        Stream: assemblyStream
+      ),
       loadIntoReflectionOnlyContext,
       arg,
       actionWithLoadedAssembly,
