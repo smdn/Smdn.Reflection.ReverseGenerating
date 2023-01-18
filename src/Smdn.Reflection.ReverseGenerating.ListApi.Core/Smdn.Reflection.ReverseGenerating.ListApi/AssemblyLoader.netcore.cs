@@ -27,7 +27,7 @@ partial class AssemblyLoader {
     AssemblySource assemblySource,
     bool loadIntoReflectionOnlyContext,
     TArg arg,
-    Func<Assembly, TArg, TResult> actionWithLoadedAssembly,
+    Func<Assembly, TArg, TResult>? actionWithLoadedAssembly,
     out WeakReference? context,
     ILogger? logger = null
   )
@@ -59,7 +59,7 @@ partial class AssemblyLoader {
   private static TResult UsingReflectionOnlyAssembly<TArg, TResult>(
     AssemblySource assemblySource,
     TArg arg,
-    Func<Assembly, TArg, TResult> actionWithLoadedAssembly,
+    Func<Assembly, TArg, TResult>? actionWithLoadedAssembly,
     ILogger? logger = null
   )
   {
@@ -96,6 +96,9 @@ partial class AssemblyLoader {
       assemblyTypeFullName
     );
 
+    if (actionWithLoadedAssembly is null)
+      return default;
+
     return actionWithLoadedAssembly(assm, arg);
   }
 
@@ -106,7 +109,7 @@ partial class AssemblyLoader {
   private static TResult UsingAssembly<TArg, TResult>(
     AssemblySource assemblySource,
     TArg arg,
-    Func<Assembly, TArg, TResult> actionWithLoadedAssembly,
+    Func<Assembly, TArg, TResult>? actionWithLoadedAssembly,
     out WeakReference? context,
     ILogger? logger = null
   )
@@ -148,6 +151,9 @@ partial class AssemblyLoader {
     );
 
     try {
+      if (actionWithLoadedAssembly is null)
+        return default;
+
       return actionWithLoadedAssembly(assm, arg);
     }
     finally {

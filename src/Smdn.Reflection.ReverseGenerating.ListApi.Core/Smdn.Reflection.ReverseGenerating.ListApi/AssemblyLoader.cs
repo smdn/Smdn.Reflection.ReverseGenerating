@@ -27,7 +27,7 @@ public static partial class AssemblyLoader {
     FileInfo assemblyFile,
     bool loadIntoReflectionOnlyContext,
     TArg arg,
-    Func<Assembly, TArg, TResult> actionWithLoadedAssembly,
+    Func<Assembly, TArg, TResult>? actionWithLoadedAssembly,
     out WeakReference? context,
     ILogger? logger = null
   )

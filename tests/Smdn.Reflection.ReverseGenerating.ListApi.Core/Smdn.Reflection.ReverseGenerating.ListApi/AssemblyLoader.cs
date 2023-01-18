@@ -1,5 +1,7 @@
 // SPDX-FileCopyrightText: 2021 smdn <smdn@smdn.jp>
 // SPDX-License-Identifier: MIT
+#nullable enable
+
 using System;
 using System.Linq;
 using System.IO;
@@ -22,7 +24,7 @@ namespace Smdn.Reflection.ReverseGenerating.ListApi;
 
 [TestFixture]
 class AssemblyLoaderTests {
-  private ILogger logger = null;
+  private ILogger? logger = null;
 
   [OneTimeSetUp]
   public void Init()
@@ -129,6 +131,54 @@ class AssemblyLoaderTests {
 
     Assert.IsNotNull(result, nameof(result));
     Assert.AreEqual(result, "Lib.LibA.CBase", nameof(result));
+
+    if (loadIntoReflectionOnlyContext) {
+      Assert.IsNull(context, nameof(context));
+      return;
+    }
+
+    Assert.IsNotNull(context, nameof(context));
+
+    var unloaded = false;
+
+    for (var i = 0; i < 10; i++) {
+      if (!context!.IsAlive) {
+        unloaded = true;
+        break;
+      }
+
+      GC.Collect();
+      GC.WaitForPendingFinalizers();
+    }
+
+    Assert.IsTrue(unloaded, nameof(unloaded));
+  }
+
+#if NETCOREAPP3_1_OR_GREATER || NET6_0_OR_GREATER
+  [TestCase(true, "netstandard2.1")]
+  [TestCase(false, "netstandard2.1")]
+#endif
+  public void UsingAssembly_ArgumentNull_ActionWithLoadedAssembly(bool loadIntoReflectionOnlyContext, string targetFrameworkMoniker)
+  {
+    var assemblyFile = new FileInfo(
+      TestAssemblyInfo.TestAssemblyPaths.First(f => f.Contains(targetFrameworkMoniker) && f.Contains("LibA.dll"))
+    );
+
+    WeakReference? context = null;
+    int result = 1;
+
+    Assert.DoesNotThrow(() => {
+      result = AssemblyLoader.UsingAssembly<int, int>(
+        assemblyFile,
+        loadIntoReflectionOnlyContext: loadIntoReflectionOnlyContext,
+        arg: int.MaxValue,
+        actionWithLoadedAssembly: null,
+        context: out context,
+        logger: logger
+      );
+    });
+
+    Assert.AreEqual(default(int), result, nameof(result));
 
     if (loadIntoReflectionOnlyContext) {
       Assert.IsNull(context, nameof(context));
