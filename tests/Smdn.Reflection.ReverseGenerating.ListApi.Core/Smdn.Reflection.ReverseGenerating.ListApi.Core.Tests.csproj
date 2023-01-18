@@ -25,6 +25,7 @@ SPDX-License-Identifier: MIT
       <TestProjects Include="$(TestAssemblyRootDirectory)\LibA\LibA.csproj" />
       <TestProjects Include="$(TestAssemblyRootDirectory)\LibB\LibB.csproj" />
       <TestProjects Include="$(TestAssemblyRootDirectory)\LibReferencedAssemblies1\LibReferencedAssemblies1.csproj" />
+      <TestProjects Include="$(TestAssemblyRootDirectory)\LibPackageReferences1\LibPackageReferences1.csproj" />
     </ItemGroup>
 
     <!--

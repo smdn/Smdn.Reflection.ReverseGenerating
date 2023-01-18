@@ -3,6 +3,7 @@
 using System;
 using System.Linq;
 using System.IO;
+using System.Reflection;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Console;
@@ -175,7 +176,7 @@ class AssemblyLoaderTests {
   [TestCase(true, "net7.0")]
   [TestCase(false, "net7.0")]
 #endif
-  public void UsingAssembly_ResolveDependency(bool loadIntoReflectionOnlyContext, string targetFrameworkMoniker)
+  public void UsingAssembly_ResolveDependency_ProjectReference(bool loadIntoReflectionOnlyContext, string targetFrameworkMoniker)
   {
     var assemblyFile = new FileInfo(
       TestAssemblyInfo.TestAssemblyPaths.First(f => f.Contains(targetFrameworkMoniker) && f.Contains("LibB.dll"))
@@ -236,7 +237,7 @@ class AssemblyLoaderTests {
   [TestCase(true, "net7.0")]
   [TestCase(false, "net7.0")]
 #endif
-  public void UsingAssembly_FromStream_ResolveDependency(bool loadIntoReflectionOnlyContext, string targetFrameworkMoniker)
+  public void UsingAssembly_FromStream_ResolveDependency_ProjectReference(bool loadIntoReflectionOnlyContext, string targetFrameworkMoniker)
   {
     var assemblyFile = new FileInfo(
       TestAssemblyInfo.TestAssemblyPaths.First(f => f.Contains(targetFrameworkMoniker) && f.Contains("LibB.dll"))
@@ -266,6 +267,73 @@ class AssemblyLoaderTests {
 
     Assert.IsNotNull(result, nameof(result));
     Assert.AreEqual(result, "Lib.LibB.CEx", nameof(result));
+
+    if (loadIntoReflectionOnlyContext) {
+      Assert.IsNull(context, nameof(context));
+      return;
+    }
+
+    Assert.IsNotNull(context, nameof(context));
+
+    var unloaded = false;
+
+    for (var i = 0; i < 10; i++) {
+      if (!context!.IsAlive) {
+        unloaded = true;
+        break;
+      }
+
+      GC.Collect();
+      GC.WaitForPendingFinalizers();
+    }
+
+    Assert.IsTrue(unloaded, nameof(unloaded));
+  }
+
+#if NETCOREAPP3_1_OR_GREATER || NET6_0_OR_GREATER
+  [TestCase(true, "netstandard2.1")]
+  [TestCase(false, "netstandard2.1")]
+#endif
+#if NET6_0_OR_GREATER
+  [TestCase(true, "net6.0")]
+  [TestCase(false, "net6.0")]
+#endif
+#if NET7_0_OR_GREATER
+  [TestCase(true, "net7.0")]
+  [TestCase(false, "net7.0")]
+#endif
+  public void UsingAssembly_ResolveDependency_PackageReference(bool loadIntoReflectionOnlyContext, string targetFrameworkMoniker)
+  {
+    var assemblyFile = new FileInfo(
+      TestAssemblyInfo.TestAssemblyPaths.First(f => f.Contains(targetFrameworkMoniker) && f.Contains("LibPackageReferences1.dll"))
+    );
+
+    var result = AssemblyLoader.UsingAssembly(
+      assemblyFile,
+      loadIntoReflectionOnlyContext: loadIntoReflectionOnlyContext,
+      arg: assemblyFile,
+      (assm, arg) => {
+        Assert.AreSame(arg, assemblyFile, nameof(arg));
+
+        Assert.IsNotNull(assm, nameof(assm));
+        Assert.AreEqual(arg.FullName, assm.Location, nameof(assm.Location));
+
+        Assert.DoesNotThrow(() => assm.GetExportedTypes(), nameof(assm.GetExportedTypes));
+
+        return assm
+          .GetType("C")
+          ?.GetMethod("M", BindingFlags.Public | BindingFlags.Static)
+          ?.GetParameters()
+          ?[0]
+          ?.ParameterType
+          ?.FullName;
+      },
+      context: out var context,
+      logger: logger
+    );
+
+    Assert.IsNotNull(result, nameof(result));
+    Assert.AreEqual(result, "Microsoft.Extensions.Logging.ILogger", nameof(result));
 
     if (loadIntoReflectionOnlyContext) {
       Assert.IsNull(context, nameof(context));

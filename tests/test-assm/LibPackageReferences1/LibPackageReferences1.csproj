@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFrameworks>net6.0;netstandard2.1</TargetFrameworks>
+    <!-- do not copy assemblies from the NuGet packages to the output directory -->
+    <CopyLocalLockFileAssemblies>false</CopyLocalLockFileAssemblies>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.Logging" Version="6.0.0" />
+  </ItemGroup>
+
+  <Import Project="..\..\..\src\Sdk.net7.0.props" />
+</Project>
