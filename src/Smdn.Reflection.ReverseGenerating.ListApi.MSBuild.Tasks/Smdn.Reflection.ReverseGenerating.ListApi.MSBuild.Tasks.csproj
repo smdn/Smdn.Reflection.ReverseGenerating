@@ -6,7 +6,7 @@ SPDX-License-Identifier: MIT
   <PropertyGroup>
     <TargetFrameworks>net6.0;netcoreapp3.1</TargetFrameworks>
     <RootNamespace>Smdn.Reflection.ReverseGenerating.ListApi.MSBuild.Tasks</RootNamespace>
-    <VersionPrefix>1.1.7</VersionPrefix>
+    <VersionPrefix>1.2.0</VersionPrefix>
     <VersionSuffix></VersionSuffix>
     <Nullable>enable</Nullable>
 
