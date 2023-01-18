@@ -14,6 +14,17 @@ using Microsoft.Extensions.Logging;
 namespace Smdn.Reflection.ReverseGenerating.ListApi;
 
 public class ApiListWriter {
+  private static readonly Action<ILogger, string?, Exception?> loggerMessageGeneratorErrorOnType = LoggerMessage.Define<string?>(
+    LogLevel.Error,
+    new(1, nameof(loggerMessageGeneratorErrorOnType)),
+    "generator error on type '{TypeFullName}'"
+  );
+  private static readonly Action<ILogger, string?, string, Exception?> loggerMessageGeneratorErrorOnMember = LoggerMessage.Define<string?, string>(
+    LogLevel.Error,
+    new(1, nameof(loggerMessageGeneratorErrorOnMember)),
+    "generator error on member '{TypeFullName}.{MemberName}'"
+  );
+
   public TextWriter BaseWriter { get; }
 
   private readonly Assembly assembly;
@@ -305,7 +316,14 @@ public class ApiListWriter {
           )
         );
       }
+      catch (MemberDeclarationException) {
+        // just rethrow since the log has been output already
+        throw;
+      }
       catch (Exception ex) {
+        if (logger is not null)
+          loggerMessageGeneratorErrorOnType(logger, type.FullName, ex);
+
         throw new InvalidOperationException($"generator error on type '{type.FullName}'", ex);
       }
 
@@ -406,6 +424,12 @@ public class ApiListWriter {
     return ret.ToString();
   }
 
+  private sealed class MemberDeclarationException : Exception {
+    public MemberDeclarationException(string? message, Exception? innerException)
+      : base(message, innerException)
+    { }
+  }
+
   private static string GenerateTypeContentDeclarations(
     int nestLevel,
     Assembly assm,
@@ -468,7 +492,10 @@ public class ApiListWriter {
         declaration = Generator.GenerateMemberDeclaration(member, referencingNamespaces, options);
       }
       catch (Exception ex) {
-        throw new InvalidOperationException($"generator error on member '{t.FullName}.{member.Name}'", ex);
+        if (logger is not null)
+          loggerMessageGeneratorErrorOnMember(logger, t.FullName, member.Name, ex);
+
+        throw new MemberDeclarationException($"generator error on member '{t.FullName}.{member.Name}'", ex);
       }
 
       if (declaration == null)
