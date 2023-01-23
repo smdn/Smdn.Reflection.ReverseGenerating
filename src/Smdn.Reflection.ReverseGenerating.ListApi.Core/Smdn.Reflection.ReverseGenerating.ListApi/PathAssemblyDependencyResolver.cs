@@ -47,7 +47,7 @@ internal sealed class PathAssemblyDependencyResolver : PathAssemblyResolver {
     assm = packageDependencyResolver.Resolve(assemblyName, context.LoadFromAssemblyPath);
 
     if (assm is null)
-      logger?.LogWarning("could not resolve assembly '{AssemblyName}'", assemblyName);
+      RuntimeAssemblyName.WarnNotToBeAbleToResolve(logger, assemblyName);
 
     return assm;
   }
