@@ -16,7 +16,11 @@ using Microsoft.Extensions.Logging;
 namespace Smdn.Reflection.ReverseGenerating.ListApi;
 
 internal sealed class PackageDependencyAssemblyResolver {
-  private static DependencyContext? LoadDependencyContextIfDepsJsonExist(string assemblyPath, ILogger? logger = null)
+  private static (
+    DependencyContext? DependencyContext,
+    string AssemblyDepsJsonPath
+  )
+  LoadDependencyContextIfDepsJsonExist(string assemblyPath, ILogger? logger = null)
   {
     if (assemblyPath is null)
       throw new ArgumentNullException(nameof(assemblyPath));
@@ -25,15 +29,30 @@ internal sealed class PackageDependencyAssemblyResolver {
 
     var assemblyDepsJsonPath = Path.ChangeExtension(assemblyPath, ".deps.json");
 
-    if (!File.Exists(assemblyDepsJsonPath)) {
-      logger?.LogWarning("dependency configuration file not found: '{AssemblyDepsJsonPath}'", assemblyDepsJsonPath);
-      return null;
+    if (File.Exists(assemblyDepsJsonPath)) {
+      logger?.LogDebug("dependency configuration file found: '{AssemblyDepsJsonPath}'", assemblyDepsJsonPath);
+    }
+    else {
+      logger?.LogDebug("dependency configuration file could not be found: '{AssemblyDepsJsonPath}'", assemblyDepsJsonPath);
+
+      return (null, assemblyDepsJsonPath);
     }
 
     using var stream = File.OpenRead(assemblyDepsJsonPath);
     using var reader = new DependencyContextJsonReader();
 
-    return reader.Read(stream);
+    try {
+      var context = reader.Read(stream);
+
+      logger?.LogDebug("dependency configuration file loaded: '{AssemblyDepsJsonPath}'", assemblyDepsJsonPath);
+
+      return (context, assemblyDepsJsonPath);
+    }
+    catch (Exception ex) {
+      logger?.LogError(ex, "dependency configuration file could not be loaded: '{AssemblyDepsJsonPath}'", assemblyDepsJsonPath);
+
+      return (null, assemblyDepsJsonPath);
+    }
   }
 
   public DependencyContext? DependencyContext { get; }
@@ -41,7 +60,7 @@ internal sealed class PackageDependencyAssemblyResolver {
 
   public PackageDependencyAssemblyResolver(string componentAssemblyPath, ILogger? logger = null)
   {
-    this.DependencyContext = LoadDependencyContextIfDepsJsonExist(componentAssemblyPath, logger);
+    (this.DependencyContext, _) = LoadDependencyContextIfDepsJsonExist(componentAssemblyPath, logger);
     this.logger = logger;
   }
 
