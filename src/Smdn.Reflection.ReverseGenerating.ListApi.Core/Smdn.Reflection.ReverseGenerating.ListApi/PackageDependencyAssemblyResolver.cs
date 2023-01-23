@@ -36,12 +36,12 @@ internal sealed class PackageDependencyAssemblyResolver {
     return reader.Read(stream);
   }
 
-  private readonly DependencyContext? dependencyContext;
+  public DependencyContext? DependencyContext { get; }
   private readonly ILogger? logger;
 
   public PackageDependencyAssemblyResolver(string componentAssemblyPath, ILogger? logger = null)
   {
-    this.dependencyContext = LoadDependencyContextIfDepsJsonExist(componentAssemblyPath, logger);
+    this.DependencyContext = LoadDependencyContextIfDepsJsonExist(componentAssemblyPath, logger);
     this.logger = logger;
   }
 
@@ -51,12 +51,12 @@ internal sealed class PackageDependencyAssemblyResolver {
   {
     logger?.LogTrace("attempting to resolve package dependency assembly '{AssemblyName}'", name);
 
-    if (dependencyContext is null) {
+    if (DependencyContext is null) {
       logger?.LogDebug("could not resolve package dependency '{AssemblyName}'", name);
       return null;
     }
 
-    var runtimeLibrary = dependencyContext
+    var runtimeLibrary = DependencyContext
       .RuntimeLibraries
       .FirstOrDefault(
         runtimeLib => runtimeLib.Name.Equals(name.Name, StringComparison.OrdinalIgnoreCase)
