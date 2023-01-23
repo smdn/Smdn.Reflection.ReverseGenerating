@@ -19,10 +19,12 @@ internal sealed class LoggerAdapter : Microsoft.Extensions.Logging.ILogger {
   }
 
   private readonly TaskLoggingHelper? log;
+  private readonly string? file;
 
-  public LoggerAdapter(TaskLoggingHelper? log)
+  public LoggerAdapter(TaskLoggingHelper? log, string? file = null)
   {
     this.log = log;
+    this.file = file;
   }
 
   public IDisposable BeginScope<TState>(TState state)
@@ -47,7 +49,7 @@ internal sealed class LoggerAdapter : Microsoft.Extensions.Logging.ILogger {
           errorCode: eventId == default ? null : eventId.ToString(),
           helpKeyword: null,
           helpLink: null,
-          file: null,
+          file: file,
           lineNumber: 0,
           columnNumber: 0,
           endLineNumber: 0,
@@ -63,7 +65,7 @@ internal sealed class LoggerAdapter : Microsoft.Extensions.Logging.ILogger {
           warningCode: eventId == default ? null : eventId.ToString(),
           helpKeyword: null,
           helpLink: null,
-          file: null,
+          file: file,
           lineNumber: 0,
           columnNumber: 0,
           endLineNumber: 0,
@@ -80,7 +82,7 @@ internal sealed class LoggerAdapter : Microsoft.Extensions.Logging.ILogger {
           subcategory: null,
           code: eventId == default ? null : eventId.ToString(),
           helpKeyword: null,
-          file: null,
+          file: file,
           lineNumber: 0,
           columnNumber: 0,
           endLineNumber: 0,

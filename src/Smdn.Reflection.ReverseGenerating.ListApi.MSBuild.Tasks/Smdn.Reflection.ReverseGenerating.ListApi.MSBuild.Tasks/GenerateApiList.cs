@@ -75,7 +75,7 @@ public class GenerateApiList : Task {
           options,
           loadIntoReflectionOnlyContext,
           GenerateNullableAnnotations,
-          logger: new LoggerAdapter(Log)
+          logger: new LoggerAdapter(Log, inputAssemblyFilePath)
         );
       }
       catch (Exception ex) {
