@@ -53,36 +53,34 @@ internal static class RuntimeAssemblyName {
     var isTargetNetCore = depContext.Target.Framework.StartsWith(".NETCoreApp,", StringComparison.Ordinal);
 
     if (isTargetNetStandard || isTargetNetCore) {
-      if (
-        string.Equals(name.Name, "netstandard", StringComparison.Ordinal) &&
-        string.Equals(publicKeyTokenString, PublicKeyTokenDotnetOpenSource, StringComparison.OrdinalIgnoreCase)
-      ) {
-        return shouldNotWarn;
-      }
     }
 
-    var isNameStartsWithOrEqualToSystem =
-      string.Equals(name.Name, "System", StringComparison.Ordinal) ||
-      name.Name.StartsWith("System.", StringComparison.Ordinal);
+    if (isTargetNetStandard || isTargetNetCore) {
+      var isNetStandardAssembly =
+        string.Equals(name.Name, "netstandard", StringComparison.Ordinal) &&
+        string.Equals(publicKeyTokenString, PublicKeyTokenDotnetOpenSource, StringComparison.OrdinalIgnoreCase);
 
-    if (isNameStartsWithOrEqualToSystem) {
-      if (isTargetNetCore) {
-        if (
+      if (isNetStandardAssembly)
+        return shouldNotWarn;
+
+      var isNameSystemAssembly =
+        string.Equals(name.Name, "System", StringComparison.Ordinal) ||
+        name.Name.StartsWith("System.", StringComparison.Ordinal);
+      var isSystemAssembly =
+        isNameSystemAssembly && (
           string.Equals(publicKeyTokenString, PublicKeyTokenDotnetOpenSource, StringComparison.OrdinalIgnoreCase) ||
           string.Equals(publicKeyTokenString, PublicKeyTokenMicrosoft, StringComparison.OrdinalIgnoreCase)
-        ) {
-          return shouldNotWarn;
-        }
-      }
+        );
 
-      if (isTargetNetStandard) {
-        if (
-          string.Equals(publicKeyTokenString, PublicKeyTokenDotnetOpenSource, StringComparison.OrdinalIgnoreCase) ||
-          string.Equals(publicKeyTokenString, PublicKeyTokenMicrosoft, StringComparison.OrdinalIgnoreCase)
-        ) {
-          return shouldNotWarn;
-        }
-      }
+      if (isSystemAssembly)
+        return shouldNotWarn;
+
+      var isCoreLibAssembly =
+        string.Equals(name.Name, "mscorlib", StringComparison.Ordinal) &&
+        string.Equals(publicKeyTokenString, "7cec85d7bea7798e" /* CoreLib? */, StringComparison.OrdinalIgnoreCase);
+
+      if (isCoreLibAssembly)
+        return shouldNotWarn;
     }
 
     return shouldWarn;
