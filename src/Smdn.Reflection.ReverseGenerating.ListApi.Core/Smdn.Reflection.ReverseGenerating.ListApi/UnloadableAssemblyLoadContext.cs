@@ -16,6 +16,9 @@ internal sealed class UnloadableAssemblyLoadContext : AssemblyLoadContext {
   private readonly PackageDependencyAssemblyResolver packageDependencyResolver;
   private readonly ILogger? logger;
 
+  public bool HasDepsJsonLoaded => packageDependencyResolver.DependencyContext is not null;
+  public string PossibleAssemblyDepsJsonPath => packageDependencyResolver.PossibleAssemblyDepsJsonPath;
+
   public UnloadableAssemblyLoadContext(string componentAssemblyPath, ILogger? logger = null)
     : base(
       isCollectible: true // is required to unload assembly

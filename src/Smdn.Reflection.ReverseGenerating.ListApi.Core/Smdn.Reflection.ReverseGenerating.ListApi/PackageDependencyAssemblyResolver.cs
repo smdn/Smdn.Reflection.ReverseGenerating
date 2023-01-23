@@ -56,11 +56,12 @@ internal sealed class PackageDependencyAssemblyResolver {
   }
 
   public DependencyContext? DependencyContext { get; }
+  public string PossibleAssemblyDepsJsonPath { get; }
   private readonly ILogger? logger;
 
   public PackageDependencyAssemblyResolver(string componentAssemblyPath, ILogger? logger = null)
   {
-    (this.DependencyContext, _) = LoadDependencyContextIfDepsJsonExist(componentAssemblyPath, logger);
+    (DependencyContext, PossibleAssemblyDepsJsonPath) = LoadDependencyContextIfDepsJsonExist(componentAssemblyPath, logger);
     this.logger = logger;
   }
 

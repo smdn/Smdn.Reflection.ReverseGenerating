@@ -18,6 +18,9 @@ internal sealed class PathAssemblyDependencyResolver : PathAssemblyResolver {
   private readonly PackageDependencyAssemblyResolver packageDependencyResolver;
   private readonly ILogger? logger;
 
+  public bool HasDepsJsonLoaded => packageDependencyResolver.DependencyContext is not null;
+  public string PossibleAssemblyDepsJsonPath => packageDependencyResolver.PossibleAssemblyDepsJsonPath;
+
   public PathAssemblyDependencyResolver(string componentAssemblyPath, ILogger? logger = null)
     : base(
       Directory.GetFiles(RuntimeEnvironment.GetRuntimeDirectory(), "*.dll") // add runtime assemblies

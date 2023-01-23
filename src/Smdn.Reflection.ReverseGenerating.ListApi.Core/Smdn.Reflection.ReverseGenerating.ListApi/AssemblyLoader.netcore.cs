@@ -12,6 +12,7 @@ using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Runtime.Loader;
+using System.Runtime.Versioning;
 
 using Microsoft.Extensions.Logging;
 
@@ -63,9 +64,8 @@ partial class AssemblyLoader {
     ILogger? logger = null
   )
   {
-    using var mlc = new MetadataLoadContext(
-      new PathAssemblyDependencyResolver(assemblySource.ComponentAssemblyPath)
-    );
+    var resolver = new PathAssemblyDependencyResolver(assemblySource.ComponentAssemblyPath);
+    using var mlc = new MetadataLoadContext(resolver);
 
     logger?.LogDebug(
       "loading assembly into reflection-only context (ComponentAssemblyPath: '{ComponentAssemblyPath}')",
@@ -89,6 +89,9 @@ partial class AssemblyLoader {
 
     var assemblyName = assm.FullName;
     var assemblyTypeFullName = assm.GetType().FullName;
+
+    if (!resolver.HasDepsJsonLoaded)
+      WarnDepsJsonCouldNotBeLoaded(logger, resolver.PossibleAssemblyDepsJsonPath, assm);
 
     logger?.LogDebug(
       "loaded reflection-only assembly '{AssemblyName}' ({AssemblyTypeFullName})",
@@ -144,6 +147,9 @@ partial class AssemblyLoader {
     var assemblyName = assm.FullName;
     var assemblyTypeFullName = assm.GetType().FullName;
 
+    if (!alc.HasDepsJsonLoaded)
+      WarnDepsJsonCouldNotBeLoaded(logger, alc.PossibleAssemblyDepsJsonPath, assm);
+
     logger?.LogDebug(
       "loaded assembly '{AssemblyName}' ({AssemblyTypeFullName})",
       assemblyName,
@@ -161,6 +167,26 @@ partial class AssemblyLoader {
 
       logger?.LogDebug("unloaded assembly '{AssemblyName}'", assemblyName);
     }
+  }
+
+  private static void WarnDepsJsonCouldNotBeLoaded(
+    ILogger? logger,
+    string possibleAssemblyDepsJsonPath,
+    Assembly assembly
+  )
+  {
+    if (logger is null)
+      return;
+
+    var targetFramework = assembly.GetAssemblyMetadataAttributeValue<TargetFrameworkAttribute, string?>();
+
+    if (targetFramework is not null && targetFramework.StartsWith(".NETFramework,", StringComparison.Ordinal))
+      return;
+
+    if (File.Exists(possibleAssemblyDepsJsonPath))
+      logger.LogWarning("dependency configuration could not be loaded: '{AssemblyDepsJsonPath}'", possibleAssemblyDepsJsonPath);
+    else
+      logger.LogWarning("dependency configuration could not be found: '{AssemblyDepsJsonPath}'", possibleAssemblyDepsJsonPath);
   }
 }
 #endif
