@@ -2,6 +2,7 @@
 # SPDX-FileCopyrightText: "2022 smdn <smdn@smdn.jp>"
 
 name: Publish release target
+run-name: Publish release target ${{ github.head_ref }}
 
 on:
   pull_request:
@@ -9,7 +10,7 @@ on:
 
 jobs:
   run-publish-release-target:
-    uses: smdn/Smdn.Fundamentals/.github/workflows/publish-release-target.yml@workflows/release-target-v1.5.5
+    uses: smdn/Smdn.Fundamentals/.github/workflows/publish-release-target.yml@workflows/release-target-v1.5.8
     if: |
       (github.event.pull_request.merged == true && startsWith(github.head_ref, 'releases/')) &&
       (contains(github.event.pull_request.labels.*.name, 'release-target'))

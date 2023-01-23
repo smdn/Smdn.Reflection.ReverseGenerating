@@ -2,10 +2,12 @@
 # SPDX-FileCopyrightText: "2022 smdn <smdn@smdn.jp>"
 
 name: Generate release target
+run-name: Generate release target for ${{ inputs.release_target_tag_name || github.ref_name }}
 
 on:
   push:
-    tags: new-release/*/*
+    tags:
+      - new-release/*/*
 
   workflow_dispatch:
     inputs:
@@ -55,7 +57,7 @@ jobs:
         exit 1
 
   run-generate-release-target:
-    uses: smdn/Smdn.Fundamentals/.github/workflows/generate-release-target.yml@workflows/release-target-v1.5.5
+    uses: smdn/Smdn.Fundamentals/.github/workflows/generate-release-target.yml@workflows/release-target-v1.5.8
     needs: determine-release-target
     if: startsWith(needs.determine-release-target.outputs.tag_name, 'new-release/')
     with:
