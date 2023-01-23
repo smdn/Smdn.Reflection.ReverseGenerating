@@ -50,8 +50,9 @@ internal static class RuntimeAssemblyName {
 #endif
 
     var isTargetNetStandard = depContext.Target.Framework.StartsWith(".NETStandard,", StringComparison.Ordinal);
+    var isTargetNetCore = depContext.Target.Framework.StartsWith(".NETCoreApp,", StringComparison.Ordinal);
 
-    if (isTargetNetStandard) {
+    if (isTargetNetStandard || isTargetNetCore) {
       if (
         string.Equals(name.Name, "netstandard", StringComparison.Ordinal) &&
         string.Equals(publicKeyTokenString, PublicKeyTokenDotnetOpenSource, StringComparison.OrdinalIgnoreCase)
@@ -65,8 +66,6 @@ internal static class RuntimeAssemblyName {
       name.Name.StartsWith("System.", StringComparison.Ordinal);
 
     if (isNameStartsWithOrEqualToSystem) {
-      var isTargetNetCore = depContext.Target.Framework.StartsWith(".NETCoreApp,", StringComparison.Ordinal);
-
       if (isTargetNetCore) {
         if (
           string.Equals(publicKeyTokenString, PublicKeyTokenDotnetOpenSource, StringComparison.OrdinalIgnoreCase) ||
