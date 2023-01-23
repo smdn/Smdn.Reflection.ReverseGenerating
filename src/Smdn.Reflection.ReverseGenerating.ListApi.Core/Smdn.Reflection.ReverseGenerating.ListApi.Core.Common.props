@@ -1,0 +1,42 @@
+<!--
+SPDX-FileCopyrightText: 2020 smdn <smdn@smdn.jp>
+SPDX-License-Identifier: MIT
+-->
+<Project>
+  <PropertyGroup>
+    <RootNamespace>Smdn.Reflection.ReverseGenerating.ListApi.Core</RootNamespace>
+    <VersionPrefix>1.2.0</VersionPrefix>
+    <VersionSuffix></VersionSuffix>
+    <Nullable>enable</Nullable>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+  </PropertyGroup>
+
+  <Import Project="$(MSBuildThisFileDirectory)..\Sdk.net7.0.props" />
+
+  <PropertyGroup Condition=" '$(Configuration)' == 'Release' " Label="Required properties to generate API list">
+    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+  </PropertyGroup>
+
+  <PropertyGroup Label="assembly attributes">
+    <Description>A common library for the tools of reverse generating API lists.</Description>
+    <CopyrightYear>2021</CopyrightYear>
+  </PropertyGroup>
+
+  <PropertyGroup Label="package properties">
+    <PackageTags>reflection;reverse-generating;reverse-generation;generator;api-list</PackageTags>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)Smdn.Reflection.ReverseGenerating.ListApi\*.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)..\Common\System.Runtime.CompilerServices\IsExternalInit.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="System.Reflection.MetadataLoadContext" Version="6.0.0" Condition="$(TargetFramework.StartsWith('net6.')) Or $(TargetFramework.StartsWith('netcoreapp'))" />
+    <PackageReference Include="System.Reflection.MetadataLoadContext" Version="7.0.0" Condition="$(TargetFramework.StartsWith('net7.'))" />
+    <PackageReference Include="Microsoft.Extensions.DependencyModel" Version="6.0.0" Condition="$(TargetFramework.StartsWith('net6.')) Or $(TargetFramework.StartsWith('netcoreapp'))" />
+    <PackageReference Include="Microsoft.Extensions.DependencyModel" Version="7.0.0" Condition="$(TargetFramework.StartsWith('net7.'))" />
+    <PackageReference Include="Microsoft.Extensions.Logging" Version="6.0.0" />
+  </ItemGroup>
+</Project>

@@ -5,40 +5,15 @@ SPDX-License-Identifier: MIT
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFrameworks>net6.0;netcoreapp3.1</TargetFrameworks>
-    <RootNamespace>Smdn.Reflection.ReverseGenerating.ListApi.Core</RootNamespace>
-    <VersionPrefix>1.2.0</VersionPrefix>
-    <VersionSuffix></VersionSuffix>
+  </PropertyGroup>
+
+  <Import Project="Smdn.Reflection.ReverseGenerating.ListApi.Core.Common.props" />
+
+  <PropertyGroup>
     <PackageValidationBaselineVersion>1.0.0</PackageValidationBaselineVersion>
-    <Nullable>enable</Nullable>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-  </PropertyGroup>
-
-  <Import Project="..\Sdk.net7.0.props" />
-
-  <PropertyGroup Condition=" '$(Configuration)' == 'Release' " Label="Required properties to generate API list">
-    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
-  </PropertyGroup>
-
-  <PropertyGroup Label="assembly attributes">
-    <Description>A common library for the tools of reverse generating API lists.</Description>
-    <CopyrightYear>2021</CopyrightYear>
-  </PropertyGroup>
-
-  <PropertyGroup Label="package properties">
-    <PackageTags>reflection;reverse-generating;reverse-generation;generator;api-list</PackageTags>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="System.Reflection.MetadataLoadContext" Version="6.0.0" Condition="$(TargetFramework.StartsWith('net6.')) Or $(TargetFramework.StartsWith('netcoreapp'))" />
-    <PackageReference Include="System.Reflection.MetadataLoadContext" Version="7.0.0" Condition="$(TargetFramework.StartsWith('net7.'))" />
-    <PackageReference Include="Microsoft.Extensions.DependencyModel" Version="6.0.0" Condition="$(TargetFramework.StartsWith('net6.')) Or $(TargetFramework.StartsWith('netcoreapp'))" />
-    <PackageReference Include="Microsoft.Extensions.DependencyModel" Version="7.0.0" Condition="$(TargetFramework.StartsWith('net7.'))" />
-    <PackageReference Include="Microsoft.Extensions.Logging" Version="6.0.0" />
-
     <ProjectOrPackageReference ReferencePackageVersion="[1.1.1,2.0.0)" Include="..\Smdn.Reflection.ReverseGenerating\Smdn.Reflection.ReverseGenerating.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Compile Include="..\Common\System.Runtime.CompilerServices\IsExternalInit.cs" />
   </ItemGroup>
 </Project>

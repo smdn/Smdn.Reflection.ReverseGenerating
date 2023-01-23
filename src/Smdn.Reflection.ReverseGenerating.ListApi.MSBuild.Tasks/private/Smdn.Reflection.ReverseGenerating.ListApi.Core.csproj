@@ -1,0 +1,29 @@
+<!--
+SPDX-FileCopyrightText: 2023 smdn <smdn@smdn.jp>
+SPDX-License-Identifier: MIT
+-->
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFrameworks>net6.0;netcoreapp3.1</TargetFrameworks>
+  </PropertyGroup>
+
+  <Import Project="..\..\Smdn.Reflection.ReverseGenerating.ListApi.Core\Smdn.Reflection.ReverseGenerating.ListApi.Core.Common.props" />
+
+  <PropertyGroup>
+    <IsPackable>false</IsPackable>
+    <VersionSuffix>private</VersionSuffix>
+    <!--
+      Later than version 1.4.5 of Smdn.MSBuild.ProjectAssets.Library, this will be set according to
+      the value of IsPackable, so this can be removed in the future.
+    -->
+    <APIListEnableGenerating>false</APIListEnableGenerating>
+  </PropertyGroup>
+
+  <!--
+    Smdn.Reflection.ReverseGenerating.ListApi.MSBuild.Tasks bundles the private build assembly with the package.
+    So in case when Smdn.Reflection.ReverseGenerating.ListApi.MSBuild.Tasks builds this project, use ProjectReference.
+  -->
+  <ItemGroup>
+    <ProjectReference Include="..\..\Smdn.Reflection.ReverseGenerating\Smdn.Reflection.ReverseGenerating.csproj" />
+  </ItemGroup>
+</Project>
