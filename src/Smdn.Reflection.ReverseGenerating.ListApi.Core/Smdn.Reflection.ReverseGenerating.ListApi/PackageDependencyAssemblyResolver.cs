@@ -74,11 +74,11 @@ internal sealed class PackageDependencyAssemblyResolver {
     logger?.LogTrace("  Hash: {RuntimeLibraryHash}", runtimeLibrary.Hash);
     logger?.LogTrace(
       "  RuntimeAssemblyGroups: {RuntimeLibraryRuntimeAssemblyGroups}",
-      string.Join(",", runtimeLibrary.RuntimeAssemblyGroups.SelectMany(static g => g.AssetPaths))
+      string.Join(", ", runtimeLibrary.RuntimeAssemblyGroups.SelectMany(static g => g.AssetPaths))
     );
     logger?.LogTrace(
       "  Dependencies: {RuntimeLibraryDependencies}",
-      string.Join(",", runtimeLibrary.Dependencies.SelectMany(static d => d.Name))
+      string.Join(", ", runtimeLibrary.Dependencies.Select(static d => d.Name))
     );
     logger?.LogTrace("  Serviceable: {RuntimeLibraryServiceable}", runtimeLibrary.Serviceable);
     logger?.LogTrace("  Path: {RuntimeLibraryPath}", runtimeLibrary.Path);
