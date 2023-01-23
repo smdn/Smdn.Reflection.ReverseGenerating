@@ -29,10 +29,6 @@ SPDX-License-Identifier: MIT
     ">$(DefineConstants);WORKAROUND_NULLABILITYINFO_BYREFTYPE</DefineConstants>
   </PropertyGroup>
 
-  <PropertyGroup Condition=" '$(Configuration)' == 'Release' " Label="Required properties to generate API list">
-    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
-  </PropertyGroup>
-
   <PropertyGroup Label="assembly attributes">
     <Description>The reflection library for reverse-generating declarations of types and members.</Description>
     <CopyrightYear>2020</CopyrightYear>
