@@ -1,9 +1,16 @@
-// Smdn.Reflection.ReverseGenerating.dll (Smdn.Reflection.ReverseGenerating-1.1.4)
+// Smdn.Reflection.ReverseGenerating.dll (Smdn.Reflection.ReverseGenerating-1.1.5)
 //   Name: Smdn.Reflection.ReverseGenerating
-//   AssemblyVersion: 1.1.4.0
-//   InformationalVersion: 1.1.4+474aa1799ff8a98167dc9760f2acafaa15b81d4c
-//   TargetFramework: .NETCoreApp,Version=v5.0
+//   AssemblyVersion: 1.1.5.0
+//   InformationalVersion: 1.1.5+8b0234f9aa81d64e62185c0c566a560c630f934b
+//   TargetFramework: .NETCoreApp,Version=v7.0
 //   Configuration: Release
+//   Referenced assemblies:
+//     Smdn.Fundamental.Reflection, Version=3.3.2.0, Culture=neutral
+//     System.Collections, Version=7.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+//     System.Linq, Version=7.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+//     System.Memory, Version=7.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51
+//     System.Runtime, Version=7.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+//     System.Runtime.InteropServices, Version=7.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
 #nullable enable annotations
 
 using System;
@@ -31,13 +38,20 @@ namespace Smdn.Reflection.ReverseGenerating {
   public static class CSharpFormatter {
     public static string EscapeString(string s, bool escapeSingleQuote = false, bool escapeDoubleQuote = false) {}
     public static string FormatAccessibility(Accessibility accessibility) {}
+    public static string FormatParameter(ParameterInfo p, NullabilityInfoContext? nullabilityInfoContext, bool typeWithNamespace = true, bool useDefaultLiteral = false) {}
     public static string FormatParameter(ParameterInfo p, bool typeWithNamespace = true, bool useDefaultLiteral = false) {}
+    public static string FormatParameterList(MethodBase m, NullabilityInfoContext? nullabilityInfoContext, bool typeWithNamespace = true, bool useDefaultLiteral = false) {}
     public static string FormatParameterList(MethodBase m, bool typeWithNamespace = true, bool useDefaultLiteral = false) {}
+    public static string FormatParameterList(ParameterInfo[] parameterList, NullabilityInfoContext? nullabilityInfoContext, bool typeWithNamespace = true, bool useDefaultLiteral = false) {}
     public static string FormatParameterList(ParameterInfo[] parameterList, bool typeWithNamespace = true, bool useDefaultLiteral = false) {}
     public static string FormatSpecialNameMethod(MethodBase methodOrConstructor, out MethodSpecialName nameType) {}
+    public static string FormatTypeName(this EventInfo ev, NullabilityInfoContext? nullabilityInfoContext, bool typeWithNamespace = true, bool withDeclaringTypeName = true, bool translateLanguagePrimitiveType = true) {}
     public static string FormatTypeName(this EventInfo ev, bool typeWithNamespace = true, bool withDeclaringTypeName = true, bool translateLanguagePrimitiveType = true) {}
+    public static string FormatTypeName(this FieldInfo f, NullabilityInfoContext? nullabilityInfoContext, bool typeWithNamespace = true, bool withDeclaringTypeName = true, bool translateLanguagePrimitiveType = true) {}
     public static string FormatTypeName(this FieldInfo f, bool typeWithNamespace = true, bool withDeclaringTypeName = true, bool translateLanguagePrimitiveType = true) {}
+    public static string FormatTypeName(this ParameterInfo p, NullabilityInfoContext? nullabilityInfoContext, bool typeWithNamespace = true, bool withDeclaringTypeName = true, bool translateLanguagePrimitiveType = true) {}
     public static string FormatTypeName(this ParameterInfo p, bool typeWithNamespace = true, bool withDeclaringTypeName = true, bool translateLanguagePrimitiveType = true) {}
+    public static string FormatTypeName(this PropertyInfo p, NullabilityInfoContext? nullabilityInfoContext, bool typeWithNamespace = true, bool withDeclaringTypeName = true, bool translateLanguagePrimitiveType = true) {}
     public static string FormatTypeName(this PropertyInfo p, bool typeWithNamespace = true, bool withDeclaringTypeName = true, bool translateLanguagePrimitiveType = true) {}
     public static string FormatTypeName(this Type t, ICustomAttributeProvider? attributeProvider = null, bool typeWithNamespace = true, bool withDeclaringTypeName = true, bool translateLanguagePrimitiveType = true) {}
     public static string FormatValueDeclaration(object? val, Type typeOfValue, bool typeWithNamespace = true, bool findConstantField = false, bool useDefaultLiteral = false) {}
@@ -78,6 +92,7 @@ namespace Smdn.Reflection.ReverseGenerating {
 
       public MethodBodyOption AccessorBody { get; set; }
       public MethodBodyOption MethodBody { get; set; }
+      public NullabilityInfoContext? NullabilityInfoContext { get; set; }
       public bool OmitEndOfStatement { get; set; }
       public bool WithAccessibility { get; set; }
       public bool WithDeclaringTypeName { get; set; }
@@ -95,7 +110,9 @@ namespace Smdn.Reflection.ReverseGenerating {
     public class TypeDeclarationOptions {
       public TypeDeclarationOptions() {}
 
+      public NullabilityInfoContext? NullabilityInfoContext { get; set; }
       public bool OmitEndOfStatement { get; set; }
+      public bool OmitEnumUnderlyingTypeIfPossible { get; set; }
       public bool WithAccessibility { get; set; }
       public bool WithDeclaringTypeName { get; set; }
       public bool WithNamespace { get; set; }
@@ -124,3 +141,5 @@ namespace Smdn.Reflection.ReverseGenerating {
     object ICloneable.Clone() {}
   }
 }
+// API list generated by Smdn.Reflection.ReverseGenerating.ListApi.MSBuild.Tasks v1.2.1.0.
+// Smdn.Reflection.ReverseGenerating.ListApi.Core v1.2.0.0 (https://github.com/smdn/Smdn.Reflection.ReverseGenerating)
