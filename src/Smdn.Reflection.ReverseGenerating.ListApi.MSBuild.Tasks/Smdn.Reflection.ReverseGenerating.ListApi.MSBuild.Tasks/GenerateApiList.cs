@@ -109,7 +109,7 @@ public class GenerateApiList : Task {
     var options = new ApiListWriterOptions();
 #pragma warning restore IDE0017
 
-#pragma warning disable IDE0055
+#pragma warning disable IDE0017, IDE0055
     options.TranslateLanguagePrimitiveTypeDeclaration = GenerateLanguagePrimitiveType;
 
     options.TypeDeclaration.WithNamespace         = false;
@@ -141,7 +141,7 @@ public class GenerateApiList : Task {
     options.AttributeDeclaration.WithNamedArguments = GenerateAttributeWithNamedArguments;
 
     options.ValueDeclaration.UseDefaultLiteral = GenerateValueWithDefaultLiteral;
-#pragma warning restore IDE0055
+#pragma warning restore IDE0017, IDE0055
 
     return options;
   }
