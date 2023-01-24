@@ -3,40 +3,8 @@ SPDX-FileCopyrightText: 2022 smdn <smdn@smdn.jp>
 SPDX-License-Identifier: MIT
 -->
 <Project>
-  <PropertyGroup>
-    <CanTestReleasedPackage Condition=" '$(CanTestReleasedPackage)' == '' ">true</CanTestReleasedPackage>
-  </PropertyGroup>
+  <Import Project="$(MSBuildThisFileDirectory)TestReleasedPackage.targets" Condition=" '$(IsTestProject)' == 'true' " />
 
-  <Choose>
-    <When Condition=" '$(TestReleasedPackage)' == 'true' and '$(CanTestReleasedPackage)' == 'true' ">
-      <ItemGroup Label="add test target package reference">
-        <PackageReference
-          Condition=" '$(SmdnTestTargetProjectName)' != '' "
-          Include="$(SmdnTestTargetProjectName)"
-          Version="*-*"
-        />
-      </ItemGroup>
-    </When>
-    <Otherwise>
-      <ItemGroup
-        Label="add test target project reference"
-        Condition=" '$(SmdnTestTargetProjectReferenceManuallyIncluded)' != 'true' "
-      >
-        <ProjectReference
-          Condition=" '$(SmdnTestTargetProjectFullPath)' != '' and Exists('$(SmdnTestTargetProjectFullPath)') "
-          Include="$(SmdnTestTargetProjectFullPath)"
-        />
-      </ItemGroup>
-    </Otherwise>
-  </Choose>
-
-  <Target
-    Name="WarnCannotTestReleasedPackage"
-    BeforeTargets="BeforeBuild"
-    Condition=" '$(TestReleasedPackage)' == 'true' and '$(CanTestReleasedPackage)' != 'true' "
-  >
-    <Warning Text="cannot test with released package"/>
-  </Target>
 
   <ImportGroup>
     <Import Project="$(SmdnProjectAssets_TargetsImports)" />
