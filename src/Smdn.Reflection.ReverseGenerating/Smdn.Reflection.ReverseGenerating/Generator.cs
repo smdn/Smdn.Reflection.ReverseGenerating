@@ -753,18 +753,37 @@ public static partial class Generator {
         : options.MemberDeclaration.OmitEndOfStatement,
       TranslateLanguagePrimitiveType = options.TranslateLanguagePrimitiveTypeDeclaration,
     };
+
     var method = m as MethodInfo;
-    var methodReturnType = method?.ReturnParameter?.FormatTypeName(
+    string? methodReturnType;
+
+    try {
+      methodReturnType = method?.ReturnParameter?.FormatTypeName(
 #pragma warning disable SA1114
 #if SYSTEM_REFLECTION_NULLABILITYINFOCONTEXT
-      nullabilityInfoContext: formattingOptions.NullabilityInfoContext,
+        nullabilityInfoContext: formattingOptions.NullabilityInfoContext,
 #endif
-      typeWithNamespace: formattingOptions.FormatTypeWithNamespace
+        typeWithNamespace: formattingOptions.FormatTypeWithNamespace
 #pragma warning restore SA1114
-    );
-    var methodReturnTypeAttributes = method is null
-      ? null
-      : GenerateParameterAttributeList(method.ReturnParameter, referencingNamespaces, options);
+      );
+    }
+    catch (TypeLoadException) {
+      // FIXME: https://github.com/smdn/Smdn.Reflection.ReverseGenerating/issues/31
+      methodReturnType = "<unknown>";
+    }
+
+    string? methodReturnTypeAttributes;
+
+    try {
+      methodReturnTypeAttributes = method is null
+        ? null
+        : GenerateParameterAttributeList(method.ReturnParameter, referencingNamespaces, options);
+    }
+    catch (TypeLoadException) {
+      // FIXME: https://github.com/smdn/Smdn.Reflection.ReverseGenerating/issues/31
+      methodReturnTypeAttributes = "[...]";
+    }
+
     var methodGenericParameters = m.IsGenericMethod
       ? string.Concat(
           "<",
@@ -782,12 +801,22 @@ public static partial class Generator {
           ">"
         )
       : null;
-    var methodParameterList = string.Join(
-      ", ",
-      m.GetParameters().Select(
-        p => GenerateParameterDeclaration(p, referencingNamespaces, options)
-      )
-    );
+
+    string? methodParameterList;
+
+    try {
+      methodParameterList = string.Join(
+        ", ",
+        m.GetParameters().Select(
+          p => GenerateParameterDeclaration(p, referencingNamespaces, options)
+        )
+      );
+    }
+    catch (TypeLoadException) {
+      // FIXME: https://github.com/smdn/Smdn.Reflection.ReverseGenerating/issues/31
+      methodParameterList = "...";
+    }
+
     var genericParameters = method is null
       ? null
       : asDelegateDeclaration
@@ -808,12 +837,17 @@ public static partial class Generator {
     string? methodName = null;
     var isFinalizer = false;
 
-    referencingNamespaces?.UnionWith(
-      m
-        .GetSignatureTypes()
-        .Where(static mpt => !mpt.ContainsGenericParameters)
-        .SelectMany(CSharpFormatter.ToNamespaceList)
-    );
+    try {
+      referencingNamespaces?.UnionWith(
+        m
+          .GetSignatureTypes()
+          .Where(static mpt => !mpt.ContainsGenericParameters)
+          .SelectMany(CSharpFormatter.ToNamespaceList)
+      );
+    }
+    catch (TypeLoadException) {
+      // FIXME: https://github.com/smdn/Smdn.Reflection.ReverseGenerating/issues/31
+    }
 
     if (asDelegateDeclaration) {
       methodName = m.GetDeclaringTypeOrThrow().FormatTypeName(
@@ -1241,8 +1275,13 @@ public static partial class Generator {
       if (isAsyncStateMachine)
         sb.Append("async ");
 
-      if (method is not null && method.GetParameters().Any(IsParameterUnsafe))
-        sb.Append("unsafe ");
+      try {
+        if (method is not null && method.GetParameters().Any(IsParameterUnsafe))
+          sb.Append("unsafe ");
+      }
+      catch (TypeLoadException) {
+        // FIXME: https://github.com/smdn/Smdn.Reflection.ReverseGenerating/issues/31
+      }
     }
 
     static bool IsParameterUnsafe(ParameterInfo p)
@@ -1255,8 +1294,13 @@ public static partial class Generator {
       return false;
     }
 
-    if (member.IsHidingInheritedMember(nonPublic: true))
-      sb.Append("new ");
+    try {
+      if (member.IsHidingInheritedMember(nonPublic: true))
+        sb.Append("new ");
+    }
+    catch (TypeLoadException) {
+      // FIXME: https://github.com/smdn/Smdn.Reflection.ReverseGenerating/issues/31
+    }
 
     SWITCH_MEMBER_TYPE:
     switch (member) {

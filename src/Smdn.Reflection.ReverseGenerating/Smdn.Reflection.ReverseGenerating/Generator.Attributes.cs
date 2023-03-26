@@ -106,9 +106,15 @@ partial class Generator {
           attributeSectionPrefix = attributeSectionPrefixDefault;
           attributeTarget = AttributeTarget.PropertyAccessorMethod;
         }
-        else if (m.IsEventAccessorMethod()) {
-          attributeSectionPrefix = attributeSectionPrefixDefault;
-          attributeTarget = AttributeTarget.EventAccessorMethod;
+
+        try {
+          if (m.IsEventAccessorMethod()) {
+            attributeSectionPrefix = attributeSectionPrefixDefault;
+            attributeTarget = AttributeTarget.EventAccessorMethod;
+          }
+        }
+        catch (TypeLoadException) {
+          // FIXME: https://github.com/smdn/Smdn.Reflection.ReverseGenerating/issues/31
         }
 
         break;
