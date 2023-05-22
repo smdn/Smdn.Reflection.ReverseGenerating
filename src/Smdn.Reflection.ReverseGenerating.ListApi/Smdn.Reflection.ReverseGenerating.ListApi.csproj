@@ -11,6 +11,7 @@ SPDX-License-Identifier: MIT
     <ToolCommandName>list-api</ToolCommandName>
     <VersionPrefix>1.2.0</VersionPrefix>
     <VersionSuffix></VersionSuffix>
+    <RootNamespace/> <!-- empty the root namespace so that the namespace is determined only by the directory name, for code style rule IDE0030 -->
     <Nullable>enable</Nullable>
     <EnableFeature_BuildProjectFile Condition=" '$(Configuration)' != 'Release' ">true</EnableFeature_BuildProjectFile>
     <APIListEnableGenerating>false</APIListEnableGenerating>
