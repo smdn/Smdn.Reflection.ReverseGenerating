@@ -444,6 +444,7 @@ public static partial class Generator {
     return sb.ToString();
   }
 
+#pragma warning disable CA1502 // TODO: reduce code complexity
   private static string? GeneratePropertyDeclaration(
     PropertyInfo property,
     ISet<string>? referencingNamespaces,
@@ -617,6 +618,7 @@ public static partial class Generator {
 
     return sb.ToString();
   }
+#pragma warning restore CA1502
 
   private static void GenerateAccessorDeclaration(
     string accessor,
@@ -714,6 +716,7 @@ public static partial class Generator {
       options: options
     );
 
+#pragma warning disable CA1502 // TODO: reduce code complexity
   private static string? GenerateMethodOrDelegateDeclaration(
     MethodBase m,
     bool asDelegateDeclaration,
@@ -971,6 +974,7 @@ public static partial class Generator {
 
     return sb.Append(methodBody).Append(endOfMethodBody).ToString();
   }
+#pragma warning restore CA1502
 
   private static string GenerateParameterDeclaration(
     ParameterInfo p,
@@ -1198,6 +1202,7 @@ public static partial class Generator {
       out _
     );
 
+#pragma warning disable CA1502 // TODO: reduce code complexity
   // TODO: extern, volatile
   private static void AppendMemberModifiers(
     StringBuilder sb,
@@ -1377,4 +1382,5 @@ public static partial class Generator {
     if (propertySetMethodAccessibility.HasValue)
       setMethodAccessibility = CSharpFormatter.FormatAccessibility(propertySetMethodAccessibility.Value);
   }
+#pragma warning restore CA1502
 }

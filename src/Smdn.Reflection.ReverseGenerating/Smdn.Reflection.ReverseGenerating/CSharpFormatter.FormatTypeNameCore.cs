@@ -21,6 +21,7 @@ static partial class CSharpFormatter {
       "System".Equals(t.Namespace, StringComparison.Ordinal) &&
       t.GetGenericTypeName().Equals("ValueTuple", StringComparison.Ordinal);
 
+#pragma warning disable CA1502 // TODO: reduce code complexity
   internal static string FormatTypeNameCore(
     Type t,
     FormatTypeNameOptions options
@@ -172,4 +173,5 @@ static partial class CSharpFormatter {
       return name;
     }
   }
+#pragma warning restore CA1502
 }

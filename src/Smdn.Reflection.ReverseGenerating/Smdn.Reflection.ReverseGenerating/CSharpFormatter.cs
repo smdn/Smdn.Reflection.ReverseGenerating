@@ -468,6 +468,7 @@ public static partial class CSharpFormatter /* ITypeFormatter */ {
       );
   }
 
+#pragma warning disable CA1502 // TODO: reduce code complexity
   internal static string FormatValueDeclaration(
     object? val,
     Type typeOfValue,
@@ -576,4 +577,5 @@ public static partial class CSharpFormatter /* ITypeFormatter */ {
       );
     }
   }
+#pragma warning restore CA1502
 }

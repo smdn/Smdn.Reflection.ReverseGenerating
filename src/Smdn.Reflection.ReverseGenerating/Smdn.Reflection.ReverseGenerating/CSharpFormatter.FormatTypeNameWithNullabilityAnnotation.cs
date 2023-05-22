@@ -66,6 +66,7 @@ static partial class CSharpFormatter {
   }
 #endif
 
+#pragma warning disable CA1502 // TODO: reduce code complexity
   private static StringBuilder FormatTypeNameWithNullabilityAnnotation(
     NullabilityInfo target,
     StringBuilder builder,
@@ -208,6 +209,7 @@ static partial class CSharpFormatter {
       .Append(GetTypeName(targetType, options))
       .Append(GetNullabilityAnnotation(target));
   }
+#pragma warning restore CA1502
 
   private static StringBuilder FormatClosedGenericTypeOrGenericTypeDefinition(
     NullabilityInfo target,

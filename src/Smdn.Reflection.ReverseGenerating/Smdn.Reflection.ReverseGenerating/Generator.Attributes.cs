@@ -31,6 +31,7 @@ partial class Generator {
     DelegateReturnParameter,
   }
 
+#pragma warning disable CA1502, CA1506 // TODO: reduce code complexity
   public static IEnumerable<string> GenerateAttributeList(
     ICustomAttributeProvider attributeProvider,
     ISet<string>? referencingNamespaces,
@@ -275,4 +276,5 @@ partial class Generator {
         )
       );
   }
+#pragma warning restore CA1502, CA1506
 }
