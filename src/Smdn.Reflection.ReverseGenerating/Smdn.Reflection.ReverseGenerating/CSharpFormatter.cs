@@ -183,16 +183,19 @@ public static partial class CSharpFormatter /* ITypeFormatter */ {
 #endif
     out string primitiveTypeName
   )
-    => primitiveTypes.TryGetValue(t.FullName ?? string.Empty, out primitiveTypeName);
+    => primitiveTypes.TryGetValue((t ?? throw new ArgumentNullException(nameof(t))).FullName ?? string.Empty, out primitiveTypeName);
 
   public static IEnumerable<string> ToNamespaceList(Type t)
-    => t.GetNamespaces(static type => IsLanguagePrimitiveType(type, out _));
+    => (t ?? throw new ArgumentNullException(nameof(t))).GetNamespaces(static type => IsLanguagePrimitiveType(type, out _));
 
   public static string FormatSpecialNameMethod(
     MethodBase methodOrConstructor,
     out MethodSpecialName nameType
   )
   {
+    if (methodOrConstructor is null)
+      throw new ArgumentNullException(nameof(methodOrConstructor));
+
     nameType = methodOrConstructor.GetNameType();
 
     if (specialMethodNames.TryGetValue(nameType, out var name))
@@ -436,7 +439,7 @@ public static partial class CSharpFormatter /* ITypeFormatter */ {
   )
     => FormatValueDeclaration(
       val: val,
-      typeOfValue: typeOfValue,
+      typeOfValue: typeOfValue ?? throw new ArgumentNullException(nameof(typeOfValue)),
       options: new(
         TranslateLanguagePrimitiveType: true,
         TryFindConstantField: findConstantField,
