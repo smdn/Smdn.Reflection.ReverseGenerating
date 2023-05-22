@@ -17,6 +17,9 @@ public static class ProjectFinder {
     ILogger? logger = null
   )
   {
+    if (directory is null)
+      throw new ArgumentNullException(nameof(directory));
+
     logger?.LogDebug("finding project or solution from directory '{Directory}'", directory.FullName);
 
     var solutionAndProjectFiles = directory

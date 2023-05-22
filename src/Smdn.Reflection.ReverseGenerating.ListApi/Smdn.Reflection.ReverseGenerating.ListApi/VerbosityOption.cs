@@ -1,5 +1,6 @@
 // SPDX-FileCopyrightText: 2021 smdn <smdn@smdn.jp>
 // SPDX-License-Identifier: MIT
+using System;
 using System.CommandLine;
 using System.CommandLine.Parsing;
 
@@ -27,7 +28,7 @@ public static class VerbosityOption {
   }
 
   public static LogLevel ParseLogLevel(ParseResult parseResult)
-    => parseResult.ValueForOption(Option) switch {
+    => (parseResult ?? throw new ArgumentNullException(nameof(parseResult))).ValueForOption(Option) switch {
 #pragma warning disable IDE0055
       "q" or "quiet"          => LogLevel.Information,
       "m" or "minimal"        => LogLevel.Information,
@@ -49,7 +50,7 @@ public static class VerbosityOption {
   }
 
   public static LoggerVerbosity ParseLoggerVerbosity(ParseResult parseResult)
-    => parseResult.ValueForOption(Option) switch {
+    => (parseResult ?? throw new ArgumentNullException(nameof(parseResult))).ValueForOption(Option) switch {
 #pragma warning disable IDE0055
       "q" or "quiet"          => LoggerVerbosity.Quiet,
       "m" or "minimal"        => LoggerVerbosity.Minimal,
