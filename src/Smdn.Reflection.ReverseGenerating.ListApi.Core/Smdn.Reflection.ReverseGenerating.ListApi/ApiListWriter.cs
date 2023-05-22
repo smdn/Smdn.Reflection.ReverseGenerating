@@ -255,13 +255,16 @@ public class ApiListWriter {
       BaseWriter.WriteLine();
     }
 
-    if (orderedReferencingNamespaces.Any()) {
-      foreach (var ns in orderedReferencingNamespaces) {
-        BaseWriter.WriteLine($"using {ns};");
-      }
+    var hasUsingDirectivesWritten = false;
 
-      BaseWriter.WriteLine();
+    foreach (var ns in orderedReferencingNamespaces) {
+      BaseWriter.WriteLine($"using {ns};");
+
+      hasUsingDirectivesWritten = true;
     }
+
+    if (hasUsingDirectivesWritten)
+      BaseWriter.WriteLine();
 
     BaseWriter.Write(typeDeclarations);
   }
