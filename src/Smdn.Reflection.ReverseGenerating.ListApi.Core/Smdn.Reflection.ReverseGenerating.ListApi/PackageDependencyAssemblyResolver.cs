@@ -48,11 +48,13 @@ internal sealed class PackageDependencyAssemblyResolver {
 
       return (context, assemblyDepsJsonPath);
     }
+#pragma warning disable CA1031
     catch (Exception ex) {
       logger?.LogError(ex, "dependency configuration file could not be loaded: '{AssemblyDepsJsonPath}'", assemblyDepsJsonPath);
 
       return (null, assemblyDepsJsonPath);
     }
+#pragma warning restore CA1031
   }
 
   public DependencyContext? DependencyContext { get; }
