@@ -8,6 +8,7 @@ namespace Smdn.Reflection.ReverseGenerating.ListApi;
 public static class AttributeFilter {
   public static readonly AttributeTypeFilter Default = DefaultImpl;
 
+#pragma warning disable CA1502 // TODO: reduce code complexity
   private static bool DefaultImpl(Type attrType, ICustomAttributeProvider attrProvider)
   {
     if (ROCType.FullNameEquals(typeof(System.CLSCompliantAttribute), attrType))
@@ -96,4 +97,5 @@ public static class AttributeFilter {
 
     return true;
   }
+#pragma warning restore CA1502
 }
