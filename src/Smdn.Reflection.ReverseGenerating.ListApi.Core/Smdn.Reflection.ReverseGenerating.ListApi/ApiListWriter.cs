@@ -438,11 +438,13 @@ public class ApiListWriter {
     return ret.ToString();
   }
 
+#pragma warning disable CA1032
   private sealed class MemberDeclarationException : Exception {
     public MemberDeclarationException(string? message, Exception? innerException)
       : base(message, innerException)
     { }
   }
+#pragma warning restore CA1032
 
   private static string GenerateTypeContentDeclarations(
     int nestLevel,
