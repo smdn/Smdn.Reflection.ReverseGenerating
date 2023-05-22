@@ -7,6 +7,7 @@ SPDX-License-Identifier: MIT
     <RootNamespace>Smdn.Reflection.ReverseGenerating.ListApi.Core</RootNamespace>
     <VersionPrefix>1.2.0</VersionPrefix>
     <VersionSuffix></VersionSuffix>
+    <RootNamespace/> <!-- empty the root namespace so that the namespace is determined only by the directory name, for code style rule IDE0030 -->
     <Nullable>enable</Nullable>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
