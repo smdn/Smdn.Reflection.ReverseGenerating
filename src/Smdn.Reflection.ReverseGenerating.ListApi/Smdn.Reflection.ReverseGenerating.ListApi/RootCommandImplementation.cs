@@ -98,12 +98,10 @@ public class RootCommandImplementation {
     getDefaultValue: static () => true
   );
 
-  private readonly IServiceProvider? serviceProvider;
   private readonly Microsoft.Extensions.Logging.ILogger? logger;
 
   public RootCommandImplementation(IServiceProvider? serviceProvider = null)
   {
-    this.serviceProvider = serviceProvider;
     this.logger = serviceProvider?.GetService<ILoggerFactory>()?.CreateLogger(Program.LoggerCategoryName);
   }
 
