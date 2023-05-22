@@ -7,7 +7,7 @@ $RepositoryRootDirectory = [System.IO.Path]::GetFullPath(
 )
 
 # download Smdn.MSBuild.ProjectAssets.* first
-dotnet restore ${RepositoryRootDirectory}eng\InstallProjectAssets.proj
+dotnet restore $([System.IO.Path]::Join($RepositoryRootDirectory, 'eng', 'InstallProjectAssets.proj'))
 
 # create a solution for the build target projects
 Set-Location $RepositoryRootDirectory
@@ -15,7 +15,11 @@ Set-Location $RepositoryRootDirectory
 dotnet new sln
 
 # add build target projects to the solution
-dotnet sln add ${RepositoryRootDirectory}src/Smdn.*/*.csproj
+$ProjectFiles = Get-ChildItem -Path $([System.IO.Path]::Join($RepositoryRootDirectory, 'src', 'Smdn.*', '*')) -Filter '*.csproj'
+
+foreach ($ProjectFile in $ProjectFiles) {
+  dotnet sln add $ProjectFile
+}
 
 # restore dependencies
 dotnet restore
