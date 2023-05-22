@@ -15,12 +15,16 @@ public static class AssemblyExtensions {
 #endif
   public static TValue GetAssemblyMetadataAttributeValue<TAssemblyMetadataAttribute, TValue>(this Assembly assm)
     where TAssemblyMetadataAttribute : Attribute
-    => (TValue)(
-      (assm ?? throw new ArgumentNullException(nameof(assm)))
-      ?.GetCustomAttributesData()
-      ?.FirstOrDefault(static d => ROCType.FullNameEquals(typeof(TAssemblyMetadataAttribute), d.AttributeType))
+    => (TValue)GetAssemblyMetadataAttributeValue<TAssemblyMetadataAttribute>(
+        assm ?? throw new ArgumentNullException(nameof(assm))
+      )!;
+
+  private static object? GetAssemblyMetadataAttributeValue<TAssemblyMetadataAttribute>(Assembly assm)
+    where TAssemblyMetadataAttribute : Attribute
+    => assm
+      .GetCustomAttributesData()
+      .FirstOrDefault(static d => ROCType.FullNameEquals(typeof(TAssemblyMetadataAttribute), d.AttributeType))
       ?.ConstructorArguments
       ?.FirstOrDefault()
-      .Value
-    )!;
+      .Value;
 }
