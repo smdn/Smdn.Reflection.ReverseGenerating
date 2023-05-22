@@ -5,8 +5,18 @@ using System;
 namespace Smdn.Reflection.ReverseGenerating.ListApi;
 
 public class CommandOperationNotSupportedException : NotSupportedException {
-  public CommandOperationNotSupportedException(string message)
+  public CommandOperationNotSupportedException()
+    : base()
+  {
+  }
+
+  public CommandOperationNotSupportedException(string? message)
     : base(message)
+  {
+  }
+
+  public CommandOperationNotSupportedException(string? message, Exception? innerException)
+    : base(message, innerException)
   {
   }
 }

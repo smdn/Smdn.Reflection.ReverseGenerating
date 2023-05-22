@@ -5,8 +5,18 @@ using System;
 namespace Smdn.Reflection.ReverseGenerating.ListApi;
 
 public class InvalidCommandOperationException : InvalidOperationException {
-  public InvalidCommandOperationException(string message)
+  public InvalidCommandOperationException()
+    : base()
+  {
+  }
+
+  public InvalidCommandOperationException(string? message)
     : base(message)
+  {
+  }
+
+  public InvalidCommandOperationException(string? message, Exception? innerException)
+    : base(message, innerException)
   {
   }
 }
