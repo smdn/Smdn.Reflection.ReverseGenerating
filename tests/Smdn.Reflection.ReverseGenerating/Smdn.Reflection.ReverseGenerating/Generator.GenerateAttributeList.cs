@@ -90,7 +90,10 @@ partial class GeneratorTests {
         }
         catch (IndexOutOfRangeException) {
           // Mono bug: https://github.com/dotnet/runtime/issues/72907
-          if (RuntimeInformation.FrameworkDescription.StartsWith("Mono ") || RuntimeInformation.FrameworkDescription.StartsWith(".NET Framework ")) {
+          if (
+            RuntimeInformation.FrameworkDescription.StartsWith("Mono ", StringComparison.OrdinalIgnoreCase) ||
+            RuntimeInformation.FrameworkDescription.StartsWith(".NET Framework ", StringComparison.OrdinalIgnoreCase)
+          ) {
             if (p.CustomAttributes.Count() == 0)
               return Enumerable.Empty<object[]>();
           }

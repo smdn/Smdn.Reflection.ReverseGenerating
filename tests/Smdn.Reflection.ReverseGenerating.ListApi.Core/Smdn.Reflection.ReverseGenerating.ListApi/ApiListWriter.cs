@@ -106,7 +106,9 @@ class ApiListWriterTests {
       var span = diag.Location.GetLineSpan();
       var location = $"{span.Path}({span.StartLinePosition.Line + 1},{span.StartLinePosition.Character + 1})";
 
+#pragma warning disable CA1305 // cannot pass IFormatProvider
       TestContext.WriteLine($"{TestContext.CurrentContext.Test.FullName} {location}: {diag.Severity} {diag.Id}: {diag.GetMessage()}");
+#pragma warning restore CA1305
     }
 
     if (!emitResult.Success)

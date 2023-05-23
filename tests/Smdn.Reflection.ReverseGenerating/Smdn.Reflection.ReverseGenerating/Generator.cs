@@ -16,7 +16,7 @@ public partial class GeneratorTests {
     => Assembly
       .GetExecutingAssembly()
       .GetTypes()
-      .Where(static t => t.FullName!.StartsWith(GeneratorTestCases.NS.Namespace));
+      .Where(static t => t.FullName!.StartsWith(GeneratorTestCases.NS.Namespace, StringComparison.Ordinal));
 
   internal static bool ExceptTestCaseAttributeFilter(Type type, ICustomAttributeProvider _)
     => !typeof(ITestCaseAttribute).IsAssignableFrom(type);
