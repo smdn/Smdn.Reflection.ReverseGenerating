@@ -57,11 +57,13 @@ public class RootCommandImplementation {
     description: "The 'target runtime' option passed to `Build` target when the project will be built.",
     getDefaultValue: static () => null
   );
+#if false
   private static readonly Option<string?> optionOS = new(
     aliases: new[] { "--os" },
     description: "The 'target operating system' option passed to `Build` target when the project will be built.",
     getDefaultValue: static () => null
   );
+#endif
   private static readonly Option<DirectoryInfo> optionOutputDirectory = new(
     aliases: new[] { "-o", "--output-directory" },
     description: "Path to output directory.",
