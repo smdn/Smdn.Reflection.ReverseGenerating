@@ -71,9 +71,14 @@ public static class ProjectBuilder {
     var proj = new Project(
       projectFile: projectFile.FullName,
       globalProperties: globalProps,
-      toolsVersion: RuntimeInformation.FrameworkDescription.Contains(".NET Framework")
-        ? "4.0"
-        : "Current"
+      toolsVersion:
+#if SYSTEM_STRING_CONTAINS_STRING_STRINGCOMPARISON
+        RuntimeInformation.FrameworkDescription.Contains(".NET Framework", StringComparison.OrdinalIgnoreCase)
+#else
+        RuntimeInformation.FrameworkDescription.Contains(".NET Framework")
+#endif
+          ? "4.0"
+          : "Current"
     );
 
     var buildRequest = new BuildRequestData(
