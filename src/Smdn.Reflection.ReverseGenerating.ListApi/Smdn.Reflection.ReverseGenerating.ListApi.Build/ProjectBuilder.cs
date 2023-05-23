@@ -27,7 +27,9 @@ public static class ProjectBuilder {
     public string? TargetFramework { get; init; } = null;
     // public string? OS { get; init; }
     public string? RuntimeIdentifier { get; init; } = null;
+#pragma warning disable CA1819
     public string[]? TargetsToBuild { get; init; } = new[] { "Restore", "Build" };
+#pragma warning restore CA1819
     public LoggerVerbosity LoggerVerbosity { get; init; } = LoggerVerbosity.Minimal;
   }
 
