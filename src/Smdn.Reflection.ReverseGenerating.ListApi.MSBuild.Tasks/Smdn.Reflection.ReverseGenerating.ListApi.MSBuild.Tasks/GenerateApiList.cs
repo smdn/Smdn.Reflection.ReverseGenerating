@@ -82,6 +82,7 @@ public class GenerateApiList : Task {
           logger: new LoggerAdapter(Log, inputAssemblyFilePath)
         );
       }
+#pragma warning disable CA1031
       catch (Exception ex) {
         Log.LogErrorFromException(
           exception: ex,
@@ -92,6 +93,7 @@ public class GenerateApiList : Task {
 
         continue;
       }
+#pragma warning restore CA1031
 
       Log.LogMessage(MessageImportance.High, $"{inputAssemblyFilePath} -> {outputApiListFilePath}");
 
