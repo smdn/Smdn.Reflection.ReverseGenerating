@@ -15,8 +15,10 @@ using Microsoft.Build.Utilities;
 namespace Smdn.Reflection.ReverseGenerating.ListApi.MSBuild.Tasks;
 
 public class GenerateApiList : Task {
+#pragma warning disable CA1819
   [Required]
   public ITaskItem[]? Assemblies { get; set; }
+#pragma warning restore CA1819
 
   public bool GenerateLanguagePrimitiveType { get; set; } = true;
   public bool GenerateFullTypeName { get; set; }
@@ -30,8 +32,10 @@ public class GenerateApiList : Task {
   public bool GenerateEmbeddedResources { get; set; } = true;
   public bool GenerateReferencedAssemblies { get; set; } = true;
 
+#pragma warning disable CA1819
   [Output]
   public ITaskItem[]? GeneratedFiles { get; private set; }
+#pragma warning restore CA1819
 
   private const string DefaultOutputFileExtension = ".apilist.cs";
   private const bool LoadIntoReflectionOnlyContextDefault =
