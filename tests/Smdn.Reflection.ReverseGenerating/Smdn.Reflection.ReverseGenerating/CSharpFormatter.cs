@@ -32,7 +32,7 @@ public class CCloseGeneric : CGeneric<int, string> {
 }
 
 [TestFixture]
-public class CSharpFormatterTests {
+public partial class CSharpFormatterTests {
   [TestCase(typeof(int), "int")]
   [TestCase(typeof(int[]), "int[]")]
   [TestCase(typeof(int[,]), "int[,]")]
