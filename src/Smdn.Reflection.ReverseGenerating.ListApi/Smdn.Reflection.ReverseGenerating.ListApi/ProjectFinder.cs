@@ -32,10 +32,8 @@ public static class ProjectFinder {
     if (1 < solutionAndProjectFiles.Count())
       throw new InvalidOperationException($"multiple solution or project file found in directory '{directory.FullName}'");
 
-    var first = solutionAndProjectFiles.FirstOrDefault();
-
-    if (first is null)
-      throw new FileNotFoundException($"no solution or project file found in directory '{directory.FullName}'");
+    var first = solutionAndProjectFiles.FirstOrDefault()
+      ?? throw new FileNotFoundException($"no solution or project file found in directory '{directory.FullName}'");
 
     logger?.LogDebug("found '{ProjectOrSolutionPath}'", first.FullName);
 

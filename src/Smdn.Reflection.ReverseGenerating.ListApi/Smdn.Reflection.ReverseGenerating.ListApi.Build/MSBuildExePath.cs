@@ -83,11 +83,7 @@ public static class MSBuildExePath {
 #if true
     sdkVersion = default;
 
-    var sdkBasePath = GetSdkBasePath(out sdkVersion);
-
-    if (sdkBasePath is null)
-      throw new InvalidOperationException("could not get SDK base path");
-
+    var sdkBasePath = GetSdkBasePath(out sdkVersion) ?? throw new InvalidOperationException("could not get SDK base path");
     var msbuildExePath = JoinPath(
       sdkBasePath,
       "MSBuild.dll" // .NET SDK always ships MSBuild executables with the extension 'dll'
