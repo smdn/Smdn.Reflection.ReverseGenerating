@@ -27,9 +27,10 @@ public static class ProjectFinder {
       .Where(static file =>
         // *.sln, *.csproj, *.vbproj, etc
         Regex.IsMatch(file.Extension, @"\.(?i:sln|[a-z]+proj)$", RegexOptions.Singleline | RegexOptions.CultureInvariant)
-      );
+      )
+      .ToList();
 
-    if (1 < solutionAndProjectFiles.Count())
+    if (1 < solutionAndProjectFiles.Count)
       throw new InvalidOperationException($"multiple solution or project file found in directory '{directory.FullName}'");
 
     var first = solutionAndProjectFiles.FirstOrDefault()
