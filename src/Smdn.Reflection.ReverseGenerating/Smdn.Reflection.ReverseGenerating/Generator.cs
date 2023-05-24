@@ -985,12 +985,13 @@ public static partial class Generator {
 #if SYSTEM_REFLECTION_NULLABILITYINFOCONTEXT
     var isDelegate = p.Member == p.Member.DeclaringType?.GetDelegateSignatureMethod();
 #endif
-    var param = CSharpFormatter.FormatParameter(
+    var param = CSharpFormatter.FormatParameterCore(
       p,
 #if SYSTEM_REFLECTION_NULLABILITYINFOCONTEXT
       nullabilityInfoContext: isDelegate
         ? options.TypeDeclaration.NullabilityInfoContext
         : options.MemberDeclaration.NullabilityInfoContext,
+      nullabilityInfoContextLockObject: null, // TODO
 #endif
       typeWithNamespace: options.ParameterDeclaration.WithNamespace,
       typeWithDeclaringTypeName: options.ParameterDeclaration.WithDeclaringTypeName,

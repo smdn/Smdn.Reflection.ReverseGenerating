@@ -47,6 +47,23 @@ static partial class CSharpFormatter {
     bool withDeclaringTypeName = true,
     bool translateLanguagePrimitiveType = true
   )
+    => FormatTypeName(
+      f: f ?? throw new ArgumentNullException(nameof(f)),
+      nullabilityInfoContext: nullabilityInfoContext,
+      nullabilityInfoContextLockObject: null,
+      typeWithNamespace: typeWithNamespace,
+      withDeclaringTypeName: withDeclaringTypeName,
+      translateLanguagePrimitiveType: translateLanguagePrimitiveType
+    );
+
+  public static string FormatTypeName(
+    this FieldInfo f,
+    NullabilityInfoContext? nullabilityInfoContext,
+    object? nullabilityInfoContextLockObject,
+    bool typeWithNamespace = true,
+    bool withDeclaringTypeName = true,
+    bool translateLanguagePrimitiveType = true
+  )
     => nullabilityInfoContext is null
       ? FormatTypeName(
         f: f,
@@ -55,7 +72,7 @@ static partial class CSharpFormatter {
         translateLanguagePrimitiveType: translateLanguagePrimitiveType
       )
       : FormatTypeNameWithNullabilityAnnotation(
-        nullabilityInfoContext.Create(f ?? throw new ArgumentNullException(nameof(f))),
+        target: nullabilityInfoContext.Create(f ?? throw new ArgumentNullException(nameof(f)), nullabilityInfoContextLockObject),
         builder: new(capacity: 32),
         options: new(
           AttributeProvider: f,
@@ -93,6 +110,23 @@ static partial class CSharpFormatter {
     bool withDeclaringTypeName = true,
     bool translateLanguagePrimitiveType = true
   )
+    => FormatTypeName(
+      p: p ?? throw new ArgumentNullException(nameof(p)),
+      nullabilityInfoContext: nullabilityInfoContext,
+      nullabilityInfoContextLockObject: null,
+      typeWithNamespace: typeWithNamespace,
+      withDeclaringTypeName: withDeclaringTypeName,
+      translateLanguagePrimitiveType: translateLanguagePrimitiveType
+    );
+
+  public static string FormatTypeName(
+    this PropertyInfo p,
+    NullabilityInfoContext? nullabilityInfoContext,
+    object? nullabilityInfoContextLockObject,
+    bool typeWithNamespace = true,
+    bool withDeclaringTypeName = true,
+    bool translateLanguagePrimitiveType = true
+  )
     => nullabilityInfoContext is null
       ? FormatTypeName(
         p: p,
@@ -101,7 +135,7 @@ static partial class CSharpFormatter {
         translateLanguagePrimitiveType: translateLanguagePrimitiveType
       )
       : FormatTypeNameWithNullabilityAnnotation(
-        nullabilityInfoContext.Create(p ?? throw new ArgumentNullException(nameof(p))),
+        target: nullabilityInfoContext.Create(p ?? throw new ArgumentNullException(nameof(p)), nullabilityInfoContextLockObject),
         builder: new(capacity: 32),
         options: new(
           AttributeProvider: p,
@@ -139,6 +173,23 @@ static partial class CSharpFormatter {
     bool withDeclaringTypeName = true,
     bool translateLanguagePrimitiveType = true
   )
+    => FormatTypeName(
+      p: p ?? throw new ArgumentNullException(nameof(p)),
+      nullabilityInfoContext: nullabilityInfoContext,
+      nullabilityInfoContextLockObject: null,
+      typeWithNamespace: typeWithNamespace,
+      withDeclaringTypeName: withDeclaringTypeName,
+      translateLanguagePrimitiveType: translateLanguagePrimitiveType
+    );
+
+  public static string FormatTypeName(
+    this ParameterInfo p,
+    NullabilityInfoContext? nullabilityInfoContext,
+    object? nullabilityInfoContextLockObject,
+    bool typeWithNamespace = true,
+    bool withDeclaringTypeName = true,
+    bool translateLanguagePrimitiveType = true
+  )
     => nullabilityInfoContext is null
       ? FormatTypeName(
         p: p,
@@ -147,7 +198,7 @@ static partial class CSharpFormatter {
         translateLanguagePrimitiveType: translateLanguagePrimitiveType
       )
       : FormatTypeNameWithNullabilityAnnotation(
-        nullabilityInfoContext.Create(p ?? throw new ArgumentNullException(nameof(p))),
+        target: nullabilityInfoContext.Create(p ?? throw new ArgumentNullException(nameof(p)), nullabilityInfoContextLockObject),
         builder: new(capacity: 32),
         options: new(
           AttributeProvider: p,
@@ -185,6 +236,23 @@ static partial class CSharpFormatter {
     bool withDeclaringTypeName = true,
     bool translateLanguagePrimitiveType = true
   )
+    => FormatTypeName(
+      ev: ev,
+      nullabilityInfoContext: nullabilityInfoContext,
+      nullabilityInfoContextLockObject: null,
+      typeWithNamespace: typeWithNamespace,
+      withDeclaringTypeName: withDeclaringTypeName,
+      translateLanguagePrimitiveType: translateLanguagePrimitiveType
+    );
+
+  public static string FormatTypeName(
+    this EventInfo ev,
+    NullabilityInfoContext? nullabilityInfoContext,
+    object? nullabilityInfoContextLockObject,
+    bool typeWithNamespace = true,
+    bool withDeclaringTypeName = true,
+    bool translateLanguagePrimitiveType = true
+  )
     => nullabilityInfoContext is null
       ? FormatTypeName(
         ev: ev,
@@ -193,7 +261,7 @@ static partial class CSharpFormatter {
         translateLanguagePrimitiveType: translateLanguagePrimitiveType
       )
       : FormatTypeNameWithNullabilityAnnotation(
-        nullabilityInfoContext.Create(ev ?? throw new ArgumentNullException(nameof(ev))),
+        target: nullabilityInfoContext.Create(ev ?? throw new ArgumentNullException(nameof(ev)), nullabilityInfoContextLockObject),
         builder: new(capacity: 32),
         options: new(
           AttributeProvider: ev,
