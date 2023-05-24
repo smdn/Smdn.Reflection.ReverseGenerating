@@ -65,9 +65,11 @@ public partial class CSharpFormatterTests {
   }
 #pragma warning restore CS0649
 
-  [Test]
-  public Task FormatTypeName_FieldInfo_Concurrent()
+  [TestCase(true)]
+  [TestCase(false)]
+  public Task FormatTypeName_OfFieldInfo_Concurrent(bool lockCreatingNullabilityInfo)
     => FormatTypeName_Concurrent(
+      lockCreatingNullabilityInfo,
       typeof(C),
       typeof(C).GetField(nameof(C.F0)) ?? throw new InvalidOperationException($"field not found: {nameof(C.F0)}"),
       typeof(C).GetField(nameof(C.F1)) ?? throw new InvalidOperationException($"field not found: {nameof(C.F1)}"),
@@ -81,9 +83,11 @@ public partial class CSharpFormatterTests {
       typeof(C).GetField(nameof(C.F9)) ?? throw new InvalidOperationException($"field not found: {nameof(C.F9)}")
     );
 
-  [Test]
-  public Task FormatTypeName_PropertyInfo_Concurrent()
+  [TestCase(true)]
+  [TestCase(false)]
+  public Task FormatTypeName_OfPropertyInfo_Concurrent(bool lockCreatingNullabilityInfo)
     => FormatTypeName_Concurrent(
+      lockCreatingNullabilityInfo,
       typeof(C),
       typeof(C).GetProperty(nameof(C.P0)) ?? throw new InvalidOperationException($"property not found: {nameof(C.P0)}"),
       typeof(C).GetProperty(nameof(C.P1)) ?? throw new InvalidOperationException($"property not found: {nameof(C.P1)}"),
@@ -97,9 +101,11 @@ public partial class CSharpFormatterTests {
       typeof(C).GetProperty(nameof(C.P9)) ?? throw new InvalidOperationException($"property not found: {nameof(C.P9)}")
     );
 
-  [Test]
-  public Task FormatTypeName_EventInfo_Concurrent()
+  [TestCase(true)]
+  [TestCase(false)]
+  public Task FormatTypeName_OfEventInfo_Concurrent(bool lockCreatingNullabilityInfo)
     => FormatTypeName_Concurrent(
+      lockCreatingNullabilityInfo,
       typeof(C),
       typeof(C).GetEvent(nameof(C.E0)) ?? throw new InvalidOperationException($"event not found: {nameof(C.E0)}"),
       typeof(C).GetEvent(nameof(C.E1)) ?? throw new InvalidOperationException($"event not found: {nameof(C.E1)}"),
@@ -113,32 +119,99 @@ public partial class CSharpFormatterTests {
       typeof(C).GetEvent(nameof(C.E9)) ?? throw new InvalidOperationException($"event not found: {nameof(C.E9)}")
     );
 
-  [Test]
-  public Task FormatTypeName_ParameterInfo_Concurrent()
+  [TestCase(true)]
+  [TestCase(false)]
+  public Task FormatTypeName_OfParameterInfo_Concurrent(bool lockCreatingNullabilityInfo)
     => FormatTypeName_Concurrent(
+      lockCreatingNullabilityInfo,
       typeof(C),
       typeof(C).GetMethod(nameof(C.M))!.GetParameters()
     );
 
-  private async Task FormatTypeName_Concurrent<TMemberInfo>(Type declaringTypeOfTargets, params TMemberInfo[] targets)
+  private async Task FormatTypeName_Concurrent<TMemberInfo>(
+    bool lockCreatingNullabilityInfo,
+    Type declaringTypeOfTargets,
+    params TMemberInfo[] targets
+  )
     where TMemberInfo : class
   {
-    Func<object, NullabilityInfoContext, string> formatTypeName;
+    Func<object, NullabilityInfoContext, object?, string> formatTypeName;
 
-    if (typeof(TMemberInfo) == typeof(FieldInfo))
-      formatTypeName = new Func<object, NullabilityInfoContext, string>(static (f, ctx) => CSharpFormatter.FormatTypeName((FieldInfo)f, ctx));
-    else if (typeof(TMemberInfo) == typeof(PropertyInfo))
-      formatTypeName = new Func<object, NullabilityInfoContext, string>(static (p, ctx) => CSharpFormatter.FormatTypeName((PropertyInfo)p, ctx));
-    else if (typeof(TMemberInfo) == typeof(EventInfo))
-      formatTypeName = new Func<object, NullabilityInfoContext, string>(static (ev, ctx) => CSharpFormatter.FormatTypeName((EventInfo)ev, ctx));
-    else if (typeof(TMemberInfo) == typeof(ParameterInfo))
-      formatTypeName = new Func<object, NullabilityInfoContext, string>(static (para, ctx) => CSharpFormatter.FormatTypeName((ParameterInfo)para, ctx));
-    else
-      throw new NotSupportedException();
+    if (typeof(TMemberInfo) == typeof(FieldInfo)) {
+      formatTypeName = lockCreatingNullabilityInfo
+        ? new(static (f, ctx, lockObj) => CSharpFormatter.FormatTypeName((FieldInfo)f, ctx, nullabilityInfoContextLockObject: lockObj ?? throw new ArgumentNullException(nameof(lockObj))))
+        : new(static (f, ctx, _) => CSharpFormatter.FormatTypeName((FieldInfo)f, ctx));
+    }
+    else if (typeof(TMemberInfo) == typeof(PropertyInfo)) {
+      formatTypeName = lockCreatingNullabilityInfo
+        ? new(static (p, ctx, lockObj) => CSharpFormatter.FormatTypeName((PropertyInfo)p, ctx, nullabilityInfoContextLockObject: lockObj ?? throw new ArgumentNullException(nameof(lockObj))))
+        : new(static (p, ctx, _) => CSharpFormatter.FormatTypeName((PropertyInfo)p, ctx));
+    }
+    else if (typeof(TMemberInfo) == typeof(EventInfo)) {
+      formatTypeName = lockCreatingNullabilityInfo
+        ? new(static (ev, ctx, lockObj) => CSharpFormatter.FormatTypeName((EventInfo)ev, ctx, nullabilityInfoContextLockObject: lockObj ?? throw new ArgumentNullException(nameof(lockObj))))
+        : new(static (ev, ctx, _) => CSharpFormatter.FormatTypeName((EventInfo)ev, ctx));
+    }
+    else if (typeof(TMemberInfo) == typeof(ParameterInfo)) {
+      formatTypeName = lockCreatingNullabilityInfo
+        ? new(static (para, ctx, lockObj) => CSharpFormatter.FormatTypeName((ParameterInfo)para, ctx, nullabilityInfoContextLockObject: lockObj ?? throw new ArgumentNullException(nameof(lockObj))))
+        : new(static (para, ctx, _) => CSharpFormatter.FormatTypeName((ParameterInfo)para, ctx));
+    }
+    else {
+      throw new InvalidOperationException();
+    }
+
+    Action<NullabilityInfoContext, object?> testAction = new(
+      (ctx, lockObject) => {
+        foreach (var target in targets) {
+          formatTypeName(target, ctx, lockObject);
+        }
+      }
+    );
 
     const int maxNumberOfRepeat = 20;
-    var participantCount = Environment.ProcessorCount * 2;
-    var expectedExceptionThrown = false;
+
+    if (lockCreatingNullabilityInfo) {
+      await AssertNullabilityInfoContextConcurrentOperationWithLockMustNotThrowExceptionAsync(
+        testAction,
+        maxNumberOfRepeat
+      ).ConfigureAwait(false);
+    }
+    else {
+      await AssertNullabilityInfoContextConcurrentOperationWithoutLockMustThrowExceptionAsync(
+        testAction,
+        maxNumberOfRepeat
+      ).ConfigureAwait(false);
+    }
+  }
+
+  internal static ValueTask AssertNullabilityInfoContextConcurrentOperationWithoutLockMustThrowExceptionAsync(
+    Action<NullabilityInfoContext, object?> testAction,
+    int maxNumberOfRepeat
+  )
+    => AssertNullabilityInfoContextConcurrentOperationAsync(
+      testAction: testAction,
+      enableLockForTestAction: false,
+      maxNumberOfRepeat: maxNumberOfRepeat
+    );
+
+  internal static ValueTask AssertNullabilityInfoContextConcurrentOperationWithLockMustNotThrowExceptionAsync(
+    Action<NullabilityInfoContext, object?> testAction,
+    int maxNumberOfRepeat
+  )
+    => AssertNullabilityInfoContextConcurrentOperationAsync(
+      testAction: testAction,
+      enableLockForTestAction: true,
+      maxNumberOfRepeat: maxNumberOfRepeat
+    );
+
+  private static async ValueTask AssertNullabilityInfoContextConcurrentOperationAsync(
+    Action<NullabilityInfoContext, object?> testAction,
+    bool enableLockForTestAction,
+    int maxNumberOfRepeat
+  )
+  {
+    var participantCount = Environment.ProcessorCount * 2 / 3;
 
     for (var n = 0; n < maxNumberOfRepeat; n++) {
       using var barrier = new Barrier(participantCount);
@@ -152,35 +225,48 @@ public partial class CSharpFormatterTests {
       // confirms that an ArgumentException or IndexOutOfRangeException is thrown when
       // NullabilityInfoContext.Create() is called in a concurrency.
       var ctx = new NullabilityInfoContext();
+      var lockObject = enableLockForTestAction ? new object() : null;
+      Exception? thrownException = null;
 
       try {
         await Parallel.ForEachAsync(Enumerable.Range(0, participantCount), parallelOptions, (_, cancellationToken) => {
           barrier.SignalAndWait(cancellationToken);
 
-          foreach (var target in targets) {
-            formatTypeName(target, ctx);
-          }
+          testAction(ctx, lockObject);
 
           return default; // ValueTask
         });
       }
       catch (ArgumentException ex) when (
-        (ex.Message ?? string.Empty).Contains(declaringTypeOfTargets.FullName!, StringComparison.Ordinal)
+        (ex.Message ?? string.Empty).Contains("An item with the same key has already been added.", StringComparison.Ordinal)
       ) {
         // excepted exception: "An item with the same key has already been added."
-        expectedExceptionThrown = true;
+        thrownException = ex;
       }
-      catch (IndexOutOfRangeException) {
+      catch (IndexOutOfRangeException ex) {
         // excepted exception: "Index was outside the bounds of the array."
-        expectedExceptionThrown = true;
+        thrownException = ex;
+      }
+      catch (InvalidOperationException ex) when (
+        (ex.Message ?? string.Empty).Contains("Operations that change non-concurrent collections must have exclusive access.", StringComparison.Ordinal)
+      ) {
+        // excepted exception: "Operations that change non-concurrent collections must have exclusive access. A concurrent update was performed on this collection and corrupted its state. The collection's state is no longer correct."
+        thrownException = ex;
       }
 
-      if (expectedExceptionThrown)
-        break;
+      if (thrownException is not null) {
+        if (enableLockForTestAction) {
+          Assert.Fail($"The operation failed with exception. ({thrownException.GetType().FullName})");
+          return;
+        }
+        else {
+          return; // expected exception thrown
+        }
+      }
     }
 
-    if (!expectedExceptionThrown)
-      Assert.Warn($"The operation succeeded unexpectedly. ({formatTypeName.Method.Name}");
+    if (!enableLockForTestAction)
+      Assert.Warn($"The operation succeeded unexpectedly. ({testAction.Method.Name})");
   }
 }
 #endif // SYSTEM_REFLECTION_NULLABILITYINFOCONTEXT

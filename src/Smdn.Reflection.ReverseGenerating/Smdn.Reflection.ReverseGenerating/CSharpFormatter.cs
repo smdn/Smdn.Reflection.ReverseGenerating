@@ -221,6 +221,7 @@ public static partial class CSharpFormatter /* ITypeFormatter */ {
       parameterList: (m ?? throw new ArgumentNullException(nameof(m))).GetParameters(),
 #if SYSTEM_REFLECTION_NULLABILITYINFOCONTEXT
       nullabilityInfoContext: null,
+      nullabilityInfoContextLockObject: null,
 #endif
       typeWithNamespace: typeWithNamespace,
       useDefaultLiteral: useDefaultLiteral
@@ -236,6 +237,22 @@ public static partial class CSharpFormatter /* ITypeFormatter */ {
     => FormatParameterListCore(
       parameterList: (m ?? throw new ArgumentNullException(nameof(m))).GetParameters(),
       nullabilityInfoContext: nullabilityInfoContext,
+      nullabilityInfoContextLockObject: null,
+      typeWithNamespace: typeWithNamespace,
+      useDefaultLiteral: useDefaultLiteral
+    );
+
+  public static string FormatParameterList(
+    MethodBase m,
+    NullabilityInfoContext? nullabilityInfoContext,
+    object? nullabilityInfoContextLockObject,
+    bool typeWithNamespace = true,
+    bool useDefaultLiteral = false
+  )
+    => FormatParameterListCore(
+      parameterList: (m ?? throw new ArgumentNullException(nameof(m))).GetParameters(),
+      nullabilityInfoContext: nullabilityInfoContext,
+      nullabilityInfoContextLockObject: nullabilityInfoContextLockObject,
       typeWithNamespace: typeWithNamespace,
       useDefaultLiteral: useDefaultLiteral
     );
@@ -250,6 +267,7 @@ public static partial class CSharpFormatter /* ITypeFormatter */ {
       parameterList: parameterList ?? throw new ArgumentNullException(nameof(parameterList)),
 #if SYSTEM_REFLECTION_NULLABILITYINFOCONTEXT
       nullabilityInfoContext: null,
+      nullabilityInfoContextLockObject: null,
 #endif
       typeWithNamespace: typeWithNamespace,
       useDefaultLiteral: useDefaultLiteral
@@ -265,6 +283,22 @@ public static partial class CSharpFormatter /* ITypeFormatter */ {
     => FormatParameterListCore(
       parameterList: parameterList ?? throw new ArgumentNullException(nameof(parameterList)),
       nullabilityInfoContext: nullabilityInfoContext,
+      nullabilityInfoContextLockObject: null,
+      typeWithNamespace: typeWithNamespace,
+      useDefaultLiteral: useDefaultLiteral
+    );
+
+  public static string FormatParameterList(
+    ParameterInfo[] parameterList,
+    NullabilityInfoContext? nullabilityInfoContext,
+    object? nullabilityInfoContextLockObject,
+    bool typeWithNamespace = true,
+    bool useDefaultLiteral = false
+  )
+    => FormatParameterListCore(
+      parameterList: parameterList ?? throw new ArgumentNullException(nameof(parameterList)),
+      nullabilityInfoContext: nullabilityInfoContext,
+      nullabilityInfoContextLockObject: nullabilityInfoContextLockObject,
       typeWithNamespace: typeWithNamespace,
       useDefaultLiteral: useDefaultLiteral
     );
@@ -274,6 +308,7 @@ public static partial class CSharpFormatter /* ITypeFormatter */ {
     ParameterInfo[] parameterList,
 #if SYSTEM_REFLECTION_NULLABILITYINFOCONTEXT
     NullabilityInfoContext? nullabilityInfoContext,
+    object? nullabilityInfoContextLockObject,
 #endif
     bool typeWithNamespace = true,
     bool useDefaultLiteral = false
@@ -285,6 +320,7 @@ public static partial class CSharpFormatter /* ITypeFormatter */ {
           p,
 #if SYSTEM_REFLECTION_NULLABILITYINFOCONTEXT
           nullabilityInfoContext: nullabilityInfoContext,
+          nullabilityInfoContextLockObject: nullabilityInfoContextLockObject,
 #endif
           typeWithNamespace: typeWithNamespace,
           useDefaultLiteral: useDefaultLiteral
@@ -297,10 +333,11 @@ public static partial class CSharpFormatter /* ITypeFormatter */ {
     bool typeWithNamespace = true,
     bool useDefaultLiteral = false
   )
-    => FormatParameter(
+    => FormatParameterCore(
       p: p ?? throw new ArgumentNullException(nameof(p)),
 #if SYSTEM_REFLECTION_NULLABILITYINFOCONTEXT
       nullabilityInfoContext: null,
+      nullabilityInfoContextLockObject: null,
 #endif
       typeWithNamespace: typeWithNamespace,
       typeWithDeclaringTypeName: true,
@@ -323,6 +360,22 @@ public static partial class CSharpFormatter /* ITypeFormatter */ {
     => FormatParameter(
       p: p ?? throw new ArgumentNullException(nameof(p)),
       nullabilityInfoContext: nullabilityInfoContext,
+      nullabilityInfoContextLockObject: null,
+      typeWithNamespace: typeWithNamespace,
+      useDefaultLiteral: useDefaultLiteral
+    );
+
+  public static string FormatParameter(
+    ParameterInfo p,
+    NullabilityInfoContext? nullabilityInfoContext,
+    object? nullabilityInfoContextLockObject,
+    bool typeWithNamespace = true,
+    bool useDefaultLiteral = false
+  )
+    => FormatParameterCore(
+      p: p ?? throw new ArgumentNullException(nameof(p)),
+      nullabilityInfoContext: nullabilityInfoContext,
+      nullabilityInfoContextLockObject: nullabilityInfoContextLockObject,
       typeWithNamespace: typeWithNamespace,
       typeWithDeclaringTypeName: true,
       valueFormatOptions: new(
@@ -335,10 +388,11 @@ public static partial class CSharpFormatter /* ITypeFormatter */ {
     );
 #endif
 
-  internal static string FormatParameter(
+  internal static string FormatParameterCore(
     ParameterInfo p,
 #if SYSTEM_REFLECTION_NULLABILITYINFOCONTEXT
     NullabilityInfoContext? nullabilityInfoContext,
+    object? nullabilityInfoContextLockObject,
 #endif
     bool typeWithNamespace,
     bool typeWithDeclaringTypeName,
@@ -368,6 +422,7 @@ public static partial class CSharpFormatter /* ITypeFormatter */ {
 #pragma warning disable SA1114
 #if SYSTEM_REFLECTION_NULLABILITYINFOCONTEXT
         nullabilityInfoContext: nullabilityInfoContext,
+        nullabilityInfoContextLockObject: nullabilityInfoContextLockObject,
 #endif
         typeWithNamespace: typeWithNamespace,
         withDeclaringTypeName: typeWithDeclaringTypeName
