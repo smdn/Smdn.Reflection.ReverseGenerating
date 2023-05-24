@@ -386,6 +386,7 @@ public static partial class Generator {
 #pragma warning disable SA1114
 #if SYSTEM_REFLECTION_NULLABILITYINFOCONTEXT
             nullabilityInfoContext: memberOptions.NullabilityInfoContext,
+            nullabilityInfoContextLockObject: memberOptions.NullabilityInfoContextLockObject,
 #endif
             typeWithNamespace: memberOptions.WithNamespace
 #pragma warning restore SA1114
@@ -509,6 +510,7 @@ public static partial class Generator {
 #pragma warning disable SA1114
 #if SYSTEM_REFLECTION_NULLABILITYINFOCONTEXT
         nullabilityInfoContext: memberOptions.NullabilityInfoContext,
+        nullabilityInfoContextLockObject: memberOptions.NullabilityInfoContextLockObject,
 #endif
         typeWithNamespace: memberOptions.WithNamespace
 #pragma warning restore SA1114
@@ -744,6 +746,9 @@ public static partial class Generator {
       NullabilityInfoContext = asDelegateDeclaration
         ? options.TypeDeclaration.NullabilityInfoContext
         : options.MemberDeclaration.NullabilityInfoContext,
+      NullabilityInfoContextLockObject = asDelegateDeclaration
+        ? options.TypeDeclaration.NullabilityInfoContextLockObject
+        : options.MemberDeclaration.NullabilityInfoContextLockObject,
 #endif
       FormatTypeWithNamespace = asDelegateDeclaration
         ? options.TypeDeclaration.WithNamespace
@@ -765,6 +770,7 @@ public static partial class Generator {
 #pragma warning disable SA1114
 #if SYSTEM_REFLECTION_NULLABILITYINFOCONTEXT
         nullabilityInfoContext: formattingOptions.NullabilityInfoContext,
+        nullabilityInfoContextLockObject: formattingOptions.NullabilityInfoContextLockObject,
 #endif
         typeWithNamespace: formattingOptions.FormatTypeWithNamespace
 #pragma warning restore SA1114
@@ -991,7 +997,9 @@ public static partial class Generator {
       nullabilityInfoContext: isDelegate
         ? options.TypeDeclaration.NullabilityInfoContext
         : options.MemberDeclaration.NullabilityInfoContext,
-      nullabilityInfoContextLockObject: null, // TODO
+      nullabilityInfoContextLockObject: isDelegate
+        ? options.TypeDeclaration.NullabilityInfoContextLockObject
+        : options.MemberDeclaration.NullabilityInfoContextLockObject,
 #endif
       typeWithNamespace: options.ParameterDeclaration.WithNamespace,
       typeWithDeclaringTypeName: options.ParameterDeclaration.WithDeclaringTypeName,
@@ -1073,6 +1081,7 @@ public static partial class Generator {
 #pragma warning disable SA1114
 #if SYSTEM_REFLECTION_NULLABILITYINFOCONTEXT
           nullabilityInfoContext: memberOptions.NullabilityInfoContext,
+          nullabilityInfoContextLockObject: memberOptions.NullabilityInfoContextLockObject,
 #endif
           typeWithNamespace: memberOptions.WithNamespace
 #pragma warning restore SA1114

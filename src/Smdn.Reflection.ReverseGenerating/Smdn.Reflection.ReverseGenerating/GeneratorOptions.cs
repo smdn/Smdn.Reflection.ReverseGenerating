@@ -37,6 +37,7 @@ public class GeneratorOptions : ICloneable {
     public bool OmitEnumUnderlyingTypeIfPossible { get; set; } = false;
 #if SYSTEM_REFLECTION_NULLABILITYINFOCONTEXT
     public NullabilityInfoContext? NullabilityInfoContext { get; set; } = new();
+    public object? NullabilityInfoContextLockObject { get; set; }
 #endif
 
     internal TypeDeclarationOptions Clone()
@@ -55,6 +56,7 @@ public class GeneratorOptions : ICloneable {
     public MethodBodyOption AccessorBody { get; set; } = MethodBodyOption.EmptyImplementation;
 #if SYSTEM_REFLECTION_NULLABILITYINFOCONTEXT
     public NullabilityInfoContext? NullabilityInfoContext { get; set; } = new();
+    public object? NullabilityInfoContextLockObject { get; set; }
 #endif
 
     internal MemberDeclarationOptions Clone()
