@@ -571,12 +571,12 @@ public static class C {{
         }
       );
 #endif
-#if NET7_0_OR_GREATER
+#if NET8_0_OR_GREATER
       yield return (
         "Lib",
-        "net7.0",
+        "net8.0",
         new[] {
-          "System.Runtime, Version=7.0.",
+          "System.Runtime, Version=8.0.",
         }
       );
 #endif
@@ -620,14 +620,14 @@ public static class C {{
         }
       );
 #endif
-#if NET7_0_OR_GREATER
+#if NET8_0_OR_GREATER
       yield return (
         "LibReferencedAssemblies1",
-        "net7.0",
+        "net8.0",
         new[] {
-          "System.Runtime, Version=7.0.",
-          "System.Threading, Version=7.0.",
-          "System.Xml.ReaderWriter, Version=7.0.",
+          "System.Runtime, Version=8.0.",
+          "System.Threading, Version=8.0.",
+          "System.Xml.ReaderWriter, Version=8.0.",
         }
       );
 #endif

@@ -7,7 +7,7 @@ SPDX-License-Identifier: MIT
   <PropertyGroup>
     <UseExportedTasksFromOutputAssembly>true</UseExportedTasksFromOutputAssembly>
     <UsingTaskAssemblyFileConfiguration>Release</UsingTaskAssemblyFileConfiguration>
-    <UsingTaskAssemblyFileTargetFramework>net6.0</UsingTaskAssemblyFileTargetFramework>
+    <UsingTaskAssemblyFileTargetFramework>net8.0</UsingTaskAssemblyFileTargetFramework>
   </PropertyGroup>
 
   <UsingTask

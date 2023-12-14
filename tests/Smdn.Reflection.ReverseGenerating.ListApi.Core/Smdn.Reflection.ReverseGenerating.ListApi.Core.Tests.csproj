@@ -11,7 +11,7 @@ SPDX-License-Identifier: MIT
     <NoWarn>CS2002;$(NoWarn)</NoWarn>
   </PropertyGroup>
 
-  <Import Project="..\..\src\Sdk.net7.0.props" />
+  <Import Project="..\..\src\Sdk.net8.0.props" />
 
   <ItemGroup>
     <Compile Include="..\Common\**\*.cs" />
@@ -43,14 +43,14 @@ SPDX-License-Identifier: MIT
     <MSBuild Projects="@(TestProjects)" Targets="Build" Properties="Configuration=Release;TargetFramework=net6.0">
       <Output TaskParameter="TargetOutputs" ItemName="TestAssembliesNet60" />
     </MSBuild>
-    <MSBuild Projects="@(TestProjects)" Targets="Build" Properties="Configuration=Release;TargetFramework=net7.0" Condition="$(TargetFrameworks.Contains('net7.0'))">
-      <Output TaskParameter="TargetOutputs" ItemName="TestAssembliesNet70" />
+    <MSBuild Projects="@(TestProjects)" Targets="Build" Properties="Configuration=Release;TargetFramework=net8.0" Condition="$(TargetFrameworks.Contains('net8.0'))">
+      <Output TaskParameter="TargetOutputs" ItemName="TestAssembliesNet80" />
     </MSBuild>
 
     <ItemGroup>
       <TestAssemblies Include="@(TestAssembliesNetStandard21)" />
       <TestAssemblies Include="@(TestAssembliesNet60)" />
-      <TestAssemblies Include="@(TestAssembliesNet70)" />
+      <TestAssemblies Include="@(TestAssembliesNet80)" />
     </ItemGroup>
 
     <PropertyGroup>

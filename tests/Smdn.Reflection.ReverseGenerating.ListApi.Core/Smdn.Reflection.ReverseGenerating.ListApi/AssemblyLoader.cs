@@ -101,9 +101,9 @@ class AssemblyLoaderTests {
   [TestCase(true, "net6.0")]
   [TestCase(false, "net6.0")]
 #endif
-#if NET7_0_OR_GREATER
-  [TestCase(true, "net7.0")]
-  [TestCase(false, "net7.0")]
+#if NET8_0_OR_GREATER
+  [TestCase(true, "net8.0")]
+  [TestCase(false, "net8.0")]
 #endif
   public void UsingAssembly(bool loadIntoReflectionOnlyContext, string targetFrameworkMoniker)
   {
@@ -210,9 +210,9 @@ class AssemblyLoaderTests {
   [TestCase(true, "net6.0")]
   [TestCase(false, "net6.0")]
 #endif
-#if NET7_0_OR_GREATER
-  [TestCase(true, "net7.0")]
-  [TestCase(false, "net7.0")]
+#if NET8_0_OR_GREATER
+  [TestCase(true, "net8.0")]
+  [TestCase(false, "net8.0")]
 #endif
   public void UsingAssembly_FromStream(bool loadIntoReflectionOnlyContext, string targetFrameworkMoniker)
   {
@@ -275,9 +275,9 @@ class AssemblyLoaderTests {
   [TestCase(true, "net6.0")]
   [TestCase(false, "net6.0")]
 #endif
-#if NET7_0_OR_GREATER
-  [TestCase(true, "net7.0")]
-  [TestCase(false, "net7.0")]
+#if NET8_0_OR_GREATER
+  [TestCase(true, "net8.0")]
+  [TestCase(false, "net8.0")]
 #endif
   public void UsingAssembly_ResolveDependency_ProjectReference(bool loadIntoReflectionOnlyContext, string targetFrameworkMoniker)
   {
@@ -336,9 +336,9 @@ class AssemblyLoaderTests {
   [TestCase(true, "net6.0")]
   [TestCase(false, "net6.0")]
 #endif
-#if NET7_0_OR_GREATER
-  [TestCase(true, "net7.0")]
-  [TestCase(false, "net7.0")]
+#if NET8_0_OR_GREATER
+  [TestCase(true, "net8.0")]
+  [TestCase(false, "net8.0")]
 #endif
   public void UsingAssembly_FromStream_ResolveDependency_ProjectReference(bool loadIntoReflectionOnlyContext, string targetFrameworkMoniker)
   {
@@ -401,9 +401,9 @@ class AssemblyLoaderTests {
   [TestCase(true, "net6.0")]
   [TestCase(false, "net6.0")]
 #endif
-#if NET7_0_OR_GREATER
-  [TestCase(true, "net7.0")]
-  [TestCase(false, "net7.0")]
+#if NET8_0_OR_GREATER
+  [TestCase(true, "net8.0")]
+  [TestCase(false, "net8.0")]
 #endif
   public void UsingAssembly_ResolveDependency_PackageReference(bool loadIntoReflectionOnlyContext, string targetFrameworkMoniker)
   {

@@ -9,5 +9,5 @@
     <PackageReference Include="Microsoft.Extensions.Logging" Version="6.0.0" />
   </ItemGroup>
 
-  <Import Project="..\..\..\src\Sdk.net7.0.props" />
+  <Import Project="..\..\..\src\Sdk.net8.0.props" />
 </Project>
