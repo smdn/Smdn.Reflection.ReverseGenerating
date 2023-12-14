@@ -39,6 +39,10 @@ SPDX-License-Identifier: MIT
     <!-- .NET 7.x -->
     @(TaskFiles->WithMetadataValue('TargetFramework', 'net6.0')->'%(ImportLine)', '%0D%0A    ')
   </ImportGroup>
+  <ImportGroup Condition=" '%24(MSBuildRuntimeType)' == 'Core' and %24([System.Runtime.InteropServices.RuntimeInformation]::FrameworkDescription.StartsWith('.NET 8.')) ">
+    <!-- .NET 8.x -->
+    @(TaskFiles->WithMetadataValue('TargetFramework', 'net8.0')->'%(ImportLine)', '%0D%0A    ')
+  </ImportGroup>
 </Project>
       ]]></GenerateMSBuildTargetsFileLines>
     </PropertyGroup>
