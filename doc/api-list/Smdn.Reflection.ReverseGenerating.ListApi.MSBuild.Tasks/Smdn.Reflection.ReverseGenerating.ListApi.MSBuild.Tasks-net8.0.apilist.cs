@@ -2,7 +2,7 @@
 //   Name: Smdn.Reflection.ReverseGenerating.ListApi.MSBuild.Tasks
 //   AssemblyVersion: 1.3.0.0
 //   InformationalVersion: 1.3.0+26ff166439449b3d7ec53cbaf3e1d66c2264a611
-//   TargetFramework: .NETCoreApp,Version=v6.0
+//   TargetFramework: .NETCoreApp,Version=v8.0
 //   Configuration: Release
 //   Referenced assemblies:
 //     Microsoft.Build.Framework, Version=15.1.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
@@ -10,9 +10,9 @@
 //     Microsoft.Extensions.Logging.Abstractions, Version=6.0.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60
 //     Smdn.Reflection.ReverseGenerating, Version=1.1.6.0, Culture=neutral
 //     Smdn.Reflection.ReverseGenerating.ListApi.Core, Version=1.2.0.0, Culture=neutral
-//     System.Collections, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
-//     System.Runtime, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
-//     System.Text.Encoding.Extensions, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+//     System.Collections, Version=8.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+//     System.Runtime, Version=8.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+//     System.Text.Encoding.Extensions, Version=8.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
 #nullable enable annotations
 
 using Microsoft.Build.Framework;
