@@ -3,7 +3,6 @@
 #pragma warning disable CA1848
 
 #if NETCOREAPP3_1_OR_GREATER
-using System;
 using System.IO;
 using System.Reflection;
 using System.Runtime.InteropServices;
