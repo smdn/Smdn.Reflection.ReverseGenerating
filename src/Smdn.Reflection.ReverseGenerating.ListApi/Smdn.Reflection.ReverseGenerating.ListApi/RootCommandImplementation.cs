@@ -29,7 +29,7 @@ namespace Smdn.Reflection.ReverseGenerating.ListApi;
 public class RootCommandImplementation {
   public static readonly string DefaultBuildConfiguration = "Release";
 
-  private static readonly Argument<FileSystemInfo> argumentInput = new(
+  private static readonly Argument<FileSystemInfo> ArgumentInput = new(
     name: "input",
 #if FEATURE_BUILD_PROJ
     description: "Path to project/solution/assembly file to generate the API list. The command will search for an project file from the current directory if not specified, or search from the directory if a directory is specified.",
@@ -42,34 +42,34 @@ public class RootCommandImplementation {
     Arity = ArgumentArity.ExactlyOne,
   };
 
-  private static readonly Option<string?> optionConfiguration = new(
+  private static readonly Option<string?> OptionConfiguration = new(
     aliases: new[] { "-c", "--configuration" },
     description: "The 'build configuration' option passed to `Build` target when the project will be built.",
     getDefaultValue: static () => DefaultBuildConfiguration
   );
-  private static readonly Option<string?> optionTargetFramework = new(
+  private static readonly Option<string?> OptionTargetFramework = new(
     aliases: new[] { "-f", "--framework" },
     description: "The 'target framework' option passed to `Build` target when the project will be built.",
     getDefaultValue: static () => null
   );
-  private static readonly Option<string?> optionRuntimeIdentifier = new(
+  private static readonly Option<string?> OptionRuntimeIdentifier = new(
     aliases: new[] { "-r", "--runtime" },
     description: "The 'target runtime' option passed to `Build` target when the project will be built.",
     getDefaultValue: static () => null
   );
 #if false
-  private static readonly Option<string?> optionOS = new(
+  private static readonly Option<string?> OptionOS = new(
     aliases: new[] { "--os" },
     description: "The 'target operating system' option passed to `Build` target when the project will be built.",
     getDefaultValue: static () => null
   );
 #endif
-  private static readonly Option<DirectoryInfo> optionOutputDirectory = new(
+  private static readonly Option<DirectoryInfo> OptionOutputDirectory = new(
     aliases: new[] { "-o", "--output-directory" },
     description: "Path to output directory.",
     getDefaultValue: static () => new DirectoryInfo(Environment.CurrentDirectory)
   );
-  private static readonly Option<bool> optionLoadAssemblyIntoReflectionOnlyContext = new(
+  private static readonly Option<bool> OptionLoadAssemblyIntoReflectionOnlyContext = new(
     aliases: new[] { "--load-reflection-only" },
     description: "Loads and processes input assemblies in the reflection-only context.",
     getDefaultValue: static () =>
@@ -79,22 +79,22 @@ public class RootCommandImplementation {
       false
 #endif
   );
-  private static readonly Option<bool> optionGenerateFullTypeName = new(
+  private static readonly Option<bool> OptionGenerateFullTypeName = new(
     aliases: new[] { "--generate-fulltypename" },
     description: "Generates declarations with full type name.",
     getDefaultValue: static () => false
   );
-  private static readonly Option<MethodBodyOption> optionGenerateMethodBody = new(
+  private static readonly Option<MethodBodyOption> OptionGenerateMethodBody = new(
     aliases: new[] { "--generate-methodbody" },
     description: "Generates method body with specified type of implementation.",
     getDefaultValue: static () => MethodBodyOption.EmptyImplementation
   );
-  private static readonly Option<bool> optionGenerateStaticMembersFirst = new(
+  private static readonly Option<bool> OptionGenerateStaticMembersFirst = new(
     aliases: new[] { "--generate-staticmembersfirst" },
     description: "Generates member declarations in the order of the static members first.",
     getDefaultValue: static () => false
   );
-  private static readonly Option<bool> optionGenerateNullableAnnotations = new(
+  private static readonly Option<bool> OptionGenerateNullableAnnotations = new(
     aliases: new[] { "--generate-nullableannotations" },
     description: "Generates declarations with nullable annotations.",
     getDefaultValue: static () => true
@@ -110,20 +110,20 @@ public class RootCommandImplementation {
   internal Command CreateCommand()
   {
     var rootCommand = new RootCommand {
-      argumentInput,
+      ArgumentInput,
 #if FEATURE_BUILD_PROJ
-      optionConfiguration,
-      optionTargetFramework,
-      // optionOS
-      optionRuntimeIdentifier,
+      OptionConfiguration,
+      OptionTargetFramework,
+      // OptionOS
+      OptionRuntimeIdentifier,
 #endif
-      optionOutputDirectory,
+      OptionOutputDirectory,
       VerbosityOption.Option,
-      optionLoadAssemblyIntoReflectionOnlyContext,
-      optionGenerateFullTypeName,
-      optionGenerateMethodBody,
-      optionGenerateStaticMembersFirst,
-      optionGenerateNullableAnnotations,
+      OptionLoadAssemblyIntoReflectionOnlyContext,
+      OptionGenerateFullTypeName,
+      OptionGenerateMethodBody,
+      OptionGenerateStaticMembersFirst,
+      OptionGenerateNullableAnnotations,
     };
 
     rootCommand.Handler = CommandHandler.Create<ParseResult, IConsole>(CommandMain);
@@ -143,17 +143,17 @@ public class RootCommandImplementation {
     var options = new ApiListWriterOptions();
 
 #pragma warning disable IDE0055
-    options.TypeDeclaration.WithNamespace       = parseResult.ValueForOption(optionGenerateFullTypeName);
-    options.MemberDeclaration.WithNamespace     = parseResult.ValueForOption(optionGenerateFullTypeName);
-    options.AttributeDeclaration.WithNamespace  = parseResult.ValueForOption(optionGenerateFullTypeName);
+    options.TypeDeclaration.WithNamespace       = parseResult.ValueForOption(OptionGenerateFullTypeName);
+    options.MemberDeclaration.WithNamespace     = parseResult.ValueForOption(OptionGenerateFullTypeName);
+    options.AttributeDeclaration.WithNamespace  = parseResult.ValueForOption(OptionGenerateFullTypeName);
 
-    var methodBody = parseResult.ValueForOption(optionGenerateMethodBody);
+    var methodBody = parseResult.ValueForOption(OptionGenerateMethodBody);
 
     options.MemberDeclaration.MethodBody        = methodBody;
     options.MemberDeclaration.AccessorBody      = methodBody;
 
-    options.Writer.OrderStaticMembersFirst          = parseResult.ValueForOption(optionGenerateStaticMembersFirst);
-    options.Writer.WriteNullableAnnotationDirective = parseResult.ValueForOption(optionGenerateNullableAnnotations);
+    options.Writer.OrderStaticMembersFirst          = parseResult.ValueForOption(OptionGenerateStaticMembersFirst);
+    options.Writer.WriteNullableAnnotationDirective = parseResult.ValueForOption(OptionGenerateNullableAnnotations);
 
     options.AttributeDeclaration.TypeFilter     = AttributeFilter.Default;
 
@@ -164,7 +164,7 @@ public class RootCommandImplementation {
   }
 
   private static DirectoryInfo GetOutputDirectory(ParseResult parseResult)
-    => parseResult.ValueForOption(optionOutputDirectory) ?? new(Environment.CurrentDirectory);
+    => parseResult.ValueForOption(OptionOutputDirectory) ?? new(Environment.CurrentDirectory);
 
   private void CommandMain(ParseResult parseResult, IConsole console)
   {
@@ -179,8 +179,8 @@ public class RootCommandImplementation {
 
     var options = GetApiListWriterOptions(parseResult);
     var outputDirectory = GetOutputDirectory(parseResult);
-    var loadAssemblyIntoReflectionOnlyContext = parseResult.ValueForOption(optionLoadAssemblyIntoReflectionOnlyContext);
-    var enableNullabilityAnnotations = parseResult.ValueForOption(optionGenerateNullableAnnotations);
+    var loadAssemblyIntoReflectionOnlyContext = parseResult.ValueForOption(OptionLoadAssemblyIntoReflectionOnlyContext);
+    var enableNullabilityAnnotations = parseResult.ValueForOption(OptionGenerateNullableAnnotations);
 
     foreach (var inputAssemblyFile in GetInputAssemblyFiles(parseResult)) {
       AssemblyLoader.UsingAssembly(
@@ -336,7 +336,7 @@ public class RootCommandImplementation {
 
   private IEnumerable<FileInfo> GetInputAssemblyFiles(ParseResult parseResult)
   {
-    var input = parseResult.ValueForArgument(argumentInput);
+    var input = parseResult.ValueForArgument(ArgumentInput);
     FileInfo inputFile;
 
     if (input is null)
@@ -382,10 +382,10 @@ public class RootCommandImplementation {
       inputAssemblyFiles = ProjectBuilder.Build(
         inputFile,
         options: new() {
-          Configuration = parseResult.ValueForOption(optionConfiguration),
-          TargetFramework = parseResult.ValueForOption(optionTargetFramework),
-          // OS: parseResult.ValueForOption(optionOS),
-          RuntimeIdentifier = parseResult.ValueForOption(optionRuntimeIdentifier),
+          Configuration = parseResult.ValueForOption(OptionConfiguration),
+          TargetFramework = parseResult.ValueForOption(OptionTargetFramework),
+          // OS: parseResult.ValueForOption(OptionOS),
+          RuntimeIdentifier = parseResult.ValueForOption(OptionRuntimeIdentifier),
           LoggerVerbosity = VerbosityOption.ParseLoggerVerbosity(parseResult),
         },
         logger: logger

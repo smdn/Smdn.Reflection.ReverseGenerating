@@ -30,12 +30,12 @@ internal sealed class Program {
       .UseDefaults()
       .UseExceptionHandler(
         onException: static (ex, context) => {
-          Exception? _ex = ex;
+          Exception? caughtException = ex;
 
           if (ex is TargetInvocationException exTargetInvocation)
-            _ex = exTargetInvocation.InnerException;
+            caughtException = exTargetInvocation.InnerException;
 
-          switch (_ex) {
+          switch (caughtException) {
             case InvalidCommandOperationException exInvalidCommandOperation:
               Console.Error.WriteLine(exInvalidCommandOperation.Message);
               break;
@@ -45,7 +45,7 @@ internal sealed class Program {
               break;
 
             default:
-              Console.Error.WriteLine(_ex);
+              Console.Error.WriteLine(caughtException);
               break;
           }
         },

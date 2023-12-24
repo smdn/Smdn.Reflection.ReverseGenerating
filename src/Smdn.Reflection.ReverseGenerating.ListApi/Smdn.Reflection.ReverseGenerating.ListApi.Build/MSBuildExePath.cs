@@ -56,7 +56,7 @@ public static class MSBuildExePath {
   }
 #endif
 
-  private static readonly Regex regexSdkBasePath = new(
+  private static readonly Regex RegexSdkBasePath = new(
     @"^\s*Base Path:\s+(?<base_path>.+)$",
     RegexOptions.Multiline | RegexOptions.CultureInvariant | RegexOptions.Compiled
   );
@@ -65,7 +65,7 @@ public static class MSBuildExePath {
   {
     sdkVersion = default;
 
-    var match = regexSdkBasePath.Match(Shell.Execute("dotnet --info"));
+    var match = RegexSdkBasePath.Match(Shell.Execute("dotnet --info"));
 
     if (match.Success) {
       var basePath = match.Groups["base_path"].Value.TrimEnd();
