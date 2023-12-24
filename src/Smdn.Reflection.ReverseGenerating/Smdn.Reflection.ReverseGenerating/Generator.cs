@@ -965,19 +965,19 @@ public static partial class Generator {
 
     var (methodBody, endOfMethodBody) = m.IsAbstract
       ? options.MemberDeclaration.MethodBody switch {
-          MethodBodyOption.None => (null, null),
-          MethodBodyOption.EmptyImplementation or
-          MethodBodyOption.ThrowNotImplementedException or
-          MethodBodyOption.ThrowNull => (null, endOfStatement),
-          _ => throw new InvalidOperationException($"invalid value of {nameof(MethodBodyOption)} ({options.MemberDeclaration.MethodBody})"),
-        }
+        MethodBodyOption.None => (null, null),
+        MethodBodyOption.EmptyImplementation or
+        MethodBodyOption.ThrowNotImplementedException or
+        MethodBodyOption.ThrowNull => (null, endOfStatement),
+        _ => throw new InvalidOperationException($"invalid value of {nameof(MethodBodyOption)} ({options.MemberDeclaration.MethodBody})"),
+      }
       : options.MemberDeclaration.MethodBody switch {
-          MethodBodyOption.None => (null, null),
-          MethodBodyOption.EmptyImplementation => (" {}", null),
-          MethodBodyOption.ThrowNotImplementedException => (" => throw new NotImplementedException()", endOfStatement),
-          MethodBodyOption.ThrowNull => (" => throw null", endOfStatement),
-          _ => throw new InvalidOperationException($"invalid value of {nameof(MethodBodyOption)} ({options.MemberDeclaration.MethodBody})"),
-        };
+        MethodBodyOption.None => (null, null),
+        MethodBodyOption.EmptyImplementation => (" {}", null),
+        MethodBodyOption.ThrowNotImplementedException => (" => throw new NotImplementedException()", endOfStatement),
+        MethodBodyOption.ThrowNull => (" => throw null", endOfStatement),
+        _ => throw new InvalidOperationException($"invalid value of {nameof(MethodBodyOption)} ({options.MemberDeclaration.MethodBody})"),
+      };
 
     return sb.Append(methodBody).Append(endOfMethodBody).ToString();
   }
@@ -1321,7 +1321,7 @@ public static partial class Generator {
       // FIXME: https://github.com/smdn/Smdn.Reflection.ReverseGenerating/issues/31
     }
 
-    SWITCH_MEMBER_TYPE:
+  SWITCH_MEMBER_TYPE:
     switch (member) {
       case EventInfo ev:
         member = ev.GetMethods(true).First();
