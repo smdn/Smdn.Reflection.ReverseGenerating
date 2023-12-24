@@ -149,18 +149,25 @@ public static partial class CSharpFormatter /* ITypeFormatter */ {
     // unary
     { MethodSpecialName.UnaryPlus, "operator +" },
     { MethodSpecialName.UnaryNegation, "operator -" },
+    { MethodSpecialName.CheckedUnaryNegation, "operator checked -" },
     { MethodSpecialName.LogicalNot, "operator !" },
     { MethodSpecialName.OnesComplement, "operator ~" },
     { MethodSpecialName.True, "operator true" },
     { MethodSpecialName.False, "operator false" },
     { MethodSpecialName.Increment, "operator ++" },
+    { MethodSpecialName.CheckedIncrement, "operator checked ++" },
     { MethodSpecialName.Decrement, "operator --" },
+    { MethodSpecialName.CheckedDecrement, "operator checked --" },
 
     // binary
     { MethodSpecialName.Addition, "operator +" },
+    { MethodSpecialName.CheckedAddition, "operator checked +" },
     { MethodSpecialName.Subtraction, "operator -" },
+    { MethodSpecialName.CheckedSubtraction, "operator checked -" },
     { MethodSpecialName.Multiply, "operator *" },
+    { MethodSpecialName.CheckedMultiply, "operator checked *" },
     { MethodSpecialName.Division, "operator /" },
+    { MethodSpecialName.CheckedDivision, "operator checked /" },
     { MethodSpecialName.Modulus, "operator %" },
     { MethodSpecialName.BitwiseAnd, "operator &" },
     { MethodSpecialName.BitwiseOr, "operator |" },
@@ -170,6 +177,7 @@ public static partial class CSharpFormatter /* ITypeFormatter */ {
 
     // type cast
     { MethodSpecialName.Explicit, "explicit operator" },
+    { MethodSpecialName.CheckedExplicit, "explicit operator checked" },
     { MethodSpecialName.Implicit, "implicit operator" },
   };
 

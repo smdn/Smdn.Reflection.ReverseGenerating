@@ -874,6 +874,7 @@ public static partial class Generator {
         case MethodSpecialName.None: break;
         case MethodSpecialName.Unknown: break;
         case MethodSpecialName.Explicit: methodName += " " + methodReturnType; methodReturnType = null; break;
+        case MethodSpecialName.CheckedExplicit: methodName += " " + methodReturnType; methodReturnType = null; break;
         case MethodSpecialName.Implicit: methodName += " " + methodReturnType; methodReturnType = null; break;
         case MethodSpecialName.Constructor: methodReturnType = null; methodName = GenerateMemberName(m, methodName, options); break;
         default: methodName += " "; break;
