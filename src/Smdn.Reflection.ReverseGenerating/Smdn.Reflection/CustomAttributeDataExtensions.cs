@@ -2,7 +2,9 @@
 // SPDX-License-Identifier: MIT
 using System;
 using System.Reflection;
+#if !CAN_OVERRIDE_CUSTOMATTRIBUTEDATA_ATTRIBUTETYPE
 using System.Runtime.InteropServices;
+#endif
 
 namespace Smdn.Reflection;
 

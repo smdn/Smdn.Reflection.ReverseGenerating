@@ -1,7 +1,6 @@
 // SPDX-FileCopyrightText: 2023 smdn <smdn@smdn.jp>
 // SPDX-License-Identifier: MIT
 #if SYSTEM_REFLECTION_NULLABILITYINFOCONTEXT
-using System;
 using System.Reflection;
 
 namespace Smdn.Reflection.ReverseGenerating;

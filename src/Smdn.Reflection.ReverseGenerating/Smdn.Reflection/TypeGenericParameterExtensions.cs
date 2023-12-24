@@ -1,9 +1,6 @@
 // SPDX-FileCopyrightText: 2022 smdn <smdn@smdn.jp>
 // SPDX-License-Identifier: MIT
 using System;
-#if NULL_STATE_STATIC_ANALYSIS_ATTRIBUTES
-using System.Diagnostics.CodeAnalysis;
-#endif
 using System.Linq;
 using System.Reflection;
 
