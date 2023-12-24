@@ -106,6 +106,17 @@ namespace Smdn.Reflection.ReverseGenerating.GeneratorTestCases.MemberDeclaration
       public ValueTask MValueTask3() => new ValueTask();
 #endif
     }
+
+    public struct ReadOnly {
+      [MemberDeclarationTestCase("public readonly int MReadOnly() {}")]
+      public readonly int MReadOnly() => throw new NotImplementedException();
+
+      [MemberDeclarationTestCase("public readonly unsafe int MReadOnlyUnsafe(int* x) {}")]
+      public readonly unsafe int MReadOnlyUnsafe(int* x) => throw new NotImplementedException();
+
+      [MemberDeclarationTestCase("public readonly async System.Threading.Tasks.Task<int> MAsyncReadOnly() {}")]
+      public async readonly Task<int> MAsyncReadOnly() { await Task.Delay(0); return 0; }
+    }
   }
 
   public class Accessibilities {

@@ -36,6 +36,20 @@ public class ModifiersNewVirtual : Modifiers {
   [MemberDeclarationTestCase("new public virtual event System.EventHandler EProtectedVirtual;")] public new virtual event EventHandler EProtectedVirtual;
 }
 
+public struct ModifiersReadOnly {
+  [MemberDeclarationTestCase("public readonly event System.EventHandler EPublicReadOnly { add; remove; }")]
+  public readonly event EventHandler EPublicReadOnly {
+    add => throw new NotImplementedException();
+    remove => throw new NotImplementedException();
+  }
+
+  [MemberDeclarationTestCase("private readonly event System.EventHandler EPrivateReadOnly { add; remove; }")]
+  private readonly event EventHandler EPrivateReadOnly {
+    add => throw new NotImplementedException();
+    remove => throw new NotImplementedException();
+  }
+}
+
 public class Accessibilities {
   [MemberDeclarationTestCase("public event System.EventHandler E1;")] public event EventHandler E1;
   [MemberDeclarationTestCase("internal event System.EventHandler E2;")] internal event EventHandler E2;

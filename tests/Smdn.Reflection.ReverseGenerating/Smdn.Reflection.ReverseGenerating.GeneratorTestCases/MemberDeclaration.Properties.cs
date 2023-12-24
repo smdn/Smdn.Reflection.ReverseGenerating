@@ -69,6 +69,7 @@ public class Modifiers_ReadOnly {
     [MemberDeclarationTestCase("public readonly int P4 { get; }")] public readonly int P4 { get => 0; }
     [MemberDeclarationTestCase("public int P5 { get; }")] public int P5 => 0;
     [MemberDeclarationTestCase("public readonly int P6 { get; }")] public readonly int P6 => 0;
+    [MemberDeclarationTestCase("public readonly int P7 { get; set; }")] public int P7 { readonly get => 0; set => throw new NotImplementedException(); }
 
     [MemberDeclarationTestCase("public static int SP0 { get; }")] public static int SP0 { get; }
     [MemberDeclarationTestCase("public static int SP1 { get; }")] public static int SP1 { get => 0; }

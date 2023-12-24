@@ -1283,6 +1283,9 @@ public static partial class Generator {
         }
       }
 
+      if (method is not null && !method.IsPropertyAccessorMethod() && method.IsReadOnly())
+        sb.Append("readonly ");
+
       var isAsyncStateMachine = m.GetCustomAttributesData().Any(
         static d => string.Equals(d.AttributeType.FullName, "System.Runtime.CompilerServices.AsyncStateMachineAttribute", StringComparison.Ordinal)
       );
@@ -1340,7 +1343,6 @@ public static partial class Generator {
 
       case PropertyInfo p:
         var mostOpenAccessibility = p.GetAccessors(true).Select(Smdn.Reflection.MemberInfoExtensions.GetAccessibility).Max();
-        var isGetMethodReadOnly = false;
 
         if (!asExplicitInterfaceMember && options.MemberDeclaration.WithAccessibility)
           AppendAccessibility(sb, p, mostOpenAccessibility);
@@ -1350,10 +1352,6 @@ public static partial class Generator {
 
           if (accessorAccessibility < mostOpenAccessibility)
             propertyGetMethodAccessibility = accessorAccessibility;
-
-          isGetMethodReadOnly = p.GetMethod.GetCustomAttributesData().Any(
-            static d => string.Equals(d.AttributeType.FullName, "System.Runtime.CompilerServices.IsReadOnlyAttribute", StringComparison.Ordinal)
-          );
         }
 
         if (p.SetMethod != null) {
@@ -1365,7 +1363,7 @@ public static partial class Generator {
 
         AppendMethodModifiers(sb, p.GetAccessors(true).FirstOrDefault());
 
-        if (isGetMethodReadOnly)
+        if (p.IsAccessorReadOnly())
           sb.Append("readonly ");
 
         break;
