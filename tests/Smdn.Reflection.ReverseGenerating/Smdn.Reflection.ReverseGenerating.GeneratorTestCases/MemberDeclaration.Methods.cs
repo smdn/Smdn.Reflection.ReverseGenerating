@@ -341,6 +341,10 @@ namespace Smdn.Reflection.ReverseGenerating.GeneratorTestCases.MemberDeclaration
         [MemberDeclarationTestCase("public static C operator >> (C x, int y) {}", MemberWithNamespace = false, MemberWithDeclaringTypeName = true,  ParameterWithNamespace = false, ParameterWithDeclaringTypeName = true)]
         public static C operator >>(C x, int y) => throw new NotImplementedException();
 
+        [MemberDeclarationTestCase("public static C operator >>> (C x, int y) {}", MemberWithNamespace = false, MemberWithDeclaringTypeName = false, ParameterWithNamespace = false, ParameterWithDeclaringTypeName = false)]
+        [MemberDeclarationTestCase("public static C operator >>> (C x, int y) {}", MemberWithNamespace = false, MemberWithDeclaringTypeName = true,  ParameterWithNamespace = false, ParameterWithDeclaringTypeName = true)]
+        public static C operator >>>(C x, int y) => throw new NotImplementedException();
+
         [MemberDeclarationTestCase("public static C operator << (C x, int y) {}", MemberWithNamespace = false, MemberWithDeclaringTypeName = false, ParameterWithNamespace = false, ParameterWithDeclaringTypeName = false)]
         [MemberDeclarationTestCase("public static C operator << (C x, int y) {}", MemberWithNamespace = false, MemberWithDeclaringTypeName = true,  ParameterWithNamespace = false, ParameterWithDeclaringTypeName = true)]
         public static C operator <<(C x, int y) => throw new NotImplementedException();

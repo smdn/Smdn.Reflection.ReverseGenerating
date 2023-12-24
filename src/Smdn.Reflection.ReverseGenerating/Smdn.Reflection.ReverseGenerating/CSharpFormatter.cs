@@ -173,6 +173,7 @@ public static partial class CSharpFormatter /* ITypeFormatter */ {
     { MethodSpecialName.BitwiseOr, "operator |" },
     { MethodSpecialName.ExclusiveOr, "operator ^" },
     { MethodSpecialName.RightShift, "operator >>" },
+    { MethodSpecialName.UnsignedRightShift, "operator >>>" },
     { MethodSpecialName.LeftShift, "operator <<" },
 
     // type cast
