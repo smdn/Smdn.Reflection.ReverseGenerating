@@ -24,14 +24,14 @@ internal static class RuntimeAssemblyName {
 
   private static bool ShouldWarnIfNotToBeAbleToResolve(AssemblyName name, DependencyContext? depContext)
   {
-    const bool shouldNotWarn = false;
-    const bool shouldWarn = true;
+    const bool ShouldNotWarn = false;
+    const bool ShouldWarn = true;
 
     if (name.Name is null)
-      return shouldWarn;
+      return ShouldWarn;
 
     if (depContext is null)
-      return shouldNotWarn; // target framework may be .NET Framework
+      return ShouldNotWarn; // target framework may be .NET Framework
 
     var publicKeyTokenBytes = name.GetPublicKeyToken();
     var publicKeyTokenString = publicKeyTokenBytes is null
@@ -61,7 +61,7 @@ internal static class RuntimeAssemblyName {
         string.Equals(publicKeyTokenString, PublicKeyTokenDotnetOpenSource, StringComparison.OrdinalIgnoreCase);
 
       if (isNetStandardAssembly)
-        return shouldNotWarn;
+        return ShouldNotWarn;
 
       var isNameSystemAssembly =
         string.Equals(name.Name, "System", StringComparison.Ordinal) ||
@@ -73,16 +73,16 @@ internal static class RuntimeAssemblyName {
         );
 
       if (isSystemAssembly)
-        return shouldNotWarn;
+        return ShouldNotWarn;
 
       var isCoreLibAssembly =
         string.Equals(name.Name, "mscorlib", StringComparison.Ordinal) &&
         string.Equals(publicKeyTokenString, "7cec85d7bea7798e" /* CoreLib? */, StringComparison.OrdinalIgnoreCase);
 
       if (isCoreLibAssembly)
-        return shouldNotWarn;
+        return ShouldNotWarn;
     }
 
-    return shouldWarn;
+    return ShouldWarn;
   }
 }

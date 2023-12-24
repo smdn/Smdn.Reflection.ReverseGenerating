@@ -9,7 +9,7 @@ using System.Runtime.Versioning;
 namespace Smdn.Reflection.ReverseGenerating.ListApi;
 
 public static class FrameworkMonikers {
-  private static readonly Version versionNET5OrGreater = new(5, 0);
+  private static readonly Version VersionNET5OrGreater = new(5, 0);
 
   /// <remarks>
   ///   <see cref="FrameworkName.Profile"/> of <paramref name="frameworkName"/> is not supported currently.
@@ -32,7 +32,7 @@ public static class FrameworkMonikers {
 
     // TODO: frameworkName.Profile, osSpecifier
     switch (frameworkName.Identifier) {
-      case ".NETCoreApp" when versionNET5OrGreater <= frameworkName.Version:
+      case ".NETCoreApp" when VersionNET5OrGreater <= frameworkName.Version:
         frameworkMoniker = $"net{frameworkName.Version.Major}.{frameworkName.Version.Minor}";
         return true;
 

@@ -14,14 +14,14 @@ using Microsoft.Extensions.Logging;
 namespace Smdn.Reflection.ReverseGenerating.ListApi;
 
 public class ApiListWriter {
-  private static readonly Action<ILogger, string?, Exception?> loggerMessageGeneratorErrorOnType = LoggerMessage.Define<string?>(
+  private static readonly Action<ILogger, string?, Exception?> LoggerMessageGeneratorErrorOnType = LoggerMessage.Define<string?>(
     LogLevel.Error,
-    new(1, nameof(loggerMessageGeneratorErrorOnType)),
+    new(1, nameof(LoggerMessageGeneratorErrorOnType)),
     "generator error on type '{TypeFullName}'"
   );
-  private static readonly Action<ILogger, string?, string, Exception?> loggerMessageGeneratorErrorOnMember = LoggerMessage.Define<string?, string>(
+  private static readonly Action<ILogger, string?, string, Exception?> LoggerMessageGeneratorErrorOnMember = LoggerMessage.Define<string?, string>(
     LogLevel.Error,
-    new(1, nameof(loggerMessageGeneratorErrorOnMember)),
+    new(1, nameof(LoggerMessageGeneratorErrorOnMember)),
     "generator error on member '{TypeFullName}.{MemberName}'"
   );
 
@@ -339,7 +339,7 @@ public class ApiListWriter {
       }
       catch (Exception ex) {
         if (logger is not null)
-          loggerMessageGeneratorErrorOnType(logger, type.FullName, ex);
+          LoggerMessageGeneratorErrorOnType(logger, type.FullName, ex);
 
         throw new InvalidOperationException($"generator error on type '{type.FullName}'", ex);
       }
@@ -461,9 +461,9 @@ public class ApiListWriter {
     if (options == null)
       throw new ArgumentNullException(nameof(options));
 
-    const BindingFlags bindingFlags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static | BindingFlags.DeclaredOnly;
+    const BindingFlags MembersBindingFlags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static | BindingFlags.DeclaredOnly;
 
-    var members = t.GetMembers(bindingFlags).OrderBy(static f => f.Name, StringComparer.Ordinal).ToList();
+    var members = t.GetMembers(MembersBindingFlags).OrderBy(static f => f.Name, StringComparer.Ordinal).ToList();
     var exceptingMembers = new List<MemberInfo>();
     var nestedTypes = new List<Type>();
 
@@ -512,7 +512,7 @@ public class ApiListWriter {
       }
       catch (Exception ex) {
         if (logger is not null)
-          loggerMessageGeneratorErrorOnMember(logger, t.FullName, member.Name, ex);
+          LoggerMessageGeneratorErrorOnMember(logger, t.FullName, member.Name, ex);
 
         throw new MemberDeclarationException($"generator error on member '{t.FullName}.{member.Name}'", ex);
       }
