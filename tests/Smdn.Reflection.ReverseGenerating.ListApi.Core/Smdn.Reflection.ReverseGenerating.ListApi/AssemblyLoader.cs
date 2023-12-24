@@ -130,7 +130,7 @@ class AssemblyLoaderTests {
     );
 
     Assert.IsNotNull(result, nameof(result));
-    Assert.AreEqual(result, "Lib.LibA.CBase", nameof(result));
+    Assert.AreEqual("Lib.LibA.CBase", result, nameof(result));
 
     if (loadIntoReflectionOnlyContext) {
       Assert.IsNull(context, nameof(context));
@@ -243,7 +243,7 @@ class AssemblyLoaderTests {
     );
 
     Assert.IsNotNull(result, nameof(result));
-    Assert.AreEqual(result, "Lib.LibA.CBase", nameof(result));
+    Assert.AreEqual("Lib.LibA.CBase", result, nameof(result));
 
     if (loadIntoReflectionOnlyContext) {
       Assert.IsNull(context, nameof(context));
@@ -304,7 +304,7 @@ class AssemblyLoaderTests {
     );
 
     Assert.IsNotNull(result, nameof(result));
-    Assert.AreEqual(result, "Lib.LibB.CEx", nameof(result));
+    Assert.AreEqual("Lib.LibB.CEx", result, nameof(result));
 
     if (loadIntoReflectionOnlyContext) {
       Assert.IsNull(context, nameof(context));
@@ -369,7 +369,7 @@ class AssemblyLoaderTests {
     );
 
     Assert.IsNotNull(result, nameof(result));
-    Assert.AreEqual(result, "Lib.LibB.CEx", nameof(result));
+    Assert.AreEqual("Lib.LibB.CEx", result, nameof(result));
 
     if (loadIntoReflectionOnlyContext) {
       Assert.IsNull(context, nameof(context));
@@ -436,7 +436,7 @@ class AssemblyLoaderTests {
     );
 
     Assert.IsNotNull(result, nameof(result));
-    Assert.AreEqual(result, "Microsoft.Extensions.Logging.ILogger", nameof(result));
+    Assert.AreEqual("Microsoft.Extensions.Logging.ILogger", result, nameof(result));
 
     if (loadIntoReflectionOnlyContext) {
       Assert.IsNull(context, nameof(context));
