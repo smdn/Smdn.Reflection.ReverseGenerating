@@ -9,6 +9,7 @@ using System.Reflection.Metadata;
 using System.Runtime.CompilerServices;
 using System.Runtime.Versioning;
 using System.Text;
+
 using Microsoft.Extensions.Logging;
 
 namespace Smdn.Reflection.ReverseGenerating.ListApi;

@@ -33,7 +33,7 @@ public static partial class AssemblyLoader {
   )
   {
     if (assemblyFile is null)
-       throw new ArgumentNullException(nameof(assemblyFile));
+      throw new ArgumentNullException(nameof(assemblyFile));
 
     return UsingAssemblyCore(
       new(
