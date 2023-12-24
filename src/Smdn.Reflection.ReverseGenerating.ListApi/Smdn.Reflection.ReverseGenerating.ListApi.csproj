@@ -6,7 +6,7 @@ SPDX-License-Identifier: MIT
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <PackAsTool>true</PackAsTool>
-    <TargetFrameworks>net6.0<!-- ;net472 --></TargetFrameworks>
+    <TargetFrameworks>net8.0;net6.0<!-- ;net472 --></TargetFrameworks>
     <AssemblyName>Smdn.Reflection.ReverseGenerating.ListApi</AssemblyName>
     <ToolCommandName>list-api</ToolCommandName>
     <VersionPrefix>1.2.0</VersionPrefix>
@@ -34,6 +34,7 @@ SPDX-License-Identifier: MIT
   <ItemGroup>
     <PackageReference Include="System.CommandLine" Version="2.0.0-beta1.21308.1" />
     <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="6.0.0" Condition="$(TargetFramework.StartsWith('net6.')) Or $(TargetFramework.StartsWith('netcoreapp'))" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="8.0.0" Condition="$(TargetFramework.StartsWith('net8.'))" />
 
     <ProjectOrPackageReference ReferencePackageVersion="[1.2.0,2.0.0)" Include="..\Smdn.Reflection.ReverseGenerating.ListApi.Core\Smdn.Reflection.ReverseGenerating.ListApi.Core.csproj" />
   </ItemGroup>
@@ -48,6 +49,7 @@ SPDX-License-Identifier: MIT
     <PackageReference Include="Microsoft.Build.Tasks.Core" Version="16.11.0" />
     <PackageReference Include="Microsoft.Extensions.DependencyModel" Version="6.0.0" Condition="$(TargetFramework.StartsWith('net6.'))" />
     <PackageReference Include="Microsoft.Extensions.DependencyModel" Version="7.0.0" Condition="$(TargetFramework.StartsWith('net7.'))" />
+    <PackageReference Include="Microsoft.Extensions.DependencyModel" Version="8.0.0" Condition="$(TargetFramework.StartsWith('net8.'))" />
     <PackageReference Include="Microsoft.NET.HostModel" Version="3.1.16" />
     <PackageReference Include="NuGet.ProjectModel" Version="5.11.0" />
     <PackageReference Include="Smdn.Fundamental.Shell" Version="3.0.0" />

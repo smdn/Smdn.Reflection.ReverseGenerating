@@ -16,8 +16,6 @@ SPDX-License-Identifier: MIT
     <EnableTrimAnalyzer>false</EnableTrimAnalyzer>
   </PropertyGroup>
 
-  <Import Project="$(MSBuildThisFileDirectory)..\Sdk.net8.0.props" />
-
   <PropertyGroup Label="assembly attributes">
     <Description>A common library for the tools of reverse generating API lists.</Description>
     <CopyrightYear>2021</CopyrightYear>
