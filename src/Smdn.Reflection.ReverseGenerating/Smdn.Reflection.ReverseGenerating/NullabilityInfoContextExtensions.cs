@@ -5,6 +5,7 @@ using System.Reflection;
 
 namespace Smdn.Reflection.ReverseGenerating;
 
+#pragma warning disable CS0419
 /// <summary>
 /// Provides extension methods for <see cref="NullabilityInfoContext"/>.
 /// </summary>
@@ -13,6 +14,7 @@ namespace Smdn.Reflection.ReverseGenerating;
 /// This may cause an exception to be thrown if <see cref="NullabilityInfoContext.Create"/> is called concurrently.
 /// So, this class provides extension methods that uses a lock object to lock and then calls <see cref="NullabilityInfoContext.Create"/>.
 /// </remarks>
+#pragma warning restore CS0419
 internal static class NullabilityInfoContextExtensions {
   internal static NullabilityInfo Create(this NullabilityInfoContext context, FieldInfo field, object? lockObject)
   {
