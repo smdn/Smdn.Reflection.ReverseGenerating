@@ -13,7 +13,7 @@ using Smdn.OperatingSystem;
 
 namespace Smdn.Reflection.ReverseGenerating.ListApi.Build;
 
-public static class MSBuildExePath {
+public static partial class MSBuildExePath {
   private static string JoinPath(string path1, string path2)
   {
 #pragma warning disable SA1114
@@ -56,16 +56,27 @@ public static class MSBuildExePath {
   }
 #endif
 
+  private const string SdkBasePathRegexPattern = @"^\s*Base Path:\s+(?<base_path>.+)$";
+
+#if SYSTEM_TEXT_REGULAREXPRESSIONS_GENERATEDREGEXATTRIBUTE
+  [GeneratedRegex(SdkBasePathRegexPattern, RegexOptions.Multiline | RegexOptions.CultureInvariant | RegexOptions.Compiled)]
+  private static partial Regex GetRegexSdkBasePath();
+#else
   private static readonly Regex RegexSdkBasePath = new(
-    @"^\s*Base Path:\s+(?<base_path>.+)$",
+    SdkBasePathRegexPattern,
     RegexOptions.Multiline | RegexOptions.CultureInvariant | RegexOptions.Compiled
   );
+#endif
 
   private static string? GetSdkBasePath(out string? sdkVersion)
   {
     sdkVersion = default;
 
+#if SYSTEM_TEXT_REGULAREXPRESSIONS_GENERATEDREGEXATTRIBUTE
+    var match = GetRegexSdkBasePath().Match(Shell.Execute("dotnet --info"));
+#else
     var match = RegexSdkBasePath.Match(Shell.Execute("dotnet --info"));
+#endif
 
     if (match.Success) {
       var basePath = match.Groups["base_path"].Value.TrimEnd();

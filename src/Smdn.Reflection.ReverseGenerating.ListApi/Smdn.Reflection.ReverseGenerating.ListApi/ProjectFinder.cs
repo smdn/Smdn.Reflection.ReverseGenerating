@@ -11,7 +11,19 @@ using Microsoft.Extensions.Logging;
 
 namespace Smdn.Reflection.ReverseGenerating.ListApi;
 
-public static class ProjectFinder {
+public static partial class ProjectFinder {
+  private const string SlnOrProjFileNameRegexPattern = @"\.(?i:sln|[a-z]+proj)$";
+
+#if SYSTEM_TEXT_REGULAREXPRESSIONS_GENERATEDREGEXATTRIBUTE
+  [GeneratedRegex(SlnOrProjFileNameRegexPattern, RegexOptions.Singleline | RegexOptions.CultureInvariant)]
+  private static partial Regex GetRegexSlnOrProjFileName();
+#else
+  private static readonly Regex RegexSlnOrProjFileName = new(
+    SlnOrProjFileNameRegexPattern,
+    RegexOptions.Singleline | RegexOptions.CultureInvariant
+  );
+#endif
+
   public static FileInfo FindSingleProjectOrSolution(
     DirectoryInfo directory,
     ILogger? logger = null
@@ -26,7 +38,11 @@ public static class ProjectFinder {
       .GetFiles("*.*", SearchOption.TopDirectoryOnly)
       .Where(static file =>
         // *.sln, *.csproj, *.vbproj, etc
-        Regex.IsMatch(file.Extension, @"\.(?i:sln|[a-z]+proj)$", RegexOptions.Singleline | RegexOptions.CultureInvariant)
+#if SYSTEM_TEXT_REGULAREXPRESSIONS_GENERATEDREGEXATTRIBUTE
+        GetRegexSlnOrProjFileName().IsMatch(file.Extension)
+#else
+        RegexSlnOrProjFileName.IsMatch(file.Extension)
+#endif
       )
       .ToList();
 
