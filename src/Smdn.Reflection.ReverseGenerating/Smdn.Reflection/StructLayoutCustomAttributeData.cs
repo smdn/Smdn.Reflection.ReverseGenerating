@@ -22,7 +22,7 @@ internal sealed class StructLayoutCustomAttributeData : CustomAttributeData {
       }
     );
 
-    const BindingFlags attributeFieldBindingFlags = BindingFlags.Public | BindingFlags.Instance;
+    const BindingFlags AttributeFieldBindingFlags = BindingFlags.Public | BindingFlags.Instance;
     var namedArgs = new List<CustomAttributeNamedArgument>(capacity: 3);
 
     if (attr.CharSet is not (CharSet.Auto or CharSet.Ansi)) {
@@ -55,7 +55,7 @@ internal sealed class StructLayoutCustomAttributeData : CustomAttributeData {
     NamedArguments = namedArgs.AsReadOnly();
 
     static FieldInfo GetStructLayoutAttributeField(string name)
-      => typeof(StructLayoutAttribute).GetField(name, attributeFieldBindingFlags)
+      => typeof(StructLayoutAttribute).GetField(name, AttributeFieldBindingFlags)
         ?? throw new InvalidOperationException($"can not get field '{name}' of {nameof(StructLayoutAttribute)}");
   }
 

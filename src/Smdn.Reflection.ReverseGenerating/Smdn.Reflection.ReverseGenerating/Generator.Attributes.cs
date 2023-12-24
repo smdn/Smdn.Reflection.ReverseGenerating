@@ -43,18 +43,18 @@ partial class Generator {
     if (options is null)
       throw new ArgumentNullException(nameof(options));
 
-    const string attributeSectionPrefixDefault = "[";
-    const string attributeSectionPrefixField = "[field: ";
-    const string attributeSectionPrefixParameter = "[param: ";
-    const string attributeSectionPrefixReturnParameter = "[return: ";
-    const string attributeSectionSuffix = "]";
+    const string AttributeSectionPrefixDefault = "[";
+    const string AttributeSectionPrefixField = "[field: ";
+    const string AttributeSectionPrefixParameter = "[param: ";
+    const string AttributeSectionPrefixReturnParameter = "[return: ";
+    const string AttributeSectionSuffix = "]";
 
     var attributeTarget = AttributeTarget.Default;
-    var attributeSectionPrefix = attributeSectionPrefixDefault;
+    var attributeSectionPrefix = AttributeSectionPrefixDefault;
 
     switch (attributeProvider) {
       case Type t:
-        attributeSectionPrefix = attributeSectionPrefixDefault;
+        attributeSectionPrefix = AttributeSectionPrefixDefault;
         attributeTarget = t.IsGenericParameter
           ? AttributeTarget.GenericParameter
           : AttributeTarget.Default;
@@ -63,26 +63,26 @@ partial class Generator {
       case ParameterInfo para:
         if (para.GetDeclaringProperty() is PropertyInfo p) {
           if (para.Member == p.GetMethod) {
-            attributeSectionPrefix = attributeSectionPrefixReturnParameter;
+            attributeSectionPrefix = AttributeSectionPrefixReturnParameter;
             attributeTarget = AttributeTarget.PropertyGetMethodReturnParameter;
           }
           else if (para.Member == p.SetMethod) {
-            attributeSectionPrefix = attributeSectionPrefixParameter;
+            attributeSectionPrefix = AttributeSectionPrefixParameter;
             attributeTarget = AttributeTarget.PropertySetMethodParameter;
           }
         }
         else if (para.GetDeclaringEvent() is EventInfo ev) {
-          attributeSectionPrefix = attributeSectionPrefixParameter;
+          attributeSectionPrefix = AttributeSectionPrefixParameter;
           attributeTarget = AttributeTarget.EventAccessorMethodParameter;
         }
         else if (para.IsReturnParameter()) {
-          attributeSectionPrefix = attributeSectionPrefixReturnParameter;
+          attributeSectionPrefix = AttributeSectionPrefixReturnParameter;
           attributeTarget = para.Member.GetDeclaringTypeOrThrow().IsDelegate()
             ? AttributeTarget.DelegateReturnParameter
             : AttributeTarget.MethodReturnParameter;
         }
         else {
-          attributeSectionPrefix = attributeSectionPrefixDefault;
+          attributeSectionPrefix = AttributeSectionPrefixDefault;
           attributeTarget = para.Member.GetDeclaringTypeOrThrow().IsDelegate()
             ? AttributeTarget.DelegateParameter
             : AttributeTarget.MethodParameter;
@@ -92,11 +92,11 @@ partial class Generator {
 
       case FieldInfo f:
         if (f.IsPropertyBackingField()) {
-          attributeSectionPrefix = attributeSectionPrefixField;
+          attributeSectionPrefix = AttributeSectionPrefixField;
           attributeTarget = AttributeTarget.PropertyBackingField;
         }
         else if (f.IsEventBackingField()) {
-          attributeSectionPrefix = attributeSectionPrefixField;
+          attributeSectionPrefix = AttributeSectionPrefixField;
           attributeTarget = AttributeTarget.EventBackingField;
         }
 
@@ -104,13 +104,13 @@ partial class Generator {
 
       case MethodInfo m:
         if (m.IsPropertyAccessorMethod()) {
-          attributeSectionPrefix = attributeSectionPrefixDefault;
+          attributeSectionPrefix = AttributeSectionPrefixDefault;
           attributeTarget = AttributeTarget.PropertyAccessorMethod;
         }
 
         try {
           if (m.IsEventAccessorMethod()) {
-            attributeSectionPrefix = attributeSectionPrefixDefault;
+            attributeSectionPrefix = AttributeSectionPrefixDefault;
             attributeTarget = AttributeTarget.EventAccessorMethod;
           }
         }
@@ -166,7 +166,7 @@ partial class Generator {
 
     return attributeSectionFormat switch {
       AttributeSectionFormat.Discrete => attributes.Select(
-        a => attributeSectionPrefix + a.name + (string.IsNullOrEmpty(a.args) ? string.Empty : "(" + a.args + ")") + attributeSectionSuffix
+        a => attributeSectionPrefix + a.name + (string.IsNullOrEmpty(a.args) ? string.Empty : "(" + a.args + ")") + AttributeSectionSuffix
       ),
 
       AttributeSectionFormat.List => Enumerable.Repeat(
@@ -178,7 +178,7 @@ partial class Generator {
               static a => string.IsNullOrEmpty(a.args) ? a.name : a.name + "(" + a.args + ")"
             )
           ),
-          attributeSectionSuffix
+          AttributeSectionSuffix
         ),
         count: 1
       ),

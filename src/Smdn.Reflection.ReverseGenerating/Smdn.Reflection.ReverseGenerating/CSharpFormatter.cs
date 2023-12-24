@@ -13,7 +13,7 @@ using System.Text;
 namespace Smdn.Reflection.ReverseGenerating;
 
 public static partial class CSharpFormatter /* ITypeFormatter */ {
-  private static readonly Dictionary<Accessibility, string> accessibilities = new() {
+  private static readonly Dictionary<Accessibility, string> Accessibilities = new() {
     { Accessibility.Public,            "public" },
     { Accessibility.Assembly,          "internal" },
     { Accessibility.Family,            "protected" },
@@ -22,7 +22,7 @@ public static partial class CSharpFormatter /* ITypeFormatter */ {
     { Accessibility.Private,           "private" },
   };
 
-  private static readonly Dictionary<string, string> primitiveTypes = new(StringComparer.Ordinal) {
+  private static readonly Dictionary<string, string> PrimitiveTypes = new(StringComparer.Ordinal) {
     { typeof(void).FullName!, "void" },
     { typeof(sbyte).FullName!, "sbyte" },
     { typeof(short).FullName!, "short" },
@@ -41,7 +41,7 @@ public static partial class CSharpFormatter /* ITypeFormatter */ {
     { typeof(bool).FullName!, "bool" },
   };
 
-  private static readonly HashSet<string> keywords = new(StringComparer.Ordinal) {
+  private static readonly HashSet<string> Keywords = new(StringComparer.Ordinal) {
     "abstract",
     "as",
     "base",
@@ -137,7 +137,7 @@ public static partial class CSharpFormatter /* ITypeFormatter */ {
     "yield",
   };
 
-  private static readonly Dictionary<MethodSpecialName, string> specialMethodNames = new() {
+  private static readonly Dictionary<MethodSpecialName, string> SpecialMethodNames = new() {
     // comparison
     { MethodSpecialName.Equality, "operator ==" },
     { MethodSpecialName.Inequality, "operator !=" },
@@ -183,7 +183,7 @@ public static partial class CSharpFormatter /* ITypeFormatter */ {
   };
 
   public static string FormatAccessibility(Accessibility accessibility)
-    => accessibilities.TryGetValue(accessibility, out var ret) ? ret : string.Empty;
+    => Accessibilities.TryGetValue(accessibility, out var ret) ? ret : string.Empty;
 
   public static bool IsLanguagePrimitiveType(
     Type t,
@@ -192,7 +192,7 @@ public static partial class CSharpFormatter /* ITypeFormatter */ {
 #endif
     out string primitiveTypeName
   )
-    => primitiveTypes.TryGetValue((t ?? throw new ArgumentNullException(nameof(t))).FullName ?? string.Empty, out primitiveTypeName);
+    => PrimitiveTypes.TryGetValue((t ?? throw new ArgumentNullException(nameof(t))).FullName ?? string.Empty, out primitiveTypeName);
 
   public static IEnumerable<string> ToNamespaceList(Type t)
     => (t ?? throw new ArgumentNullException(nameof(t))).GetNamespaces(static type => IsLanguagePrimitiveType(type, out _));
@@ -207,7 +207,7 @@ public static partial class CSharpFormatter /* ITypeFormatter */ {
 
     nameType = methodOrConstructor.GetNameType();
 
-    if (specialMethodNames.TryGetValue(nameType, out var name))
+    if (SpecialMethodNames.TryGetValue(nameType, out var name))
       return name;
 
     if (nameType == MethodSpecialName.Constructor) {
@@ -461,7 +461,7 @@ public static partial class CSharpFormatter /* ITypeFormatter */ {
 
       sb.Append(' ');
 
-      if (keywords.Contains(p.Name))
+      if (Keywords.Contains(p.Name))
         sb.Append('@'); // to verbatim
 
       return sb.Append(p.Name);

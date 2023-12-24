@@ -303,9 +303,9 @@ static partial class CSharpFormatter {
       typeof(Attribute).IsAssignableFrom(t) &&
       t != typeof(Attribute)
     ) {
-      const int lengthOfAttributeSuffix = 9; // "Attribute".Length
+      const int LengthOfAttributeSuffix = 9; // "Attribute".Length
 
-      typeName = typeName.Substring(0, typeName.Length - lengthOfAttributeSuffix);
+      typeName = typeName.Substring(0, typeName.Length - LengthOfAttributeSuffix);
     }
 
     return typeName;
