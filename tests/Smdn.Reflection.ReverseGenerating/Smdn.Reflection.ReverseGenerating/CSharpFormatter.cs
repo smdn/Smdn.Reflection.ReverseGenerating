@@ -76,9 +76,9 @@ public partial class CSharpFormatterTests {
   [TestCase(typeof(KeyValuePair<Tuple<int, int?>, Tuple<int[], int[,]>>), "KeyValuePair<Tuple<int, int?>, Tuple<int[], int[,]>>")]
   public void TestFormatTypeName(Type type, string expected)
   {
-    Assert.AreEqual(
-      expected,
-      type.FormatTypeName(null, typeWithNamespace: false)
+    Assert.That(
+      type.FormatTypeName(null, typeWithNamespace: false),
+      Is.EqualTo(expected)
     );
   }
 
@@ -87,9 +87,9 @@ public partial class CSharpFormatterTests {
   [TestCase(typeof(System.Guid?), "Guid?")]
   public void TestFormatTypeName_WithoutNamespace(Type type, string expected)
   {
-    Assert.AreEqual(
-      expected,
-      type.FormatTypeName(null, typeWithNamespace: false)
+    Assert.That(
+      type.FormatTypeName(null, typeWithNamespace: false),
+      Is.EqualTo(expected)
     );
   }
 
@@ -98,9 +98,9 @@ public partial class CSharpFormatterTests {
   [TestCase(typeof(System.Guid?), "System.Guid?")]
   public void TestFormatTypeName_WithNamespace(Type type, string expected)
   {
-    Assert.AreEqual(
-      expected,
-      type.FormatTypeName(null, typeWithNamespace: true)
+    Assert.That(
+      type.FormatTypeName(null, typeWithNamespace: true),
+      Is.EqualTo(expected)
     );
   }
 
@@ -122,9 +122,9 @@ public partial class CSharpFormatterTests {
   [TestCase(typeof(bool), "bool")]
   public void TestFormatTypeName_PrimitiveType(Type type, string expected)
   {
-    Assert.AreEqual(
-      expected,
-      type.FormatTypeName(null)
+    Assert.That(
+      type.FormatTypeName(null),
+      Is.EqualTo(expected)
     );
   }
 
@@ -166,13 +166,13 @@ public partial class CSharpFormatterTests {
     string expected
   )
   {
-    Assert.AreEqual(
-      expected,
+    Assert.That(
       type.FormatTypeName(
         null,
         typeWithNamespace: withNamespace,
         translateLanguagePrimitiveType: false
-      )
+      ),
+      Is.EqualTo(expected)
     );
   }
 
@@ -184,9 +184,9 @@ public partial class CSharpFormatterTests {
   [TestCase(typeof(KeyValuePair<int, int>), "System.Collections.Generic.KeyValuePair<int, int>*")]
   public void TestFormatTypeName_PointerType(Type type, string expected)
   {
-    Assert.AreEqual(
-      expected,
-      type.MakePointerType().FormatTypeName(null)
+    Assert.That(
+      type.MakePointerType().FormatTypeName(null),
+      Is.EqualTo(expected)
     );
   }
 
@@ -204,13 +204,13 @@ public partial class CSharpFormatterTests {
     string expected
   )
   {
-    Assert.AreEqual(
-      expected,
+    Assert.That(
       type.MakePointerType().FormatTypeName(
         null,
         typeWithNamespace: withNamespace,
         translateLanguagePrimitiveType: false
-      )
+      ),
+      Is.EqualTo(expected)
     );
   }
 
@@ -219,9 +219,9 @@ public partial class CSharpFormatterTests {
   [TestCase(typeof(bool), "bool&")]
   public void TestFormatTypeName_PrimitiveByRefType(Type type, string expected)
   {
-    Assert.AreEqual(
-      expected,
-      type.MakeByRefType().FormatTypeName(null)
+    Assert.That(
+      type.MakeByRefType().FormatTypeName(null),
+      Is.EqualTo(expected)
     );
   }
 
@@ -237,13 +237,13 @@ public partial class CSharpFormatterTests {
     string expected
   )
   {
-    Assert.AreEqual(
-      expected,
+    Assert.That(
       type.MakeByRefType().FormatTypeName(
         null,
         typeWithNamespace: withNamespace,
         translateLanguagePrimitiveType: false
-      )
+      ),
+      Is.EqualTo(expected)
     );
   }
 
@@ -253,9 +253,9 @@ public partial class CSharpFormatterTests {
   [TestCase(typeof(CNest1.CNest2.CNest3), "CNest1.CNest2.CNest3")]
   public void TestFormatTypeName_NestedType(Type type, string expected)
   {
-    Assert.AreEqual(
-      expected,
-      type.FormatTypeName(null, typeWithNamespace: false)
+    Assert.That(
+      type.FormatTypeName(null, typeWithNamespace: false),
+      Is.EqualTo(expected)
     );
   }
 
@@ -309,9 +309,9 @@ public partial class CSharpFormatterTests {
     string expected
   )
   {
-    Assert.AreEqual(
-      expected,
-      type.FormatTypeName(null, typeWithNamespace: typeWithNamespace, withDeclaringTypeName: withDeclaringTypeName)
+    Assert.That(
+      type.FormatTypeName(null, typeWithNamespace: typeWithNamespace, withDeclaringTypeName: withDeclaringTypeName),
+      Is.EqualTo(expected)
     );
   }
 }

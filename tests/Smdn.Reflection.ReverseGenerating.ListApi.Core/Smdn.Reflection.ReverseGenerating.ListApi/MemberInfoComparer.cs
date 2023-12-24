@@ -42,8 +42,9 @@ class MemberInfoComparerTests {
       t.GetMethod("M"),
     };
 
-    CollectionAssert.AreEqual(
-      new MemberInfo[] {
+    Assert.That(
+      members.OrderBy(m => m, MemberInfoComparer.Default),
+      Is.EqualTo(new MemberInfo[] {
         t.GetEvent("SE"),
         t.GetEvent("E"),
         t.GetField("SF"),
@@ -54,8 +55,7 @@ class MemberInfoComparerTests {
         t.GetProperty("P"),
         t.GetMethod("SM"),
         t.GetMethod("M"),
-      },
-      members.OrderBy(m => m, MemberInfoComparer.Default)
+      }).AsCollection
     );
   }
 
@@ -76,8 +76,9 @@ class MemberInfoComparerTests {
       t.GetMethod("M"),
     };
 
-    CollectionAssert.AreEqual(
-      new MemberInfo[] {
+    Assert.That(
+      members.OrderBy(m => m, MemberInfoComparer.StaticMembersFirst),
+      Is.EqualTo(new MemberInfo[] {
         t.GetEvent("SE"),
         t.GetField("SF"),
         t.TypeInitializer,
@@ -88,8 +89,7 @@ class MemberInfoComparerTests {
         t.GetConstructor(BindingFlags.Public | BindingFlags.Instance, binder: null, Type.EmptyTypes, modifiers: null),
         t.GetProperty("P"),
         t.GetMethod("M"),
-      },
-      members.OrderBy(m => m, MemberInfoComparer.StaticMembersFirst)
+      }).AsCollection
     );
   }
 }

@@ -25,9 +25,9 @@ class VerbosityOptionTests {
   [TestCase("default", LogLevel.Information)]
   public void ParseLogLevel(string verbosity, LogLevel expectedLogLevel)
   {
-    Assert.AreEqual(
-      VerbosityOption.ParseLogLevel(verbosity is null ? Array.Empty<string>() : new[] { "-v", verbosity }),
-      expectedLogLevel
+    Assert.That(
+      expectedLogLevel,
+      Is.EqualTo(VerbosityOption.ParseLogLevel(verbosity is null ? Array.Empty<string>() : new[] { "-v", verbosity }))
     );
   }
 
@@ -45,9 +45,9 @@ class VerbosityOptionTests {
   [TestCase("default", LoggerVerbosity.Minimal)]
   public void ParseLoggerVerbosity(string verbosity, LoggerVerbosity expectedLoggerVerbosity)
   {
-    Assert.AreEqual(
-      VerbosityOption.ParseLoggerVerbosity(verbosity is null ? Array.Empty<string>() : new[] { "-v", verbosity }),
-      expectedLoggerVerbosity
+    Assert.That(
+      expectedLoggerVerbosity,
+      Is.EqualTo(VerbosityOption.ParseLoggerVerbosity(verbosity is null ? Array.Empty<string>() : new[] { "-v", verbosity }))
     );
   }
 }

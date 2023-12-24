@@ -20,8 +20,8 @@ class FrameworkMonikersTests {
   [TestCase(".NETFramework,Version=v4.0", "net40")]
   public void TryGetMoniker(string input, string expected)
   {
-    Assert.IsTrue(FrameworkMonikers.TryGetMoniker(new FrameworkName(input), osSpecifier: null, out var moniker));
-    Assert.AreEqual(expected, moniker, nameof(moniker));
+    Assert.That(FrameworkMonikers.TryGetMoniker(new FrameworkName(input), osSpecifier: null, out var moniker), Is.True);
+    Assert.That(moniker, Is.EqualTo(expected), nameof(moniker));
   }
 
   [Test]

@@ -25,8 +25,8 @@ class ProjectFinderTests {
       new(PathJoiner.Join(TestAssemblyInfo.RootDirectory.FullName, directoryName))
     );
 
-    Assert.IsNotNull(project, nameof(project));
-    Assert.AreEqual(project.Name, expectedProjectFileName, nameof(project.Name));
+    Assert.That(project, Is.Not.Null, nameof(project));
+    Assert.That(expectedProjectFileName, Is.EqualTo(project.Name), nameof(project.Name));
   }
 
   [Test]

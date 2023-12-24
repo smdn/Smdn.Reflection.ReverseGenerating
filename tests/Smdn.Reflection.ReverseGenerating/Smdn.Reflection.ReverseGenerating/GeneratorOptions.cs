@@ -15,32 +15,32 @@ public class GeneratorOptionsTests {
     var options = new GeneratorOptions();
     var clone = options.Clone();
 
-    Assert.IsNotNull(clone);
-    Assert.AreNotSame(clone, options);
+    Assert.That(clone, Is.Not.Null);
+    Assert.That(options, Is.Not.SameAs(clone));
 
     options.Indent = "1";
 
-    Assert.AreEqual("1", options.Indent);
+    Assert.That(options.Indent, Is.EqualTo("1"));
 
     clone.Indent = "2";
 
-    Assert.AreEqual("1", options.Indent);
-    Assert.AreEqual("2", clone.Indent);
+    Assert.That(options.Indent, Is.EqualTo("1"));
+    Assert.That(clone.Indent, Is.EqualTo("2"));
 
     options.Indent = "3";
 
-    Assert.AreEqual("3", options.Indent);
-    Assert.AreEqual("2", clone.Indent);
+    Assert.That(options.Indent, Is.EqualTo("3"));
+    Assert.That(clone.Indent, Is.EqualTo("2"));
 
     clone.Indent = "4";
 
-    Assert.AreEqual("3", options.Indent);
-    Assert.AreEqual("4", clone.Indent);
+    Assert.That(options.Indent, Is.EqualTo("3"));
+    Assert.That(clone.Indent, Is.EqualTo("4"));
 
-    Assert.AreNotSame(clone.TypeDeclaration, options.TypeDeclaration, nameof(GeneratorOptions.TypeDeclaration));
-    Assert.AreNotSame(clone.MemberDeclaration, options.MemberDeclaration, nameof(GeneratorOptions.MemberDeclaration));
-    Assert.AreNotSame(clone.AttributeDeclaration, options.AttributeDeclaration, nameof(GeneratorOptions.AttributeDeclaration));
-    Assert.AreNotSame(clone.ValueDeclaration, options.ValueDeclaration, nameof(GeneratorOptions.ValueDeclaration));
-    Assert.AreNotSame(clone.ParameterDeclaration, options.ParameterDeclaration, nameof(GeneratorOptions.ParameterDeclaration));
+    Assert.That(options.TypeDeclaration, Is.Not.SameAs(clone.TypeDeclaration), nameof(GeneratorOptions.TypeDeclaration));
+    Assert.That(options.MemberDeclaration, Is.Not.SameAs(clone.MemberDeclaration), nameof(GeneratorOptions.MemberDeclaration));
+    Assert.That(options.AttributeDeclaration, Is.Not.SameAs(clone.AttributeDeclaration), nameof(GeneratorOptions.AttributeDeclaration));
+    Assert.That(options.ValueDeclaration, Is.Not.SameAs(clone.ValueDeclaration), nameof(GeneratorOptions.ValueDeclaration));
+    Assert.That(options.ParameterDeclaration, Is.Not.SameAs(clone.ParameterDeclaration), nameof(GeneratorOptions.ParameterDeclaration));
   }
 }

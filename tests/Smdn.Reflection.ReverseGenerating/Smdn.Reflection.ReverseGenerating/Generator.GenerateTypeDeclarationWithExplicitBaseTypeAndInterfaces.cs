@@ -62,8 +62,7 @@ partial class GeneratorTests {
 
     options.AttributeDeclaration.TypeFilter ??= static (_, _) => false;
 
-    Assert.AreEqual(
-      attrTestCase.Expected.Replace("\r\n", "\n"),
+    Assert.That(
       string.Join(
         "\n",
         Generator.GenerateTypeDeclarationWithExplicitBaseTypeAndInterfaces(
@@ -72,6 +71,7 @@ partial class GeneratorTests {
           options
         )
       ),
+      Is.EqualTo(attrTestCase.Expected.Replace("\r\n", "\n")),
       message: $"{attrTestCase.SourceLocation} ({type.FullName})"
     );
   }

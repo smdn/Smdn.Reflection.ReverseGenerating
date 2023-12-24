@@ -56,14 +56,8 @@ class RootCommandImplementationGetOutputFilePathsTests {
       assemblyFile.FullName
     }).First();
 
-    Assert.AreEqual(
-      expectedOutputFileName,
-      Path.GetFileName(outputFilePath)
-    );
-    Assert.AreEqual(
-      GetCurrentDirectory(),
-      Path.GetDirectoryName(outputFilePath)
-    );
+    Assert.That(Path.GetFileName(outputFilePath), Is.EqualTo(expectedOutputFileName));
+    Assert.That(Path.GetDirectoryName(outputFilePath), Is.EqualTo(GetCurrentDirectory()));
   }
 
   [TestCase("-o", "output")]
@@ -80,14 +74,8 @@ class RootCommandImplementationGetOutputFilePathsTests {
       assemblyFile.FullName
     }).First();
 
-    Assert.AreEqual(
-      "Lib-net6.0.apilist.cs",
-      Path.GetFileName(outputFilePath)
-    );
-    Assert.AreEqual(
-      Path.GetFullPath(outputDirectory),
-      Path.GetDirectoryName(outputFilePath)
-    );
+    Assert.That(Path.GetFileName(outputFilePath), Is.EqualTo("Lib-net6.0.apilist.cs"));
+    Assert.That(Path.GetDirectoryName(outputFilePath), Is.EqualTo(Path.GetFullPath(outputDirectory)));
   }
 
   [Test]

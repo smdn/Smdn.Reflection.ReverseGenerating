@@ -84,9 +84,9 @@ partial class GeneratorTests {
     GenericParameterConstraintTestCaseAttribute attrTestCase,
     Type type
   )
-    => Assert.AreEqual(
-      attrTestCase.Expected,
+    => Assert.That(
       GenerateConstraintDeclaration(type.GetGenericArguments(), GetGeneratorOptions(attrTestCase)),
+      Is.EqualTo(attrTestCase.Expected),
       message: $"{attrTestCase.SourceLocation} ({type.FullName})"
     );
 
@@ -95,9 +95,9 @@ partial class GeneratorTests {
     GenericParameterConstraintTestCaseAttribute attrTestCase,
     MethodInfo method
   )
-    => Assert.AreEqual(
-      attrTestCase.Expected,
+    => Assert.That(
       GenerateConstraintDeclaration(method.GetGenericArguments(), GetGeneratorOptions(attrTestCase)),
+      Is.EqualTo(attrTestCase.Expected),
       message: $"{attrTestCase.SourceLocation} ({method})"
     );
 }

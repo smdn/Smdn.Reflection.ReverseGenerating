@@ -66,9 +66,9 @@ partial class GeneratorTests {
       ? t.FullName
       : $"{typeOrMember.DeclaringType?.FullName}.{typeOrMember.Name}";
 
-    Assert.AreEqual(
-      attrTestCase.Expected,
+    Assert.That(
       string.Join(", ", Generator.GenerateAttributeList(typeOrMember, null, options)),
+      Is.EqualTo(attrTestCase.Expected),
       message: $"{attrTestCase.SourceLocation} ({typeOrMemberName})"
     );
   }
@@ -112,9 +112,9 @@ partial class GeneratorTests {
 
     options.AttributeDeclaration.TypeFilter = ExceptTestCaseAttributeFilter;
 
-    Assert.AreEqual(
-      attrTestCase.Expected,
+    Assert.That(
       string.Join(", ", Generator.GenerateAttributeList(param, null, options)),
+      Is.EqualTo(attrTestCase.Expected),
       message: $"{attrTestCase.SourceLocation} ({param.Member.DeclaringType!.FullName}.{param.Member.Name} {(param.Name ?? "return value")})"
     );
   }

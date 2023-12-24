@@ -54,9 +54,9 @@ class RootCommandImplementationGetInputAssemblyFilesTests {
 
     var impl = new RootCommandImplementation(serviceProvider);
 
-    CollectionAssert.AreEquivalent(
-      new[] { assemblyFile.FullName },
-      impl.GetInputAssemblyFiles(new[] { assemblyFile.FullName }).Select(f => f.FullName)
+    Assert.That(
+      impl.GetInputAssemblyFiles(new[] { assemblyFile.FullName }).Select(f => f.FullName),
+      Is.EquivalentTo(new[] { assemblyFile.FullName })
     );
   }
 

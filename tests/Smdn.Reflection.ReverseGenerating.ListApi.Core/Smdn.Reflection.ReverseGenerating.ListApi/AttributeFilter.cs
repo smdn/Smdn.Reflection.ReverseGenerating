@@ -82,9 +82,9 @@ partial class AttributeFilterTests {
       );
     }
     else {
-      Assert.AreEqual(
-        testCase.ExpectedResult,
+      Assert.That(
         actual(),
+        Is.EqualTo(testCase.ExpectedResult),
         message
       );
     }

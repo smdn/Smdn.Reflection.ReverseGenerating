@@ -47,9 +47,9 @@ partial class GeneratorTests {
     ExplicitBaseTypeAndInterfacesTestCaseAttribute attrTestCase,
     Type type
   )
-    => Assert.AreEqual(
-      attrTestCase.Expected,
+    => Assert.That(
       string.Join(", ", Generator.GenerateExplicitBaseTypeAndInterfaces(type, null, GetGeneratorOptions(attrTestCase))),
+      Is.EqualTo(attrTestCase.Expected),
       message: $"{attrTestCase.SourceLocation} ({type.FullName})"
     );
 }

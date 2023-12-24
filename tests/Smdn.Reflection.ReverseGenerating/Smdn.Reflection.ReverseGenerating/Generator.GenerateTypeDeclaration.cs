@@ -110,9 +110,9 @@ partial class GeneratorTests {
 
     options.AttributeDeclaration.TypeFilter ??= static (_, _) => false;
 
-    Assert.AreEqual(
-      attrTestCase.Expected,
+    Assert.That(
       Generator.GenerateTypeDeclaration(attrTestCase.TestTargetType ?? type, null, options),
+      Is.EqualTo(attrTestCase.Expected),
       message: $"{attrTestCase.SourceLocation} ({type.FullName})"
     );
   }

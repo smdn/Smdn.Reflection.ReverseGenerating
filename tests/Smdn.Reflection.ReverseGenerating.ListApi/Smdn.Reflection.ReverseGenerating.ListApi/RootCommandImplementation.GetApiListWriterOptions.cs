@@ -33,8 +33,8 @@ class RootCommandImplementationGetApiListWriterOptionsTests {
   {
     var options = GetApiListWriterOptions(args);
 
-    Assert.AreEqual(expected, options.TypeDeclaration.WithNamespace, $"args='{args}'");
-    Assert.AreEqual(expected, options.MemberDeclaration.WithNamespace, $"args='{args}'");
+    Assert.That(options.TypeDeclaration.WithNamespace, Is.EqualTo(expected), $"args='{args}'");
+    Assert.That(options.MemberDeclaration.WithNamespace, Is.EqualTo(expected), $"args='{args}'");
   }
 
   [TestCase("--generate-methodbody=EmptyImplementation", MethodBodyOption.EmptyImplementation)]
@@ -45,7 +45,7 @@ class RootCommandImplementationGetApiListWriterOptionsTests {
   {
     var options = GetApiListWriterOptions(args);
 
-    Assert.AreEqual(expected, options.MemberDeclaration.MethodBody, $"args='{args}'");
+    Assert.That(options.MemberDeclaration.MethodBody, Is.EqualTo(expected), $"args='{args}'");
   }
 
   [TestCase("--generate-staticmembersfirst", true)]
@@ -56,7 +56,7 @@ class RootCommandImplementationGetApiListWriterOptionsTests {
   {
     var options = GetApiListWriterOptions(args);
 
-    Assert.AreEqual(expected, options.Writer.OrderStaticMembersFirst, $"args='{args}'");
+    Assert.That(options.Writer.OrderStaticMembersFirst, Is.EqualTo(expected), $"args='{args}'");
   }
 
   [TestCase("--generate-nullableannotations", true)]
@@ -67,6 +67,6 @@ class RootCommandImplementationGetApiListWriterOptionsTests {
   {
     var options = GetApiListWriterOptions(args);
 
-    Assert.AreEqual(expected, options.Writer.WriteNullableAnnotationDirective, $"args='{args}'");
+    Assert.That(options.Writer.WriteNullableAnnotationDirective, Is.EqualTo(expected), $"args='{args}'");
   }
 }

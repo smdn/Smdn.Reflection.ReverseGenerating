@@ -116,10 +116,10 @@ class AssemblyLoaderTests {
       loadIntoReflectionOnlyContext: loadIntoReflectionOnlyContext,
       arg: assemblyFile,
       (assm, arg) => {
-        Assert.AreSame(arg, assemblyFile, nameof(arg));
+        Assert.That(assemblyFile, Is.SameAs(arg), nameof(arg));
 
-        Assert.IsNotNull(assm, nameof(assm));
-        Assert.AreEqual(arg.FullName, assm.Location, nameof(assm.Location));
+        Assert.That(assm, Is.Not.Null, nameof(assm));
+        Assert.That(assm.Location, Is.EqualTo(arg.FullName), nameof(assm.Location));
 
         Assert.DoesNotThrow(() => assm.GetExportedTypes(), nameof(assm.GetExportedTypes));
 
@@ -129,15 +129,15 @@ class AssemblyLoaderTests {
       logger: logger
     );
 
-    Assert.IsNotNull(result, nameof(result));
-    Assert.AreEqual("Lib.LibA.CBase", result, nameof(result));
+    Assert.That(result, Is.Not.Null, nameof(result));
+    Assert.That(result, Is.EqualTo("Lib.LibA.CBase"), nameof(result));
 
     if (loadIntoReflectionOnlyContext) {
-      Assert.IsNull(context, nameof(context));
+      Assert.That(context, Is.Null, nameof(context));
       return;
     }
 
-    Assert.IsNotNull(context, nameof(context));
+    Assert.That(context, Is.Not.Null, nameof(context));
 
     var unloaded = false;
 
@@ -151,7 +151,7 @@ class AssemblyLoaderTests {
       GC.WaitForPendingFinalizers();
     }
 
-    Assert.IsTrue(unloaded, nameof(unloaded));
+    Assert.That(unloaded, Is.True, nameof(unloaded));
   }
 
 #if NETCOREAPP3_1_OR_GREATER || NET6_0_OR_GREATER
@@ -178,14 +178,14 @@ class AssemblyLoaderTests {
       );
     });
 
-    Assert.AreEqual(default(int), result, nameof(result));
+    Assert.That(result, Is.EqualTo(default(int)), nameof(result));
 
     if (loadIntoReflectionOnlyContext) {
-      Assert.IsNull(context, nameof(context));
+      Assert.That(context, Is.Null, nameof(context));
       return;
     }
 
-    Assert.IsNotNull(context, nameof(context));
+    Assert.That(context, Is.Not.Null, nameof(context));
 
     var unloaded = false;
 
@@ -199,7 +199,7 @@ class AssemblyLoaderTests {
       GC.WaitForPendingFinalizers();
     }
 
-    Assert.IsTrue(unloaded, nameof(unloaded));
+    Assert.That(unloaded, Is.True, nameof(unloaded));
   }
 
 #if NETCOREAPP3_1_OR_GREATER || NET6_0_OR_GREATER
@@ -227,12 +227,12 @@ class AssemblyLoaderTests {
       loadIntoReflectionOnlyContext: loadIntoReflectionOnlyContext,
       arg: assemblyFile,
       (assm, arg) => {
-        Assert.IsNotNull(assm, nameof(assm));
+        Assert.That(assm, Is.Not.Null, nameof(assm));
 
         if (loadIntoReflectionOnlyContext)
-          Assert.AreEqual(arg.FullName, assm.Location, nameof(assm.Location));
+          Assert.That(assm.Location, Is.EqualTo(arg.FullName), nameof(assm.Location));
         else
-          Assert.IsEmpty(assm.Location, nameof(assm.Location));
+          Assert.That(assm.Location, Is.Empty, nameof(assm.Location));
 
         Assert.DoesNotThrow(() => assm.GetExportedTypes(), nameof(assm.GetExportedTypes));
 
@@ -242,15 +242,15 @@ class AssemblyLoaderTests {
       logger: logger
     );
 
-    Assert.IsNotNull(result, nameof(result));
-    Assert.AreEqual("Lib.LibA.CBase", result, nameof(result));
+    Assert.That(result, Is.Not.Null, nameof(result));
+    Assert.That(result, Is.EqualTo("Lib.LibA.CBase"), nameof(result));
 
     if (loadIntoReflectionOnlyContext) {
-      Assert.IsNull(context, nameof(context));
+      Assert.That(context, Is.Null, nameof(context));
       return;
     }
 
-    Assert.IsNotNull(context, nameof(context));
+    Assert.That(context, Is.Not.Null, nameof(context));
 
     var unloaded = false;
 
@@ -264,7 +264,7 @@ class AssemblyLoaderTests {
       GC.WaitForPendingFinalizers();
     }
 
-    Assert.IsTrue(unloaded, nameof(unloaded));
+    Assert.That(unloaded, Is.True, nameof(unloaded));
   }
 
 #if NETCOREAPP3_1_OR_GREATER || NET6_0_OR_GREATER
@@ -290,10 +290,10 @@ class AssemblyLoaderTests {
       loadIntoReflectionOnlyContext: loadIntoReflectionOnlyContext,
       arg: assemblyFile,
       (assm, arg) => {
-        Assert.AreSame(arg, assemblyFile, nameof(arg));
+        Assert.That(assemblyFile, Is.SameAs(arg), nameof(arg));
 
-        Assert.IsNotNull(assm, nameof(assm));
-        Assert.AreEqual(arg.FullName, assm.Location, nameof(assm.Location));
+        Assert.That(assm, Is.Not.Null, nameof(assm));
+        Assert.That(assm.Location, Is.EqualTo(arg.FullName), nameof(assm.Location));
 
         Assert.DoesNotThrow(() => assm.GetExportedTypes(), nameof(assm.GetExportedTypes));
 
@@ -303,15 +303,15 @@ class AssemblyLoaderTests {
       logger: logger
     );
 
-    Assert.IsNotNull(result, nameof(result));
-    Assert.AreEqual("Lib.LibB.CEx", result, nameof(result));
+    Assert.That(result, Is.Not.Null, nameof(result));
+    Assert.That(result, Is.EqualTo("Lib.LibB.CEx"), nameof(result));
 
     if (loadIntoReflectionOnlyContext) {
-      Assert.IsNull(context, nameof(context));
+      Assert.That(context, Is.Null, nameof(context));
       return;
     }
 
-    Assert.IsNotNull(context, nameof(context));
+    Assert.That(context, Is.Not.Null, nameof(context));
 
     var unloaded = false;
 
@@ -325,7 +325,7 @@ class AssemblyLoaderTests {
       GC.WaitForPendingFinalizers();
     }
 
-    Assert.IsTrue(unloaded, nameof(unloaded));
+    Assert.That(unloaded, Is.True, nameof(unloaded));
   }
 
 #if NETCOREAPP3_1_OR_GREATER || NET6_0_OR_GREATER
@@ -353,12 +353,12 @@ class AssemblyLoaderTests {
       loadIntoReflectionOnlyContext: loadIntoReflectionOnlyContext,
       arg: assemblyFile,
       (assm, arg) => {
-        Assert.IsNotNull(assm, nameof(assm));
+        Assert.That(assm, Is.Not.Null, nameof(assm));
 
         if (loadIntoReflectionOnlyContext)
-          Assert.AreEqual(arg.FullName, assm.Location, nameof(assm.Location));
+          Assert.That(assm.Location, Is.EqualTo(arg.FullName), nameof(assm.Location));
         else
-          Assert.IsEmpty(assm.Location, nameof(assm.Location));
+          Assert.That(assm.Location, Is.Empty, nameof(assm.Location));
 
         Assert.DoesNotThrow(() => assm.GetExportedTypes(), nameof(assm.GetExportedTypes));
 
@@ -368,15 +368,15 @@ class AssemblyLoaderTests {
       logger: logger
     );
 
-    Assert.IsNotNull(result, nameof(result));
-    Assert.AreEqual("Lib.LibB.CEx", result, nameof(result));
+    Assert.That(result, Is.Not.Null, nameof(result));
+    Assert.That(result, Is.EqualTo("Lib.LibB.CEx"), nameof(result));
 
     if (loadIntoReflectionOnlyContext) {
-      Assert.IsNull(context, nameof(context));
+      Assert.That(context, Is.Null, nameof(context));
       return;
     }
 
-    Assert.IsNotNull(context, nameof(context));
+    Assert.That(context, Is.Not.Null, nameof(context));
 
     var unloaded = false;
 
@@ -390,7 +390,7 @@ class AssemblyLoaderTests {
       GC.WaitForPendingFinalizers();
     }
 
-    Assert.IsTrue(unloaded, nameof(unloaded));
+    Assert.That(unloaded, Is.True, nameof(unloaded));
   }
 
 #if NETCOREAPP3_1_OR_GREATER || NET6_0_OR_GREATER
@@ -416,10 +416,10 @@ class AssemblyLoaderTests {
       loadIntoReflectionOnlyContext: loadIntoReflectionOnlyContext,
       arg: assemblyFile,
       (assm, arg) => {
-        Assert.AreSame(arg, assemblyFile, nameof(arg));
+        Assert.That(assemblyFile, Is.SameAs(arg), nameof(arg));
 
-        Assert.IsNotNull(assm, nameof(assm));
-        Assert.AreEqual(arg.FullName, assm.Location, nameof(assm.Location));
+        Assert.That(assm, Is.Not.Null, nameof(assm));
+        Assert.That(assm.Location, Is.EqualTo(arg.FullName), nameof(assm.Location));
 
         Assert.DoesNotThrow(() => assm.GetExportedTypes(), nameof(assm.GetExportedTypes));
 
@@ -435,15 +435,15 @@ class AssemblyLoaderTests {
       logger: logger
     );
 
-    Assert.IsNotNull(result, nameof(result));
-    Assert.AreEqual("Microsoft.Extensions.Logging.ILogger", result, nameof(result));
+    Assert.That(result, Is.Not.Null, nameof(result));
+    Assert.That(result, Is.EqualTo("Microsoft.Extensions.Logging.ILogger"), nameof(result));
 
     if (loadIntoReflectionOnlyContext) {
-      Assert.IsNull(context, nameof(context));
+      Assert.That(context, Is.Null, nameof(context));
       return;
     }
 
-    Assert.IsNotNull(context, nameof(context));
+    Assert.That(context, Is.Not.Null, nameof(context));
 
     var unloaded = false;
 
@@ -457,6 +457,6 @@ class AssemblyLoaderTests {
       GC.WaitForPendingFinalizers();
     }
 
-    Assert.IsTrue(unloaded, nameof(unloaded));
+    Assert.That(unloaded, Is.True, nameof(unloaded));
   }
 }
