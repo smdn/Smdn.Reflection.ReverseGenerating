@@ -20,7 +20,7 @@ namespace Smdn.Reflection.ReverseGenerating.ListApi;
 
 [TestFixture]
 class RootCommandImplementationGetInputAssemblyFilesTests {
-  private IServiceProvider serviceProvider;
+  private ServiceProvider serviceProvider;
 
   [OneTimeSetUp]
   public void Init()
@@ -34,6 +34,12 @@ class RootCommandImplementationGetInputAssemblyFilesTests {
     );
 
     serviceProvider = services.BuildServiceProvider();
+  }
+
+  [OneTimeTearDown]
+  public void OneTimeTearDown()
+  {
+    serviceProvider.Dispose();
   }
 
   [TestCase("Lib.dll", "net6.0")]

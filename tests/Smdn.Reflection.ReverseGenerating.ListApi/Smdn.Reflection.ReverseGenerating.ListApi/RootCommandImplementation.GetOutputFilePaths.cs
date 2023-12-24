@@ -17,7 +17,7 @@ namespace Smdn.Reflection.ReverseGenerating.ListApi;
 
 [TestFixture]
 class RootCommandImplementationGetOutputFilePathsTests {
-  private IServiceProvider serviceProvider;
+  private ServiceProvider serviceProvider;
 
   [OneTimeSetUp]
   public void Init()
@@ -31,6 +31,12 @@ class RootCommandImplementationGetOutputFilePathsTests {
     );
 
     serviceProvider = services.BuildServiceProvider();
+  }
+
+  [OneTimeTearDown]
+  public void OneTimeTearDown()
+  {
+    serviceProvider.Dispose();
   }
 
   static string GetCurrentDirectory() => TestContext.CurrentContext.WorkDirectory;
