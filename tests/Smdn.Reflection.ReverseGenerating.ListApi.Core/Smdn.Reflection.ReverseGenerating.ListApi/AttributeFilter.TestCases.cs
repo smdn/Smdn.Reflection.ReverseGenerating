@@ -129,6 +129,16 @@ public class MethodAttributes {
     [MemberAttributeFilterTestCaseAttribute("", FilterType = typeof(AttributeFilter), FilterMemberName = nameof(AttributeFilter.Default))]
     public async ValueTask ValueTaskAsyncStateMachineMethod() => await Task.Delay(0);
   }
+
+  public struct IsReadOnlyAttr : IDisposable {
+    [MemberAttributeFilterTestCaseAttribute("[IsReadOnly]")]
+    [MemberAttributeFilterTestCaseAttribute("", FilterType = typeof(AttributeFilter), FilterMemberName = nameof(AttributeFilter.Default))]
+    public readonly void M() => throw null;
+
+    [MemberAttributeFilterTestCaseAttribute("[IsReadOnly]")]
+    [MemberAttributeFilterTestCaseAttribute("", FilterType = typeof(AttributeFilter), FilterMemberName = nameof(AttributeFilter.Default))]
+    readonly void IDisposable.Dispose() => throw null;
+  }
 }
 
 public class FieldAttributes {
@@ -216,6 +226,17 @@ public class EventAttributes {
     [method: MemberAttributeFilterTestCaseAttribute("", FilterType = typeof(AttributeFilter), FilterMemberName = nameof(AttributeFilter.Default))]
     public event EventHandler ECompilerGenerated;
 #pragma warning restore CS0067
+  }
+
+  public struct IsReadOnlyAttr {
+    public readonly event EventHandler E {
+      [MemberAttributeFilterTestCaseAttribute("[IsReadOnly]")]
+      [MemberAttributeFilterTestCaseAttribute("", FilterType = typeof(AttributeFilter), FilterMemberName = nameof(AttributeFilter.Default))]
+      add => throw null;
+      [MemberAttributeFilterTestCaseAttribute("[IsReadOnly]")]
+      [MemberAttributeFilterTestCaseAttribute("", FilterType = typeof(AttributeFilter), FilterMemberName = nameof(AttributeFilter.Default))]
+      remove => throw null;
+    }
   }
 }
 

@@ -30,7 +30,7 @@ public static class AttributeFilter {
       if ("IsReadOnlyAttribute".Equals(attrType.Name, StringComparison.Ordinal)) {
         var ignore = attrProvider switch {
           Type => true,
-          MethodInfo m => m.IsPropertyAccessorMethod(),
+          MethodInfo => true, // also ignores event and property accessors
           ParameterInfo => true,
           _ => false,
         };
