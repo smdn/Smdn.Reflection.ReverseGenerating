@@ -368,7 +368,6 @@ public sealed class RootCommandImplementation : ICommandHandler {
       inputFile = f;
     }
     else {
-      // TODO: dereference symlink
       throw new CommandOperationNotSupportedException($"unsupported input: {input}");
     }
 
