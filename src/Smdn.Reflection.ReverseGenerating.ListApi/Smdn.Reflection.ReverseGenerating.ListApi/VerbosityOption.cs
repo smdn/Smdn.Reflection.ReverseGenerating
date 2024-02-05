@@ -28,7 +28,7 @@ public static class VerbosityOption {
   }
 
   public static LogLevel ParseLogLevel(ParseResult parseResult)
-    => (parseResult ?? throw new ArgumentNullException(nameof(parseResult))).ValueForOption(Option) switch {
+    => (parseResult ?? throw new ArgumentNullException(nameof(parseResult))).GetValueForOption(Option) switch {
 #pragma warning disable IDE0055
       "q" or "quiet"          => LogLevel.Information,
       "m" or "minimal"        => LogLevel.Information,
@@ -50,7 +50,7 @@ public static class VerbosityOption {
   }
 
   public static LoggerVerbosity ParseLoggerVerbosity(ParseResult parseResult)
-    => (parseResult ?? throw new ArgumentNullException(nameof(parseResult))).ValueForOption(Option) switch {
+    => (parseResult ?? throw new ArgumentNullException(nameof(parseResult))).GetValueForOption(Option) switch {
 #pragma warning disable IDE0055
       "q" or "quiet"          => LoggerVerbosity.Quiet,
       "m" or "minimal"        => LoggerVerbosity.Minimal,

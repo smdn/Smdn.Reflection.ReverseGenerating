@@ -52,17 +52,6 @@ internal sealed class Program {
         errorExitCode: -1
       );
 
-#if false
-    // [BUG?] System.CommandLine 2.0.0-beta1.21308.1 ignores first <FileSystemInfo> argument?
-    // `--version`    --- works
-    // `-v n foo.dll` --- works
-    // `foo.dll -v n` --- ignores argument `foo.dll`
-    // `foo.dll`      --- ignores argument `foo.dll`
-    // `--foo`        --- parses as filename `--foo`
-
     return builder.Build().Invoke(args);
-#else
-    return builder.Build().Invoke(Environment.GetCommandLineArgs());
-#endif
   }
 }

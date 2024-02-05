@@ -16,6 +16,7 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.Versioning;
 using System.Text;
+using System.Threading.Tasks;
 
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -26,7 +27,7 @@ using Smdn.Reflection.ReverseGenerating.ListApi.Build;
 
 namespace Smdn.Reflection.ReverseGenerating.ListApi;
 
-public class RootCommandImplementation {
+public sealed class RootCommandImplementation : ICommandHandler {
   public static readonly string DefaultBuildConfiguration = "Release";
 
   private static readonly Argument<FileSystemInfo> ArgumentInput = new(
@@ -126,7 +127,7 @@ public class RootCommandImplementation {
       OptionGenerateNullableAnnotations,
     };
 
-    rootCommand.Handler = CommandHandler.Create<ParseResult, IConsole>(CommandMain);
+    rootCommand.Handler = this;
 
     return rootCommand;
   }
@@ -143,17 +144,17 @@ public class RootCommandImplementation {
     var options = new ApiListWriterOptions();
 
 #pragma warning disable IDE0055
-    options.TypeDeclaration.WithNamespace       = parseResult.ValueForOption(OptionGenerateFullTypeName);
-    options.MemberDeclaration.WithNamespace     = parseResult.ValueForOption(OptionGenerateFullTypeName);
-    options.AttributeDeclaration.WithNamespace  = parseResult.ValueForOption(OptionGenerateFullTypeName);
+    options.TypeDeclaration.WithNamespace       = parseResult.GetValueForOption(OptionGenerateFullTypeName);
+    options.MemberDeclaration.WithNamespace     = parseResult.GetValueForOption(OptionGenerateFullTypeName);
+    options.AttributeDeclaration.WithNamespace  = parseResult.GetValueForOption(OptionGenerateFullTypeName);
 
-    var methodBody = parseResult.ValueForOption(OptionGenerateMethodBody);
+    var methodBody = parseResult.GetValueForOption(OptionGenerateMethodBody);
 
     options.MemberDeclaration.MethodBody        = methodBody;
     options.MemberDeclaration.AccessorBody      = methodBody;
 
-    options.Writer.OrderStaticMembersFirst          = parseResult.ValueForOption(OptionGenerateStaticMembersFirst);
-    options.Writer.WriteNullableAnnotationDirective = parseResult.ValueForOption(OptionGenerateNullableAnnotations);
+    options.Writer.OrderStaticMembersFirst          = parseResult.GetValueForOption(OptionGenerateStaticMembersFirst);
+    options.Writer.WriteNullableAnnotationDirective = parseResult.GetValueForOption(OptionGenerateNullableAnnotations);
 
     options.AttributeDeclaration.TypeFilter     = AttributeFilter.Default;
 
@@ -164,10 +165,17 @@ public class RootCommandImplementation {
   }
 
   private static DirectoryInfo GetOutputDirectory(ParseResult parseResult)
-    => parseResult.ValueForOption(OptionOutputDirectory) ?? new(Environment.CurrentDirectory);
+    => parseResult.GetValueForOption(OptionOutputDirectory) ?? new(Environment.CurrentDirectory);
 
-  private void CommandMain(ParseResult parseResult, IConsole console)
+  Task<int> ICommandHandler.InvokeAsync(InvocationContext invocationContext)
+#pragma warning disable CA1849
+    => Task.FromResult((this as ICommandHandler).Invoke(invocationContext));
+#pragma warning restore CA1849
+
+  int ICommandHandler.Invoke(InvocationContext invocationContext)
   {
+    var parseResult = invocationContext.ParseResult;
+
 #pragma warning disable CA2254
     logger?.LogDebug(parseResult.ToString());
 #pragma warning restore CA2254
@@ -179,8 +187,8 @@ public class RootCommandImplementation {
 
     var options = GetApiListWriterOptions(parseResult);
     var outputDirectory = GetOutputDirectory(parseResult);
-    var loadAssemblyIntoReflectionOnlyContext = parseResult.ValueForOption(OptionLoadAssemblyIntoReflectionOnlyContext);
-    var enableNullabilityAnnotations = parseResult.ValueForOption(OptionGenerateNullableAnnotations);
+    var loadAssemblyIntoReflectionOnlyContext = parseResult.GetValueForOption(OptionLoadAssemblyIntoReflectionOnlyContext);
+    var enableNullabilityAnnotations = parseResult.GetValueForOption(OptionGenerateNullableAnnotations);
 
     foreach (var inputAssemblyFile in GetInputAssemblyFiles(parseResult)) {
       AssemblyLoader.UsingAssembly(
@@ -247,6 +255,8 @@ public class RootCommandImplementation {
         GC.WaitForPendingFinalizers();
       }
     }
+
+    return 0;
   }
 
   // <remarks>This method is for testing purposes.</remarks>
@@ -336,7 +346,7 @@ public class RootCommandImplementation {
 
   private IEnumerable<FileInfo> GetInputAssemblyFiles(ParseResult parseResult)
   {
-    var input = parseResult.ValueForArgument(ArgumentInput);
+    var input = parseResult.GetValueForArgument(ArgumentInput);
     FileInfo inputFile;
 
     if (input is null)
@@ -382,10 +392,10 @@ public class RootCommandImplementation {
       inputAssemblyFiles = ProjectBuilder.Build(
         inputFile,
         options: new() {
-          Configuration = parseResult.ValueForOption(OptionConfiguration),
-          TargetFramework = parseResult.ValueForOption(OptionTargetFramework),
-          // OS: parseResult.ValueForOption(OptionOS),
-          RuntimeIdentifier = parseResult.ValueForOption(OptionRuntimeIdentifier),
+          Configuration = parseResult.GetValueForOption(OptionConfiguration),
+          TargetFramework = parseResult.GetValueForOption(OptionTargetFramework),
+          // OS: parseResult.GetValueForOption(OptionOS),
+          RuntimeIdentifier = parseResult.GetValueForOption(OptionRuntimeIdentifier),
           LoggerVerbosity = VerbosityOption.ParseLoggerVerbosity(parseResult),
         },
         logger: logger
