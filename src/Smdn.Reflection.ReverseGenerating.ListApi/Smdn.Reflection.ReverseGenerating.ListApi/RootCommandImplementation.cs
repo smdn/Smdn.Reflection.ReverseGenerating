@@ -30,7 +30,7 @@ namespace Smdn.Reflection.ReverseGenerating.ListApi;
 public sealed class RootCommandImplementation : ICommandHandler {
   public static readonly string DefaultBuildConfiguration = "Release";
 
-  private static readonly Argument<FileSystemInfo> ArgumentInput = new(
+  private static readonly Argument<FileSystemInfo> ArgumentInput = new Argument<FileSystemInfo>(
     name: "input",
 #if FEATURE_BUILD_PROJ
     description: "Path to project/solution/assembly file to generate the API list. The command will search for an project file from the current directory if not specified, or search from the directory if a directory is specified.",
@@ -41,7 +41,8 @@ public sealed class RootCommandImplementation : ICommandHandler {
   ) {
     // Arity = ArgumentArity.OneOrMore
     Arity = ArgumentArity.ExactlyOne,
-  };
+  }
+  .ExistingOnly();
 
   private static readonly Option<string?> OptionConfiguration = new(
     aliases: new[] { "-c", "--configuration" },
