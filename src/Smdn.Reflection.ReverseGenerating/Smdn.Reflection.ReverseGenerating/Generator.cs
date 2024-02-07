@@ -1116,10 +1116,9 @@ public static partial class Generator {
       );
     }
 
-    var emitAccessor = !ev.GetDeclaringTypeOrThrow().IsInterface && (
-      ev.AddMethod?.GetCustomAttribute<CompilerGeneratedAttribute>() is null ||
-      ev.RemoveMethod?.GetCustomAttribute<CompilerGeneratedAttribute>() is null
-    );
+    static bool IsCompilerGeneratedAttribute(CustomAttributeData d)
+      => d.AttributeType == typeof(CompilerGeneratedAttribute)
+      || string.Equals(d.AttributeType.FullName, "System.Runtime.CompilerServices.CompilerGeneratedAttribute", StringComparison.Ordinal);
 
     static bool HasAttributeExceptCompilerGeneratedAttribute(MethodInfo? accessor, AttributeTypeFilter? filter)
     {
@@ -1127,14 +1126,20 @@ public static partial class Generator {
         return false;
 
       var attributesExceptCompilerGenerated = accessor
-        .GetCustomAttributes()
-        .Where(static a => a.GetType() != typeof(CompilerGeneratedAttribute));
+        .GetCustomAttributesData()
+        .Where(static d => !IsCompilerGeneratedAttribute(d));
 
       if (filter is null)
         return attributesExceptCompilerGenerated.Any();
       else
-        return attributesExceptCompilerGenerated.Any(a => filter(a.GetType(), accessor));
+        return attributesExceptCompilerGenerated.Any(d => filter(d.AttributeType, accessor));
     }
+
+    var compilerGeneratedAccessors =
+      (ev.AddMethod?.GetCustomAttributesData()?.Any(IsCompilerGeneratedAttribute) ?? false) &&
+      (ev.RemoveMethod?.GetCustomAttributesData()?.Any(IsCompilerGeneratedAttribute) ?? false);
+
+    var emitAccessor = !ev.GetDeclaringTypeOrThrow().IsInterface && !compilerGeneratedAccessors;
 
     emitAccessor |= HasAttributeExceptCompilerGeneratedAttribute(ev.AddMethod, options.AttributeDeclaration.TypeFilter);
     emitAccessor |= HasAttributeExceptCompilerGeneratedAttribute(ev.RemoveMethod, options.AttributeDeclaration.TypeFilter);
