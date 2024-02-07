@@ -181,6 +181,10 @@ public sealed class RootCommandImplementation : ICommandHandler {
     logger?.LogDebug(parseResult.ToString());
 #pragma warning restore CA2254
 
+    // https://learn.microsoft.com/dotnet/core/versions/selection
+    // https://learn.microsoft.com/dotnet/core/tools/dotnet-environment-variables#dotnet_roll_forward
+    logger?.LogDebug("DOTNET_ROLL_FORWARD={EnvVar_DOTNET_ROLL_FORWARD}", Environment.GetEnvironmentVariable("DOTNET_ROLL_FORWARD"));
+
     // ref: https://docs.microsoft.com/en-us/dotnet/core/dependency-loading/default-probing
     logger?.LogDebug("APP_PATHS={AppContext_APP_PATHS}", AppContext.GetData("APP_PATHS"));
     logger?.LogDebug("APP_CONTEXT_DEPS_FILES={AppContext_APP_CONTEXT_DEPS_FILES}", AppContext.GetData("APP_CONTEXT_DEPS_FILES"));
