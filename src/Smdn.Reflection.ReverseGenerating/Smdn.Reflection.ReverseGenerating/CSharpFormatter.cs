@@ -589,9 +589,27 @@ public static partial class CSharpFormatter /* ITypeFormatter */ {
           return ToString(typeOfValue, options) + "." + f.Name;
       }
 
-      if (!typeOfValue.IsPrimitive && val.Equals(Activator.CreateInstance(typeOfValue)))
-        // format as 'default'
-        return ToDefaultValue(typeOfValue, options);
+      if (!typeOfValue.IsPrimitive) {
+        object? defaultValue;
+
+        try {
+          defaultValue = Activator.CreateInstance(type: typeOfValue);
+        }
+        catch (ArgumentException ex) when (
+          // "Type must be a type provided by the runtime. (Parameter 'type')"
+          string.Equals(ex.ParamName, "type", StringComparison.Ordinal)
+        ) {
+          // may be reflection-only context
+          if (typeOfValue.IsEnum)
+            return "(" + ToString(typeOfValue, options) + ")" + val.ToString();
+
+          return val.ToString() ?? string.Empty;
+        }
+
+        if (val.Equals(defaultValue))
+          // format as 'default'
+          return ToDefaultValue(typeOfValue, options);
+      }
     }
 
     if (typeOfValue.IsEnum)
