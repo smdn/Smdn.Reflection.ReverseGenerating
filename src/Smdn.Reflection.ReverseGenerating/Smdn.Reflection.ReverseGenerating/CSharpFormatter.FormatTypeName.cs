@@ -300,7 +300,7 @@ static partial class CSharpFormatter {
     if (
       options.OmitAttributeSuffix &&
       typeName.EndsWith("Attribute", StringComparison.Ordinal) &&
-      typeof(Attribute).IsAssignableFrom(t) &&
+      (typeof(Attribute).IsAssignableFrom(t) || IsAttributeType(t)) &&
       t != typeof(Attribute)
     ) {
       const int LengthOfAttributeSuffix = 9; // "Attribute".Length
@@ -309,5 +309,21 @@ static partial class CSharpFormatter {
     }
 
     return typeName;
+
+    // alternative method to Type.IsAssignableTo(typeof(Attribute)) for the
+    // reflection-only context types
+    static bool IsAttributeType(Type maybeReflectionOnlyType)
+    {
+      var t = maybeReflectionOnlyType.BaseType;
+
+      for (; ; ) {
+        if (t is null)
+          return false;
+        if (string.Equals(t.FullName, "System.Attribute", StringComparison.Ordinal))
+          return true;
+
+        t = t.BaseType;
+      }
+    }
   }
 }
