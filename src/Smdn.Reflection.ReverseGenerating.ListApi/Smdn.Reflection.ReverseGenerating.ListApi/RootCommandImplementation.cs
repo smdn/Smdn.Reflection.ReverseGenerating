@@ -353,6 +353,7 @@ public sealed class RootCommandImplementation : ICommandHandler {
     if (input is null)
       throw new CommandOperationNotSupportedException("input file or directory not specified");
 
+#pragma warning disable IDE0045
     if (input is DirectoryInfo inputDirectory) {
       try {
         inputFile = ProjectFinder.FindSingleProjectOrSolution(inputDirectory);
@@ -370,6 +371,7 @@ public sealed class RootCommandImplementation : ICommandHandler {
     else {
       throw new CommandOperationNotSupportedException($"unsupported input: {input}");
     }
+#pragma warning restore IDE0045
 
     logger?.LogDebug("input file: '{InputFilePath}'", inputFile.FullName);
 
