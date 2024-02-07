@@ -184,7 +184,7 @@ partial class AssemblyLoader {
     if (File.Exists(possibleAssemblyDepsJsonPath))
       logger.LogWarning("dependency configuration could not be loaded: '{AssemblyDepsJsonPath}'", possibleAssemblyDepsJsonPath);
     else
-      logger.LogWarning("dependency configuration could not be found: '{AssemblyDepsJsonPath}'", possibleAssemblyDepsJsonPath);
+      logger.LogInformation("dependency configuration could not be found: '{AssemblyDepsJsonPath}'", possibleAssemblyDepsJsonPath);
   }
 }
 #endif
