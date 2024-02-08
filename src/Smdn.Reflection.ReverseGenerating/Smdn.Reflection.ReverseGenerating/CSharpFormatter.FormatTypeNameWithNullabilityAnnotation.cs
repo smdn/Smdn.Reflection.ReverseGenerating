@@ -66,6 +66,14 @@ static partial class CSharpFormatter {
   }
 #endif
 
+#if DEBUG
+  private static void ThrowIfTypeIsCompoundType(Type type, string name)
+  {
+    if (type.IsArray || type.IsPointer || type.IsByRef)
+      throw new InvalidOperationException($"'{name}' is expected to be non-compound elemental type, but was compound: {type}");
+  }
+#endif
+
 #pragma warning disable CA1502 // TODO: reduce code complexity
   private static StringBuilder FormatTypeNameWithNullabilityAnnotation(
     NullabilityInfo target,
@@ -122,12 +130,6 @@ static partial class CSharpFormatter {
           options
         );
       }
-#else
-      return FormatTypeNameWithNullabilityAnnotation(
-        target.ElementType!,
-        builder,
-        options
-      );
 #endif
     }
 
@@ -140,23 +142,36 @@ static partial class CSharpFormatter {
         .Append(GetNullabilityAnnotation(target));
     }
 
-    if (target.Type.IsPointer || target.Type.IsByRef)
-      // pointer types or ByRef types (exclude ParameterInfo and PropertyInfo)
-      return builder.Append(FormatTypeNameCore(target.Type, options));
+    var type = target.Type;
 
-    if (IsValueTupleType(target.Type)) {
+#if WORKAROUND_NULLABILITYINFO_BYREFTYPE
+    if (type.IsPointer || type.IsByRef)
+#else
+    if (type.IsByRef)
+      type = type.GetElementType()!;
+
+    if (type.IsPointer)
+#endif
+      // pointer types or by-ref types (exclude ParameterInfo and PropertyInfo)
+      return builder.Append(FormatTypeNameCore(type, options));
+
+#if DEBUG
+    // where 'type' should be an non-compound elemental type (i.e., the element type of a type of an array, pointer, or by-ref)
+    ThrowIfTypeIsCompoundType(type, nameof(type));
+#endif
+
+    if (IsValueTupleType(type)) {
       // special case for value tuples (ValueTuple<>)
       return FormatValueTupleType(target, builder, options)
         .Append(GetNullabilityAnnotation(target));
     }
 
-    var targetType = target.Type;
     var isGenericTypeClosedOrDefinition =
-      targetType.IsGenericTypeDefinition ||
-      targetType.IsConstructedGenericType ||
-      (targetType.IsGenericType && targetType.ContainsGenericParameters);
+      type.IsGenericTypeDefinition ||
+      type.IsConstructedGenericType ||
+      (type.IsGenericType && type.ContainsGenericParameters);
 
-    if (Nullable.GetUnderlyingType(targetType) is Type nullableUnderlyingType) {
+    if (Nullable.GetUnderlyingType(type) is Type nullableUnderlyingType) {
       // nullable value types (Nullable<>)
       if (IsValueTupleType(nullableUnderlyingType)) {
         // special case for nullable value tuples (Nullable<ValueTuple<>>)
@@ -169,44 +184,34 @@ static partial class CSharpFormatter {
           .Append(GetNullabilityAnnotation(target));
       }
 
-      targetType = nullableUnderlyingType;
+      type = nullableUnderlyingType;
     }
     else if (isGenericTypeClosedOrDefinition) {
       // other generic types
-      if (targetType.IsByRef) {
-#if WORKAROUND_NULLABILITYINFO_BYREFTYPE
-        // TODO: cannot get NullabilityInfo of generic type arguments from by-ref parameter type
-        return builder.Append(FormatTypeNameCore(targetType, options));
-#else
-        return FormatTypeNameWithNullabilityAnnotation(target.ElementType!, builder, options);
-#endif
-      }
-      else {
-        return FormatClosedGenericTypeOrGenericTypeDefinition(target, builder, options)
-          .Append(GetNullabilityAnnotation(target));
-      }
+      return FormatClosedGenericTypeOrGenericTypeDefinition(target, builder, options)
+        .Append(GetNullabilityAnnotation(target));
     }
 
-    if (options.TranslateLanguagePrimitiveType && IsLanguagePrimitiveType(targetType, out var n)) {
+    if (options.TranslateLanguagePrimitiveType && IsLanguagePrimitiveType(type, out var n)) {
       // language primitive types
       return builder
         .Append(n)
         .Append(GetNullabilityAnnotation(target));
     }
 
-    if (targetType.IsGenericParameter && targetType.HasGenericParameterNoConstraints())
+    if (type.IsGenericParameter && type.HasGenericParameterNoConstraints())
       // generic parameter which has no constraints must not have nullability annotation
-      return builder.Append(GetTypeName(targetType, options));
+      return builder.Append(GetTypeName(type, options));
 
-    if (!targetType.IsGenericParameter) {
-      if (targetType.IsNested && options.WithDeclaringTypeName)
-        builder.Append(FormatTypeNameCore(targetType.GetDeclaringTypeOrThrow(), options)).Append('.');
+    if (!type.IsGenericParameter) {
+      if (type.IsNested && options.WithDeclaringTypeName)
+        builder.Append(FormatTypeNameCore(type.GetDeclaringTypeOrThrow(), options)).Append('.');
       else if (options.TypeWithNamespace)
-        builder.Append(targetType.Namespace).Append('.');
+        builder.Append(type.Namespace).Append('.');
     }
 
     return builder
-      .Append(GetTypeName(targetType, options))
+      .Append(GetTypeName(type, options))
       .Append(GetNullabilityAnnotation(target));
   }
 #pragma warning restore CA1502
@@ -217,19 +222,23 @@ static partial class CSharpFormatter {
     FormatTypeNameOptions options
   )
   {
-    if (options.TypeWithNamespace && !target.Type.IsNested)
-      builder.Append(target.Type.Namespace).Append('.');
+    var type = target.Type.IsByRef
+      ? target.Type.GetElementType()!
+      : target.Type;
+
+    if (options.TypeWithNamespace && !type.IsNested)
+      builder.Append(type.Namespace).Append('.');
 
     IEnumerable<NullabilityInfo> genericTypeArguments = target.GenericTypeArguments;
 
-    if (target.Type.IsNested) {
-      var declaringType = target.Type.GetDeclaringTypeOrThrow();
+    if (type.IsNested) {
+      var declaringType = type.GetDeclaringTypeOrThrow();
       var genericArgsOfDeclaringType = declaringType.GetGenericArguments();
 
       if (options.WithDeclaringTypeName) {
         if (declaringType.IsGenericTypeDefinition) {
           declaringType = declaringType.MakeGenericType(
-            target.Type.GetGenericArguments().Take(genericArgsOfDeclaringType.Length).ToArray()
+            type.GetGenericArguments().Take(genericArgsOfDeclaringType.Length).ToArray()
           );
         }
 
@@ -239,7 +248,7 @@ static partial class CSharpFormatter {
       genericTypeArguments = genericTypeArguments.Skip(genericArgsOfDeclaringType.Length);
     }
 
-    builder.Append(GetTypeName(target.Type, options));
+    builder.Append(GetTypeName(type, options));
 
     if (genericTypeArguments.Any()) {
       builder.Append('<');

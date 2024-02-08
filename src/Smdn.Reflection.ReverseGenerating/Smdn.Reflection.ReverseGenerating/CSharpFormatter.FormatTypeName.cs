@@ -14,7 +14,7 @@ static partial class CSharpFormatter {
     bool TypeWithNamespace,
     bool WithDeclaringTypeName,
     bool TranslateLanguagePrimitiveType,
-#if SYSTEM_REFLECTION_NULLABILITYINFOCONTEXT && WORKAROUND_NULLABILITYINFO_BYREFTYPE
+#if SYSTEM_REFLECTION_NULLABILITYINFOCONTEXT
     NullabilityInfoContext? NullabilityInfoContext = null,
 #endif
     Func<Type, string, string>? GenericParameterNameModifier = null,
@@ -78,9 +78,7 @@ static partial class CSharpFormatter {
           AttributeProvider: f,
           TypeWithNamespace: typeWithNamespace,
           WithDeclaringTypeName: withDeclaringTypeName,
-#if WORKAROUND_NULLABILITYINFO_BYREFTYPE
           NullabilityInfoContext: nullabilityInfoContext,
-#endif
           TranslateLanguagePrimitiveType: translateLanguagePrimitiveType
         )
       ).ToString();
@@ -141,9 +139,7 @@ static partial class CSharpFormatter {
           AttributeProvider: p,
           TypeWithNamespace: typeWithNamespace,
           WithDeclaringTypeName: withDeclaringTypeName,
-#if WORKAROUND_NULLABILITYINFO_BYREFTYPE
           NullabilityInfoContext: nullabilityInfoContext,
-#endif
           TranslateLanguagePrimitiveType: translateLanguagePrimitiveType
         )
       ).ToString();
@@ -204,9 +200,7 @@ static partial class CSharpFormatter {
           AttributeProvider: p,
           TypeWithNamespace: typeWithNamespace,
           WithDeclaringTypeName: withDeclaringTypeName,
-#if WORKAROUND_NULLABILITYINFO_BYREFTYPE
           NullabilityInfoContext: nullabilityInfoContext,
-#endif
           TranslateLanguagePrimitiveType: translateLanguagePrimitiveType
         )
       ).ToString();
@@ -267,9 +261,7 @@ static partial class CSharpFormatter {
           AttributeProvider: ev,
           TypeWithNamespace: typeWithNamespace,
           WithDeclaringTypeName: withDeclaringTypeName,
-#if WORKAROUND_NULLABILITYINFO_BYREFTYPE
           NullabilityInfoContext: nullabilityInfoContext,
-#endif
           TranslateLanguagePrimitiveType: translateLanguagePrimitiveType
         )
       ).ToString();
