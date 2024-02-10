@@ -73,3 +73,43 @@ public class ModifiersNew : Modifiers {
   [MemberDeclarationTestCase("new public int FProtected;")] new public int FProtected;
 }
 #pragma warning restore CA2211
+
+#if NET7_0_OR_GREATER // && SYSTEM_REFLECTION_NULLABILITYINFOCONTEXT
+#nullable enable annotations
+public unsafe ref struct RefFields {
+  [MemberDeclarationTestCase($"public ref int {nameof(ValueType)};")] public ref int ValueType;
+  [MemberDeclarationTestCase($"public ref int? {nameof(NullableValueType)};")] public ref int? NullableValueType;
+
+  [MemberDeclarationTestCase($"public ref int[] {nameof(ArrayOfValueType)};")] public ref int[] ArrayOfValueType;
+  [MemberDeclarationTestCase($"public ref int?[] {nameof(ArrayOfNullableValueType)};")] public ref int?[] ArrayOfNullableValueType;
+  [MemberDeclarationTestCase($"public ref int[]? {nameof(NullableArrayOfValueType)};")] public ref int[]? NullableArrayOfValueType;
+  [MemberDeclarationTestCase($"public ref int?[]? {nameof(NullableArrayOfNullableValueType)};")] public ref int?[]? NullableArrayOfNullableValueType;
+
+  [MemberDeclarationTestCase($"public ref string {nameof(ReferenceType)};")] public ref string ReferenceType;
+  [MemberDeclarationTestCase($"public ref string? {nameof(NullableReferenceType)};")] public ref string? NullableReferenceType;
+
+  [MemberDeclarationTestCase($"public ref string[] {nameof(ArrayOfReferenceType)};")] public ref string[] ArrayOfReferenceType;
+  [MemberDeclarationTestCase($"public ref string?[] {nameof(ArrayOfNullableReferenceType)};")] public ref string?[] ArrayOfNullableReferenceType;
+  [MemberDeclarationTestCase($"public ref string[]? {nameof(NullableArrayOfReferenceType)};")] public ref string[]? NullableArrayOfReferenceType;
+  [MemberDeclarationTestCase($"public ref string?[]? {nameof(NullableArrayOfNullableReferenceType)};")] public ref string?[]? NullableArrayOfNullableReferenceType;
+
+  [MemberDeclarationTestCase($"public ref int* {nameof(PointerOfValueType)};")] public ref int* PointerOfValueType;
+  [MemberDeclarationTestCase($"public ref int?* {nameof(PointerOfNullableValueType)};")] public ref int?* PointerOfNullableValueType;
+
+#pragma warning disable CS8500
+  [MemberDeclarationTestCase($"public ref (int, int?, string, string?) {nameof(ValueTupleType)};")] public ref (int, int?, string, string?) ValueTupleType;
+  // NullabilityState of 'string' become Unknown
+  [MemberDeclarationTestCase($"public ref (int, int?, string, string)* {nameof(PointerOfValueTupleType)};")] public ref (int, int?, string, string?)* PointerOfValueTupleType;
+#pragma warning restore CS8500
+
+  [MemberDeclarationTestCase($"public ref KeyValuePair<int, string> {nameof(GenericValueTypeOfValueTypeAndReferenceType)};", MemberWithNamespace = false)] public ref KeyValuePair<int, string> GenericValueTypeOfValueTypeAndReferenceType;
+  [MemberDeclarationTestCase($"public ref KeyValuePair<int?, string?> {nameof(GenericValueTypeOfNullableValueTypeAndNullableReferenceType)};", MemberWithNamespace = false)] public ref KeyValuePair<int?, string?> GenericValueTypeOfNullableValueTypeAndNullableReferenceType;
+
+#pragma warning disable CS8500
+  [MemberDeclarationTestCase($"public ref KeyValuePair<int, string>* {nameof(PointerOfGenericValueTypeOfValueTypeAndReferenceType)};", MemberWithNamespace = false)] public ref KeyValuePair<int, string>* PointerOfGenericValueTypeOfValueTypeAndReferenceType;
+  // NullabilityState of 'string' become Unknown
+  [MemberDeclarationTestCase($"public ref KeyValuePair<int?, string>* {nameof(PointerOfGenericValueTypeOfNullableValueTypeAndNullableReferenceType)};", MemberWithNamespace = false)] public ref KeyValuePair<int?, string?>* PointerOfGenericValueTypeOfNullableValueTypeAndNullableReferenceType;
+#pragma warning restore CS8500
+}
+#nullable restore
+#endif

@@ -57,6 +57,9 @@ static partial class CSharpFormatter {
           case PropertyInfo p:
             return "ref " + typeName;
 
+          case FieldInfo f:
+            return "ref " + typeName;
+
           default:
             return typeName + "&";
         }

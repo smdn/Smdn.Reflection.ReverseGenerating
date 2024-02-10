@@ -120,6 +120,23 @@ static partial class CSharpFormatter {
             elementTypeNullabilityInfo = options.NullabilityInfoContext.Create(new ByRefElementTypePropertyInfo(p));
 #endif
           break;
+
+        // C# 11 ref fields
+        // https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/ref-struct#ref-fields
+        case FieldInfo f:
+          builder.Append("ref ");
+
+#if WORKAROUND_NULLABILITYINFO_BYREFTYPE
+#if NET7_0_OR_GREATER
+          if (options.NullabilityInfoContext is not null && f.FieldType.HasElementType)
+#else
+          if (options.NullabilityInfoContext is not null && target.ElementType is null && f.FieldType.HasElementType)
+#endif
+            elementTypeNullabilityInfo = options.NullabilityInfoContext.Create(new UnwrapByRefFieldInfo(f));
+
+#endif
+
+          break;
       }
 
 #if WORKAROUND_NULLABILITYINFO_BYREFTYPE
@@ -133,22 +150,31 @@ static partial class CSharpFormatter {
 #endif
     }
 
-    if (target.Type.IsArray) {
+    var type = target.Type;
+
+    if (type.IsArray) {
       // arrays
       return FormatTypeNameWithNullabilityAnnotation(target.ElementType!, builder, options)
         .Append('[')
-        .Append(',', target.Type.GetArrayRank() - 1)
+        .Append(',', type.GetArrayRank() - 1)
         .Append(']')
         .Append(GetNullabilityAnnotation(target));
     }
-
-    var type = target.Type;
 
 #if WORKAROUND_NULLABILITYINFO_BYREFTYPE
     if (type.IsPointer || type.IsByRef)
 #else
     if (type.IsByRef)
       type = type.GetElementType()!;
+
+    if (type.IsArray) {
+      // arrays
+      return FormatTypeNameWithNullabilityAnnotation(target.ElementType!, builder, options)
+        .Append('[')
+        .Append(',', type.GetArrayRank() - 1)
+        .Append(']')
+        .Append(GetNullabilityAnnotation(target));
+    }
 
     if (type.IsPointer)
 #endif
