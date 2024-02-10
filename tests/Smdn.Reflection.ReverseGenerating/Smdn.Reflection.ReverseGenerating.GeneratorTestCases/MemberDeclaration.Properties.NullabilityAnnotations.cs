@@ -107,6 +107,27 @@ public class NullabilityAnnotations {
   [MemberDeclarationTestCase($"public Dictionary<string, string>? {nameof(DictionaryOfRefTypeValueNullable)} {{ get; }}", MemberWithNamespace = false)] public Dictionary<string, string>? DictionaryOfRefTypeValueNullable => throw null;
   [MemberDeclarationTestCase($"public Dictionary<string, string?>? {nameof(NullableDictionaryOfNullableRefTypeValue)} {{ get; }}", MemberWithNamespace = false)] public Dictionary<string, string?>? NullableDictionaryOfNullableRefTypeValue => throw null;
 
+  unsafe class PointerReturnTypes {
+    [MemberDeclarationTestCase($"public int* {nameof(PointerOfValueType)} {{ get; }}")] public int* PointerOfValueType => throw null;
+    [MemberDeclarationTestCase($"public int?* {nameof(PointerOfNullableValueType)} {{ get; }}")] public int?* PointerOfNullableValueType => throw null;
+    [MemberDeclarationTestCase($"public (int, int)* {nameof(PointerOfValueTupleOfValueType)} {{ get; }}")] public (int, int)* PointerOfValueTupleOfValueType => throw null;
+    [MemberDeclarationTestCase($"public (int, int?)* {nameof(PointerOfValueTupleOfNullableValueType)} {{ get; }}")] public (int, int?)* PointerOfValueTupleOfNullableValueType => throw null;
+    [MemberDeclarationTestCase($"public (int, int)?* {nameof(PointerOfNullableValueTupleOfValueType)} {{ get; }}")] public (int, int)?* PointerOfNullableValueTupleOfValueType => throw null;
+    [MemberDeclarationTestCase($"public (int, int?)?* {nameof(PointerOfNullableValueTupleOfNullableValueType)} {{ get; }}")] public (int, int?)?* PointerOfNullableValueTupleOfNullableValueType => throw null;
+
+#pragma warning disable CS8500
+    [MemberDeclarationTestCase($"public (int, string)* {nameof(PointerOfValueTupleOfReferenceType)} {{ get; }}")] public (int, string)* PointerOfValueTupleOfReferenceType => throw null;
+    // NullabilityState of 'string' become Unknown
+    [MemberDeclarationTestCase($"public (int, string)* {nameof(PointerOfValueTupleOfNullableReferenceType)} {{ get; }}")] public (int, string?)* PointerOfValueTupleOfNullableReferenceType => throw null;
+#pragma warning restore CS8500
+
+#pragma warning disable CS8500
+    [MemberDeclarationTestCase($"public KeyValuePair<int, string>* {nameof(PointerOfGenericValueTypeOfReferenceType)} {{ get; }}", MemberWithNamespace = false)] public KeyValuePair<int, string>* PointerOfGenericValueTypeOfReferenceType => throw null;
+    // NullabilityState of 'string' become Unknown
+    [MemberDeclarationTestCase($"public KeyValuePair<int, string>* {nameof(PointerOfGenericValueTypeOfNullableReferenceType)} {{ get; }}", MemberWithNamespace = false)] public KeyValuePair<int, string?>* PointerOfGenericValueTypeOfNullableReferenceType => throw null;
+#pragma warning restore CS8500
+  }
+
   public class RefReturnTypes {
     [MemberDeclarationTestCase($"public ref int {nameof(ValueType)} {{ get; }}")] public ref int ValueType => throw null;
     [MemberDeclarationTestCase($"public ref int? {nameof(NullableValueType)} {{ get; }}")] public ref int? NullableValueType => throw null;

@@ -115,6 +115,18 @@ public class NullabilityAnnotations {
     [MemberDeclarationTestCase($"public (int, int?)* {nameof(PointerOfValueTupleOfNullableValueType)};")] public (int, int?)* PointerOfValueTupleOfNullableValueType;
     [MemberDeclarationTestCase($"public (int, int)?* {nameof(PointerOfNullableValueTupleOfValueType)};")] public (int, int)?* PointerOfNullableValueTupleOfValueType;
     [MemberDeclarationTestCase($"public (int, int?)?* {nameof(PointerOfNullableValueTupleOfNullableValueType)};")] public (int, int?)?* PointerOfNullableValueTupleOfNullableValueType;
+
+#pragma warning disable CS8500
+    [MemberDeclarationTestCase($"public (int, string)* {nameof(PointerOfValueTupleOfReferenceType)};")] public (int, string)* PointerOfValueTupleOfReferenceType;
+    // NullabilityState of 'string' become Unknown
+    [MemberDeclarationTestCase($"public (int, string)* {nameof(PointerOfValueTupleOfNullableReferenceType)};")] public (int, string?)* PointerOfValueTupleOfNullableReferenceType;
+#pragma warning restore CS8500
+
+#pragma warning disable CS8500
+    [MemberDeclarationTestCase($"public KeyValuePair<int, string>* {nameof(PointerOfGenericValueTypeOfReferenceType)};", MemberWithNamespace = false)] public KeyValuePair<int, string>* PointerOfGenericValueTypeOfReferenceType;
+    // NullabilityState of 'string' become Unknown
+    [MemberDeclarationTestCase($"public KeyValuePair<int, string>* {nameof(PointerOfGenericValueTypeOfNullableReferenceType)};", MemberWithNamespace = false)] public KeyValuePair<int, string?>* PointerOfGenericValueTypeOfNullableReferenceType;
+#pragma warning restore CS8500
   }
 
   class NullabilityAnnotationOptions {

@@ -159,6 +159,18 @@ public class NullabilityAnnotations {
     [MemberDeclarationTestCase($"public unsafe void {nameof(PointerOfNullableValueTupleOfValueType)}((int, int)?* p) {{}}")] public unsafe void PointerOfNullableValueTupleOfValueType((int, int)?* p) { }
     [MemberDeclarationTestCase($"public unsafe void {nameof(PointerOfNullableValueTupleOfNullableValueType)}((int, int?)?* p) {{}}")] public unsafe void PointerOfNullableValueTupleOfNullableValueType((int, int?)?* p) { }
 
+#pragma warning disable CS8500
+    [MemberDeclarationTestCase($"public unsafe void {nameof(PointerOfValueTupleOfReferenceType)}((int, string)* p) {{}}")] public unsafe void PointerOfValueTupleOfReferenceType((int, string)* p) { }
+    // NullabilityState of 'string' become Unknown
+    [MemberDeclarationTestCase($"public unsafe void {nameof(PointerOfValueTupleOfNullableReferenceType)}((int, string)* p) {{}}")] public unsafe void PointerOfValueTupleOfNullableReferenceType((int, string?)* p) { }
+#pragma warning restore CS8500
+
+#pragma warning disable CS8500
+    [MemberDeclarationTestCase($"public unsafe void {nameof(PointerOfGenericValueTypeOfReferenceType)}(KeyValuePair<int, string>* p) {{}}", ParameterWithNamespace = false)] public unsafe void PointerOfGenericValueTypeOfReferenceType(KeyValuePair<int, string>* p) { }
+    // NullabilityState of 'string' become Unknown
+    [MemberDeclarationTestCase($"public unsafe void {nameof(PointerOfGenericValueTypeOfNullableReferenceType)}(KeyValuePair<int, string>* p) {{}}", ParameterWithNamespace = false)] public unsafe void PointerOfGenericValueTypeOfNullableReferenceType(KeyValuePair<int, string?>* p) { }
+#pragma warning restore CS8500
+
     class ByRef {
       [MemberDeclarationTestCase($"public unsafe void {nameof(PointerOfValueType)}(out int* p) {{}}")] public unsafe void PointerOfValueType(out int* p) => throw null;
       [MemberDeclarationTestCase($"public unsafe void {nameof(PointerOfNullableValueType)}(out int?* p) {{}}")] public unsafe void PointerOfNullableValueType(out int?* p) => throw null;
