@@ -74,6 +74,15 @@ static partial class CSharpFormatter {
   }
 #endif
 
+  private static string GetNullabilityAnnotation(NullabilityInfo target)
+  {
+    const string NullableAnnotationSyntaxString = "?";
+
+    return target.ReadState == NullabilityState.Nullable || target.WriteState == NullabilityState.Nullable
+      ? NullableAnnotationSyntaxString
+      : string.Empty;
+  }
+
 #pragma warning disable CA1502 // TODO: reduce code complexity
   private static StringBuilder FormatTypeNameWithNullabilityAnnotation(
     NullabilityInfo target,
@@ -81,13 +90,6 @@ static partial class CSharpFormatter {
     FormatTypeNameOptions options
   )
   {
-    const string NullableAnnotationSyntaxString = "?";
-
-    static string GetNullabilityAnnotation(NullabilityInfo target)
-      => target.ReadState == NullabilityState.Nullable || target.WriteState == NullabilityState.Nullable
-        ? NullableAnnotationSyntaxString
-        : string.Empty;
-
     if (target.Type.IsByRef) {
 #if WORKAROUND_NULLABILITYINFO_BYREFTYPE
       var elementTypeNullabilityInfo = target.ElementType;
@@ -152,33 +154,22 @@ static partial class CSharpFormatter {
 
     var type = target.Type;
 
-    if (type.IsArray) {
-      // arrays
-      return FormatTypeNameWithNullabilityAnnotation(target.ElementType!, builder, options)
-        .Append('[')
-        .Append(',', type.GetArrayRank() - 1)
-        .Append(']')
-        .Append(GetNullabilityAnnotation(target));
-    }
+    if (type.IsArray)
+      return FormatArray(target, type, builder, options);
 
 #if WORKAROUND_NULLABILITYINFO_BYREFTYPE
     if (type.IsPointer || type.IsByRef)
+      // pointer types or by-ref types (exclude ParameterInfo, PropertyInfo and FieldInfo)
 #else
     if (type.IsByRef)
       type = type.GetElementType()!;
 
-    if (type.IsArray) {
-      // arrays
-      return FormatTypeNameWithNullabilityAnnotation(target.ElementType!, builder, options)
-        .Append('[')
-        .Append(',', type.GetArrayRank() - 1)
-        .Append(']')
-        .Append(GetNullabilityAnnotation(target));
-    }
+    if (type.IsArray)
+      return FormatArray(target, type, builder, options);
 
     if (type.IsPointer)
+      // pointer types
 #endif
-      // pointer types or by-ref types (exclude ParameterInfo and PropertyInfo)
       return builder.Append(FormatTypeNameCore(type, options));
 
 #if DEBUG
@@ -241,6 +232,18 @@ static partial class CSharpFormatter {
       .Append(GetNullabilityAnnotation(target));
   }
 #pragma warning restore CA1502
+
+  private static StringBuilder FormatArray(
+    NullabilityInfo target,
+    Type typeOfArray,
+    StringBuilder builder,
+    FormatTypeNameOptions options
+  )
+    => FormatTypeNameWithNullabilityAnnotation(target.ElementType!, builder, options)
+      .Append('[')
+      .Append(',', typeOfArray.GetArrayRank() - 1)
+      .Append(']')
+      .Append(GetNullabilityAnnotation(target));
 
   private static StringBuilder FormatClosedGenericTypeOrGenericTypeDefinition(
     NullabilityInfo target,
