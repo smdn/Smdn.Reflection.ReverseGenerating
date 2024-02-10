@@ -77,6 +77,13 @@ static partial class CSharpFormatter {
         case FieldInfo f:
           builder.Append("ref ");
 
+          var isReadOnly = f.GetCustomAttributesData().Any(
+            static d => string.Equals(d.AttributeType.FullName, "System.Runtime.CompilerServices.IsReadOnlyAttribute", StringComparison.Ordinal)
+          );
+
+          if (isReadOnly)
+            builder.Append("readonly ");
+
 #if WORKAROUND_NULLABILITYINFO_BYREFTYPE
 #if NET7_0_OR_GREATER
           if (options.NullabilityInfoContext is not null && f.FieldType.HasElementType)

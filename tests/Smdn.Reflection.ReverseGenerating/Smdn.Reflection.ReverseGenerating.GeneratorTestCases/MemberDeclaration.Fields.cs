@@ -111,5 +111,15 @@ public unsafe ref struct RefFields {
   [MemberDeclarationTestCase($"public ref KeyValuePair<int?, string>* {nameof(PointerOfGenericValueTypeOfNullableValueTypeAndNullableReferenceType)};", MemberWithNamespace = false)] public ref KeyValuePair<int?, string?>* PointerOfGenericValueTypeOfNullableValueTypeAndNullableReferenceType;
 #pragma warning restore CS8500
 }
+
+public ref struct RefFieldsReadOnlyModifier {
+  [MemberDeclarationTestCase($"public ref int {nameof(FRef)};")] public ref int FRef;
+  [MemberDeclarationTestCase($"public ref readonly int {nameof(FRefReadOnly)};")] public ref readonly int FRefReadOnly;
+}
+
+public readonly ref struct RefReadOnlyFieldsReadOnlyModifier {
+  [MemberDeclarationTestCase($"public readonly ref int {nameof(FReadOnlyRef)};")] public readonly ref int FReadOnlyRef;
+  [MemberDeclarationTestCase($"public readonly ref readonly int {nameof(FReadOnlyRefReadOnly)};")]public readonly ref readonly int FReadOnlyRefReadOnly;
+}
 #nullable restore
 #endif
