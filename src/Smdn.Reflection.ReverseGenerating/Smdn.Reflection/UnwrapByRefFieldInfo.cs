@@ -15,8 +15,10 @@ internal sealed class UnwrapByRefFieldInfo : FieldInfo {
 
   public UnwrapByRefFieldInfo(FieldInfo baseField)
   {
+#if DEBUG
     if (!baseField.FieldType.IsByRef)
       throw new ArgumentException($"{baseField.FieldType} must be by-ref");
+#endif
 
     BaseField = baseField;
   }
