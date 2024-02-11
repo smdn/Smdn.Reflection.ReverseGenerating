@@ -31,6 +31,7 @@ public class GenerateApiList : Task {
   public bool GenerateAssemblyInfo { get; set; } = true;
   public bool GenerateEmbeddedResources { get; set; } = true;
   public bool GenerateReferencedAssemblies { get; set; } = true;
+  public bool ThrowIfForwardedTypesCouldNotLoaded { get; set; } = true;
 
 #pragma warning disable CA1819
   [Output]
@@ -142,6 +143,7 @@ public class GenerateApiList : Task {
     options.Writer.WriteAssemblyInfo                = GenerateAssemblyInfo;
     options.Writer.WriteEmbeddedResources           = GenerateEmbeddedResources;
     options.Writer.WriteReferencedAssemblies        = GenerateReferencedAssemblies;
+    options.Writer.ThrowIfForwardedTypesCouldNotLoaded = ThrowIfForwardedTypesCouldNotLoaded;
 
     options.AttributeDeclaration.TypeFilter         = AttributeFilter.Default;
     options.AttributeDeclaration.WithNamedArguments = GenerateAttributeWithNamedArguments;
