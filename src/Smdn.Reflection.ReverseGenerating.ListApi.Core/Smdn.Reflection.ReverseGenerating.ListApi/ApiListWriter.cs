@@ -178,11 +178,25 @@ public class ApiListWriter {
 
   public void WriteExportedTypes()
   {
-    var types = assembly.GetExportedTypes()
+    IReadOnlyList<Type> types;
+
+    try {
+      types = assembly.GetExportedTypes();
+    }
+    catch (FileNotFoundException ex) { // when (!string.IsNullOrEmpty(ex.FusionLog))
+      // in the case of reference assembly cannot be loaded
+      throw AssemblyFileNotFoundException.Create(assembly.GetName(), ex);
+    }
+
 #if SYSTEM_ASSEMBLY_GETFORWARDEDTYPES
-      .Union(assembly.GetForwardedTypes())
+    try {
+      types = types.Union(assembly.GetForwardedTypes()).ToList();
+    }
+    catch (FileNotFoundException ex) { // when (!string.IsNullOrEmpty(ex.FusionLog))
+      // in the case of reference assembly cannot be loaded
+      throw AssemblyFileNotFoundException.Create(assembly.GetName(), ex);
+    }
 #endif
-    ;
 
     var typeDeclarations = new StringBuilder(10240);
     var referencingNamespaces = new HashSet<string>(StringComparer.Ordinal);
