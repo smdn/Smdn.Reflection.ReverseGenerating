@@ -1,5 +1,7 @@
 // SPDX-FileCopyrightText: 2021 smdn <smdn@smdn.jp>
 // SPDX-License-Identifier: MIT
+#pragma warning disable CA1848
+
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -195,6 +197,25 @@ public class ApiListWriter {
     catch (FileNotFoundException ex) { // when (!string.IsNullOrEmpty(ex.FusionLog))
       // in the case of reference assembly cannot be loaded
       throw AssemblyFileNotFoundException.Create(assembly.GetName(), ex);
+    }
+    catch (ReflectionTypeLoadException ex) {
+      // in the case of the forwarded type could not load or not found in assembly
+      if (options.Writer.ThrowIfForwardedTypesCouldNotLoaded)
+        throw;
+
+      foreach (var exLoader in ex.LoaderExceptions) {
+        if (exLoader is not null && !string.IsNullOrEmpty(exLoader.Message))
+          logger?.LogWarning("LoaderException: {ExceptionMessage}", exLoader.Message);
+      }
+
+      logger?.LogWarning("ReflectionTypeLoadException: Could not load one or more forwarded types. If you are trying to load an assembly with an SDK version that is not currently installed, install that version of the SDK, or specify the 'DOTNET_ROLL_FORWARD' environment variable and try again.");
+
+      // append successfully loaded types
+      if (ex.Types is not null) {
+        types = types
+          .Union(ex.Types.Where(static t => t is not null).Select(static t => t!))
+          .ToList();
+      }
     }
 #endif
 

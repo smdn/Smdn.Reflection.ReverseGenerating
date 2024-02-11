@@ -7,6 +7,7 @@ public class ApiListWriterOptions : GeneratorOptions {
 
   public class WriterOptions {
     public bool OrderStaticMembersFirst { get; set; } = false;
+    public bool ThrowIfForwardedTypesCouldNotLoaded { get; set; } = false;
     public bool WriteNullableAnnotationDirective { get; set; } = true;
 
     /* options relevant to header */
