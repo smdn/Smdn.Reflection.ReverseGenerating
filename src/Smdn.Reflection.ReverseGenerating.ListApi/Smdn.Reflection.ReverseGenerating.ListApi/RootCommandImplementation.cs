@@ -194,9 +194,10 @@ public sealed class RootCommandImplementation : ICommandHandler {
     var outputDirectory = GetOutputDirectory(parseResult);
     var loadAssemblyIntoReflectionOnlyContext = parseResult.GetValueForOption(OptionLoadAssemblyIntoReflectionOnlyContext);
     var enableNullabilityAnnotations = parseResult.GetValueForOption(OptionGenerateNullableAnnotations);
+    var hasError = false;
 
     foreach (var inputAssemblyFile in GetInputAssemblyFiles(parseResult)) {
-      AssemblyLoader.UsingAssembly(
+      var outputFilePath = AssemblyLoader.UsingAssembly(
         inputAssemblyFile,
         arg: (
           outputDirectory,
@@ -232,9 +233,16 @@ public sealed class RootCommandImplementation : ICommandHandler {
               arg.logger
             );
 
-            writer.WriteHeader();
-            writer.WriteExportedTypes();
-            writer.WriteFooter();
+            try {
+              writer.WriteHeader();
+              writer.WriteExportedTypes();
+              writer.WriteFooter();
+            }
+            catch (AssemblyFileNotFoundException ex) {
+              arg.logger?.LogCritical(ex, "Could not load depending assembly '{FileName}', referenced from the assembly '{AssemblyName}'", ex.FileName, assm.GetName());
+              arg.logger?.LogError("If you are trying to load an assembly with an SDK version that is not currently installed, install that version of the SDK, or specify the 'DOTNET_ROLL_FORWARD' environment variable and try again.");
+              return null;
+            }
 
             arg.logger?.LogDebug("generated API list {OutputFilePath}", outputFilePath);
             arg.logger?.LogInformation("{AssemblyFilePath} -> {OutputFilePath}", assm.Location, outputFilePath);
@@ -251,6 +259,8 @@ public sealed class RootCommandImplementation : ICommandHandler {
         }
       );
 
+      hasError |= string.IsNullOrEmpty(outputFilePath);
+
       // wait for the context to be collected
       if (context is null)
         continue;
@@ -261,7 +271,7 @@ public sealed class RootCommandImplementation : ICommandHandler {
       }
     }
 
-    return 0;
+    return hasError ? 1 : 0;
   }
 
   // <remarks>This method is for testing purposes.</remarks>
