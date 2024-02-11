@@ -6,7 +6,7 @@ SPDX-License-Identifier: MIT
   <PropertyGroup>
     <TargetFrameworks>net8.0;net6.0</TargetFrameworks>
     <RootNamespace>Smdn.Reflection.ReverseGenerating.ListApi.MSBuild.Tasks</RootNamespace>
-    <VersionPrefix>1.3.2</VersionPrefix>
+    <VersionPrefix>1.4.0</VersionPrefix>
     <VersionSuffix></VersionSuffix>
     <RootNamespace/> <!-- empty the root namespace so that the namespace is determined only by the directory name, for code style rule IDE0030 -->
     <Nullable>enable</Nullable>
