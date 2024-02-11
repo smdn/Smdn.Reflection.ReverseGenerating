@@ -55,12 +55,20 @@ dotnet tool install -g Smdn.Reflection.ReverseGenerating.ListApi
 
 # update
 dotnet tool update -g Smdn.Reflection.ReverseGenerating.ListApi
+
+# install and update (specifies the target framework explicitly)
+dotnet tool install --framework net6.0 -g Smdn.Reflection.ReverseGenerating.ListApi
+dotnet tool update --framework net8.0 -g Smdn.Reflection.ReverseGenerating.ListApi
 ```
 
 ## Usage
 ```sh
-# The file 'Program-net6.0.apilist.cs' will be generated.
-list-api Program/bin/Release/net6.0/Program.dll
+# Generates the API list.
+# The file 'Library-net8.0.apilist.cs' will be generated.
+list-api Library/bin/Release/net8.0/Library.dll
+
+# Generates the API list with loading the assembly in the reflection-only context.
+list-api --load-reflection-only Library/bin/Release/net8.0/Library.dll
 ```
 
 Type `list-api --help` to show usage about command line arguments and options.
