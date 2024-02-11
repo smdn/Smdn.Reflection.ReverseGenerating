@@ -44,6 +44,7 @@ public sealed class RootCommandImplementation : ICommandHandler {
   }
   .ExistingOnly();
 
+#if FEATURE_BUILD_PROJ
   private static readonly Option<string?> OptionConfiguration = new(
     aliases: new[] { "-c", "--configuration" },
     description: "The 'build configuration' option passed to `Build` target when the project will be built.",
@@ -66,6 +67,7 @@ public sealed class RootCommandImplementation : ICommandHandler {
     getDefaultValue: static () => null
   );
 #endif
+#endif // FEATURE_BUILD_PROJ
   private static readonly Option<DirectoryInfo> OptionOutputDirectory = new(
     aliases: new[] { "-o", "--output-directory" },
     description: "Path to output directory.",
