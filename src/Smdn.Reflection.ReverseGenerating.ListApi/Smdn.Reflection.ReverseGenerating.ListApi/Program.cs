@@ -16,12 +16,13 @@ internal sealed class Program {
 
   private static int Main(string[] args)
   {
+    var logLevel = VerbosityOption.ParseLogLevel(args);
     var services = new ServiceCollection();
 
     services.AddLogging(
       builder => builder
         .AddSimpleConsole(static options => options.SingleLine = true)
-        .AddFilter(level => VerbosityOption.ParseLogLevel(args) <= level)
+        .AddFilter(level => logLevel <= level)
     );
 
     using var serviceProvider = services.BuildServiceProvider();
