@@ -306,9 +306,17 @@ public sealed class RootCommandImplementation : ICommandHandler {
     static string GetOutputFileName(Assembly a)
     {
       var prefix = a.GetName().Name!;
-      var targetFramework = a.GetAssemblyMetadataAttributeValue<TargetFrameworkAttribute, string>();
+      string? targetFramework;
 
-      if (targetFramework is null)
+      try {
+        targetFramework = a.GetAssemblyMetadataAttributeValue<TargetFrameworkAttribute, string>();
+      }
+      catch (AssemblyFileNotFoundException) {
+        // If the target framework cannot be obtained due to failure to load reference assembly, treat as 'unknown'(null).
+        targetFramework = null;
+      }
+
+      if (string.IsNullOrEmpty(targetFramework))
         return prefix;
 
       // TODO: osSpecifier

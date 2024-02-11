@@ -176,7 +176,15 @@ partial class AssemblyLoader {
     if (logger is null)
       return;
 
-    var targetFramework = assembly.GetAssemblyMetadataAttributeValue<TargetFrameworkAttribute, string?>();
+    string? targetFramework;
+
+    try {
+      targetFramework = assembly.GetAssemblyMetadataAttributeValue<TargetFrameworkAttribute, string?>();
+    }
+    catch (AssemblyFileNotFoundException) {
+      // If the target framework cannot be obtained due to failure to load reference assembly, treat as 'unknown'(null).
+      targetFramework = null;
+    }
 
     if (targetFramework is not null && targetFramework.StartsWith(".NETFramework,", StringComparison.Ordinal))
       return;
