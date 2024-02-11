@@ -2,6 +2,10 @@
 [![tests/main](https://img.shields.io/github/actions/workflow/status/smdn/Smdn.Reflection.ReverseGenerating/test.yml?branch=main&label=tests%2Fmain)](https://github.com/smdn/Smdn.Reflection.ReverseGenerating/actions/workflows/test.yml)
 [![CodeQL](https://github.com/smdn/Smdn.Reflection.ReverseGenerating/actions/workflows/codeql-analysis.yml/badge.svg?branch=main)](https://github.com/smdn/Smdn.Reflection.ReverseGenerating/actions/workflows/codeql-analysis.yml)
 
+This repository provides the libraries and tools to reverse-generate C# code that describes the type and member information, from the .NET assemblies.
+
+By generating an API list from the library, the types and members provided by the library can be presented in C# code format. This allows you to present an outline of the library API to users in addition to explaining the API through text or sample code.
+
 # Smdn.Reflection.ReverseGenerating.ListApi.MSBuild.Tasks
 [![NuGet Smdn.Reflection.ReverseGenerating.ListApi.MSBuild.Tasks](https://img.shields.io/nuget/v/Smdn.Reflection.ReverseGenerating.ListApi.MSBuild.Tasks.svg)](https://www.nuget.org/packages/Smdn.Reflection.ReverseGenerating.ListApi.MSBuild.Tasks/)
 
