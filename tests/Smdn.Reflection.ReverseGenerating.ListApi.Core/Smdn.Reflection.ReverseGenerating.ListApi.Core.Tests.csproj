@@ -16,7 +16,7 @@ SPDX-License-Identifier: MIT
     <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="6.0.0" />
     <PackageReference Include="Smdn.Fundamental.Stream.TextReader" Version="3.*" />
     <!-- This updates package reference for Smdn.Fundamental.Reflection referenced from Smdn.Reflection.ReverseGenerating.ListApi.Core. -->
-    <PackageReference Include="Smdn.Fundamental.Reflection" Version="3.4.*" Condition=" '$(TestReleasedPackage)' == 'true' " />
+    <PackageReference Include="Smdn.Fundamental.Reflection" Version="3.6.*" Condition=" '$(TestReleasedPackage)' == 'true' " />
   </ItemGroup>
 
   <Target Name="WriteTestAssemblyInfo" BeforeTargets="BeforeBuild">
