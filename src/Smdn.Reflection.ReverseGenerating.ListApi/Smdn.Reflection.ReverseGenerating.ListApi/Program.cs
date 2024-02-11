@@ -12,7 +12,7 @@ using Microsoft.Extensions.Logging;
 namespace Smdn.Reflection.ReverseGenerating.ListApi;
 
 internal sealed class Program {
-  internal static string LoggerCategoryName => typeof(Program).Assembly.GetName().Name!;
+  internal static string LoggerCategoryName => Constants.ToolCommandName;
 
   private static int Main(string[] args)
   {

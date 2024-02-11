@@ -14,6 +14,7 @@ SPDX-License-Identifier: MIT
     <RootNamespace/> <!-- empty the root namespace so that the namespace is determined only by the directory name, for code style rule IDE0030 -->
     <Nullable>enable</Nullable>
     <NoWarn>CS1591;$(NoWarn)</NoWarn> <!-- CS1591: Missing XML comment for publicly visible type or member 'Type_or_Member' -->
+    <NoWarn>CS2002;$(NoWarn)</NoWarn> <!-- see target 'WriteConstantsFile' -->
     <EnableFeature_BuildProjectFile Condition=" '$(Configuration)' != 'Release' ">true</EnableFeature_BuildProjectFile>
     <APIListEnableGenerating>false</APIListEnableGenerating>
     <GeneratePackageReadmeFile>false</GeneratePackageReadmeFile>
@@ -55,4 +56,27 @@ SPDX-License-Identifier: MIT
     <PackageReference Include="NuGet.ProjectModel" Version="5.11.0" />
     <PackageReference Include="Smdn.Fundamental.Shell" Version="3.0.0" />
   </ItemGroup>
+
+  <Target Name="WriteConstantsFile" BeforeTargets="BeforeBuild">
+    <ItemGroup>
+      <SourceLines Include="internal static class Constants {" />
+      <SourceLines Include="public const string ToolCommandName = &quot;$(ToolCommandName)&quot;$([MSBuild]::Escape(';'))" />
+      <SourceLines Include="}" />
+    </ItemGroup>
+
+    <PropertyGroup>
+      <ConstantsFilePath>$(IntermediateOutputPath)Constants.g.cs</ConstantsFilePath>
+    </PropertyGroup>
+
+    <WriteLinesToFile
+      File="$(ConstantsFilePath)"
+      Overwrite="true"
+      Lines="@(SourceLines)"
+    />
+
+    <ItemGroup>
+      <!-- XXX: This causes compiler warning CS2002. -->
+      <Compile Include="$(ConstantsFilePath)" />
+    </ItemGroup>
+  </Target>
 </Project>
