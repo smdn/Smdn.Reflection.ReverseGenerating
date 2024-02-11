@@ -197,6 +197,8 @@ public sealed class RootCommandImplementation : ICommandHandler {
     var hasError = false;
 
     foreach (var inputAssemblyFile in GetInputAssemblyFiles(parseResult)) {
+      logger?.LogInformation("generating API list: '{InputAssemblyFile}'", inputAssemblyFile);
+
       var outputFilePath = AssemblyLoader.UsingAssembly(
         inputAssemblyFile,
         arg: (
