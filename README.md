@@ -73,6 +73,18 @@ list-api --load-reflection-only Library/bin/Release/net8.0/Library.dll
 
 Type `list-api --help` to show usage about command line arguments and options.
 
+
+
+If you are loading an assembly that targets a newer version than the runtime version that the `list-api` command targets, try running it with the [DOTNET_ROLL_FORWARD](https://learn.microsoft.com/dotnet/core/versions/selection) environment variable.
+
+```sh
+# Installs list-api targeting .NET 6.0
+dotnet tool install --framework net6.0 -g Smdn.Reflection.ReverseGenerating.ListApi
+
+# Uses runtime roll forwarding to load the assembly targeting .NET 8.0
+DOTNET_ROLL_FORWARD=LatestMajor list-api Library/bin/Release/net8.0/Library.dll
+```
+
 ## Limitations
 This tool does not provide any options for code styles including spaces, indents, and new lines. Use `dotnet format` after generating to format such code styles.
 
