@@ -24,7 +24,9 @@ internal sealed class Program {
         .AddFilter(level => VerbosityOption.ParseLogLevel(args) <= level)
     );
 
-    var rootCommand = new RootCommandImplementation(serviceProvider: services.BuildServiceProvider()).CreateCommand();
+    using var serviceProvider = services.BuildServiceProvider();
+
+    var rootCommand = new RootCommandImplementation(serviceProvider).CreateCommand();
     var builder =
       new CommandLineBuilder(rootCommand)
       .UseDefaults()
