@@ -6,6 +6,8 @@ This repository provides the libraries and tools to reverse-generate C# code tha
 
 By generating an API list from the library, the types and members provided by the library can be presented in C# code format. This allows you to present an outline of the library API to users in addition to explaining the API through text or sample code.
 
+![Example of output: System.Exception, .NET 8.0](https://github.com/smdn/Smdn.Reflection.ReverseGenerating/blob/main/doc/image/output-example-System.Exception-net8.0.png)
+
 # Smdn.Reflection.ReverseGenerating.ListApi.MSBuild.Tasks
 [![NuGet Smdn.Reflection.ReverseGenerating.ListApi.MSBuild.Tasks](https://img.shields.io/nuget/v/Smdn.Reflection.ReverseGenerating.ListApi.MSBuild.Tasks.svg)](https://www.nuget.org/packages/Smdn.Reflection.ReverseGenerating.ListApi.MSBuild.Tasks/)
 
