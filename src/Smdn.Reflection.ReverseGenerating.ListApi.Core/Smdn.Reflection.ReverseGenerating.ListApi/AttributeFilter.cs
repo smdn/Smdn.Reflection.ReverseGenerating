@@ -81,6 +81,11 @@ public static class AttributeFilter {
           return false;
         break;
 
+      case EventInfo:
+        if (ROCType.FullNameEquals(typeof(System.Runtime.CompilerServices.TupleElementNamesAttribute), attrType))
+          return false;
+        break;
+
       case ParameterInfo:
         if (ROCType.FullNameEquals(typeof(System.Runtime.InteropServices.OptionalAttribute), attrType))
           return false;

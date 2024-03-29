@@ -238,6 +238,22 @@ public class EventAttributes {
       remove => throw null;
     }
   }
+
+  public class TupleElementNamesAttr {
+    [MemberAttributeFilterTestCaseAttribute("")]
+    [MemberAttributeFilterTestCaseAttribute("", FilterType = typeof(AttributeFilter), FilterMemberName = nameof(AttributeFilter.Default))]
+    public event EventHandler<(int, int)> Unnamed {
+      add => throw null;
+      remove => throw null;
+    }
+
+    [MemberAttributeFilterTestCaseAttribute("[TupleElementNames(new string[] { \"X\", \"Y\" })]")]
+    [MemberAttributeFilterTestCaseAttribute("", FilterType = typeof(AttributeFilter), FilterMemberName = nameof(AttributeFilter.Default))]
+    public event EventHandler<(int X, int Y)> Named {
+      add => throw null;
+      remove => throw null;
+    }
+  }
 }
 
 public class ParameterAttributes {
