@@ -107,7 +107,7 @@ class ApiListWriterTests {
       var location = $"{span.Path}({span.StartLinePosition.Line + 1},{span.StartLinePosition.Character + 1})";
 
 #pragma warning disable CA1305 // cannot pass IFormatProvider
-      TestContext.WriteLine($"{TestContext.CurrentContext.Test.FullName} {location}: {diag.Severity} {diag.Id}: {diag.GetMessage()}");
+      TestContext.Out.WriteLine($"{TestContext.CurrentContext.Test.FullName} {location}: {diag.Severity} {diag.Id}: {diag.GetMessage()}");
 #pragma warning restore CA1305
     }
 
@@ -518,7 +518,7 @@ public static class C {{
 
   [Test]
   public void WriteHeader_WriteEmbeddedResources_HasNoEmbeddedResources(
-    [Values(true, false)] bool writeEmbeddedResources
+    [Values] bool writeEmbeddedResources
   )
   {
     var options = new ApiListWriterOptions();
@@ -718,7 +718,7 @@ public static class C {{
 
   [Test]
   public void WriteFooter(
-    [Values(true, false)] bool writeFooter
+    [Values] bool writeFooter
   )
   {
     var options = new ApiListWriterOptions();

@@ -42,7 +42,7 @@ class AssemblyLoaderTests {
 
   [Test]
   public void UsingAssembly_ArgumentNull_AssemblyFile(
-    [Values(true, false)] bool loadIntoReflectionOnlyContext
+    [Values] bool loadIntoReflectionOnlyContext
   )
   {
     Assert.Throws<ArgumentNullException>(() => {
@@ -59,7 +59,7 @@ class AssemblyLoaderTests {
 
   [Test]
   public void UsingAssembly_ArgumentNull_AssemblyStream(
-    [Values(true, false)] bool loadIntoReflectionOnlyContext
+    [Values] bool loadIntoReflectionOnlyContext
   )
   {
     Assert.Throws<ArgumentNullException>(() => {
@@ -77,7 +77,7 @@ class AssemblyLoaderTests {
 
   [Test]
   public void UsingAssembly_ArgumentNull_ComponentAssemblyPath(
-    [Values(true, false)] bool loadIntoReflectionOnlyContext
+    [Values] bool loadIntoReflectionOnlyContext
   )
   {
     Assert.Throws<ArgumentNullException>(() => {
