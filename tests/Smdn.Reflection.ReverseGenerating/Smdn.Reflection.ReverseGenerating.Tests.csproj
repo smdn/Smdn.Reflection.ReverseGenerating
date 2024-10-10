@@ -4,7 +4,8 @@ SPDX-License-Identifier: MIT
 -->
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks Condition=" '$(EnableTargetFrameworkDotNet)' == 'true' ">net8.0;net6.0</TargetFrameworks>
+    <TargetFrameworks Condition=" '$(EnableTargetFrameworkDotNet80)' == 'true' ">net8.0;$(TargetFrameworks)</TargetFrameworks>
+    <TargetFrameworks Condition=" '$(EnableTargetFrameworkDotNet60)' == 'true' ">net6.0;$(TargetFrameworks)</TargetFrameworks>
     <TargetFrameworks Condition=" '$(EnableTargetFrameworkNetFx)' == 'true' ">$(TargetFrameworks);net47</TargetFrameworks>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <!-- do not use 'enable' or 'annotations': affects the behavior of the test cases -->
