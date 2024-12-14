@@ -547,21 +547,12 @@ public static class C {{
       string[] ExpectedReferencedAssemblies
     )> YieldTestCases()
     {
-#if NETCOREAPP3_1_OR_GREATER || NET6_0_OR_GREATER
+#if NETCOREAPP3_1_OR_GREATER || NET8_0_OR_GREATER
       yield return (
         "Lib",
         "netstandard2.1",
         new[] {
           "netstandard, Version=2.1.",
-        }
-      );
-#endif
-#if NET6_0_OR_GREATER
-      yield return (
-        "Lib",
-        "net6.0",
-        new[] {
-          "System.Runtime, Version=6.0.",
         }
       );
 #endif
@@ -574,7 +565,7 @@ public static class C {{
         }
       );
 #endif
-#if NETCOREAPP3_1_OR_GREATER || NET6_0_OR_GREATER
+#if NETCOREAPP3_1_OR_GREATER || NET8_0_OR_GREATER
       yield return (
         "LibB",
         "netstandard2.1",
@@ -584,33 +575,12 @@ public static class C {{
         }
       );
 #endif
-#if NET6_0_OR_GREATER
-      yield return (
-        "LibB",
-        "net6.0",
-        new[] {
-          "System.Runtime, Version=6.0.",
-          "LibA, Version=",
-        }
-      );
-#endif
-#if NETCOREAPP3_1_OR_GREATER || NET6_0_OR_GREATER
+#if NETCOREAPP3_1_OR_GREATER || NET8_0_OR_GREATER
       yield return (
         "LibReferencedAssemblies1",
         "netstandard2.1",
         new[] {
           "netstandard, Version=2.1.",
-        }
-      );
-#endif
-#if NET6_0_OR_GREATER
-      yield return (
-        "LibReferencedAssemblies1",
-        "net6.0",
-        new[] {
-          "System.Runtime, Version=6.0.",
-          "System.Threading, Version=6.0.",
-          "System.Xml.ReaderWriter, Version=6.0.",
         }
       );
 #endif

@@ -5,7 +5,6 @@ SPDX-License-Identifier: MIT
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFrameworks Condition=" '$(EnableTargetFrameworkDotNet80)' == 'true' ">net8.0;$(TargetFrameworks)</TargetFrameworks>
-    <TargetFrameworks Condition=" '$(EnableTargetFrameworkDotNet60)' == 'true' ">net6.0;$(TargetFrameworks)</TargetFrameworks>
     <TargetFrameworks Condition=" '$(EnableTargetFrameworkNetFx)' == 'true' ">$(TargetFrameworks)<!-- ;net472 --></TargetFrameworks>
     <RootNamespace>Smdn.Reflection.ReverseGenerating.ListApi</RootNamespace>
     <NoWarn>CS2002;$(NoWarn)</NoWarn>
@@ -30,11 +29,11 @@ SPDX-License-Identifier: MIT
     <Exec Command="dotnet restore $(TestAssemblyExeProjectPath)" />
     <Exec Command="dotnet restore $(TestAssemblyLibProjectPath)" />
 
-    <MSBuild Projects="$(TestAssemblyExeProjectPath)" Targets="Build" Properties="Configuration=Release;TargetFramework=net6.0">
-      <Output TaskParameter="TargetOutputs" ItemName="TestAssembliesExeNet60" />
+    <MSBuild Projects="$(TestAssemblyExeProjectPath)" Targets="Build" Properties="Configuration=Release;TargetFramework=net8.0">
+      <Output TaskParameter="TargetOutputs" ItemName="TestAssembliesExeNet80" />
     </MSBuild>
-    <MSBuild Projects="$(TestAssemblyLibProjectPath)" Targets="Build" Properties="Configuration=Release;TargetFramework=net6.0">
-      <Output TaskParameter="TargetOutputs" ItemName="TestAssembliesLibNet60" />
+    <MSBuild Projects="$(TestAssemblyLibProjectPath)" Targets="Build" Properties="Configuration=Release;TargetFramework=net8.0">
+      <Output TaskParameter="TargetOutputs" ItemName="TestAssembliesLibNet80" />
     </MSBuild>
 
     <ItemGroup>
@@ -46,15 +45,15 @@ SPDX-License-Identifier: MIT
     <MSBuild Projects="@(TestProjects)" Targets="Build" Properties="Configuration=Release;TargetFramework=netstandard2.1">
       <Output TaskParameter="TargetOutputs" ItemName="TestAssembliesNetStandard21" />
     </MSBuild>
-    <MSBuild Projects="@(TestProjects)" Targets="Build" Properties="Configuration=Release;TargetFramework=net6.0">
-      <Output TaskParameter="TargetOutputs" ItemName="TestAssembliesNet60" />
+    <MSBuild Projects="@(TestProjects)" Targets="Build" Properties="Configuration=Release;TargetFramework=net8.0">
+      <Output TaskParameter="TargetOutputs" ItemName="TestAssembliesNet80" />
     </MSBuild>
 
     <ItemGroup>
-      <TestAssemblies Include="@(TestAssembliesExeNet60)" />
-      <TestAssemblies Include="@(TestAssembliesLibNet60)" />
+      <TestAssemblies Include="@(TestAssembliesExeNet80)" />
+      <TestAssemblies Include="@(TestAssembliesLibNet80)" />
       <TestAssemblies Include="@(TestAssembliesNetStandard21)" />
-      <TestAssemblies Include="@(TestAssembliesNet60)" />
+      <TestAssemblies Include="@(TestAssembliesNet80)" />
     </ItemGroup>
 
     <PropertyGroup>
