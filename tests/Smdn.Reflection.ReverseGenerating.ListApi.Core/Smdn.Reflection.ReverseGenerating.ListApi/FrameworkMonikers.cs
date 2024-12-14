@@ -8,6 +8,8 @@ namespace Smdn.Reflection.ReverseGenerating.ListApi;
 
 [TestFixture]
 class FrameworkMonikersTests {
+  // TODO: .NET 10 / net10.0(?)
+  [TestCase(".NETCoreApp,Version=v9.0", "net9.0")]
   [TestCase(".NETCoreApp,Version=v8.0", "net8.0")]
   [TestCase(".NETCoreApp,Version=v7.0", "net7.0")]
   [TestCase(".NETCoreApp,Version=v6.0", "net6.0")]
