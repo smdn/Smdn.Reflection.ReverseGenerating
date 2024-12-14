@@ -28,7 +28,7 @@ SPDX-License-Identifier: MIT
     @(TaskFiles->WithMetadataValue('TargetFramework', 'net8.0')->'%(ImportLine)', '%0D%0A    ')
   </ImportGroup>
   <ImportGroup Condition=" '%24(MSBuildRuntimeType)' == 'Core' and %24([System.Runtime.InteropServices.RuntimeInformation]::FrameworkDescription.StartsWith('.NET 9.')) ">
-    <!-- .NET 9.x -->
+    <!-- .NET 9.x (use files that target .NET 8) -->
     @(TaskFiles->WithMetadataValue('TargetFramework', 'net8.0')->'%(ImportLine)', '%0D%0A    ')
   </ImportGroup>
 </Project>
