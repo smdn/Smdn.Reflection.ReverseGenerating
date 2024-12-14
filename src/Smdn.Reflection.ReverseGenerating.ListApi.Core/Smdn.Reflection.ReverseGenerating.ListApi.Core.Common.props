@@ -34,8 +34,10 @@ SPDX-License-Identifier: MIT
   <ItemGroup>
     <PackageReference Include="System.Reflection.MetadataLoadContext" Version="7.0.0" Condition="$(TargetFramework.StartsWith('net7.'))" />
     <PackageReference Include="System.Reflection.MetadataLoadContext" Version="8.0.0" Condition="$(TargetFramework.StartsWith('net8.'))" />
+    <PackageReference Include="System.Reflection.MetadataLoadContext" Version="9.0.0" Condition="$(TargetFramework.StartsWith('net9.'))" />
     <PackageReference Include="Microsoft.Extensions.DependencyModel" Version="7.0.0" Condition="$(TargetFramework.StartsWith('net7.'))" />
     <PackageReference Include="Microsoft.Extensions.DependencyModel" Version="8.0.0" Condition="$(TargetFramework.StartsWith('net8.'))" />
+    <PackageReference Include="Microsoft.Extensions.DependencyModel" Version="9.0.0" Condition="$(TargetFramework.StartsWith('net9.'))" />
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="6.0.0" />
   </ItemGroup>
 </Project>
