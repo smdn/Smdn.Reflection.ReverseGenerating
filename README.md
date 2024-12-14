@@ -63,8 +63,8 @@ dotnet tool install -g Smdn.Reflection.ReverseGenerating.ListApi
 dotnet tool update -g Smdn.Reflection.ReverseGenerating.ListApi
 
 # install and update (specifies the target framework explicitly)
-dotnet tool install --framework net6.0 -g Smdn.Reflection.ReverseGenerating.ListApi
-dotnet tool update --framework net8.0 -g Smdn.Reflection.ReverseGenerating.ListApi
+dotnet tool install --framework net8.0 -g Smdn.Reflection.ReverseGenerating.ListApi
+dotnet tool update --framework net6.0 -g Smdn.Reflection.ReverseGenerating.ListApi
 ```
 
 ## Usage
