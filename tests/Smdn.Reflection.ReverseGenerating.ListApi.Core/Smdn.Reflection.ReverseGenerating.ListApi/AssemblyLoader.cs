@@ -174,7 +174,7 @@ class AssemblyLoaderTests {
       );
     });
 
-    Assert.That(result, Is.EqualTo(default(int)), nameof(result));
+    Assert.That(result, Is.Default, nameof(result));
 
     if (loadIntoReflectionOnlyContext) {
       Assert.That(context, Is.Null, nameof(context));

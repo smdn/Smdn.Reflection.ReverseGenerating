@@ -5,6 +5,9 @@ SPDX-License-Identifier: MIT
 <Project>
   <Import Project="$(MSBuildThisFileDirectory)TestReleasedPackage.targets" Condition=" '$(IsTestProject)' == 'true' " />
 
+  <ItemGroup>
+    <PackageReference Update="NUnit.Analyzers" Version="4.9.1"/>
+  </ItemGroup>
 
   <ImportGroup>
     <Import Project="$(SmdnProjectAssets_TargetsImports)" />
