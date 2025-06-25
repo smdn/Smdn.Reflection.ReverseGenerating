@@ -83,6 +83,7 @@ public sealed class RootCommandImplementation : ICommandHandler {
       false
 #endif
   );
+  // cSpell:disable
   private static readonly Option<bool> OptionGenerateFullTypeName = new(
     aliases: new[] { "--generate-fulltypename" },
     description: "Generates declarations with full type name.",
@@ -103,6 +104,7 @@ public sealed class RootCommandImplementation : ICommandHandler {
     description: "Generates declarations with nullable annotations.",
     getDefaultValue: static () => true
   );
+  // cSpell:enable
 
   private readonly Microsoft.Extensions.Logging.ILogger? logger;
 
@@ -212,7 +214,7 @@ public sealed class RootCommandImplementation : ICommandHandler {
         logger: logger,
         context: out var context,
         loadIntoReflectionOnlyContext: loadAssemblyIntoReflectionOnlyContext,
-        actionWithLoadedAssembly: static (assm, arg) => {
+        actionWithLoadedAssembly: static (assembly, arg) => {
           try {
 #if SYSTEM_REFLECTION_NULLABILITYINFOCONTEXT
             var nullabilityInfoContext = arg.enableNullabilityAnnotations
@@ -223,7 +225,7 @@ public sealed class RootCommandImplementation : ICommandHandler {
             arg.options.TypeDeclaration.NullabilityInfoContext = nullabilityInfoContext;
             arg.options.MemberDeclaration.NullabilityInfoContext = nullabilityInfoContext;
 #endif
-            var outputFilePath = GetOutputFilePathOf(assm, arg.outputDirectory);
+            var outputFilePath = GetOutputFilePathOf(assembly, arg.outputDirectory);
 
             // ensure the output directory existing
             arg.outputDirectory.Create();
@@ -232,7 +234,7 @@ public sealed class RootCommandImplementation : ICommandHandler {
 
             var writer = new ApiListWriter(
               outputWriter,
-              assm,
+              assembly,
               arg.options,
               arg.logger
             );
@@ -243,13 +245,13 @@ public sealed class RootCommandImplementation : ICommandHandler {
               writer.WriteFooter();
             }
             catch (AssemblyFileNotFoundException ex) {
-              arg.logger?.LogCritical(ex, "Could not load depending assembly '{FileName}', referenced from the assembly '{AssemblyName}'", ex.FileName, assm.GetName());
+              arg.logger?.LogCritical(ex, "Could not load depending assembly '{FileName}', referenced from the assembly '{AssemblyName}'", ex.FileName, assembly.GetName());
               arg.logger?.LogError("If you are trying to load an assembly with an SDK version that is not currently installed, install that version of the SDK, or specify the 'DOTNET_ROLL_FORWARD' environment variable and try again.");
               return null;
             }
 
             arg.logger?.LogDebug("generated API list {OutputFilePath}", outputFilePath);
-            arg.logger?.LogInformation("{AssemblyFilePath} -> {OutputFilePath}", assm.Location, outputFilePath);
+            arg.logger?.LogInformation("{AssemblyFilePath} -> {OutputFilePath}", assembly.Location, outputFilePath);
 
             return outputFilePath;
           }
@@ -291,7 +293,7 @@ public sealed class RootCommandImplementation : ICommandHandler {
         arg: outputDirectory,
         logger: logger,
         context: out var context,
-        actionWithLoadedAssembly: static (assm, outdir) => GetOutputFilePathOf(assm, outdir)
+        actionWithLoadedAssembly: static (assembly, outdir) => GetOutputFilePathOf(assembly, outdir)
       )!;
 
       // wait for the context to be collected
@@ -305,7 +307,7 @@ public sealed class RootCommandImplementation : ICommandHandler {
     }
   }
 
-  private static string GetOutputFilePathOf(Assembly assm, DirectoryInfo outputDirectory)
+  private static string GetOutputFilePathOf(Assembly assembly, DirectoryInfo outputDirectory)
   {
 #pragma warning restore SA1114
 #if SYSTEM_IO_PATH_JOIN
@@ -314,7 +316,7 @@ public sealed class RootCommandImplementation : ICommandHandler {
     return Path.Combine(
 #endif
 #pragma warning disable SA1114
-      outputDirectory.FullName, $"{GetOutputFileName(assm)}.apilist.cs"
+      outputDirectory.FullName, $"{GetOutputFileName(assembly)}.apilist.cs"
     );
 
     static string GetOutputFileName(Assembly a)

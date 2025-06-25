@@ -25,10 +25,12 @@ class RootCommandImplementationGetApiListWriterOptionsTests {
     );
   }
 
+  // cSpell:disable
   [TestCase("--generate-fulltypename", true)]
   [TestCase("--generate-fulltypename=true", true)]
   [TestCase("--generate-fulltypename=false", false)]
   [TestCase("", false)]
+  // cSpell:enable
   public void GetApiListWriterOptions_GenerateFullTypeName(string args, bool expected)
   {
     var options = GetApiListWriterOptions(args);
@@ -37,10 +39,12 @@ class RootCommandImplementationGetApiListWriterOptionsTests {
     Assert.That(options.MemberDeclaration.WithNamespace, Is.EqualTo(expected), $"args='{args}'");
   }
 
+  // cSpell:disable
   [TestCase("--generate-methodbody=EmptyImplementation", MethodBodyOption.EmptyImplementation)]
   [TestCase("--generate-methodbody=ThrowNotImplementedException", MethodBodyOption.ThrowNotImplementedException)]
   [TestCase("--generate-methodbody=None", MethodBodyOption.None)]
   [TestCase("", MethodBodyOption.EmptyImplementation)]
+  // cSpell:enable
   public void GetApiListWriterOptions_GenerateMethodBody(string args, MethodBodyOption expected)
   {
     var options = GetApiListWriterOptions(args);
@@ -48,10 +52,12 @@ class RootCommandImplementationGetApiListWriterOptionsTests {
     Assert.That(options.MemberDeclaration.MethodBody, Is.EqualTo(expected), $"args='{args}'");
   }
 
+  // cSpell:disable
   [TestCase("--generate-staticmembersfirst", true)]
   [TestCase("--generate-staticmembersfirst=true", true)]
   [TestCase("--generate-staticmembersfirst=false", false)]
   [TestCase("", false)]
+  // cSpell:enable
   public void GetApiListWriterOptions_GenerateStaticMembersFirst(string args, bool expected)
   {
     var options = GetApiListWriterOptions(args);
@@ -59,10 +65,12 @@ class RootCommandImplementationGetApiListWriterOptionsTests {
     Assert.That(options.Writer.OrderStaticMembersFirst, Is.EqualTo(expected), $"args='{args}'");
   }
 
+  // cSpell:disable
   [TestCase("--generate-nullableannotations", true)]
   [TestCase("--generate-nullableannotations=true", true)]
   [TestCase("--generate-nullableannotations=false", false)]
   [TestCase("", true)]
+  // cSpell:enable
   public void GetApiListWriterOptions_GenerateNullableAnnotations(string args, bool expected)
   {
     var options = GetApiListWriterOptions(args);

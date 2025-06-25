@@ -1,5 +1,6 @@
 // SPDX-FileCopyrightText: 2020 smdn <smdn@smdn.jp>
 // SPDX-License-Identifier: MIT
+// cSpell:ignore retval
 using System;
 using System.Collections.Generic;
 using System.Linq;

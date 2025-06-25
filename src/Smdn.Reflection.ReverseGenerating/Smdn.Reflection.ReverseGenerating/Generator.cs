@@ -63,7 +63,7 @@ public static partial class Generator {
     GeneratorOptions options
   )
   {
-    var accessibilities = options.TypeDeclaration.WithAccessibility
+    var accessibilityList = options.TypeDeclaration.WithAccessibility
       ? CSharpFormatter.FormatAccessibility(t.GetAccessibility()) + " "
       : string.Empty;
     var typeName = CSharpFormatter.FormatTypeNameCore(
@@ -118,20 +118,20 @@ public static partial class Generator {
         );
       }
 
-      yield return $"{modifierNew}{accessibilities}enum {typeName}{underlyingTypeDeclaration}";
+      yield return $"{modifierNew}{accessibilityList}enum {typeName}{underlyingTypeDeclaration}";
       yield break;
     }
 
     string typeDeclaration;
 
     if (t.IsInterface) {
-      typeDeclaration = $"{modifierNew}{accessibilities}interface {typeName}";
+      typeDeclaration = $"{modifierNew}{accessibilityList}interface {typeName}";
     }
     else if (t.IsValueType) {
       var isReadOnly = t.IsReadOnlyValueType() ? "readonly " : string.Empty;
       var isByRefLike = t.IsByRefLikeValueType() ? "ref " : string.Empty;
 
-      typeDeclaration = $"{modifierNew}{accessibilities}{isReadOnly}{isByRefLike}struct {typeName}";
+      typeDeclaration = $"{modifierNew}{accessibilityList}{isReadOnly}{isByRefLike}struct {typeName}";
     }
     else {
       string? modifier = null;
@@ -143,7 +143,7 @@ public static partial class Generator {
       else if (t.IsSealed)
         modifier = "sealed ";
 
-      typeDeclaration = $"{modifierNew}{accessibilities}{modifier}class {typeName}";
+      typeDeclaration = $"{modifierNew}{accessibilityList}{modifier}class {typeName}";
     }
 
     if (!generateExplicitBaseTypeAndInterfaces) {
@@ -241,7 +241,7 @@ public static partial class Generator {
           : "struct";
 
         if (hasDefaultConstructorConstraint && ConstraintTypesContainsValueType(genericParameter, out constraintTypes))
-          hasDefaultConstructorConstraint = false; // contraint type of System.ValueType implies `new()`
+          hasDefaultConstructorConstraint = false; // constraint type of System.ValueType implies `new()`
       }
       else if (constraintAttrs.HasFlag(GenericParameterAttributes.ReferenceTypeConstraint)) {
         yield return genericParameter.GetNullableAttributeMetadataValue() == NullableMetadataValue.Annotated

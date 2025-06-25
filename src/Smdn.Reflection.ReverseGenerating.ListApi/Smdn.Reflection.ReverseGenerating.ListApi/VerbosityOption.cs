@@ -12,11 +12,13 @@ using Microsoft.Extensions.Logging;
 namespace Smdn.Reflection.ReverseGenerating.ListApi;
 
 public static class VerbosityOption {
+  // cSpell:disable
   internal static readonly Option<string> Option = new(
     aliases: new[] { "-v", "--verbosity" },
     description: "Verbosity of output. The value must be one of q[uiet], m[inimal], n[ormal], d[etailed], or diag[nostic].",
     getDefaultValue: static () => "minimal"
   );
+  // cSpell:enable
 
   public static LogLevel ParseLogLevel(string[] args)
   {

@@ -1,5 +1,6 @@
 // SPDX-FileCopyrightText: 2022 smdn <smdn@smdn.jp>
 // SPDX-License-Identifier: MIT
+// cSpell:ignore retval
 #if SYSTEM_REFLECTION_NULLABILITYINFO
 using System;
 using System.Collections.Generic;

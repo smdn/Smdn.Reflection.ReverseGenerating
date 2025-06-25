@@ -174,7 +174,7 @@ public class GenerateApiList : Task {
       logger: logger,
       context: out var context,
       loadIntoReflectionOnlyContext: loadIntoReflectionOnlyContext,
-      actionWithLoadedAssembly: static (assm, arg) => {
+      actionWithLoadedAssembly: static (assembly, arg) => {
         // ensure the output directory existing
         Directory.CreateDirectory(Path.GetDirectoryName(arg.outputApiListFilePath)!);
 
@@ -196,7 +196,7 @@ public class GenerateApiList : Task {
 #endif
           var writer = new ApiListWriter(
             outputWriter,
-            assm,
+            assembly,
             arg.options,
             arg.logger
           );

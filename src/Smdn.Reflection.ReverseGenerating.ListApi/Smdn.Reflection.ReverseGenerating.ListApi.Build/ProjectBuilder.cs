@@ -117,7 +117,7 @@ public static class ProjectBuilder {
           yield return new FileInfo(innerOutputFullPath);
         }
 
-        // retrieve Build target result / for in cace of building with single target framework
+        // retrieve Build target result / for in case of building with single target framework
         if (result.HasResultsForTarget("Build")) {
           var buildTargetResult = result.ResultsByTarget["Build"];
 

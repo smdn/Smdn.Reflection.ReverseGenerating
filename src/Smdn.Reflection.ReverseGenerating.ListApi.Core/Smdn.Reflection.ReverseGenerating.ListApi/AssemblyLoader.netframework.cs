@@ -68,19 +68,19 @@ partial class AssemblyLoader {
 
       logger?.LogDebug($"loading assembly from file '{assemblyFile.FullName}'");
 
-      var assm = proxy.LoadAssembly(assemblyFile);
+      var assembly = proxy.LoadAssembly(assemblyFile);
 
-      if (assm is null) {
+      if (assembly is null) {
         logger?.LogCritical($"failed to load assembly from file '{assemblyFile.FullName}'");
 
         return default;
       }
 
-      assemblyName = assm.FullName;
+      assemblyName = assembly.FullName;
 
       logger?.LogDebug($"loaded assembly '{assemblyName}'");
 
-      return actionWithLoadedAssembly(assm, arg);
+      return actionWithLoadedAssembly(assembly, arg);
     }
     finally {
       AppDomain.Unload(domain);

@@ -12,14 +12,14 @@ namespace Smdn.Reflection;
 internal sealed class UnwrapByRefParameterInfo : ParameterInfo {
   public ParameterInfo BaseParameter { get; }
 
-  public UnwrapByRefParameterInfo(ParameterInfo baseParamameter)
+  public UnwrapByRefParameterInfo(ParameterInfo baseParameter)
   {
 #if DEBUG
-    if (!baseParamameter.ParameterType.IsByRef)
-      throw new ArgumentException($"{baseParamameter.ParameterType} must be by-ref");
+    if (!baseParameter.ParameterType.IsByRef)
+      throw new ArgumentException($"{baseParameter.ParameterType} must be by-ref");
 #endif
 
-    BaseParameter = baseParamameter;
+    BaseParameter = baseParameter;
   }
 
   public override MemberInfo Member => BaseParameter.Member;

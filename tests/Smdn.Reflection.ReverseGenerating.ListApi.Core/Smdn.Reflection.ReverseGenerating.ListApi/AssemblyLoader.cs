@@ -50,7 +50,7 @@ class AssemblyLoaderTests {
         assemblyFile: null!,
         loadIntoReflectionOnlyContext: loadIntoReflectionOnlyContext,
         arg: 0,
-        (assm, arg) => arg,
+        (assembly, arg) => arg,
         context: out _,
         logger: null
       );
@@ -68,7 +68,7 @@ class AssemblyLoaderTests {
         componentAssemblyPath: string.Empty,
         loadIntoReflectionOnlyContext: loadIntoReflectionOnlyContext,
         arg: 0,
-        (assm, arg) => arg,
+        (assembly, arg) => arg,
         context: out _,
         logger: null
       );
@@ -86,7 +86,7 @@ class AssemblyLoaderTests {
         componentAssemblyPath: null!,
         loadIntoReflectionOnlyContext: loadIntoReflectionOnlyContext,
         arg: 0,
-        (assm, arg) => arg,
+        (assembly, arg) => arg,
         context: out _,
         logger: null
       );
@@ -111,15 +111,15 @@ class AssemblyLoaderTests {
       assemblyFile,
       loadIntoReflectionOnlyContext: loadIntoReflectionOnlyContext,
       arg: assemblyFile,
-      (assm, arg) => {
+      (assembly, arg) => {
         Assert.That(assemblyFile, Is.SameAs(arg), nameof(arg));
 
-        Assert.That(assm, Is.Not.Null, nameof(assm));
-        Assert.That(assm.Location, Is.EqualTo(arg.FullName), nameof(assm.Location));
+        Assert.That(assembly, Is.Not.Null, nameof(assembly));
+        Assert.That(assembly.Location, Is.EqualTo(arg.FullName), nameof(assembly.Location));
 
-        Assert.DoesNotThrow(() => assm.GetExportedTypes(), nameof(assm.GetExportedTypes));
+        Assert.DoesNotThrow(() => assembly.GetExportedTypes(), nameof(assembly.GetExportedTypes));
 
-        return assm.GetType("Lib.LibA.CBase")?.FullName;
+        return assembly.GetType("Lib.LibA.CBase")?.FullName;
       },
       context: out var context,
       logger: logger
@@ -218,17 +218,17 @@ class AssemblyLoaderTests {
       componentAssemblyPath: assemblyFile.FullName,
       loadIntoReflectionOnlyContext: loadIntoReflectionOnlyContext,
       arg: assemblyFile,
-      (assm, arg) => {
-        Assert.That(assm, Is.Not.Null, nameof(assm));
+      (assembly, arg) => {
+        Assert.That(assembly, Is.Not.Null, nameof(assembly));
 
         if (loadIntoReflectionOnlyContext)
-          Assert.That(assm.Location, Is.EqualTo(arg.FullName), nameof(assm.Location));
+          Assert.That(assembly.Location, Is.EqualTo(arg.FullName), nameof(assembly.Location));
         else
-          Assert.That(assm.Location, Is.Empty, nameof(assm.Location));
+          Assert.That(assembly.Location, Is.Empty, nameof(assembly.Location));
 
-        Assert.DoesNotThrow(() => assm.GetExportedTypes(), nameof(assm.GetExportedTypes));
+        Assert.DoesNotThrow(() => assembly.GetExportedTypes(), nameof(assembly.GetExportedTypes));
 
-        return assm.GetType("Lib.LibA.CBase")?.FullName;
+        return assembly.GetType("Lib.LibA.CBase")?.FullName;
       },
       context: out var context,
       logger: logger
@@ -277,15 +277,15 @@ class AssemblyLoaderTests {
       assemblyFile,
       loadIntoReflectionOnlyContext: loadIntoReflectionOnlyContext,
       arg: assemblyFile,
-      (assm, arg) => {
+      (assembly, arg) => {
         Assert.That(assemblyFile, Is.SameAs(arg), nameof(arg));
 
-        Assert.That(assm, Is.Not.Null, nameof(assm));
-        Assert.That(assm.Location, Is.EqualTo(arg.FullName), nameof(assm.Location));
+        Assert.That(assembly, Is.Not.Null, nameof(assembly));
+        Assert.That(assembly.Location, Is.EqualTo(arg.FullName), nameof(assembly.Location));
 
-        Assert.DoesNotThrow(() => assm.GetExportedTypes(), nameof(assm.GetExportedTypes));
+        Assert.DoesNotThrow(() => assembly.GetExportedTypes(), nameof(assembly.GetExportedTypes));
 
-        return assm.GetType("Lib.LibB.CEx")?.FullName;
+        return assembly.GetType("Lib.LibB.CEx")?.FullName;
       },
       context: out var context,
       logger: logger
@@ -336,17 +336,17 @@ class AssemblyLoaderTests {
       componentAssemblyPath: assemblyFile.FullName,
       loadIntoReflectionOnlyContext: loadIntoReflectionOnlyContext,
       arg: assemblyFile,
-      (assm, arg) => {
-        Assert.That(assm, Is.Not.Null, nameof(assm));
+      (assembly, arg) => {
+        Assert.That(assembly, Is.Not.Null, nameof(assembly));
 
         if (loadIntoReflectionOnlyContext)
-          Assert.That(assm.Location, Is.EqualTo(arg.FullName), nameof(assm.Location));
+          Assert.That(assembly.Location, Is.EqualTo(arg.FullName), nameof(assembly.Location));
         else
-          Assert.That(assm.Location, Is.Empty, nameof(assm.Location));
+          Assert.That(assembly.Location, Is.Empty, nameof(assembly.Location));
 
-        Assert.DoesNotThrow(() => assm.GetExportedTypes(), nameof(assm.GetExportedTypes));
+        Assert.DoesNotThrow(() => assembly.GetExportedTypes(), nameof(assembly.GetExportedTypes));
 
-        return assm.GetType("Lib.LibB.CEx")?.FullName;
+        return assembly.GetType("Lib.LibB.CEx")?.FullName;
       },
       context: out var context,
       logger: logger
@@ -395,15 +395,15 @@ class AssemblyLoaderTests {
       assemblyFile,
       loadIntoReflectionOnlyContext: loadIntoReflectionOnlyContext,
       arg: assemblyFile,
-      (assm, arg) => {
+      (assembly, arg) => {
         Assert.That(assemblyFile, Is.SameAs(arg), nameof(arg));
 
-        Assert.That(assm, Is.Not.Null, nameof(assm));
-        Assert.That(assm.Location, Is.EqualTo(arg.FullName), nameof(assm.Location));
+        Assert.That(assembly, Is.Not.Null, nameof(assembly));
+        Assert.That(assembly.Location, Is.EqualTo(arg.FullName), nameof(assembly.Location));
 
-        Assert.DoesNotThrow(() => assm.GetExportedTypes(), nameof(assm.GetExportedTypes));
+        Assert.DoesNotThrow(() => assembly.GetExportedTypes(), nameof(assembly.GetExportedTypes));
 
-        return assm
+        return assembly
           .GetType("C")
           ?.GetMethod("M", BindingFlags.Public | BindingFlags.Static)
           ?.GetParameters()

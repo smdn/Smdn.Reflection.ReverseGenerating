@@ -1,5 +1,6 @@
 // SPDX-FileCopyrightText: 2020 smdn <smdn@smdn.jp>
 // SPDX-License-Identifier: MIT
+// cSpell:ignore accessibilities,nullabilities
 using System;
 
 namespace Smdn.Reflection.ReverseGenerating.GeneratorTestCases.GenericParameterConstraints.Types {

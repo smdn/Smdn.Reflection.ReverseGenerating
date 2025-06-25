@@ -1,5 +1,6 @@
 // SPDX-FileCopyrightText: 2020 smdn <smdn@smdn.jp>
 // SPDX-License-Identifier: MIT
+// cSpell:ignore browsable
 #pragma warning disable CS0067, CS0414, CS8597
 
 using System;

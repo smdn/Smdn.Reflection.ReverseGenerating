@@ -63,13 +63,13 @@ SPDX-License-Identifier: MIT
             AppDomain
               .CurrentDomain
               .GetAssemblies()
-              .First(assm => assm.GetName().Name == item.ItemSpec)
+              .First(assembly => assembly.GetName().Name == item.ItemSpec)
           )
-          .Select(static assm =>
+          .Select(static assembly =>
             (
-              Name: assm.GetName().Name,
-              InformationalVersion: assm.GetCustomAttribute<AssemblyInformationalVersionAttribute>().InformationalVersion,
-              TargetFramework: assm.GetCustomAttribute<TargetFrameworkAttribute>().FrameworkName
+              Name: assembly.GetName().Name,
+              InformationalVersion: assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>().InformationalVersion,
+              TargetFramework: assembly.GetCustomAttribute<TargetFrameworkAttribute>().FrameworkName
             )
           )
           .Distinct()

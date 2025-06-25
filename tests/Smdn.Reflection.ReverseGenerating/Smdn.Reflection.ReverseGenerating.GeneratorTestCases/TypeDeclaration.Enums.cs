@@ -1,5 +1,6 @@
 // SPDX-FileCopyrightText: 2020 smdn <smdn@smdn.jp>
 // SPDX-License-Identifier: MIT
+// cSpell:ignore accessibilities,nullabilities
 namespace Smdn.Reflection.ReverseGenerating.GeneratorTestCases.TypeDeclaration.Enums {
   [TypeDeclarationTestCase("internal enum E0 : int")] internal enum E0 { };
   [TypeDeclarationTestCase("public enum E1 : int")] public enum E1 { };

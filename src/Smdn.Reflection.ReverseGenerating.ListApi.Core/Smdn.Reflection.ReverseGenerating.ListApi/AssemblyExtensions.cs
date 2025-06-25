@@ -15,6 +15,8 @@ public static class AssemblyExtensions {
 #if NULL_STATE_STATIC_ANALYSIS_ATTRIBUTES
   [return: MaybeNull]
 #endif
+  // cSpell:ignore assm
+  // TODO: change assm -> assembly
   public static TValue GetAssemblyMetadataAttributeValue<TAssemblyMetadataAttribute, TValue>(this Assembly assm)
     where TAssemblyMetadataAttribute : Attribute
     => (TValue)GetAssemblyMetadataAttributeValue<TAssemblyMetadataAttribute>(

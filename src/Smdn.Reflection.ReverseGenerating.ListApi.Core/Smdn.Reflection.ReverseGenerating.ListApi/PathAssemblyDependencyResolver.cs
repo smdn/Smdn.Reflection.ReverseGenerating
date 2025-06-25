@@ -34,10 +34,10 @@ internal sealed class PathAssemblyDependencyResolver : PathAssemblyResolver {
   {
     logger?.LogDebug("attempting to load '{AssemblyName}'", assemblyName);
 
-    var assm = base.Resolve(context, assemblyName);
+    var assembly = base.Resolve(context, assemblyName);
 
-    if (assm is not null)
-      return assm;
+    if (assembly is not null)
+      return assembly;
 
     var assemblyPath = dependencyResolver.ResolveAssemblyToPath(assemblyName);
 
@@ -46,12 +46,12 @@ internal sealed class PathAssemblyDependencyResolver : PathAssemblyResolver {
       return context.LoadFromAssemblyPath(assemblyPath);
     }
 
-    assm = packageDependencyResolver.Resolve(assemblyName, context.LoadFromAssemblyPath);
+    assembly = packageDependencyResolver.Resolve(assemblyName, context.LoadFromAssemblyPath);
 
-    if (assm is null)
+    if (assembly is null)
       RuntimeAssemblyName.WarnNotToBeAbleToResolve(logger, assemblyName, packageDependencyResolver.DependencyContext);
 
-    return assm;
+    return assembly;
   }
 }
 #endif

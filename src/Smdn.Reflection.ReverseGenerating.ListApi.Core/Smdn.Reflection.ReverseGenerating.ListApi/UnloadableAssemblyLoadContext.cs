@@ -1,5 +1,6 @@
 // SPDX-FileCopyrightText: 2021 smdn <smdn@smdn.jp>
 // SPDX-License-Identifier: MIT
+// cSpell:ignore unloadable
 #pragma warning disable CA1848
 
 #if NETCOREAPP3_1_OR_GREATER
@@ -39,12 +40,12 @@ internal sealed class UnloadableAssemblyLoadContext : AssemblyLoadContext {
       return LoadFromAssemblyPath(assemblyPath);
     }
 
-    var assm = packageDependencyResolver.Resolve(name, this.LoadFromAssemblyPath);
+    var assembly = packageDependencyResolver.Resolve(name, this.LoadFromAssemblyPath);
 
-    if (assm is null)
+    if (assembly is null)
       RuntimeAssemblyName.WarnNotToBeAbleToResolve(logger, name, packageDependencyResolver.DependencyContext);
 
-    return assm;
+    return assembly;
   }
 }
 #endif

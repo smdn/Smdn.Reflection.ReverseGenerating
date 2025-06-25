@@ -13,7 +13,7 @@ using System.Text;
 namespace Smdn.Reflection.ReverseGenerating;
 
 public static partial class CSharpFormatter /* ITypeFormatter */ {
-  private static readonly Dictionary<Accessibility, string> Accessibilities = new() {
+  private static readonly Dictionary<Accessibility, string> AccessibilityMap = new() {
     { Accessibility.Public,            "public" },
     { Accessibility.Assembly,          "internal" },
     { Accessibility.Family,            "protected" },
@@ -183,7 +183,7 @@ public static partial class CSharpFormatter /* ITypeFormatter */ {
   };
 
   public static string FormatAccessibility(Accessibility accessibility)
-    => Accessibilities.TryGetValue(accessibility, out var ret) ? ret : string.Empty;
+    => AccessibilityMap.TryGetValue(accessibility, out var ret) ? ret : string.Empty;
 
   public static bool IsLanguagePrimitiveType(
     Type t,

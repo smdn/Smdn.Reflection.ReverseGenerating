@@ -104,7 +104,7 @@ public class ApiListWriter {
   {
     var orderedReferencedAssemblies = assembly
       .GetReferencedAssemblies()
-      .OrderBy(static refassm => refassm.Name, StringComparer.Ordinal);
+      .OrderBy(static referencedAssembly => referencedAssembly.Name, StringComparer.Ordinal);
 
     foreach (var referencedAssembly in orderedReferencedAssemblies) {
       BaseWriter.WriteLine($"//     {referencedAssembly.FullName}");
@@ -118,22 +118,22 @@ public class ApiListWriter {
       .AssemblyReferences
       .Select(reader.GetAssemblyReference)
       .ToDictionary(
-        assmRef => reader.GetString(assmRef.Name),
-        assmRef => assmRef
+        assemblyReference => reader.GetString(assemblyReference.Name),
+        assemblyReference => assemblyReference
       );
 
-    foreach (var (name, assmRef) in assemblyReferences.OrderBy(static pair => pair.Key, StringComparer.Ordinal)) {
-      var culture = reader.GetString(assmRef.Culture);
+    foreach (var (name, assemblyReference) in assemblyReferences.OrderBy(static pair => pair.Key, StringComparer.Ordinal)) {
+      var culture = reader.GetString(assemblyReference.Culture);
 
       if (string.IsNullOrEmpty(culture))
         culture = "neutral";
 
-      var publicKeyOrToken = reader.GetBlobBytes(assmRef.PublicKeyOrToken);
+      var publicKeyOrToken = reader.GetBlobBytes(assemblyReference.PublicKeyOrToken);
       var publicKeyOrTokenString = publicKeyOrToken is null || publicKeyOrToken.Length == 0
         ? string.Empty
         : $", PublicKeyToken={string.Concat(publicKeyOrToken.Select(static b => b.ToString("x2", provider: null)))}";
 
-      BaseWriter.WriteLine($"//     {name}, Version={assmRef.Version}, Culture={culture}{publicKeyOrTokenString}");
+      BaseWriter.WriteLine($"//     {name}, Version={assemblyReference.Version}, Culture={culture}{publicKeyOrTokenString}");
     }
   }
 
@@ -307,7 +307,7 @@ public class ApiListWriter {
 
   private static string GenerateTypeAndMemberDeclarations(
     int nestLevel,
-    Assembly assm,
+    Assembly assembly,
     IEnumerable<Type> types,
     ISet<string> referencingNamespaces,
     ApiListWriterOptions options,
@@ -359,7 +359,7 @@ public class ApiListWriter {
         ret.Append(
           GenerateTypeAndMemberDeclarations(
             nestLevel,
-            assm,
+            assembly,
             type,
             referencingNamespaces,
             options,
@@ -389,7 +389,7 @@ public class ApiListWriter {
   // TODO: unsafe types
   private static string GenerateTypeAndMemberDeclarations(
     int nestLevel,
-    Assembly assm,
+    Assembly assembly,
     Type t,
     ISet<string> referencingNamespaces,
     ApiListWriterOptions options,
@@ -414,7 +414,7 @@ public class ApiListWriter {
 
     if (
       assemblyNameOfTypeForwardedFrom is not null &&
-      string.Equals(assm.FullName, assemblyNameOfTypeForwardedFrom, StringComparison.Ordinal)
+      string.Equals(assembly.FullName, assemblyNameOfTypeForwardedFrom, StringComparison.Ordinal)
     ) {
       ret
         .Append(indent)
@@ -457,7 +457,7 @@ public class ApiListWriter {
       ret.Append(
         GenerateTypeContentDeclarations(
           nestLevel + 1,
-          assm,
+          assembly,
           t,
           referencingNamespaces,
           options,
@@ -487,7 +487,7 @@ public class ApiListWriter {
 
   private static string GenerateTypeContentDeclarations(
     int nestLevel,
-    Assembly assm,
+    Assembly assembly,
     Type t,
     ISet<string> referencingNamespaces,
     ApiListWriterOptions options,
@@ -525,7 +525,7 @@ public class ApiListWriter {
       ret.Append(
         GenerateTypeAndMemberDeclarations(
           nestLevel,
-          assm,
+          assembly,
           nestedTypes.Where(nestedType => !(options.IgnorePrivateOrAssembly && (nestedType.IsNestedPrivate || nestedType.IsNestedAssembly))),
           referencingNamespaces,
           options,

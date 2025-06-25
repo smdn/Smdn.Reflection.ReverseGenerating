@@ -34,12 +34,12 @@ class AssemblyExtensionsTests {
   [Test]
   public void GetAssemblyMetadataAttributeValue()
   {
-    var assm = Assembly.GetExecutingAssembly();
+    var assembly = Assembly.GetExecutingAssembly();
 
-    Assert.That(assm.GetAssemblyMetadataAttributeValue<AssemblyStringMetadataAttribute, string>(), Is.EqualTo("foo"), nameof(AssemblyStringMetadataAttribute));
-    Assert.That(assm.GetAssemblyMetadataAttributeValue<AssemblyIntMetadataAttribute, int>(), Is.EqualTo(42), nameof(AssemblyIntMetadataAttribute));
+    Assert.That(assembly.GetAssemblyMetadataAttributeValue<AssemblyStringMetadataAttribute, string>(), Is.EqualTo("foo"), nameof(AssemblyStringMetadataAttribute));
+    Assert.That(assembly.GetAssemblyMetadataAttributeValue<AssemblyIntMetadataAttribute, int>(), Is.EqualTo(42), nameof(AssemblyIntMetadataAttribute));
 
-    Assert.That(assm.GetAssemblyMetadataAttributeValue<System.Runtime.Versioning.TargetFrameworkAttribute, string>(), Is.Not.Null, nameof(System.Runtime.Versioning.TargetFrameworkAttribute));
-    Assert.That(assm.GetAssemblyMetadataAttributeValue<System.Reflection.AssemblyConfigurationAttribute, string>(), Is.Not.Null, nameof(System.Reflection.AssemblyConfigurationAttribute));
+    Assert.That(assembly.GetAssemblyMetadataAttributeValue<System.Runtime.Versioning.TargetFrameworkAttribute, string>(), Is.Not.Null, nameof(System.Runtime.Versioning.TargetFrameworkAttribute));
+    Assert.That(assembly.GetAssemblyMetadataAttributeValue<System.Reflection.AssemblyConfigurationAttribute, string>(), Is.Not.Null, nameof(System.Reflection.AssemblyConfigurationAttribute));
   }
 }

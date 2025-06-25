@@ -70,13 +70,13 @@ partial class AssemblyLoader {
       assemblySource.ComponentAssemblyPath
     );
 
-    var assm = assemblySource.File is not null
+    var assembly = assemblySource.File is not null
       ? mlc.LoadFromAssemblyPath(assemblySource.File.FullName)
       : assemblySource.Stream is not null
         ? mlc.LoadFromStream(assemblySource.Stream)
         : throw new InvalidOperationException($"either {nameof(AssemblySource.File)} or {nameof(AssemblySource.Stream)} must be specified");
 
-    if (assm is null) {
+    if (assembly is null) {
       logger?.LogCritical(
         "failed to load assembly into reflection-only context (ComponentAssemblyPath: '{ComponentAssemblyPath}')",
         assemblySource.ComponentAssemblyPath
@@ -85,11 +85,11 @@ partial class AssemblyLoader {
       return default;
     }
 
-    var assemblyName = assm.FullName;
-    var assemblyTypeFullName = assm.GetType().FullName;
+    var assemblyName = assembly.FullName;
+    var assemblyTypeFullName = assembly.GetType().FullName;
 
     if (!resolver.HasDepsJsonLoaded)
-      WarnDepsJsonCouldNotBeLoaded(logger, resolver.PossibleAssemblyDepsJsonPath, assm);
+      WarnDepsJsonCouldNotBeLoaded(logger, resolver.PossibleAssemblyDepsJsonPath, assembly);
 
     logger?.LogDebug(
       "loaded reflection-only assembly '{AssemblyName}' ({AssemblyTypeFullName})",
@@ -100,7 +100,7 @@ partial class AssemblyLoader {
     if (actionWithLoadedAssembly is null)
       return default;
 
-    return actionWithLoadedAssembly(assm, arg);
+    return actionWithLoadedAssembly(assembly, arg);
   }
 
 #if NULL_STATE_STATIC_ANALYSIS_ATTRIBUTES
@@ -117,6 +117,7 @@ partial class AssemblyLoader {
   {
     context = null;
 
+    // cSpell:disable-next-line
     var alc = new UnloadableAssemblyLoadContext(assemblySource.ComponentAssemblyPath, logger);
     var alcWeakReference = new WeakReference(alc);
 
@@ -125,13 +126,13 @@ partial class AssemblyLoader {
       assemblySource.ComponentAssemblyPath
     );
 
-    var assm = assemblySource.File is not null
+    var assembly = assemblySource.File is not null
       ? alc.LoadFromAssemblyPath(assemblySource.File.FullName)
       : assemblySource.Stream is not null
         ? alc.LoadFromStream(assemblySource.Stream)
         : throw new InvalidOperationException($"either {nameof(AssemblySource.File)} or {nameof(AssemblySource.Stream)} must be specified");
 
-    if (assm is null) {
+    if (assembly is null) {
       logger?.LogCritical(
         "failed to load assembly (ComponentAssemblyPath: '{ComponentAssemblyPath}')",
         assemblySource.ComponentAssemblyPath
@@ -142,11 +143,11 @@ partial class AssemblyLoader {
 
     context = alcWeakReference;
 
-    var assemblyName = assm.FullName;
-    var assemblyTypeFullName = assm.GetType().FullName;
+    var assemblyName = assembly.FullName;
+    var assemblyTypeFullName = assembly.GetType().FullName;
 
     if (!alc.HasDepsJsonLoaded)
-      WarnDepsJsonCouldNotBeLoaded(logger, alc.PossibleAssemblyDepsJsonPath, assm);
+      WarnDepsJsonCouldNotBeLoaded(logger, alc.PossibleAssemblyDepsJsonPath, assembly);
 
     logger?.LogDebug(
       "loaded assembly '{AssemblyName}' ({AssemblyTypeFullName})",
@@ -158,7 +159,7 @@ partial class AssemblyLoader {
       if (actionWithLoadedAssembly is null)
         return default;
 
-      return actionWithLoadedAssembly(assm, arg);
+      return actionWithLoadedAssembly(assembly, arg);
     }
     finally {
       alc.Unload();

@@ -1,5 +1,6 @@
 // SPDX-FileCopyrightText: 2020 smdn <smdn@smdn.jp>
 // SPDX-License-Identifier: MIT
+// cSpell:ignore accessibilities,nullabilities
 namespace Smdn.Reflection.ReverseGenerating.GeneratorTestCases.TypeDeclaration.Structures {
   [TypeDeclarationTestCase("internal struct S0")] internal struct S0 { };
   [TypeDeclarationTestCase("public struct S1")] public struct S1 { };
