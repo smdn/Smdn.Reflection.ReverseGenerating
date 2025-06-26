@@ -244,17 +244,11 @@ partial class Generator {
     {
       foreach (var param in attr.Constructor.GetParameters()) {
         var arg = attr.ConstructorArguments[param.Position];
+        var convertedConstructorArgument = ConvertAttributeTypedArgument(arg);
 
-        if (options.AttributeDeclaration.WithNamedArguments) {
-          yield return string.Concat(
-            param.Name,
-            ": ",
-            ConvertAttributeTypedArgument(arg)
-          );
-        }
-        else {
-          yield return ConvertAttributeTypedArgument(arg);
-        }
+        yield return options.AttributeDeclaration.WithNamedArguments
+          ? string.Concat(param.Name, ": ", convertedConstructorArgument)
+          : convertedConstructorArgument;
       }
 
       foreach (var namedArg in attr.NamedArguments) {
