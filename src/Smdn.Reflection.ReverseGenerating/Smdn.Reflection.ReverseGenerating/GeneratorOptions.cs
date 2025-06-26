@@ -70,6 +70,7 @@ public class GeneratorOptions : ICloneable {
     public bool WithDeclaringTypeName { get; set; } = false;
     public bool WithNamedArguments { get; set; } = false;
     public bool OmitAttributeSuffix { get; set; } = true;
+    public bool OmitInaccessibleMembersInNullStateAttribute { get; set; } = true;
     public AttributeTypeFilter? TypeFilter { get; set; } = null;
     public AttributeSectionFormat AccessorFormat { get; set; } = AttributeSectionFormat.List;
     public AttributeSectionFormat AccessorParameterFormat { get; set; } = AttributeSectionFormat.List;

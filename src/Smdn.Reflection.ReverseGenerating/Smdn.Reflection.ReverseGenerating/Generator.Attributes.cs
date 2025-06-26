@@ -242,15 +242,63 @@ partial class Generator {
 
     IEnumerable<string> ConvertAttributeArguments(CustomAttributeData attr)
     {
+      var omitInaccessibleMembersInNullStateAttribute =
+        options.AttributeDeclaration.OmitInaccessibleMembersInNullStateAttribute &&
+        IsMemberNullStateAttributeType(attr.GetAttributeType());
+
       foreach (var param in attr.Constructor.GetParameters()) {
         var arg = attr.ConstructorArguments[param.Position];
-        var convertedConstructorArgument = ConvertAttributeTypedArgument(arg);
+
+        if (
+          omitInaccessibleMembersInNullStateAttribute &&
+          string.Equals(param.Name, "member", StringComparison.Ordinal) &&
+          arg.Value is string memberName &&
+          !IsAccessibleMemberName(attributeProvider, memberName)
+        ) {
+          // skip MemberNotNull(When)Attribute for non-public member
+          continue;
+        }
+
+        string convertedConstructorArgument;
+
+        if (
+          omitInaccessibleMembersInNullStateAttribute &&
+          string.Equals(param.Name, "members", StringComparison.Ordinal) &&
+          arg.Value is IEnumerable<CustomAttributeTypedArgument> members
+        ) {
+          // exclude non-public members from MemberNotNull(When)Attribute
+          var filteredArgs = members
+            .Where(member =>
+              member.Value is string memberName &&
+              IsAccessibleMemberName(attributeProvider, memberName)
+            )
+            .Select(static member => (string)member.Value!)
+            .ToArray();
+
+          if (filteredArgs.Length == 0)
+            // skip empty MemberNotNull(When)Attribute
+            continue;
+
+          convertedConstructorArgument = CSharpFormatter.FormatValueDeclaration(
+            val: filteredArgs,
+            typeOfValue: filteredArgs.GetType(),
+            options: CSharpFormatter.ValueFormatOptions.FromGeneratorOptions(
+              options: options,
+              tryFindConstantField: false
+            )
+          );
+        }
+        else {
+          convertedConstructorArgument = ConvertAttributeTypedArgument(arg);
+        }
 
         yield return options.AttributeDeclaration.WithNamedArguments
           ? string.Concat(param.Name, ": ", convertedConstructorArgument)
           : convertedConstructorArgument;
       }
 
+      // since the MemberNotNull(When)Attribute does not have writable fields,
+      // there is no need to consider attribute's named arguments
       foreach (var namedArg in attr.NamedArguments) {
         yield return string.Concat(
           namedArg.MemberName,
@@ -269,6 +317,37 @@ partial class Generator {
           tryFindConstantField: false
         )
       );
+
+    static bool IsMemberNullStateAttributeType(Type attributeType)
+    {
+      if (!string.Equals(attributeType.Namespace, "System.Diagnostics.CodeAnalysis", StringComparison.Ordinal))
+        return false;
+
+      return attributeType.Name switch {
+        "MemberNotNullAttribute" => true,
+        "MemberNotNullWhenAttribute" => true,
+        _ => false,
+      };
+    }
+
+    static bool IsAccessibleMemberName(ICustomAttributeProvider attributeProvider, string memberName)
+      =>
+        attributeProvider is MemberInfo attributeProvidingMember &&
+        attributeProvidingMember.DeclaringType is Type declaringType &&
+        declaringType
+          .GetMember(
+            name: memberName,
+            bindingAttr: BindingFlags.Static | BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic
+          )
+          .FirstOrDefault(static member => {
+            var isPrivateOrAssembly = member switch {
+              PropertyInfo property => property.GetMethod?.IsPrivateOrAssembly() ?? true /* if there's no accessor, consider to be inaccessible */,
+              FieldInfo field => field.IsPrivateOrAssembly(),
+              _ => true, // unexpected kind of member; consider to be inaccessible
+            };
+            return !isPrivateOrAssembly;
+          })
+          is not null;
   }
 #pragma warning restore CA1502, CA1506
 }

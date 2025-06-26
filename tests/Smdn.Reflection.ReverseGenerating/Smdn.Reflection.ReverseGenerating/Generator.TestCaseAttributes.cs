@@ -52,6 +52,7 @@ partial class GeneratorTests {
     attributeDeclarationOptions.WithDeclaringTypeName = testCaseAttribute.AttributeWithDeclaringTypeName;
     attributeDeclarationOptions.WithNamedArguments = testCaseAttribute.AttributeWithNamedArguments;
     attributeDeclarationOptions.OmitAttributeSuffix = testCaseAttribute.AttributeOmitAttributeSuffix;
+    attributeDeclarationOptions.OmitInaccessibleMembersInNullStateAttribute = testCaseAttribute.AttributeOmitInaccessibleMembersInNullStateAttribute;
     attributeDeclarationOptions.AccessorFormat = testCaseAttribute.AttributeAccessorFormat;
     attributeDeclarationOptions.AccessorParameterFormat = testCaseAttribute.AttributeAccessorParameterFormat;
     attributeDeclarationOptions.BackingFieldFormat = testCaseAttribute.AttributeBackingFieldFormat;
@@ -112,6 +113,7 @@ public abstract class GeneratorTestCaseAttribute : Attribute, ITestCaseAttribute
   public bool AttributeWithNamedArguments { get; set; } = false;
   public bool AttributeWithDeclaringTypeName { get; set; } = true;
   public bool AttributeOmitAttributeSuffix { get; set; } = true;
+  public bool AttributeOmitInaccessibleMembersInNullStateAttribute { get; set; } = false;
   public AttributeSectionFormat AttributeAccessorFormat { get; set; } = AttributeSectionFormat.Discrete;
   public AttributeSectionFormat AttributeAccessorParameterFormat { get; set; } = AttributeSectionFormat.Discrete;
   public AttributeSectionFormat AttributeBackingFieldFormat { get; set; } = AttributeSectionFormat.Discrete;
