@@ -58,6 +58,7 @@ public static partial class Generator {
       options ?? throw new ArgumentNullException(nameof(options))
     );
 
+#pragma warning disable CA1502 // TODO: simplify and refactor
   private static IEnumerable<string> GenerateTypeDeclaration(
     Type t,
     bool generateExplicitBaseTypeAndInterfaces,
@@ -132,8 +133,9 @@ public static partial class Generator {
     else if (t.IsValueType) {
       var isReadOnly = t.IsReadOnlyValueType() ? "readonly " : string.Empty;
       var isByRefLike = t.IsByRefLikeValueType() ? "ref " : string.Empty;
+      var isRecord = (options.TypeDeclaration.EnableRecordTypes && t.IsRecord()) ? "record " : string.Empty;
 
-      typeDeclaration = $"{modifierNew}{accessibilityList}{isReadOnly}{isByRefLike}struct {typeName}";
+      typeDeclaration = $"{modifierNew}{accessibilityList}{isReadOnly}{isByRefLike}{isRecord}struct {typeName}";
     }
     else {
       string? modifier = null;
@@ -145,7 +147,9 @@ public static partial class Generator {
       else if (t.IsSealed)
         modifier = "sealed ";
 
-      typeDeclaration = $"{modifierNew}{accessibilityList}{modifier}class {typeName}";
+      var isRecord = (options.TypeDeclaration.EnableRecordTypes && t.IsRecord()) ? "record " : string.Empty;
+
+      typeDeclaration = $"{modifierNew}{accessibilityList}{modifier}{isRecord}class {typeName}";
     }
 
     if (!generateExplicitBaseTypeAndInterfaces) {
@@ -178,6 +182,7 @@ public static partial class Generator {
       }
     }
   }
+#pragma warning restore CA1502
 
   [Obsolete($"Use {nameof(GenerateGenericParameterConstraintDeclaration)} instead.")]
   public static string GenerateGenericArgumentConstraintDeclaration(
@@ -294,9 +299,15 @@ public static partial class Generator {
     if (options == null)
       throw new ArgumentNullException(nameof(options));
 
+    var isRecord = options.TypeDeclaration.EnableRecordTypes && options.TypeDeclaration.OmitRecordImplicitInterface && t.IsRecord();
+    var typeOfIEquatableOfRecord = isRecord
+      ? typeof(IEquatable<>).MakeGenericType(t) // IEquatable<TRecord>
+      : null;
+
     return t
       .GetExplicitBaseTypeAndInterfaces()
       .Where(type => !(options.IgnorePrivateOrAssembly && type.IsPrivateOrAssembly()))
+      .Where(type => type != typeOfIEquatableOfRecord)
       .Select(type => {
         referencingNamespaces?.UnionWith(CSharpFormatter.ToNamespaceList(type));
         return new {

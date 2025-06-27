@@ -40,3 +40,43 @@ public class C3<TKey, TValue> :
 {
   public object Clone() => throw new NotImplementedException();
 }
+
+[TypeDeclarationWithExplicitBaseTypeAndInterfacesTestCase(
+  "public record class R0<TValue> where TValue : struct",
+  TypeWithNamespace = false,
+  TypeEnableRecordTypes = true,
+  TypeOmitRecordImplicitInterface = true
+)]
+[TypeDeclarationWithExplicitBaseTypeAndInterfacesTestCase(
+  "public record class R0<TValue> : IEquatable<R0<TValue>> where TValue : struct",
+  TypeWithNamespace = false,
+  TypeEnableRecordTypes = true,
+  TypeOmitRecordImplicitInterface = false
+)]
+[TypeDeclarationWithExplicitBaseTypeAndInterfacesTestCase(
+  "public class R0<TValue> : IEquatable<R0<TValue>> where TValue : struct",
+  TypeWithNamespace = false,
+  TypeEnableRecordTypes = false,
+  TypeOmitRecordImplicitInterface = true
+)]
+public record R0<TValue>(TValue Value) where TValue : struct;
+
+[TypeDeclarationWithExplicitBaseTypeAndInterfacesTestCase(
+  "public record struct RS0<TValue> where TValue : struct",
+  TypeWithNamespace = false,
+  TypeEnableRecordTypes = true,
+  TypeOmitRecordImplicitInterface = true
+)]
+[TypeDeclarationWithExplicitBaseTypeAndInterfacesTestCase(
+  "public record struct RS0<TValue> : IEquatable<RS0<TValue>> where TValue : struct",
+  TypeWithNamespace = false,
+  TypeEnableRecordTypes = true,
+  TypeOmitRecordImplicitInterface = false
+)]
+[TypeDeclarationWithExplicitBaseTypeAndInterfacesTestCase(
+  "public struct RS0<TValue> : IEquatable<RS0<TValue>> where TValue : struct",
+  TypeWithNamespace = false,
+  TypeEnableRecordTypes = false,
+  TypeOmitRecordImplicitInterface = true
+)]
+public record struct RS0<TValue>(TValue Value) where TValue : struct;
