@@ -1,8 +1,8 @@
 // SPDX-FileCopyrightText: 2021 smdn <smdn@smdn.jp>
 // SPDX-License-Identifier: MIT
 using System;
+
 using NUnit.Framework;
-using Smdn.Reflection.ReverseGenerating;
 
 namespace Smdn.Reflection.ReverseGenerating.ListApi;
 
@@ -76,5 +76,20 @@ class RootCommandImplementationGetApiListWriterOptionsTests {
     var options = GetApiListWriterOptions(args);
 
     Assert.That(options.Writer.WriteNullableAnnotationDirective, Is.EqualTo(expected), $"args='{args}'");
+  }
+
+  // cSpell:disable
+  [TestCase("--generate-records", true)]
+  [TestCase("--generate-records=true", true)]
+  [TestCase("--generate-records=false", false)]
+  [TestCase("", true)]
+  // cSpell:enable
+  public void GetApiListWriterOptions_GenerateRecords(string args, bool expected)
+  {
+    var options = GetApiListWriterOptions(args);
+
+    Assert.That(options.TypeDeclaration.EnableRecordTypes, Is.EqualTo(expected), $"args='{args}'");
+    Assert.That(options.TypeDeclaration.OmitRecordImplicitInterface, Is.EqualTo(expected), $"args='{args}'");
+    Assert.That(options.Writer.OmitCompilerGeneratedRecordEqualityMethods, Is.EqualTo(expected), $"args='{args}'");
   }
 }

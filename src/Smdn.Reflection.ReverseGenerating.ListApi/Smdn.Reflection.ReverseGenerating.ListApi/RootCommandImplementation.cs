@@ -104,6 +104,11 @@ public sealed class RootCommandImplementation : ICommandHandler {
     description: "Generates declarations with nullable annotations.",
     getDefaultValue: static () => true
   );
+  private static readonly Option<bool> OptionGenerateRecords = new(
+    aliases: new[] { "--generate-records" },
+    description: "Generates record type declarations and hides compiler-generated mebers.",
+    getDefaultValue: static () => true
+  );
   // cSpell:enable
 
   private readonly Microsoft.Extensions.Logging.ILogger? logger;
@@ -130,6 +135,7 @@ public sealed class RootCommandImplementation : ICommandHandler {
       OptionGenerateMethodBody,
       OptionGenerateStaticMembersFirst,
       OptionGenerateNullableAnnotations,
+      OptionGenerateRecords,
     };
 
     rootCommand.Handler = this;
@@ -160,6 +166,10 @@ public sealed class RootCommandImplementation : ICommandHandler {
 
     options.Writer.OrderStaticMembersFirst          = parseResult.GetValueForOption(OptionGenerateStaticMembersFirst);
     options.Writer.WriteNullableAnnotationDirective = parseResult.GetValueForOption(OptionGenerateNullableAnnotations);
+
+    options.TypeDeclaration.EnableRecordTypes =
+    options.TypeDeclaration.OmitRecordImplicitInterface =
+    options.Writer.OmitCompilerGeneratedRecordEqualityMethods = parseResult.GetValueForOption(OptionGenerateRecords);
 
     options.AttributeDeclaration.TypeFilter     = AttributeFilter.Default;
 
