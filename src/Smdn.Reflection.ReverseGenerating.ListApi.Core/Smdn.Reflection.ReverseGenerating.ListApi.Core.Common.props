@@ -27,6 +27,7 @@ SPDX-License-Identifier: MIT
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)Smdn.Reflection\*.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Smdn.Reflection.ReverseGenerating.ListApi\*.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)..\Common\System.Runtime.CompilerServices\IsExternalInit.cs" />
   </ItemGroup>

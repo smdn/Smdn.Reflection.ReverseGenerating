@@ -7,6 +7,7 @@ public class ApiListWriterOptions : GeneratorOptions {
 
   public class WriterOptions {
     public bool OrderStaticMembersFirst { get; set; } = false;
+    public bool OmitCompilerGeneratedRecordEqualityMethods { get; set; } = false;
     public bool ThrowIfForwardedTypesCouldNotLoaded { get; set; } = false;
     public bool WriteNullableAnnotationDirective { get; set; } = true;
 

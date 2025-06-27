@@ -499,6 +499,7 @@ public class ApiListWriter {
 
     const BindingFlags MembersBindingFlags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static | BindingFlags.DeclaredOnly;
 
+    var isRecord = options.TypeDeclaration.EnableRecordTypes && t.IsRecord();
     var members = t.GetMembers(MembersBindingFlags).OrderBy(static f => f.Name, StringComparer.Ordinal).ToList();
     var exceptingMembers = new List<MemberInfo>();
     var nestedTypes = new List<Type>();
@@ -515,6 +516,16 @@ public class ApiListWriter {
       else if (member.MemberType == MemberTypes.NestedType && member is Type nestedType) {
         exceptingMembers.Add(nestedType);
         nestedTypes.Add(nestedType);
+      }
+
+      if (
+        options.Writer.OmitCompilerGeneratedRecordEqualityMethods &&
+        isRecord &&
+        member is MethodInfo m &&
+        m.IsCompilerGeneratedRecordEqualityMethod()
+      ) {
+        // remove compiler-generated record equality methods
+        exceptingMembers.Add(m);
       }
     }
 

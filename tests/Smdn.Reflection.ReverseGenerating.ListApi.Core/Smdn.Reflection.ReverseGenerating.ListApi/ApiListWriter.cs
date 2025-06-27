@@ -22,7 +22,7 @@ using Smdn.Reflection.ReverseGenerating.ListApi.Core; // TestAssemblyInfo
 namespace Smdn.Reflection.ReverseGenerating.ListApi;
 
 [TestFixture]
-class ApiListWriterTests {
+public partial class ApiListWriterTests {
   private ILogger? logger = null;
 
   [OneTimeSetUp]
