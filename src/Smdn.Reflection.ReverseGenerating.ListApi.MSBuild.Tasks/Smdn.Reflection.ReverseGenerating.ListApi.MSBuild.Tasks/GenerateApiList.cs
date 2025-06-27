@@ -31,6 +31,7 @@ public class GenerateApiList : Task {
   public bool GenerateAssemblyInfo { get; set; } = true;
   public bool GenerateEmbeddedResources { get; set; } = true;
   public bool GenerateReferencedAssemblies { get; set; } = true;
+  public bool GenerateRecordTypes { get; set; } = true;
   public bool ThrowIfForwardedTypesCouldNotLoaded { get; set; } = true;
 
 #pragma warning disable CA1819
@@ -149,6 +150,10 @@ public class GenerateApiList : Task {
     options.AttributeDeclaration.WithNamedArguments = GenerateAttributeWithNamedArguments;
 
     options.ValueDeclaration.UseDefaultLiteral = GenerateValueWithDefaultLiteral;
+
+    options.TypeDeclaration.EnableRecordTypes = GenerateRecordTypes;
+    options.TypeDeclaration.OmitRecordImplicitInterface = GenerateRecordTypes;
+    options.Writer.OmitCompilerGeneratedRecordEqualityMethods = GenerateRecordTypes;
 #pragma warning restore IDE0017, IDE0055
 
     return options;
