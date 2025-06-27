@@ -9,6 +9,8 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Text;
 
+using Smdn.Reflection.Attributes;
+
 namespace Smdn.Reflection.ReverseGenerating;
 
 public static partial class Generator {
@@ -1144,8 +1146,8 @@ public static partial class Generator {
     }
 
     var compilerGeneratedAccessors =
-      (ev.AddMethod?.GetCustomAttributesData()?.Any(IsCompilerGeneratedAttribute) ?? false) &&
-      (ev.RemoveMethod?.GetCustomAttributesData()?.Any(IsCompilerGeneratedAttribute) ?? false);
+      (ev.AddMethod?.HasCompilerGeneratedAttribute() ?? false) &&
+      (ev.RemoveMethod?.HasCompilerGeneratedAttribute() ?? false);
 
     var emitAccessor = !ev.GetDeclaringTypeOrThrow().IsInterface && !compilerGeneratedAccessors;
 
