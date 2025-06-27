@@ -83,7 +83,7 @@ namespace Smdn.Reflection.ReverseGenerating.GeneratorTestCases.AttributeList.Gen
 #pragma warning disable CS8774
       [MemberNotNull(nameof(F1))]
       [AttributeListTestCase(@"[MemberNotNull(""F1"")]", AttributeWithNamespace = false, AttributeOmitInaccessibleMembersInNullStateAttribute = false)]
-      [AttributeListTestCase(@"[MemberNotNull]", AttributeWithNamespace = false, AttributeOmitInaccessibleMembersInNullStateAttribute = true)]
+      [AttributeListTestCase(@"", AttributeWithNamespace = false, AttributeOmitInaccessibleMembersInNullStateAttribute = true)]
       public void MemberNotNullWithNonPublicField() { }
 
       [MemberNotNull(nameof(F2))]
@@ -98,7 +98,7 @@ namespace Smdn.Reflection.ReverseGenerating.GeneratorTestCases.AttributeList.Gen
 
       [MemberNotNull(nameof(P1))]
       [AttributeListTestCase(@"[MemberNotNull(""P1"")]", AttributeWithNamespace = false, AttributeOmitInaccessibleMembersInNullStateAttribute = false)]
-      [AttributeListTestCase(@"[MemberNotNull]", AttributeWithNamespace = false, AttributeOmitInaccessibleMembersInNullStateAttribute = true)]
+      [AttributeListTestCase(@"", AttributeWithNamespace = false, AttributeOmitInaccessibleMembersInNullStateAttribute = true)]
       public void MemberNotNullWithNonPublicProperty() { }
 
       [MemberNotNull(nameof(P2))]
@@ -118,7 +118,7 @@ namespace Smdn.Reflection.ReverseGenerating.GeneratorTestCases.AttributeList.Gen
 
       [MemberNotNull(nameof(F1), nameof(P1))]
       [AttributeListTestCase(@"[MemberNotNull(new string[] { ""F1"", ""P1"" })]", AttributeWithNamespace = false, AttributeOmitInaccessibleMembersInNullStateAttribute = false)]
-      [AttributeListTestCase(@"[MemberNotNull]", AttributeWithNamespace = false, AttributeOmitInaccessibleMembersInNullStateAttribute = true)]
+      [AttributeListTestCase(@"", AttributeWithNamespace = false, AttributeOmitInaccessibleMembersInNullStateAttribute = true)]
       public bool MemberNotNullWithMembersAllNonPublic()
         => true;
 #pragma warning restore CS8774
@@ -126,7 +126,7 @@ namespace Smdn.Reflection.ReverseGenerating.GeneratorTestCases.AttributeList.Gen
 #pragma warning disable CS8775
       [MemberNotNullWhen(true, nameof(F1))]
       [AttributeListTestCase(@"[MemberNotNullWhen(true, ""F1"")]", AttributeWithNamespace = false, AttributeOmitInaccessibleMembersInNullStateAttribute = false)]
-      [AttributeListTestCase(@"[MemberNotNullWhen(true)]", AttributeWithNamespace = false, AttributeOmitInaccessibleMembersInNullStateAttribute = true)]
+      [AttributeListTestCase(@"", AttributeWithNamespace = false, AttributeOmitInaccessibleMembersInNullStateAttribute = true)]
       public bool MemberNotNullWhenWithNonPublicField()
         => true;
 
@@ -144,7 +144,7 @@ namespace Smdn.Reflection.ReverseGenerating.GeneratorTestCases.AttributeList.Gen
 
       [MemberNotNullWhen(true, nameof(P1))]
       [AttributeListTestCase(@"[MemberNotNullWhen(true, ""P1"")]", AttributeWithNamespace = false, AttributeOmitInaccessibleMembersInNullStateAttribute = false)]
-      [AttributeListTestCase(@"[MemberNotNullWhen(true)]", AttributeWithNamespace = false, AttributeOmitInaccessibleMembersInNullStateAttribute = true)]
+      [AttributeListTestCase(@"", AttributeWithNamespace = false, AttributeOmitInaccessibleMembersInNullStateAttribute = true)]
       public bool MemberNotNullWhenWithNonPublicProperty()
         => true;
 
@@ -168,7 +168,7 @@ namespace Smdn.Reflection.ReverseGenerating.GeneratorTestCases.AttributeList.Gen
 
       [MemberNotNullWhen(true, nameof(F1), nameof(P1))]
       [AttributeListTestCase(@"[MemberNotNullWhen(true, new string[] { ""F1"", ""P1"" })]", AttributeWithNamespace = false, AttributeOmitInaccessibleMembersInNullStateAttribute = false)]
-      [AttributeListTestCase(@"[MemberNotNullWhen(true)]", AttributeWithNamespace = false, AttributeOmitInaccessibleMembersInNullStateAttribute = true)]
+      [AttributeListTestCase(@"", AttributeWithNamespace = false, AttributeOmitInaccessibleMembersInNullStateAttribute = true)]
       public bool MemberNotNullWhenWithMembersAllNonPublic()
         => true;
 #pragma warning restore CS8775

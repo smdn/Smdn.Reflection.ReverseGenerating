@@ -154,12 +154,31 @@ partial class Generator {
 
     var attributes = GetAttributes(attributeProvider, options.AttributeDeclaration.TypeFilter)
       .OrderBy(static attr => attr.GetAttributeType().FullName)
-      .Select(attr =>
-        (
-          name: ConvertAttributeName(attr),
-          args: string.Join(", ", ConvertAttributeArguments(attr))
-        )
-      );
+      .Select(attr => {
+        var omitInaccessibleMembersInNullStateAttribute =
+          options.AttributeDeclaration.OmitInaccessibleMembersInNullStateAttribute &&
+          IsMemberNullStateAttributeType(attr.GetAttributeType());
+
+        if (omitInaccessibleMembersInNullStateAttribute) {
+          var args = ConvertAttributeArguments(attr, omitInaccessibleMembers: true).ToList();
+
+          var isArgsEmpty = string.Equals("MemberNotNullWhenAttribute", attr.GetAttributeType().Name, StringComparison.Ordinal)
+            ? args.Count == 1 // with no args for 'member'/'members', only arg 'returnValue'
+            : args.Count == 0; // with no args for 'member'/'members'
+
+          return (
+            name: isArgsEmpty ? null : ConvertAttributeName(attr),
+            args: isArgsEmpty ? null : string.Join(", ", args)
+          );
+        }
+        else {
+          return (
+            name: ConvertAttributeName(attr),
+            args: string.Join(", ", ConvertAttributeArguments(attr, omitInaccessibleMembers: false))
+          );
+        }
+      })
+      .Where(static a => a.name is not null);
 
     if (!attributes.Any())
       return Enumerable.Empty<string>();
@@ -240,17 +259,13 @@ partial class Generator {
       );
     }
 
-    IEnumerable<string> ConvertAttributeArguments(CustomAttributeData attr)
+    IEnumerable<string> ConvertAttributeArguments(CustomAttributeData attr, bool omitInaccessibleMembers)
     {
-      var omitInaccessibleMembersInNullStateAttribute =
-        options.AttributeDeclaration.OmitInaccessibleMembersInNullStateAttribute &&
-        IsMemberNullStateAttributeType(attr.GetAttributeType());
-
       foreach (var param in attr.Constructor.GetParameters()) {
         var arg = attr.ConstructorArguments[param.Position];
 
         if (
-          omitInaccessibleMembersInNullStateAttribute &&
+          omitInaccessibleMembers &&
           string.Equals(param.Name, "member", StringComparison.Ordinal) &&
           arg.Value is string memberName &&
           !IsAccessibleMemberName(attributeProvider, memberName)
@@ -262,7 +277,7 @@ partial class Generator {
         string convertedConstructorArgument;
 
         if (
-          omitInaccessibleMembersInNullStateAttribute &&
+          omitInaccessibleMembers &&
           string.Equals(param.Name, "members", StringComparison.Ordinal) &&
           arg.Value is IEnumerable<CustomAttributeTypedArgument> members
         ) {
