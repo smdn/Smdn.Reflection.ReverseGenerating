@@ -9,7 +9,7 @@ SPDX-License-Identifier: MIT
     <TargetFrameworks>net8.0<!-- ;net472 --></TargetFrameworks>
     <AssemblyName>Smdn.Reflection.ReverseGenerating.ListApi</AssemblyName>
     <ToolCommandName>list-api</ToolCommandName>
-    <VersionPrefix>1.4.0</VersionPrefix>
+    <VersionPrefix>1.5.0</VersionPrefix>
     <VersionSuffix></VersionSuffix>
     <RootNamespace/> <!-- empty the root namespace so that the namespace is determined only by the directory name, for code style rule IDE0130 -->
     <Nullable>enable</Nullable>
