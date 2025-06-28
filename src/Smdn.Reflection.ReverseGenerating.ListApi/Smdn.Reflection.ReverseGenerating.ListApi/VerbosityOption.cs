@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: MIT
 using System;
 using System.CommandLine;
-using System.CommandLine.Parsing;
 
 #if FEATURE_BUILD_PROJ
 using Microsoft.Build.Framework;
@@ -13,11 +12,10 @@ namespace Smdn.Reflection.ReverseGenerating.ListApi;
 
 public static class VerbosityOption {
   // cSpell:disable
-  internal static readonly Option<string> Option = new(
-    aliases: new[] { "-v", "--verbosity" },
-    description: "Verbosity of output. The value must be one of q[uiet], m[inimal], n[ormal], d[etailed], or diag[nostic].",
-    getDefaultValue: static () => "minimal"
-  );
+  internal static readonly Option<string> Option = new("--verbosity", "-v") {
+    Description = "Verbosity of output. The value must be one of q[uiet], m[inimal], n[ormal], d[etailed], or diag[nostic].",
+    DefaultValueFactory = static _ => "minimal",
+  };
   // cSpell:enable
 
   public static LogLevel ParseLogLevel(string[] args)
@@ -30,7 +28,7 @@ public static class VerbosityOption {
   }
 
   public static LogLevel ParseLogLevel(ParseResult parseResult)
-    => (parseResult ?? throw new ArgumentNullException(nameof(parseResult))).GetValueForOption(Option) switch {
+    => (parseResult ?? throw new ArgumentNullException(nameof(parseResult))).GetValue(Option) switch {
 #pragma warning disable IDE0055
       "q" or "quiet"          => LogLevel.Information,
       "m" or "minimal"        => LogLevel.Information,
@@ -52,7 +50,7 @@ public static class VerbosityOption {
   }
 
   public static LoggerVerbosity ParseLoggerVerbosity(ParseResult parseResult)
-    => (parseResult ?? throw new ArgumentNullException(nameof(parseResult))).GetValueForOption(Option) switch {
+    => (parseResult ?? throw new ArgumentNullException(nameof(parseResult))).GetValue(Option) switch {
 #pragma warning disable IDE0055
       "q" or "quiet"          => LoggerVerbosity.Quiet,
       "m" or "minimal"        => LoggerVerbosity.Minimal,
