@@ -92,4 +92,17 @@ class RootCommandImplementationGetApiListWriterOptionsTests {
     Assert.That(options.TypeDeclaration.OmitRecordImplicitInterface, Is.EqualTo(expected), $"args='{args}'");
     Assert.That(options.Writer.OmitCompilerGeneratedRecordEqualityMethods, Is.EqualTo(expected), $"args='{args}'");
   }
+
+  // cSpell:disable
+  [TestCase("--use-built-in-type-alias", true)]
+  [TestCase("--use-built-in-type-alias=true", true)]
+  [TestCase("--use-built-in-type-alias=false", false)]
+  [TestCase("", false)]
+  // cSpell:enable
+  public void GetApiListWriterOptions_TranslateLanguagePrimitiveTypeDeclaration(string args, bool expected)
+  {
+    var options = GetApiListWriterOptions(args);
+
+    Assert.That(options.TranslateLanguagePrimitiveTypeDeclaration, Is.EqualTo(expected), $"args='{args}'");
+  }
 }

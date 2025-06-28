@@ -95,6 +95,10 @@ public sealed class RootCommandImplementation {
     Description = "Generates record type declarations and hides compiler-generated members.",
     DefaultValueFactory = static _ => true,
   };
+  private static readonly Option<bool> OptionTranslateLanguagePrimitiveType = new("--use-built-in-type-alias") {
+    Description = "Use aliases for C# built-in types rather than .NET type names.",
+    DefaultValueFactory = static _ => false,
+  };
   // cSpell:enable
 
   private readonly Microsoft.Extensions.Logging.ILogger? logger;
@@ -122,6 +126,7 @@ public sealed class RootCommandImplementation {
       OptionGenerateStaticMembersFirst,
       OptionGenerateNullableAnnotations,
       OptionGenerateRecords,
+      OptionTranslateLanguagePrimitiveType,
     };
 
     rootCommand.SetAction(RunAsync);
@@ -141,6 +146,8 @@ public sealed class RootCommandImplementation {
     var options = new ApiListWriterOptions();
 
 #pragma warning disable IDE0055
+    options.TranslateLanguagePrimitiveTypeDeclaration = parseResult.GetValue(OptionTranslateLanguagePrimitiveType);
+
     options.TypeDeclaration.WithNamespace       = parseResult.GetValue(OptionGenerateFullTypeName);
     options.MemberDeclaration.WithNamespace     = parseResult.GetValue(OptionGenerateFullTypeName);
     options.AttributeDeclaration.WithNamespace  = parseResult.GetValue(OptionGenerateFullTypeName);
