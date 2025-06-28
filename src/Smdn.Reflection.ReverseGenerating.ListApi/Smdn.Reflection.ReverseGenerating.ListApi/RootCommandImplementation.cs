@@ -92,7 +92,7 @@ public sealed class RootCommandImplementation {
     DefaultValueFactory = static _ => true,
   };
   private static readonly Option<bool> OptionGenerateRecords = new("--generate-records") {
-    Description = "Generates record type declarations and hides compiler-generated mebers.",
+    Description = "Generates record type declarations and hides compiler-generated members.",
     DefaultValueFactory = static _ => true,
   };
   // cSpell:enable
