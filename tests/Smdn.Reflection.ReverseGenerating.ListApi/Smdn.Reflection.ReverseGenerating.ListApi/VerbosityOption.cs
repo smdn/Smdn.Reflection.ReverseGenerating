@@ -1,16 +1,16 @@
 // SPDX-FileCopyrightText: 2021 smdn <smdn@smdn.jp>
 // SPDX-License-Identifier: MIT
 using System;
-using System.CommandLine;
-using System.CommandLine.Parsing;
+
 using Microsoft.Build.Framework;
 using Microsoft.Extensions.Logging;
+
 using NUnit.Framework;
 
 namespace Smdn.Reflection.ReverseGenerating.ListApi;
 
 [TestFixture]
-class VerbosityOptionTests {
+public class VerbosityOptionTests {
   [TestCase("q", LogLevel.Information)]
   [TestCase("quiet", LogLevel.Information)]
   [TestCase("m", LogLevel.Information)]

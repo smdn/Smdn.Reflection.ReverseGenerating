@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: MIT
 using System;
 using System.IO;
+
 using NUnit.Framework;
 
 #if SYSTEM_IO_PATH_JOIN
@@ -13,7 +14,7 @@ using PathJoiner = Smdn.Reflection.ReverseGenerating.ListApi.Shim.Path;
 namespace Smdn.Reflection.ReverseGenerating.ListApi;
 
 [TestFixture]
-class ProjectFinderTests {
+public class ProjectFinderTests {
   [TestCase("Lib", "Lib.csproj")]
   [TestCase("Exe", "Exe.csproj")]
   [TestCase("ExeVB", "ExeVB.vbproj")]

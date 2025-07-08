@@ -1,14 +1,15 @@
 // SPDX-FileCopyrightText: 2021 smdn <smdn@smdn.jp>
 // SPDX-License-Identifier: MIT
+#if !FEATURE_BUILD_PROJ
 using System;
+#endif
 using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices;
-using Microsoft.Build.Framework;
+
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+
 using NUnit.Framework;
-using Smdn.Reflection.ReverseGenerating.ListApi.Build;
 
 #if SYSTEM_IO_PATH_JOIN
 using PathJoiner = System.IO.Path;
@@ -19,8 +20,8 @@ using PathJoiner = Smdn.Reflection.ReverseGenerating.ListApi.Shim.Path;
 namespace Smdn.Reflection.ReverseGenerating.ListApi;
 
 [TestFixture]
-class RootCommandImplementationGetInputAssemblyFilesTests {
-  private ServiceProvider serviceProvider;
+public class RootCommandImplementationGetInputAssemblyFilesTests {
+  private ServiceProvider? serviceProvider;
 
   [OneTimeSetUp]
   public void Init()
@@ -39,7 +40,7 @@ class RootCommandImplementationGetInputAssemblyFilesTests {
   [OneTimeTearDown]
   public void OneTimeTearDown()
   {
-    serviceProvider.Dispose();
+    serviceProvider?.Dispose();
   }
 
   [TestCase("Lib.dll", "net8.0")]

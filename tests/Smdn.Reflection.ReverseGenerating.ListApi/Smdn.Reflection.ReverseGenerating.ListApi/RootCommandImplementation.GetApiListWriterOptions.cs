@@ -7,7 +7,7 @@ using NUnit.Framework;
 namespace Smdn.Reflection.ReverseGenerating.ListApi;
 
 [TestFixture]
-class RootCommandImplementationGetApiListWriterOptionsTests {
+public class RootCommandImplementationGetApiListWriterOptionsTests {
   private ApiListWriterOptions GetApiListWriterOptions(string args)
   {
     var impl = new RootCommandImplementation();

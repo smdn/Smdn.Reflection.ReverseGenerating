@@ -1,7 +1,5 @@
-using System;
+namespace Lib.Lib;
 
-namespace Lib.Lib {
-  public abstract class C {
-    protected C() {}
-  }
+public abstract class C {
+  protected C() { }
 }
