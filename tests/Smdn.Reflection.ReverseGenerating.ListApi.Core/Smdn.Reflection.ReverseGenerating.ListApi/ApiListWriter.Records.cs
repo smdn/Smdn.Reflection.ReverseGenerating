@@ -1,7 +1,5 @@
 // SPDX-FileCopyrightText: 2025 smdn <smdn@smdn.jp>
 // SPDX-License-Identifier: MIT
-#nullable enable
-
 using System;
 using System.IO;
 using System.Runtime.CompilerServices;

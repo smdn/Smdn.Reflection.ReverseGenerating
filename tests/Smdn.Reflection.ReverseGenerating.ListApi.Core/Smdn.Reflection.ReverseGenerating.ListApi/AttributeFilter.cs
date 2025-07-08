@@ -98,7 +98,7 @@ partial class AttributeFilterTests {
     => TestAttributeFilter(
       actual: () => string.Join(", ", Generator.GenerateAttributeList(t, null, testCase.CreateGeneratorOptions())),
       testCase: testCase,
-      testTarget: t.FullName
+      testTarget: t.FullName!
     );
 
   [TestCaseSource(nameof(YieldTestCases_Members))]

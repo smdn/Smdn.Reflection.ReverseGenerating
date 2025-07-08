@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: MIT
 #pragma warning disable CS8597, CS8618
 
+#nullable disable warnings
 #nullable enable annotations
 
 using System;

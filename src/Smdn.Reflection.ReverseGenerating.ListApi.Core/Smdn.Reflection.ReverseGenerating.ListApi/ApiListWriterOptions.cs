@@ -5,7 +5,9 @@ namespace Smdn.Reflection.ReverseGenerating.ListApi;
 public class ApiListWriterOptions : GeneratorOptions {
   public WriterOptions Writer { get; } = new();
 
+#pragma warning disable CA1034
   public class WriterOptions {
+#pragma warning restore CA1034
     public bool OrderStaticMembersFirst { get; set; } = false;
     public bool OmitCompilerGeneratedRecordEqualityMethods { get; set; } = false;
     public bool ThrowIfForwardedTypesCouldNotLoaded { get; set; } = false;

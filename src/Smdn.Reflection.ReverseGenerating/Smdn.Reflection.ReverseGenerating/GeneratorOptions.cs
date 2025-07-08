@@ -29,7 +29,9 @@ public class GeneratorOptions : ICloneable {
 
   public TypeDeclarationOptions TypeDeclaration { get; init; } = new();
 
+#pragma warning disable CA1034
   public class TypeDeclarationOptions {
+#pragma warning restore CA1034
     public bool WithNamespace { get; set; } = false;
     public bool WithDeclaringTypeName { get; set; } = false;
     public bool WithAccessibility { get; set; } = true;
@@ -48,7 +50,9 @@ public class GeneratorOptions : ICloneable {
 
   public MemberDeclarationOptions MemberDeclaration { get; init; } = new();
 
+#pragma warning disable CA1034
   public class MemberDeclarationOptions {
+#pragma warning restore CA1034
     public bool WithNamespace { get; set; } = false;
     public bool WithDeclaringTypeName { get; set; } = false;
     public bool WithEnumTypeName { get; set; } = false;
@@ -67,7 +71,9 @@ public class GeneratorOptions : ICloneable {
 
   public AttributeDeclarationOptions AttributeDeclaration { get; init; } = new();
 
+#pragma warning disable CA1034
   public class AttributeDeclarationOptions {
+#pragma warning restore CA1034
     public bool WithNamespace { get; set; } = false;
     public bool WithDeclaringTypeName { get; set; } = false;
     public bool WithNamedArguments { get; set; } = false;
@@ -87,7 +93,9 @@ public class GeneratorOptions : ICloneable {
 
   public ValueDeclarationOptions ValueDeclaration { get; init; } = new();
 
+#pragma warning disable CA1034
   public class ValueDeclarationOptions {
+#pragma warning restore CA1034
     public bool UseDefaultLiteral { get; set; } = false;
     public bool WithNamespace { get; set; } = false;
     public bool WithDeclaringTypeName { get; set; } = true;
@@ -98,7 +106,9 @@ public class GeneratorOptions : ICloneable {
 
   public ParameterDeclarationOptions ParameterDeclaration { get; init; } = new();
 
+#pragma warning disable CA1034
   public class ParameterDeclarationOptions {
+#pragma warning restore CA1034
     public bool WithNamespace { get; set; } = false;
     public bool WithDeclaringTypeName { get; set; } = false;
 

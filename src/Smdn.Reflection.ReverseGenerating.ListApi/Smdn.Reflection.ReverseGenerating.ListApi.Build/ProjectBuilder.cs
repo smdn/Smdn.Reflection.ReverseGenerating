@@ -18,9 +18,9 @@ using Microsoft.Extensions.Logging;
 namespace Smdn.Reflection.ReverseGenerating.ListApi.Build;
 
 public static class ProjectBuilder {
-#pragma warning disable CA1724
+#pragma warning disable CA1034, CA1724
   public class Options {
-#pragma warning restore CA1724
+#pragma warning restore CA1034, CA1724
     public const string DefaultConfiguration = "Debug";
 
     public string? Configuration { get; init; } = DefaultConfiguration;

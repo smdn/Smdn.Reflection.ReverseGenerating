@@ -1,6 +1,8 @@
 // SPDX-FileCopyrightText: 2022 smdn <smdn@smdn.jp>
 // SPDX-License-Identifier: MIT
 // cSpell:ignore browsable
+#nullable disable
+
 #pragma warning disable CS8597
 
 using System;

@@ -11,16 +11,16 @@ namespace Smdn.Reflection.ReverseGenerating.ListApi;
 class MemberInfoComparerTests {
   class C {
 #pragma warning disable CS0067
-    static C() {}
+    static C() { }
     public static int SF = default;
     public static int SP { get; } = default;
-    public static event EventHandler SE;
+    public static event EventHandler? SE;
     public static void SM() => throw new NotImplementedException();
 
-    public C() {}
+    public C() { }
     public int F = default;
     public int P { get; } = default;
-    public event EventHandler E;
+    public event EventHandler? E;
     public void M() => throw new NotImplementedException();
 #pragma warning restore CS0067
   }
@@ -30,31 +30,31 @@ class MemberInfoComparerTests {
   {
     var t = typeof(C);
     var members = new MemberInfo[] {
-      t.TypeInitializer,
-      t.GetField("SF"),
-      t.GetProperty("SP"),
-      t.GetEvent("SE"),
-      t.GetMethod("SM"),
-      t.GetConstructor(BindingFlags.Public | BindingFlags.Instance, binder: null, Type.EmptyTypes, modifiers: null),
-      t.GetField("F"),
-      t.GetProperty("P"),
-      t.GetEvent("E"),
-      t.GetMethod("M"),
+      t.TypeInitializer!,
+      t.GetField("SF")!,
+      t.GetProperty("SP")!,
+      t.GetEvent("SE")!,
+      t.GetMethod("SM")!,
+      t.GetConstructor(BindingFlags.Public | BindingFlags.Instance, binder: null, Type.EmptyTypes, modifiers: null)!,
+      t.GetField("F")!,
+      t.GetProperty("P")!,
+      t.GetEvent("E")!,
+      t.GetMethod("M")!,
     };
 
     Assert.That(
       members.OrderBy(m => m, MemberInfoComparer.Default),
       Is.EqualTo(new MemberInfo[] {
-        t.GetEvent("SE"),
-        t.GetEvent("E"),
-        t.GetField("SF"),
-        t.GetField("F"),
-        t.TypeInitializer,
-        t.GetConstructor(BindingFlags.Public | BindingFlags.Instance, binder: null, Type.EmptyTypes, modifiers: null),
-        t.GetProperty("SP"),
-        t.GetProperty("P"),
-        t.GetMethod("SM"),
-        t.GetMethod("M"),
+        t.GetEvent("SE")!,
+        t.GetEvent("E")!,
+        t.GetField("SF")!,
+        t.GetField("F")!,
+        t.TypeInitializer!,
+        t.GetConstructor(BindingFlags.Public | BindingFlags.Instance, binder: null, Type.EmptyTypes, modifiers: null)!,
+        t.GetProperty("SP")!,
+        t.GetProperty("P")!,
+        t.GetMethod("SM")!,
+        t.GetMethod("M")!,
       }).AsCollection
     );
   }
@@ -64,31 +64,31 @@ class MemberInfoComparerTests {
   {
     var t = typeof(C);
     var members = new MemberInfo[] {
-      t.TypeInitializer,
-      t.GetField("SF"),
-      t.GetProperty("SP"),
-      t.GetEvent("SE"),
-      t.GetMethod("SM"),
-      t.GetConstructor(BindingFlags.Public | BindingFlags.Instance, binder: null, Type.EmptyTypes, modifiers: null),
-      t.GetField("F"),
-      t.GetProperty("P"),
-      t.GetEvent("E"),
-      t.GetMethod("M"),
+      t.TypeInitializer!,
+      t.GetField("SF")!,
+      t.GetProperty("SP")!,
+      t.GetEvent("SE")!,
+      t.GetMethod("SM")!,
+      t.GetConstructor(BindingFlags.Public | BindingFlags.Instance, binder: null, Type.EmptyTypes, modifiers: null)!,
+      t.GetField("F")!,
+      t.GetProperty("P")!,
+      t.GetEvent("E")!,
+      t.GetMethod("M")!,
     };
 
     Assert.That(
       members.OrderBy(m => m, MemberInfoComparer.StaticMembersFirst),
       Is.EqualTo(new MemberInfo[] {
-        t.GetEvent("SE"),
-        t.GetField("SF"),
-        t.TypeInitializer,
-        t.GetProperty("SP"),
-        t.GetMethod("SM"),
-        t.GetEvent("E"),
-        t.GetField("F"),
-        t.GetConstructor(BindingFlags.Public | BindingFlags.Instance, binder: null, Type.EmptyTypes, modifiers: null),
-        t.GetProperty("P"),
-        t.GetMethod("M"),
+        t.GetEvent("SE")!,
+        t.GetField("SF")!,
+        t.TypeInitializer!,
+        t.GetProperty("SP")!,
+        t.GetMethod("SM")!,
+        t.GetEvent("E")!,
+        t.GetField("F")!,
+        t.GetConstructor(BindingFlags.Public | BindingFlags.Instance, binder: null, Type.EmptyTypes, modifiers: null)!,
+        t.GetProperty("P")!,
+        t.GetMethod("M")!,
       }).AsCollection
     );
   }

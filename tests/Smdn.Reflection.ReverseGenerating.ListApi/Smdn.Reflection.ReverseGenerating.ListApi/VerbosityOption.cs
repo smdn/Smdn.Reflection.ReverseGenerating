@@ -23,7 +23,7 @@ class VerbosityOptionTests {
   [TestCase("diagnostic", LogLevel.Trace)]
   [TestCase(null, LogLevel.Information)]
   [TestCase("default", LogLevel.Information)]
-  public void ParseLogLevel(string verbosity, LogLevel expectedLogLevel)
+  public void ParseLogLevel(string? verbosity, LogLevel expectedLogLevel)
   {
     Assert.That(
       expectedLogLevel,
@@ -43,7 +43,7 @@ class VerbosityOptionTests {
   [TestCase("diagnostic", LoggerVerbosity.Diagnostic)]
   [TestCase(null, LoggerVerbosity.Minimal)]
   [TestCase("default", LoggerVerbosity.Minimal)]
-  public void ParseLoggerVerbosity(string verbosity, LoggerVerbosity expectedLoggerVerbosity)
+  public void ParseLoggerVerbosity(string? verbosity, LoggerVerbosity expectedLoggerVerbosity)
   {
     Assert.That(
       expectedLoggerVerbosity,
