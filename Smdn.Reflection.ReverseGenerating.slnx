@@ -1,0 +1,17 @@
+<!--
+SPDX-FileCopyrightText: 2025 smdn <smdn@smdn.jp>
+SPDX-License-Identifier: MIT
+-->
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/Smdn.Reflection.ReverseGenerating.ListApi.Core/Smdn.Reflection.ReverseGenerating.ListApi.Core.csproj" />
+    <Project Path="src/Smdn.Reflection.ReverseGenerating.ListApi.MSBuild.Tasks/Smdn.Reflection.ReverseGenerating.ListApi.MSBuild.Tasks.csproj" />
+    <Project Path="src/Smdn.Reflection.ReverseGenerating.ListApi/Smdn.Reflection.ReverseGenerating.ListApi.csproj" />
+    <Project Path="src/Smdn.Reflection.ReverseGenerating/Smdn.Reflection.ReverseGenerating.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/Smdn.Reflection.ReverseGenerating.ListApi.Core/Smdn.Reflection.ReverseGenerating.ListApi.Core.Tests.csproj" />
+    <Project Path="tests/Smdn.Reflection.ReverseGenerating.ListApi/Smdn.Reflection.ReverseGenerating.ListApi.Tests.csproj" />
+    <Project Path="tests/Smdn.Reflection.ReverseGenerating/Smdn.Reflection.ReverseGenerating.Tests.csproj" />
+  </Folder>
+</Solution>

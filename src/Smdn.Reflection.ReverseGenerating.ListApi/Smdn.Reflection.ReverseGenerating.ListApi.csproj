@@ -7,14 +7,12 @@ SPDX-License-Identifier: MIT
     <OutputType>Exe</OutputType>
     <PackAsTool>true</PackAsTool>
     <TargetFrameworks>net8.0<!-- ;net472 --></TargetFrameworks>
-    <AssemblyName>Smdn.Reflection.ReverseGenerating.ListApi</AssemblyName>
     <ToolCommandName>list-api</ToolCommandName>
     <VersionPrefix>1.4.0</VersionPrefix>
     <VersionSuffix></VersionSuffix>
-    <RootNamespace/> <!-- empty the root namespace so that the namespace is determined only by the directory name, for code style rule IDE0130 -->
-    <Nullable>enable</Nullable>
     <NoWarn>CS1591;$(NoWarn)</NoWarn> <!-- CS1591: Missing XML comment for publicly visible type or member 'Type_or_Member' -->
     <NoWarn>CS2002;$(NoWarn)</NoWarn> <!-- see target 'WriteConstantsFile' -->
+    <NoWarn>CA1515;$(NoWarn)</NoWarn> <!-- CA1515: Consider making public types internal / Must be public because it is referenced from the test project. -->
     <EnableFeature_BuildProjectFile Condition=" '$(Configuration)' != 'Release' ">true</EnableFeature_BuildProjectFile>
     <APIListEnableGenerating>false</APIListEnableGenerating>
     <GeneratePackageReadmeFile>false</GeneratePackageReadmeFile>

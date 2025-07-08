@@ -17,7 +17,6 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Console;
 using NUnit.Framework;
 using Smdn.IO;
-using Smdn.Reflection.ReverseGenerating.ListApi.Core; // TestAssemblyInfo
 
 namespace Smdn.Reflection.ReverseGenerating.ListApi;
 

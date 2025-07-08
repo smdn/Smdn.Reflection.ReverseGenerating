@@ -3,27 +3,15 @@ SPDX-FileCopyrightText: 2021 smdn <smdn@smdn.jp>
 SPDX-License-Identifier: MIT
 -->
 <Project>
-  <PropertyGroup>
+  <Import Project="Sdk.props" Sdk="Smdn.MSBuild.ProjectAssets.Common" />
+  <Import Project="Sdk.props" Sdk="Smdn.MSBuild.ProjectAssets.Library" />
+
+  <PropertyGroup Label="Configurations for Smdn.MSBuild.ProjectAssets.*">
     <SmdnBuildAssetRootDirectory>$(MSBuildThisFileDirectory)..\</SmdnBuildAssetRootDirectory>
-  </PropertyGroup>
-
-  <ImportGroup Label="project assets">
-    <Import Project="$(MSBuildThisFileDirectory)ProjectAssets.props" />
-  </ImportGroup>
-
-  <PropertyGroup Label="API list generator configurations">
     <APIListOutputBaseDirectory>$(MSBuildThisFileDirectory)..\doc\api-list\</APIListOutputBaseDirectory>
-    <APIListPackageVersion>1.6.0</APIListPackageVersion>
+    <!-- <APIListPackageVersion>1.6.0</APIListPackageVersion> -->
   </PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference
-      Include="Smdn.MSBuild.DefineConstants.NETSdkApi"
-      Version="[1.5.0]"
-      PrivateAssets="all"
-      IncludeAssets="build"
-    />
-  </ItemGroup>
 
   <PropertyGroup Label="package properties">
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
@@ -34,4 +22,13 @@ SPDX-License-Identifier: MIT
     <RepositoryUrl>https://github.com/smdn/Smdn.Reflection.ReverseGenerating</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
   </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference
+      Include="Smdn.MSBuild.DefineConstants.NETSdkApi"
+      Version="[1.5.1]"
+      PrivateAssets="all"
+      IncludeAssets="build"
+    />
+  </ItemGroup>
 </Project>

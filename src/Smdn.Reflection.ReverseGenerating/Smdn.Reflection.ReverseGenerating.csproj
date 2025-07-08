@@ -5,12 +5,9 @@ SPDX-License-Identifier: MIT
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFrameworks>net8.0;net47;net45;netstandard2.0</TargetFrameworks>
-    <RootNamespace>Smdn.Reflection.ReverseGenerating</RootNamespace>
     <VersionPrefix>1.4.0</VersionPrefix>
     <VersionSuffix></VersionSuffix>
     <PackageValidationBaselineVersion>1.0.0</PackageValidationBaselineVersion>
-    <RootNamespace/> <!-- empty the root namespace so that the namespace is determined only by the directory name, for code style rule IDE0130 -->
-    <Nullable>enable</Nullable>
     <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
     <NoWarn>CS1591;$(NoWarn)</NoWarn> <!-- CS1591: Missing XML comment for publicly visible type or member 'Type_or_Member' -->
     <!-- trimming options -->

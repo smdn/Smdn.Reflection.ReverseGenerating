@@ -9,7 +9,6 @@ SPDX-License-Identifier: MIT
     <PackageReference Update="NUnit.Analyzers" Version="4.9.1"/>
   </ItemGroup>
 
-  <ImportGroup>
-    <Import Project="$(SmdnProjectAssets_TargetsImports)" />
-  </ImportGroup>
+  <Import Project="Sdk.targets" Sdk="Smdn.MSBuild.ProjectAssets.Common" />
+  <Import Project="Sdk.targets" Sdk="Smdn.MSBuild.ProjectAssets.Library" />
 </Project>

@@ -11,9 +11,6 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Console;
 using NUnit.Framework;
 
-using Smdn.Reflection.ReverseGenerating.ListApi.Core; // TestAssemblyInfo
-
-
 #if SYSTEM_IO_PATH_JOIN
 using PathJoiner = System.IO.Path;
 #else
