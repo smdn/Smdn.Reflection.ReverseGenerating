@@ -41,9 +41,9 @@ SPDX-License-Identifier: MIT
 
   <ItemGroup Condition=" '$(EnableFeature_BuildProjectFile)' == 'True' ">
     <PackageReference Include="System.Runtime.Loader" Version="4.3.0" Condition="$(TargetFramework.StartsWith('net4'))" />
-    <PackageReference Include="Microsoft.Build" Version="17.11.31" />
-    <PackageReference Include="Microsoft.Build.Utilities.Core" Version="17.11.31" />
-    <PackageReference Include="Microsoft.Build.Tasks.Core" Version="17.11.31" />
+    <PackageReference Include="Microsoft.Build" Version="17.11.48" />
+    <PackageReference Include="Microsoft.Build.Utilities.Core" Version="17.11.48" />
+    <PackageReference Include="Microsoft.Build.Tasks.Core" Version="17.11.48" />
     <PackageReference Include="Microsoft.Extensions.DependencyModel" Version="6.0.0" Condition="$(TargetFramework.StartsWith('net6.'))" />
     <PackageReference Include="Microsoft.Extensions.DependencyModel" Version="7.0.0" Condition="$(TargetFramework.StartsWith('net7.'))" />
     <PackageReference Include="Microsoft.Extensions.DependencyModel" Version="8.0.0" Condition="$(TargetFramework.StartsWith('net8.'))" />
