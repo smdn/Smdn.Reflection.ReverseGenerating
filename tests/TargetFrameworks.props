@@ -6,6 +6,7 @@ SPDX-License-Identifier: MIT
   <PropertyGroup>
     <!-- enable target framework net* (.NET >= 5.0) by default -->
     <EnableTargetFrameworkDotNet>true</EnableTargetFrameworkDotNet>
+    <EnableTargetFrameworkDotNet100>true</EnableTargetFrameworkDotNet100>
     <EnableTargetFrameworkDotNet80>true</EnableTargetFrameworkDotNet80>
     <!-- enable target framework net* (.NET Framework/Mono) by default -->
     <EnableTargetFrameworkNetFx>true</EnableTargetFrameworkNetFx>

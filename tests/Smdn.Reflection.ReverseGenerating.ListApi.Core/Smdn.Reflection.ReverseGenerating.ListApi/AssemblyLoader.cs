@@ -96,6 +96,10 @@ class AssemblyLoaderTests {
   [TestCase(true, "net8.0")]
   [TestCase(false, "net8.0")]
 #endif
+#if NET10_0_OR_GREATER
+  [TestCase(true, "net10.0")]
+  [TestCase(false, "net10.0")]
+#endif
   public void UsingAssembly(bool loadIntoReflectionOnlyContext, string targetFrameworkMoniker)
   {
     var assemblyFile = new FileInfo(
@@ -201,6 +205,10 @@ class AssemblyLoaderTests {
   [TestCase(true, "net8.0")]
   [TestCase(false, "net8.0")]
 #endif
+#if NET10_0_OR_GREATER
+  [TestCase(true, "net10.0")]
+  [TestCase(false, "net10.0")]
+#endif
   public void UsingAssembly_FromStream(bool loadIntoReflectionOnlyContext, string targetFrameworkMoniker)
   {
     var assemblyFile = new FileInfo(
@@ -262,6 +270,10 @@ class AssemblyLoaderTests {
   [TestCase(true, "net8.0")]
   [TestCase(false, "net8.0")]
 #endif
+#if NET10_0_OR_GREATER
+  [TestCase(true, "net10.0")]
+  [TestCase(false, "net10.0")]
+#endif
   public void UsingAssembly_ResolveDependency_ProjectReference(bool loadIntoReflectionOnlyContext, string targetFrameworkMoniker)
   {
     var assemblyFile = new FileInfo(
@@ -318,6 +330,10 @@ class AssemblyLoaderTests {
 #if NET8_0_OR_GREATER
   [TestCase(true, "net8.0")]
   [TestCase(false, "net8.0")]
+#endif
+#if NET10_0_OR_GREATER
+  [TestCase(true, "net10.0")]
+  [TestCase(false, "net10.0")]
 #endif
   public void UsingAssembly_FromStream_ResolveDependency_ProjectReference(bool loadIntoReflectionOnlyContext, string targetFrameworkMoniker)
   {
@@ -379,6 +395,10 @@ class AssemblyLoaderTests {
 #if NET8_0_OR_GREATER
   [TestCase(true, "net8.0")]
   [TestCase(false, "net8.0")]
+#endif
+#if NET10_0_OR_GREATER
+  [TestCase(true, "net10.0")]
+  [TestCase(false, "net10.0")]
 #endif
   public void UsingAssembly_ResolveDependency_PackageReference(bool loadIntoReflectionOnlyContext, string targetFrameworkMoniker)
   {

@@ -562,6 +562,15 @@ public static class C {{
         }
       );
 #endif
+#if NET10_0_OR_GREATER
+      yield return (
+        "Lib",
+        "net10.0",
+        new[] {
+          "System.Runtime, Version=10.0.",
+        }
+      );
+#endif
 #if NETCOREAPP3_1_OR_GREATER || NET8_0_OR_GREATER
       yield return (
         "LibB",
@@ -589,6 +598,17 @@ public static class C {{
           "System.Runtime, Version=8.0.",
           "System.Threading, Version=8.0.",
           "System.Xml.ReaderWriter, Version=8.0.",
+        }
+      );
+#endif
+#if NET10_0_OR_GREATER
+      yield return (
+        "LibReferencedAssemblies1",
+        "net10.0",
+        new[] {
+          "System.Runtime, Version=10.0.",
+          "System.Threading, Version=10.0.",
+          "System.Xml.ReaderWriter, Version=10.0.",
         }
       );
 #endif
