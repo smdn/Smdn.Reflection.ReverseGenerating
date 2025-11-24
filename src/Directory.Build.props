@@ -9,7 +9,7 @@ SPDX-License-Identifier: MIT
   <PropertyGroup Label="Configurations for Smdn.MSBuild.ProjectAssets.*">
     <SmdnBuildAssetRootDirectory>$(MSBuildThisFileDirectory)..\</SmdnBuildAssetRootDirectory>
     <APIListOutputBaseDirectory>$(MSBuildThisFileDirectory)..\doc\api-list\</APIListOutputBaseDirectory>
-    <!-- <APIListPackageVersion>1.6.0</APIListPackageVersion> -->
+    <APIListPackageVersion>1.7.0</APIListPackageVersion>
   </PropertyGroup>
 
   <PropertyGroup Label="package properties">
