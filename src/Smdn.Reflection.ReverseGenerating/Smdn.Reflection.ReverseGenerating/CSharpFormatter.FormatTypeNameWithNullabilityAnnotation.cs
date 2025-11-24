@@ -41,10 +41,6 @@ static partial class CSharpFormatter {
   )
   {
     if (target.Type.IsByRef) {
-#if WORKAROUND_NULLABILITYINFO_BYREFTYPE
-      var elementTypeNullabilityInfo = target.ElementType;
-#endif
-
       switch (options.AttributeProvider) {
         case ParameterInfo para:
           // retval/parameter modifiers
@@ -55,22 +51,11 @@ static partial class CSharpFormatter {
           else /*if (para.IsRetval)*/
             builder.Append("ref ");
 
-#if WORKAROUND_NULLABILITYINFO_BYREFTYPE
-          // [.net6.0] Currently, NullabilityInfo.ElementType is always null if the type is ByRef.
-          // Uses the workaround implementation instead in that case.
-          // See https://github.com/dotnet/runtime/issues/72320
-          if (options.NullabilityInfoContext is not null && target.ElementType is null && para.ParameterType.HasElementType)
-            elementTypeNullabilityInfo = options.NullabilityInfoContext.Create(new UnwrapByRefParameterInfo(para));
-#endif
           break;
 
         case PropertyInfo p:
           builder.Append("ref ");
 
-#if WORKAROUND_NULLABILITYINFO_BYREFTYPE
-          if (options.NullabilityInfoContext is not null && target.ElementType is null && p.PropertyType.HasElementType)
-            elementTypeNullabilityInfo = options.NullabilityInfoContext.Create(new UnwrapByRefPropertyInfo(p));
-#endif
           break;
 
         // C# 11 ref fields
@@ -81,28 +66,8 @@ static partial class CSharpFormatter {
           if (f.IsReadOnly())
             builder.Append("readonly ");
 
-#if WORKAROUND_NULLABILITYINFO_BYREFTYPE
-#if NET7_0_OR_GREATER
-          if (options.NullabilityInfoContext is not null && f.FieldType.HasElementType)
-#else
-          if (options.NullabilityInfoContext is not null && target.ElementType is null && f.FieldType.HasElementType)
-#endif
-            elementTypeNullabilityInfo = options.NullabilityInfoContext.Create(new UnwrapByRefFieldInfo(f));
-
-#endif
-
           break;
       }
-
-#if WORKAROUND_NULLABILITYINFO_BYREFTYPE
-      if (elementTypeNullabilityInfo is not null) {
-        return FormatTypeNameWithNullabilityAnnotation(
-          elementTypeNullabilityInfo,
-          builder,
-          options
-        );
-      }
-#endif
     }
 
     var type = target.Type;
@@ -110,10 +75,6 @@ static partial class CSharpFormatter {
     if (type.IsArray)
       return FormatArray(target, type, builder, options);
 
-#if WORKAROUND_NULLABILITYINFO_BYREFTYPE
-    if (type.IsPointer || type.IsByRef)
-      // pointer types or by-ref types (exclude ParameterInfo, PropertyInfo and FieldInfo)
-#else
     if (type.IsByRef)
       type = type.GetElementType()!;
 
@@ -122,7 +83,6 @@ static partial class CSharpFormatter {
 
     if (type.IsPointer)
       // pointer types
-#endif
       return builder.Append(FormatTypeNameCore(type, options));
 
 #if DEBUG

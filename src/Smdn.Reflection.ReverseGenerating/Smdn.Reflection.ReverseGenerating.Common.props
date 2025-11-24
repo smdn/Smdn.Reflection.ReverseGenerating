@@ -22,11 +22,6 @@ SPDX-License-Identifier: MIT
         $(TargetFramework.StartsWith('netstandard2'))
       )
     ">$(DefineConstants);CAN_OVERRIDE_CUSTOMATTRIBUTEDATA_ATTRIBUTETYPE</DefineConstants>
-    <!-- enable workaround only on .NET 6.x and .NET 7.x -->
-    <DefineConstants Condition="
-      $(TargetFramework.StartsWith('net6.')) or
-      $(TargetFramework.StartsWith('net7.'))
-    ">$(DefineConstants);WORKAROUND_NULLABILITYINFO_BYREFTYPE</DefineConstants>
   </PropertyGroup>
 
   <PropertyGroup Label="assembly attributes">
