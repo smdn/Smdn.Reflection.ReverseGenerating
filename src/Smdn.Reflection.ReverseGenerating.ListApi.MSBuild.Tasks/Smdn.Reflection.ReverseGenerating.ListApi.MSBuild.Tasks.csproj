@@ -19,6 +19,12 @@ SPDX-License-Identifier: MIT
 
     <!-- suppress generating README.md by Smdn.MSBuild.ProjectAssets.Library -->
     <GeneratePackageReadmeFile>false</GeneratePackageReadmeFile>
+
+    <!--
+      To avoid cyclic references (error NU1108) when making NuGet packages,
+      disable generating API list to prevent including the reference to this package itself.
+    -->
+    <APIListEnableGenerating>false</APIListEnableGenerating>
   </PropertyGroup>
 
   <PropertyGroup Label="packaging">
@@ -47,10 +53,7 @@ SPDX-License-Identifier: MIT
 
   <ItemGroup>
     <PackageReference Include="Microsoft.Build.Utilities.Core" Version="17.8.43" PrivateAssets="All" />
-    <ProjectReference Include="private\Smdn.Reflection.ReverseGenerating.ListApi.Core.csproj" PrivateAssets="All" />
-
-    <!-- remove this package itself from PackageReference to avoid duplicate references during the running of 'Pack' target -->
-    <PackageReference Remove="$(PackageId)" />
+    <ProjectReference Include="private\Smdn.Reflection.ReverseGenerating.ListApi.Core\Smdn.Reflection.ReverseGenerating.ListApi.Core.csproj" PrivateAssets="All" />
   </ItemGroup>
 
   <ItemGroup>

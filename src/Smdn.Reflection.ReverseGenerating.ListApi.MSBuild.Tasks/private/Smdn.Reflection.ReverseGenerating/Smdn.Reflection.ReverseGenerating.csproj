@@ -1,0 +1,22 @@
+<!--
+SPDX-FileCopyrightText: 2025 smdn <smdn@smdn.jp>
+SPDX-License-Identifier: MIT
+-->
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFrameworks>net8.0</TargetFrameworks>
+  </PropertyGroup>
+
+  <Import Project="$(MSBuildThisFileDirectory)..\..\..\Smdn.Reflection.ReverseGenerating\Smdn.Reflection.ReverseGenerating.Common.props" />
+
+  <PropertyGroup>
+    <IsPackable>false</IsPackable>
+    <VersionSuffix>private</VersionSuffix>
+
+    <!--
+      To avoid cyclic references (error NU1108) when making NuGet packages,
+      disable generating API list to prevent including the package reference to ListApi.MSBuild.Tasks.
+    -->
+    <APIListEnableGenerating>false</APIListEnableGenerating>
+  </PropertyGroup>
+</Project>

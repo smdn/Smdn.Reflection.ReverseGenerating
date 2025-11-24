@@ -1,0 +1,51 @@
+<!--
+SPDX-FileCopyrightText: 2025 smdn <smdn@smdn.jp>
+SPDX-License-Identifier: MIT
+-->
+<Project>
+  <PropertyGroup>
+    <VersionPrefix>1.4.0</VersionPrefix>
+    <VersionSuffix></VersionSuffix>
+    <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
+    <NoWarn>CS1591;$(NoWarn)</NoWarn> <!-- CS1591: Missing XML comment for publicly visible type or member 'Type_or_Member' -->
+    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+    <!-- trimming options -->
+    <PublishTrimmed>false</PublishTrimmed>
+    <EnableTrimAnalyzer>false</EnableTrimAnalyzer>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <DefineConstants Condition="
+      !(
+        $(TargetFramework.StartsWith('net4')) Or
+        $(TargetFramework.StartsWith('netstandard1')) Or
+        $(TargetFramework.StartsWith('netstandard2'))
+      )
+    ">$(DefineConstants);CAN_OVERRIDE_CUSTOMATTRIBUTEDATA_ATTRIBUTETYPE</DefineConstants>
+    <!-- enable workaround only on .NET 6.x and .NET 7.x -->
+    <DefineConstants Condition="
+      $(TargetFramework.StartsWith('net6.')) or
+      $(TargetFramework.StartsWith('net7.'))
+    ">$(DefineConstants);WORKAROUND_NULLABILITYINFO_BYREFTYPE</DefineConstants>
+  </PropertyGroup>
+
+  <PropertyGroup Label="assembly attributes">
+    <Description>The reflection library for reverse-generating declarations of types and members.</Description>
+    <CopyrightYear>2020</CopyrightYear>
+  </PropertyGroup>
+
+  <PropertyGroup Label="package properties">
+    <PackageTags>reflection;reverse-generating;reverse-generation;generator</PackageTags>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)Smdn.Reflection\*.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Smdn.Reflection.ReverseGenerating\*.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)..\Common\System.Runtime.CompilerServices\IsExternalInit.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="System.ValueTuple" Version="4.5.0" Condition="$(TargetFramework.StartsWith('net45')) or $(TargetFramework.StartsWith('net46')) or $(TargetFramework.StartsWith('netstandard1'))" />
+    <PackageReference Include="Smdn.Fundamental.Reflection" Version="[3.7.0,4.0.0)" />
+  </ItemGroup>
+</Project>

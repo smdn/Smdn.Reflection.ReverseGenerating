@@ -7,11 +7,17 @@ SPDX-License-Identifier: MIT
     <TargetFrameworks>net8.0</TargetFrameworks>
   </PropertyGroup>
 
-  <Import Project="..\..\Smdn.Reflection.ReverseGenerating.ListApi.Core\Smdn.Reflection.ReverseGenerating.ListApi.Core.Common.props" />
+  <Import Project="$(MSBuildThisFileDirectory)..\..\..\Smdn.Reflection.ReverseGenerating.ListApi.Core\Smdn.Reflection.ReverseGenerating.ListApi.Core.Common.props" />
 
   <PropertyGroup>
     <IsPackable>false</IsPackable>
     <VersionSuffix>private</VersionSuffix>
+
+    <!--
+      To avoid cyclic references (error NU1108) when making NuGet packages,
+      disable generating API list to prevent including the package reference to ListApi.MSBuild.Tasks.
+    -->
+    <APIListEnableGenerating>false</APIListEnableGenerating>
   </PropertyGroup>
 
   <!--
@@ -19,6 +25,6 @@ SPDX-License-Identifier: MIT
     So in case when Smdn.Reflection.ReverseGenerating.ListApi.MSBuild.Tasks builds this project, use ProjectReference.
   -->
   <ItemGroup>
-    <ProjectReference Include="..\..\Smdn.Reflection.ReverseGenerating\Smdn.Reflection.ReverseGenerating.csproj" />
+    <ProjectReference Include="$(MSBuildThisFileDirectory)..\Smdn.Reflection.ReverseGenerating\Smdn.Reflection.ReverseGenerating.csproj" />
   </ItemGroup>
 </Project>
