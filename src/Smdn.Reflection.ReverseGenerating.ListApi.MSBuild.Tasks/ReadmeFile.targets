@@ -21,7 +21,7 @@ SPDX-License-Identifier: MIT
       <CoreAssemblyOutputs Include="$(OutputPath)**\Smdn*.dll"/>
     </ItemGroup>
 
-    <GetCoreAssemblyInformationsFromLoadedAssembly AssemblyNames="%(CoreAssemblyOutputs.Filename)" Condition="'$(UseExportedTasksFromOutputAssembly)' == 'true'">
+    <GetCoreAssemblyInformationsFromLoadedAssembly AssemblyFiles="%(CoreAssemblyOutputs.FullPath)">
       <Output TaskParameter="AssemblyInformations" ItemName="CoreAssemblyInformations" />
     </GetCoreAssemblyInformationsFromLoadedAssembly>
 
@@ -49,22 +49,31 @@ SPDX-License-Identifier: MIT
     AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.Core.dll"
   >
     <ParameterGroup>
-      <AssemblyNames ParameterType="Microsoft.Build.Framework.ITaskItem[]" Required="true" />
+      <AssemblyFiles ParameterType="Microsoft.Build.Framework.ITaskItem[]" Required="true" />
       <AssemblyInformations ParameterType="Microsoft.Build.Framework.ITaskItem[]" Output="true" />
     </ParameterGroup>
     <Task>
       <Using Namespace="System" />
       <Using Namespace="System.Linq" />
+      <Using Namespace="System.IO" />
       <Using Namespace="System.Reflection" />
       <Using Namespace="System.Runtime.Versioning" />
       <Code Type="Fragment" Language="cs"><![CDATA[
-        AssemblyInformations = AssemblyNames
-          .Select(item =>
-            AppDomain
+        AssemblyInformations = AssemblyFiles
+          .Select(static item => {
+            var assemblyName = Path.GetFileNameWithoutExtension(item.ItemSpec);
+
+            // find expected assembly from loaded assemblies
+            var assm = AppDomain
               .CurrentDomain
               .GetAssemblies()
-              .First(assembly => assembly.GetName().Name == item.ItemSpec)
-          )
+              .FirstOrDefault(assembly => assembly.GetName().Name == assemblyName);
+
+            // load assembly from file
+            assm ??= Assembly.LoadFrom(item.ItemSpec);
+
+            return assm;
+          })
           .Select(static assembly =>
             (
               Name: assembly.GetName().Name,
