@@ -4,7 +4,7 @@ SPDX-License-Identifier: MIT
 -->
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks>net8.0</TargetFrameworks>
+    <TargetFrameworks>net10.0;net8.0</TargetFrameworks>
   </PropertyGroup>
 
   <Import Project="$(MSBuildThisFileDirectory)..\..\..\Smdn.Reflection.ReverseGenerating.ListApi.Core\Smdn.Reflection.ReverseGenerating.ListApi.Core.Common.props" />
