@@ -19,6 +19,7 @@
     "MSBuild",
     "smdn",
     "SYSLIB",
+    "trimmable",
   ],
   "ignoreWords": [
     "APIList",
