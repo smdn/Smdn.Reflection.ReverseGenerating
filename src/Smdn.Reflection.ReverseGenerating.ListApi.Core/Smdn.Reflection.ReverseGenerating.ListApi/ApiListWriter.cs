@@ -88,6 +88,15 @@ public class ApiListWriter {
     BaseWriter.WriteLine($"//   InformationalVersion: {assembly.GetAssemblyMetadataAttributeValue<AssemblyInformationalVersionAttribute, string>()}");
     BaseWriter.WriteLine($"//   TargetFramework: {assembly.GetAssemblyMetadataAttributeValue<TargetFrameworkAttribute, string>()}");
     BaseWriter.WriteLine($"//   Configuration: {assembly.GetAssemblyMetadataAttributeValue<AssemblyConfigurationAttribute, string>()}");
+
+    foreach (var (key, value) in assembly.GetAssemblyMetadataAttributes<AssemblyMetadataAttribute, (object?, object?)>(
+      static constructorArguments => (
+        constructorArguments.FirstOrDefault().Value,
+        constructorArguments.Skip(1).FirstOrDefault().Value
+      )
+    )) {
+      BaseWriter.WriteLine($"//   Metadata: {key}={value}");
+    }
   }
 
   private unsafe void WriteReferencedAssemblies()

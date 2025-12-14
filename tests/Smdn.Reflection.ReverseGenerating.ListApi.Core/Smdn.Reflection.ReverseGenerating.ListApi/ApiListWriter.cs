@@ -379,6 +379,8 @@ public static class C {{
 [assembly: System.Reflection.AssemblyInformationalVersionAttribute(""1.2.3-InformationalVersion"")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute(""Configuration"")]
 [assembly: System.Runtime.Versioning.TargetFrameworkAttribute(""TargetFramework"")]
+[assembly: System.Reflection.AssemblyMetadataAttribute(""RepositoryUrl"", ""https://example.com/nonexistent.git"")]
+[assembly: System.Reflection.AssemblyMetadataAttribute(""RepositoryBranch"", ""main"")]
 ",
       "TestCase1Assembly",
       new[] {
@@ -391,7 +393,9 @@ public static class C {{
 //   AssemblyVersion: 1.2.3.4
 //   InformationalVersion: 1.2.3-InformationalVersion
 //   TargetFramework: TargetFramework
-//   Configuration: Configuration"
+//   Configuration: Configuration
+//   Metadata: RepositoryUrl=https://example.com/nonexistent.git
+//   Metadata: RepositoryBranch=main"
     };
 
     yield return new object[] {

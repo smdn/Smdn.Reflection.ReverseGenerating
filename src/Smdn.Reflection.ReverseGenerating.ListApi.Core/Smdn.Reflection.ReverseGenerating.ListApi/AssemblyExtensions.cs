@@ -19,27 +19,34 @@ public static class AssemblyExtensions {
   // TODO: change assm -> assembly
   public static TValue GetAssemblyMetadataAttributeValue<TAssemblyMetadataAttribute, TValue>(this Assembly assm)
     where TAssemblyMetadataAttribute : Attribute
-    => (TValue)GetAssemblyMetadataAttributeValue<TAssemblyMetadataAttribute>(
+    => (TValue?)GetAssemblyMetadataAttributesCore<TAssemblyMetadataAttribute>(
         assm ?? throw new ArgumentNullException(nameof(assm))
-      )!;
-
-  private static object? GetAssemblyMetadataAttributeValue<TAssemblyMetadataAttribute>(Assembly assm)
-    where TAssemblyMetadataAttribute : Attribute
-  {
-    IList<System.Reflection.CustomAttributeData> attributesData;
-
-    try {
-      attributesData = assm.GetCustomAttributesData();
-    }
-    catch (FileNotFoundException ex) { // when (!string.IsNullOrEmpty(ex.FusionLog))
-      // in the case of reference assembly cannot be loaded
-      throw AssemblyFileNotFoundException.Create(assm.GetName(), ex);
-    }
-
-    return attributesData
+      )
       .FirstOrDefault(static d => ROCType.FullNameEquals(typeof(TAssemblyMetadataAttribute), d.AttributeType))
       ?.ConstructorArguments
       ?.FirstOrDefault()
       .Value;
+
+  internal static IEnumerable<TValue?>
+  GetAssemblyMetadataAttributes<TAssemblyMetadataAttribute, TValue>(
+    this Assembly assembly,
+    Func<IList<CustomAttributeTypedArgument>, TValue?> constructorArgumentsConverter
+  ) where TAssemblyMetadataAttribute : Attribute
+    => GetAssemblyMetadataAttributesCore<TAssemblyMetadataAttribute>(
+      assembly ?? throw new ArgumentNullException(nameof(assembly))
+    )
+    .Where(static d => ROCType.FullNameEquals(typeof(TAssemblyMetadataAttribute), d.AttributeType))
+    .Select(attr => constructorArgumentsConverter(attr.ConstructorArguments));
+
+  private static IList<CustomAttributeData> GetAssemblyMetadataAttributesCore<TAssemblyMetadataAttribute>(this Assembly assembly)
+    where TAssemblyMetadataAttribute : Attribute
+  {
+    try {
+      return assembly.GetCustomAttributesData();
+    }
+    catch (FileNotFoundException ex) { // when (!string.IsNullOrEmpty(ex.FusionLog))
+      // in the case of reference assembly cannot be loaded
+      throw AssemblyFileNotFoundException.Create(assembly.GetName(), ex);
+    }
   }
 }
