@@ -1,6 +1,9 @@
 // SPDX-FileCopyrightText: 2020 smdn <smdn@smdn.jp>
 // SPDX-License-Identifier: MIT
 using System;
+#if SYSTEM_COLLECTIONS_FROZEN_FROZENDICTIONARY || SYSTEM_COLLECTIONS_FROZEN_FROZENSET
+using System.Collections.Frozen;
+#endif
 using System.Collections.Generic;
 #if NULL_STATE_STATIC_ANALYSIS_ATTRIBUTES
 using System.Diagnostics.CodeAnalysis;
@@ -13,16 +16,37 @@ using System.Text;
 namespace Smdn.Reflection.ReverseGenerating;
 
 public static partial class CSharpFormatter /* ITypeFormatter */ {
-  private static readonly Dictionary<Accessibility, string> AccessibilityMap = new() {
+#pragma warning disable IDE0090
+  private static readonly
+#if SYSTEM_COLLECTIONS_FROZEN_FROZENDICTIONARY
+  FrozenDictionary<Accessibility, string>
+#else
+  Dictionary<Accessibility, string>
+#endif
+  AccessibilityMap = new Dictionary<Accessibility, string>() {
+#pragma warning restore IDE0090
     { Accessibility.Public,            "public" },
     { Accessibility.Assembly,          "internal" },
     { Accessibility.Family,            "protected" },
     { Accessibility.FamilyOrAssembly,  "internal protected" },
     { Accessibility.FamilyAndAssembly, "private protected" },
     { Accessibility.Private,           "private" },
-  };
+  }
+#if SYSTEM_COLLECTIONS_FROZEN_FROZENDICTIONARY
+  .ToFrozenDictionary();
+#else
+  ;
+#endif
 
-  private static readonly Dictionary<string, string> PrimitiveTypes = new(StringComparer.Ordinal) {
+#pragma warning disable IDE0090
+  private static readonly
+#if SYSTEM_COLLECTIONS_FROZEN_FROZENDICTIONARY
+  FrozenDictionary<string, string>
+#else
+  Dictionary<string, string>
+#endif
+  PrimitiveTypes = new Dictionary<string, string>(StringComparer.Ordinal) {
+#pragma warning restore IDE0090
     { typeof(void).FullName!, "void" },
     { typeof(sbyte).FullName!, "sbyte" },
     { typeof(short).FullName!, "short" },
@@ -39,9 +63,22 @@ public static partial class CSharpFormatter /* ITypeFormatter */ {
     { typeof(string).FullName!, "string" },
     { typeof(object).FullName!, "object" },
     { typeof(bool).FullName!, "bool" },
-  };
+  }
+#if SYSTEM_COLLECTIONS_FROZEN_FROZENDICTIONARY
+  .ToFrozenDictionary();
+#else
+  ;
+#endif
 
-  private static readonly HashSet<string> Keywords = new(StringComparer.Ordinal) {
+#pragma warning disable IDE0090
+  private static readonly
+#if SYSTEM_COLLECTIONS_FROZEN_FROZENSET
+  FrozenSet<string>
+#else
+  HashSet<string>
+#endif
+  Keywords = new HashSet<string>(StringComparer.Ordinal) {
+#pragma warning restore IDE0090
     "abstract",
     "as",
     "base",
@@ -135,9 +172,22 @@ public static partial class CSharpFormatter /* ITypeFormatter */ {
     "when",
     "where",
     "yield",
-  };
+  }
+#if SYSTEM_COLLECTIONS_FROZEN_FROZENSET
+  .ToFrozenSet();
+#else
+  ;
+#endif
 
-  private static readonly Dictionary<MethodSpecialName, string> SpecialMethodNames = new() {
+#pragma warning disable IDE0090
+  private static readonly
+#if SYSTEM_COLLECTIONS_FROZEN_FROZENDICTIONARY
+  FrozenDictionary<MethodSpecialName, string>
+#else
+  Dictionary<MethodSpecialName, string>
+#endif
+  SpecialMethodNames = new Dictionary<MethodSpecialName, string>() {
+#pragma warning restore IDE0090
     // comparison
     { MethodSpecialName.Equality, "operator ==" },
     { MethodSpecialName.Inequality, "operator !=" },
@@ -201,7 +251,12 @@ public static partial class CSharpFormatter /* ITypeFormatter */ {
     { MethodSpecialName.Explicit, "explicit operator" },
     { MethodSpecialName.CheckedExplicit, "explicit operator checked" },
     { MethodSpecialName.Implicit, "implicit operator" },
-  };
+  }
+#if SYSTEM_COLLECTIONS_FROZEN_FROZENDICTIONARY
+  .ToFrozenDictionary();
+#else
+  ;
+#endif
 
   public static string FormatAccessibility(Accessibility accessibility)
     => AccessibilityMap.TryGetValue(accessibility, out var ret) ? ret : string.Empty;
