@@ -211,3 +211,16 @@ public record RX0(int X, string Y, double Z) : R0(X, Y);
 public record RX1(int X, string Y, double Z) : R0(X, Y), IDisposable {
   public void Dispose() => throw new NotImplementedException();
 }
+
+[TypeDeclarationWithExplicitBaseTypeAndInterfacesTestCase("public ref struct RefS0 : System.IDisposable")]
+public ref struct RefS0 : IDisposable {
+  public void Dispose() => throw new NotImplementedException();
+}
+
+[TypeDeclarationWithExplicitBaseTypeAndInterfacesTestCase(@"public ref struct RefS1 :
+  System.ICloneable,
+  System.IDisposable")]
+public ref struct RefS1 : IDisposable, ICloneable {
+  public object Clone() => throw new NotImplementedException();
+  public void Dispose() => throw new NotImplementedException();
+}
