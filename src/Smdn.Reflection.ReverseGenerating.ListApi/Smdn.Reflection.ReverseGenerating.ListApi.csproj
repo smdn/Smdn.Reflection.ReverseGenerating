@@ -10,6 +10,7 @@ SPDX-License-Identifier: MIT
     <ToolCommandName>list-api</ToolCommandName>
     <VersionPrefix>1.5.0</VersionPrefix>
     <VersionSuffix></VersionSuffix>
+    <IsAotCompatible>false</IsAotCompatible>
     <NoWarn>CS1591;$(NoWarn)</NoWarn> <!-- CS1591: Missing XML comment for publicly visible type or member 'Type_or_Member' -->
     <NoWarn>CA1515;$(NoWarn)</NoWarn> <!-- CA1515: Consider making public types internal / Must be public because it is referenced from the test project. -->
     <EnableFeature_BuildProjectFile Condition=" '$(Configuration)' != 'Release' ">true</EnableFeature_BuildProjectFile>
