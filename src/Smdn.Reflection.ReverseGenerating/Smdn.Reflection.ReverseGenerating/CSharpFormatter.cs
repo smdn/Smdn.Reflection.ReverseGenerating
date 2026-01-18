@@ -496,7 +496,9 @@ public static partial class CSharpFormatter /* ITypeFormatter */ {
     }
     else if (
       p.GetCustomAttributesData().Any(
-        static d => string.Equals(typeof(ParamArrayAttribute).FullName, d.AttributeType.FullName, StringComparison.Ordinal)
+        static d =>
+          string.Equals(typeof(ParamArrayAttribute).FullName, d.AttributeType.FullName, StringComparison.Ordinal) ||
+          string.Equals("System.Runtime.CompilerServices.ParamCollectionAttribute", d.AttributeType.FullName, StringComparison.Ordinal)
       )
     ) {
       ret.Append("params ");

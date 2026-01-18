@@ -114,6 +114,14 @@ public class NullabilityAnnotations {
     [MemberDeclarationTestCase($"public void {nameof(ArrayOfNullableRefType)}(params string?[] p) {{}}")] public void ArrayOfNullableRefType(params string?[] p) { }
     [MemberDeclarationTestCase($"public void {nameof(NullableArrayOfRefType)}(params string[]? p) {{}}")] public void NullableArrayOfRefType(params string[]? p) { }
     [MemberDeclarationTestCase($"public void {nameof(NullableArrayOfNullableRefType)}(params string?[]? p) {{}}")] public void NullableArrayOfNullableRefType(params string?[]? p) { }
+
+    [MemberDeclarationTestCase($"public void {nameof(ReadOnlySpanOfRefType)}(params ReadOnlySpan<string> p) {{}}", ParameterWithNamespace = false)] public void ReadOnlySpanOfRefType(params ReadOnlySpan<string> p) { }
+    [MemberDeclarationTestCase($"public void {nameof(ReadOnlySpanOfNullableRefType)}(params ReadOnlySpan<string?> p) {{}}", ParameterWithNamespace = false)] public void ReadOnlySpanOfNullableRefType(params ReadOnlySpan<string?> p) { }
+
+    [MemberDeclarationTestCase($"public void {nameof(CollectionOfRefType)}(params IReadOnlyList<string> p) {{}}", ParameterWithNamespace = false)] public void CollectionOfRefType(params IReadOnlyList<string> p) { }
+    [MemberDeclarationTestCase($"public void {nameof(CollectionOfNullableRefType)}(params IReadOnlyList<string?> p) {{}}", ParameterWithNamespace = false)] public void CollectionOfNullableRefType(params IReadOnlyList<string?> p) { }
+    [MemberDeclarationTestCase($"public void {nameof(NullableCollectionOfRefType)}(params IReadOnlyList<string>? p) {{}}", ParameterWithNamespace = false)] public void NullableCollectionOfRefType(params IReadOnlyList<string>? p) { }
+    [MemberDeclarationTestCase($"public void {nameof(NullableCollectionOfNullableRefType)}(params IReadOnlyList<string?>? p) {{}}", ParameterWithNamespace = false)] public void NullableCollectionOfNullableRefType(params IReadOnlyList<string?>? p) { }
   }
 
   class Modifiers {
