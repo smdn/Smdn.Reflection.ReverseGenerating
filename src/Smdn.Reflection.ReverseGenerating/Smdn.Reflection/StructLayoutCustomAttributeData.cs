@@ -65,7 +65,7 @@ internal sealed class StructLayoutCustomAttributeData : CustomAttributeData {
   public override ConstructorInfo Constructor { get; } = typeof(StructLayoutAttribute).GetConstructor(
     bindingAttr: BindingFlags.Public | BindingFlags.Instance,
     binder: null,
-    types: new[] { typeof(LayoutKind) },
+    types: [typeof(LayoutKind)],
     modifiers: null
   )!;
   public override IList<CustomAttributeTypedArgument> ConstructorArguments { get; }
