@@ -11,8 +11,7 @@ SPDX-License-Identifier: MIT
     <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
     <!-- AOT and trimming options -->
     <IsAotCompatible>false</IsAotCompatible>
-    <PublishTrimmed>false</PublishTrimmed>
-    <EnableTrimAnalyzer>false</EnableTrimAnalyzer>
+    <IsTrimmable>false</IsTrimmable>
   </PropertyGroup>
 
   <PropertyGroup>

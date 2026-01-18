@@ -12,8 +12,7 @@ SPDX-License-Identifier: MIT
 
     <!-- AOT and trimming options -->
     <IsAotCompatible>false</IsAotCompatible>
-    <PublishTrimmed>false</PublishTrimmed>
-    <EnableTrimAnalyzer>false</EnableTrimAnalyzer>
+    <IsTrimmable>false</IsTrimmable>
 
     <!-- required to include all dependencies to the package -->
     <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
