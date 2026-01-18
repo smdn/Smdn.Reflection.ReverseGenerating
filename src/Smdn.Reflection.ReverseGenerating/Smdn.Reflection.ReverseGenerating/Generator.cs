@@ -234,6 +234,12 @@ public static partial class Generator {
       bool typeWithNamespace
     )
     {
+      const GenericParameterAttributes AllowByRefLike =
+#if NET9_0_OR_GREATER
+        GenericParameterAttributes.AllowByRefLike;
+#else
+        (GenericParameterAttributes)32;
+#endif
       var constraintAttrs = genericParameter.GenericParameterAttributes & GenericParameterAttributes.SpecialConstraintMask;
       var hasDefaultConstructorConstraint = constraintAttrs.HasFlag(GenericParameterAttributes.DefaultConstructorConstraint);
       IEnumerable<Type>? constraintTypes = null;
@@ -267,6 +273,9 @@ public static partial class Generator {
 
       if (hasDefaultConstructorConstraint)
         yield return "new()";
+
+      if (genericParameter.GenericParameterAttributes.HasFlag(AllowByRefLike))
+        yield return "allows ref struct";
 
       referencingNns?.UnionWith(constraintTypes.SelectMany(CSharpFormatter.ToNamespaceList));
     }

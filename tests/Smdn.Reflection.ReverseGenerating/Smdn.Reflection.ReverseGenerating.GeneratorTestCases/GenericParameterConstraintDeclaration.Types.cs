@@ -50,6 +50,17 @@ namespace Smdn.Reflection.ReverseGenerating.GeneratorTestCases.GenericParameterC
   [GenericParameterConstraintTestCase("where T : class, System.ICloneable, System.IDisposable, new()", TypeWithNamespace = true)]
   public class ICloneableIDisposableClassWithDefaultConstructorConstraint<T> where T : class, ICloneable, IDisposable, new() { }
 
+#if NET9_0_OR_GREATER
+  [GenericParameterConstraintTestCase("where T : allows ref struct")]
+  public class AllowsRefStructAntiConstraint<T> where T : allows ref struct { }
+
+  [GenericParameterConstraintTestCase("where T : new(), allows ref struct")]
+  public class DefaultConstructorAndAllowsRefStructAntiConstraint<T> where T : new(), allows ref struct { }
+
+  [GenericParameterConstraintTestCase("where T : System.IDisposable, new(), allows ref struct", MemberWithNamespace = true)]
+  public class IDisposableWithDefaultConstructorAndAllowsRefStructAntiConstraint<T> where T : IDisposable, new(), allows ref struct { }
+#endif
+
   namespace NoConstraints {
     namespace NullableEnableContext {
 #nullable enable annotations
