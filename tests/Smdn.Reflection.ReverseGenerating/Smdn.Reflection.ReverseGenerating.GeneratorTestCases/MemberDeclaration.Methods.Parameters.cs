@@ -16,6 +16,14 @@ public class InOutRef {
   [MemberDeclarationTestCase("public void M1(in int x) {}")] public void M1(in int x) { }
   [MemberDeclarationTestCase("public void M2(out int x) {}")] public void M2(out int x) => throw new NotImplementedException();
   [MemberDeclarationTestCase("public void M3(ref int x) {}")] public void M3(ref int x) => throw new NotImplementedException();
+  [MemberDeclarationTestCase("public void M4(ref readonly System.ReadOnlySpan<int> x) {}")] public void M4(ref readonly ReadOnlySpan<int> x) => throw new NotImplementedException();
+}
+
+public class InOutRefVirtual {
+  [MemberDeclarationTestCase("public virtual void M1(in int x) {}")] public virtual void M1(in int x) { }
+  [MemberDeclarationTestCase("public virtual void M2(out int x) {}")] public virtual void M2(out int x) => throw new NotImplementedException();
+  [MemberDeclarationTestCase("public virtual void M3(ref int x) {}")] public virtual void M3(ref int x) => throw new NotImplementedException();
+  [MemberDeclarationTestCase("public virtual void M4(ref readonly System.ReadOnlySpan<int> x) {}")] public virtual void M4(ref readonly ReadOnlySpan<int> x) => throw new NotImplementedException();
 }
 
 public class Params {

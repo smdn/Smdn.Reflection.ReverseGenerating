@@ -48,12 +48,19 @@ static partial class CSharpFormatter {
           case ParameterInfo para:
             // if (para.IsRetval)
             //  return "ref " + typeName;
-            if (para.IsIn)
-              return "in " + typeName;
-            else if (para.IsOut)
+            if (para.IsIn) {
+              var isRefReadOnly = para
+                .GetCustomAttributesData()
+                .Any(static d => string.Equals(d.AttributeType.FullName, "System.Runtime.CompilerServices.RequiresLocationAttribute", StringComparison.Ordinal));
+
+              return (isRefReadOnly ? "ref readonly " : "in ") + typeName;
+            }
+            else if (para.IsOut) {
               return "out " + typeName;
-            else
+            }
+            else {
               return "ref " + typeName;
+            }
 
           case PropertyInfo p:
             return "ref " + typeName;
