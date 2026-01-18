@@ -176,6 +176,27 @@ public static partial class CSharpFormatter /* ITypeFormatter */ {
     { MethodSpecialName.UnsignedRightShift, "operator >>>" },
     { MethodSpecialName.LeftShift, "operator <<" },
 
+    // assignment
+    { MethodSpecialName.IncrementAssignment, "operator ++" },
+    { MethodSpecialName.CheckedIncrementAssignment, "operator checked ++" },
+    { MethodSpecialName.DecrementAssignment, "operator --" },
+    { MethodSpecialName.CheckedDecrementAssignment, "operator checked --" },
+    { MethodSpecialName.AdditionAssignment, "operator +=" },
+    { MethodSpecialName.CheckedAdditionAssignment, "operator checked +=" },
+    { MethodSpecialName.SubtractionAssignment, "operator -=" },
+    { MethodSpecialName.CheckedSubtractionAssignment, "operator checked -=" },
+    { MethodSpecialName.MultiplicationAssignment, "operator *=" },
+    { MethodSpecialName.CheckedMultiplicationAssignment, "operator checked *=" },
+    { MethodSpecialName.DivisionAssignment, "operator /=" },
+    { MethodSpecialName.CheckedDivisionAssignment, "operator checked /=" },
+    { MethodSpecialName.ModulusAssignment, "operator %=" },
+    { MethodSpecialName.BitwiseAndAssignment, "operator &=" },
+    { MethodSpecialName.BitwiseOrAssignment, "operator |=" },
+    { MethodSpecialName.ExclusiveOrAssignment, "operator ^=" },
+    { MethodSpecialName.RightShiftAssignment, "operator >>=" },
+    { MethodSpecialName.UnsignedRightShiftAssignment, "operator >>>=" },
+    { MethodSpecialName.LeftShiftAssignment, "operator <<=" },
+
     // type cast
     { MethodSpecialName.Explicit, "explicit operator" },
     { MethodSpecialName.CheckedExplicit, "explicit operator checked" },

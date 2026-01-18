@@ -352,6 +352,33 @@ namespace Smdn.Reflection.ReverseGenerating.GeneratorTestCases.MemberDeclaration
       }
     }
 
+#if SYSTEM_RUNTIME_COMPILERSERVICES_COMPILERFEATUREREQUIREDATTRIBUTE
+    namespace AssignmentOperators {
+      public class C {
+        [MemberDeclarationTestCase("public void operator ++ () {}")] public void operator ++() => throw new NotImplementedException();
+        [MemberDeclarationTestCase("public void operator checked ++ () {}")] public void operator checked ++() => throw new NotImplementedException();
+        [MemberDeclarationTestCase("public void operator -- () {}")] public void operator --() => throw new NotImplementedException();
+        [MemberDeclarationTestCase("public void operator checked -- () {}")] public void operator checked --() => throw new NotImplementedException();
+
+        [MemberDeclarationTestCase("public void operator += (C c) {}", ParameterWithNamespace = false)] public void operator +=(C c) => throw new NotImplementedException();
+        [MemberDeclarationTestCase("public void operator checked += (C c) {}", ParameterWithNamespace = false)] public void operator checked +=(C c) => throw new NotImplementedException();
+        [MemberDeclarationTestCase("public void operator -= (C c) {}", ParameterWithNamespace = false)] public void operator -=(C c) => throw new NotImplementedException();
+        [MemberDeclarationTestCase("public void operator checked -= (C c) {}", ParameterWithNamespace = false)] public void operator checked -=(C c) => throw new NotImplementedException();
+        [MemberDeclarationTestCase("public void operator *= (C c) {}", ParameterWithNamespace = false)] public void operator *=(C c) => throw new NotImplementedException();
+        [MemberDeclarationTestCase("public void operator checked *= (C c) {}", ParameterWithNamespace = false)] public void operator checked *=(C c) => throw new NotImplementedException();
+        [MemberDeclarationTestCase("public void operator /= (C c) {}", ParameterWithNamespace = false)] public void operator /=(C c) => throw new NotImplementedException();
+        [MemberDeclarationTestCase("public void operator checked /= (C c) {}", ParameterWithNamespace = false)] public void operator checked /=(C c) => throw new NotImplementedException();
+        [MemberDeclarationTestCase("public void operator %= (C c) {}", ParameterWithNamespace = false)] public void operator %=(C c) => throw new NotImplementedException();
+        [MemberDeclarationTestCase("public void operator &= (C c) {}", ParameterWithNamespace = false)] public void operator &=(C c) => throw new NotImplementedException();
+        [MemberDeclarationTestCase("public void operator |= (C c) {}", ParameterWithNamespace = false)] public void operator |=(C c) => throw new NotImplementedException();
+        [MemberDeclarationTestCase("public void operator ^= (C c) {}", ParameterWithNamespace = false)] public void operator ^=(C c) => throw new NotImplementedException();
+        [MemberDeclarationTestCase("public void operator <<= (C c) {}", ParameterWithNamespace = false)] public void operator <<=(C c) => throw new NotImplementedException();
+        [MemberDeclarationTestCase("public void operator >>= (C c) {}", ParameterWithNamespace = false)] public void operator >>=(C c) => throw new NotImplementedException();
+        [MemberDeclarationTestCase("public void operator >>>= (C c) {}", ParameterWithNamespace = false)] public void operator >>>=(C c) => throw new NotImplementedException();
+      }
+    }
+#endif
+
     namespace Comparison {
       public class C : IEquatable<C>, IComparable<C> {
         [MemberDeclarationTestCase("public static bool operator == (C x, C y) {}", MemberWithNamespace = false, MemberWithDeclaringTypeName = false, ParameterWithNamespace = false, ParameterWithDeclaringTypeName = false)]

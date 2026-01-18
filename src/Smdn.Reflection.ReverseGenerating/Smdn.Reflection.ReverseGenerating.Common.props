@@ -41,6 +41,6 @@ SPDX-License-Identifier: MIT
 
   <ItemGroup>
     <PackageReference Include="System.ValueTuple" Version="4.5.0" Condition="$(TargetFramework.StartsWith('net45')) or $(TargetFramework.StartsWith('net46')) or $(TargetFramework.StartsWith('netstandard1'))" />
-    <PackageReference Include="Smdn.Fundamental.Reflection" Version="[3.7.0,4.0.0)" />
+    <PackageReference Include="Smdn.Fundamental.Reflection" Version="[3.9.0,4.0.0)" />
   </ItemGroup>
 </Project>
