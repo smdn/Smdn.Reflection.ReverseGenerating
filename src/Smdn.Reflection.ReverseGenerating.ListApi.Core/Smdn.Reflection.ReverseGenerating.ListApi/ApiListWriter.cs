@@ -481,6 +481,9 @@ public class ApiListWriter {
     }
     else {
       ret.AppendLine();
+
+      if (enableNullableAnnotationsOnlyOnTypes)
+        ret.AppendLine("#nullable restore annotations");
     }
 
     return ret.ToString();

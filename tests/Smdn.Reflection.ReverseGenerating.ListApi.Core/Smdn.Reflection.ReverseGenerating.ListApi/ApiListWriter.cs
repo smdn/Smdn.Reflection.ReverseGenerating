@@ -323,6 +323,31 @@ public static class C {
       (new NullabilityInfoContext(), default(NullabilityInfoContext)),
       (default(NullabilityInfoContext), default(NullabilityInfoContext))
     }) {
+      var directiveEnableOnAssembly = contextForType is not null && contextForMember is not null;
+      var directiveDisableOnAssembly = contextForType is null && contextForMember is null;
+      var directiveOnType = contextForType is not null && contextForMember is null;
+      var directiveOnMember = contextForType is null && contextForMember is not null;
+
+      yield return new object[] {
+        @"#nullable enable
+public delegate void D(string? p);
+",
+        new string[0],
+        true,
+        contextForType!,
+        contextForMember!,
+        $@"{(directiveEnableOnAssembly ? "#nullable enable annotations\n" : string.Empty)}{(directiveDisableOnAssembly ? "#nullable disable annotations\n" : string.Empty)}
+{(directiveOnType ? "#nullable enable annotations\n" : string.Empty)}public delegate void D(string{(contextForType is null ? "" : "?")} p);{(directiveOnType ? "\n#nullable restore annotations" : string.Empty)}
+"
+      };
+    }
+
+    foreach (var (contextForType, contextForMember) in new[] {
+      (new NullabilityInfoContext(), new NullabilityInfoContext()),
+      (default(NullabilityInfoContext), new NullabilityInfoContext()),
+      (new NullabilityInfoContext(), default(NullabilityInfoContext)),
+      (default(NullabilityInfoContext), default(NullabilityInfoContext))
+    }) {
       yield return new object[] {
         @"#nullable enable
 public static class C {
