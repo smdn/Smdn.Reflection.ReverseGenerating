@@ -432,41 +432,40 @@ public class ApiListWriter {
       ret.Append(indent).Append(typeDeclarationLines[index]);
     }
 
-    var hasContent = !t.IsDelegate();
-
-    if (hasContent) {
-      if (1 < typeDeclarationLines.Count) // multiline declaration
-        ret.AppendLine().Append(indent).AppendLine("{");
-      else
-        ret.AppendLine(" {");
-
-      if (enableNullableAnnotationsOnlyOnTypes)
-        ret.AppendLine("#nullable restore annotations");
-      if (enableNullableAnnotationsOnlyOnMembers)
-        ret.AppendLine("#nullable enable annotations");
-
-      ret.Append(
-        GenerateTypeContentDeclarations(
-          nestLevel + 1,
-          assembly,
-          t,
-          referencingNamespaces,
-          options,
-          logger
-        )
-      );
-
-      if (enableNullableAnnotationsOnlyOnMembers)
-        ret.AppendLine("#nullable restore annotations");
-
-      ret.Append(indent).AppendLine("}");
-    }
-    else {
+    if (t.IsDelegate()) {
       ret.AppendLine();
 
       if (enableNullableAnnotationsOnlyOnTypes)
         ret.AppendLine("#nullable restore annotations");
+
+      return ret.ToString();
     }
+
+    if (1 < typeDeclarationLines.Count) // multiline declaration
+      ret.AppendLine().Append(indent).AppendLine("{");
+    else
+      ret.AppendLine(" {");
+
+    if (enableNullableAnnotationsOnlyOnTypes)
+      ret.AppendLine("#nullable restore annotations");
+    if (enableNullableAnnotationsOnlyOnMembers)
+      ret.AppendLine("#nullable enable annotations");
+
+    ret.Append(
+      GenerateTypeContentDeclarations(
+        nestLevel + 1,
+        assembly,
+        t,
+        referencingNamespaces,
+        options,
+        logger
+      )
+    );
+
+    if (enableNullableAnnotationsOnlyOnMembers)
+      ret.AppendLine("#nullable restore annotations");
+
+    ret.Append(indent).AppendLine("}");
 
     return ret.ToString();
   }
