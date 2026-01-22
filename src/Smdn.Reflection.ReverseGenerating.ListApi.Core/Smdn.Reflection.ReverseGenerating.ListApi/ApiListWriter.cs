@@ -413,25 +413,7 @@ public class ApiListWriter {
     var ret = new StringBuilder(1024);
     var indent = string.Concat(Enumerable.Repeat(options.Indent, nestLevel));
 
-    var assemblyNameOfTypeForwardedFrom = t
-      .GetCustomAttributesData()
-      .FirstOrDefault(static d => ROCType.FullNameEquals(typeof(TypeForwardedFromAttribute), d.AttributeType))
-      ?.ConstructorArguments
-      ?.FirstOrDefault()
-      .Value
-      as string;
-
-    if (
-      assemblyNameOfTypeForwardedFrom is not null &&
-      string.Equals(assembly.FullName, assemblyNameOfTypeForwardedFrom, StringComparison.Ordinal)
-    ) {
-      ret
-        .Append(indent)
-        .Append("// Forwarded to \"")
-        .Append(t.Assembly.FullName)
-        .Append('"')
-        .AppendLine();
-    }
+    AppendTypeForwardingInformation(ret, assembly, t, indent);
 
     foreach (var attr in Generator.GenerateAttributeList(t, null, options)) {
       ret.Append(indent)
@@ -487,6 +469,34 @@ public class ApiListWriter {
     }
 
     return ret.ToString();
+  }
+
+  private static StringBuilder AppendTypeForwardingInformation(
+    StringBuilder builder,
+    Assembly assembly,
+    Type t,
+    string indent
+  )
+  {
+    var ctorArgForTypeForwardedFrom = t
+      .GetCustomAttributesData()
+      .FirstOrDefault(static d => ROCType.FullNameEquals(typeof(TypeForwardedFromAttribute), d.AttributeType))
+      ?.ConstructorArguments
+      ?.FirstOrDefault()
+      .Value;
+
+    if (ctorArgForTypeForwardedFrom is not string assemblyNameOfTypeForwardedFrom)
+      return builder;
+
+    if (!string.Equals(assembly.FullName, assemblyNameOfTypeForwardedFrom, StringComparison.Ordinal))
+      return builder;
+
+    return builder
+      .Append(indent)
+      .Append("// Forwarded to \"")
+      .Append(t.Assembly.FullName)
+      .Append('"')
+      .AppendLine();
   }
 
 #pragma warning disable CA1032
