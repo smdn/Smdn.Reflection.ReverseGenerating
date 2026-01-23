@@ -63,5 +63,79 @@ namespace Smdn.Reflection.ReverseGenerating.GeneratorTestCases.TypeDeclaration.C
         }
       }
     }
+
+    namespace Unsafe {
+#pragma warning disable CS0649
+      [TypeDeclarationTestCase("public class UnsafeClassPublicPointerField", TypeDetectUnsafe = false)]
+      [TypeDeclarationTestCase("public unsafe class UnsafeClassPublicPointerField", TypeDetectUnsafe = true)]
+      public unsafe class UnsafeClassPublicPointerField {
+        public int* F;
+      }
+
+      [TypeDeclarationTestCase("public class UnsafeClassProtectedPointerField", TypeDetectUnsafe = false)]
+      [TypeDeclarationTestCase("public unsafe class UnsafeClassProtectedPointerField", TypeDetectUnsafe = true)]
+      public unsafe class UnsafeClassProtectedPointerField {
+        protected int* F;
+      }
+
+      [TypeDeclarationTestCase("public class UnsafeClassPrivatePointerField", TypeDetectUnsafe = false)]
+      [TypeDeclarationTestCase("public unsafe class UnsafeClassPrivatePointerField", TypeDetectUnsafe = true)]
+      public unsafe class UnsafeClassPrivatePointerField {
+#pragma warning disable CS0169
+        private int* F;
+#pragma warning restore CS0169
+      }
+
+      [TypeDeclarationTestCase("public class SafeClassInheritsUnsafeClass", TypeDetectUnsafe = false)]
+      [TypeDeclarationTestCase("public class SafeClassInheritsUnsafeClass", TypeDetectUnsafe = true)]
+      public /*safe*/ class SafeClassInheritsUnsafeClass : UnsafeClassPublicPointerField { }
+
+      [TypeDeclarationTestCase("public class UnsafeClassWithStaticPointerField", TypeDetectUnsafe = false)]
+      [TypeDeclarationTestCase("public unsafe class UnsafeClassWithStaticPointerField", TypeDetectUnsafe = true)]
+      public unsafe class UnsafeClassWithStaticPointerField {
+        public static int* F;
+      }
+
+      [TypeDeclarationTestCase("public abstract class UnsafeAbstractClass", TypeDetectUnsafe = false)]
+      [TypeDeclarationTestCase("public abstract unsafe class UnsafeAbstractClass", TypeDetectUnsafe = true)]
+      public unsafe abstract class UnsafeAbstractClass {
+        public int* F;
+      }
+
+      [TypeDeclarationTestCase("public sealed class UnsafeSealedClass", TypeDetectUnsafe = false)]
+      [TypeDeclarationTestCase("public sealed unsafe class UnsafeSealedClass", TypeDetectUnsafe = true)]
+      public unsafe sealed class UnsafeSealedClass {
+        public int* F;
+      }
+
+      [TypeDeclarationTestCase("public static class UnsafeStaticClass", TypeDetectUnsafe = false)]
+      [TypeDeclarationTestCase("public static unsafe class UnsafeStaticClass", TypeDetectUnsafe = true)]
+      public unsafe static class UnsafeStaticClass {
+        public static int* F;
+      }
+
+      [TypeDeclarationTestCase("public class ClassWithNoPointerFields", TypeDetectUnsafe = false)]
+      [TypeDeclarationTestCase("public class ClassWithNoPointerFields", TypeDetectUnsafe = true)]
+      public /*safe*/ class ClassWithNoPointerFields {
+        public unsafe int* P {
+          get => throw new NotImplementedException();
+          set => throw new NotImplementedException();
+        }
+
+        public unsafe void M(int* p) => throw new NotImplementedException();
+      }
+
+      [TypeDeclarationTestCase("public class UnsafeClassWithNoPointerFields", TypeDetectUnsafe = false)]
+      [TypeDeclarationTestCase("public class UnsafeClassWithNoPointerFields", TypeDetectUnsafe = true)]
+      public unsafe class UnsafeClassWithNoPointerFields {
+        public unsafe int* P {
+          get => throw new NotImplementedException();
+          set => throw new NotImplementedException();
+        }
+
+        public unsafe void M(int* p) => throw new NotImplementedException();
+      }
+#pragma warning restore CS0649
+    }
   }
 }

@@ -247,4 +247,50 @@ namespace Smdn.Reflection.ReverseGenerating.GeneratorTestCases.TypeDeclaration.R
     }
 #pragma warning restore CS0660,CS0661
   }
+
+  namespace Unsafe {
+#pragma warning disable CS0649
+    namespace RecordClasses {
+#if false // CS8908 https://learn.microsoft.com/dotnet/csharp/whats-new/breaking-changes/compiler%20breaking%20changes%20-%20dotnet%2010#record-and-record-struct-types-cannot-define-pointer-type-members-even-when-providing-their-own-equals-implementations
+      [TypeDeclarationTestCase("public unsafe record class R0", TypeDetectUnsafe = true, TypeEnableRecordTypes = true)]
+      public unsafe record R0(int* X);
+
+      [TypeDeclarationTestCase("public unsafe record class R1", TypeDetectUnsafe = true, TypeEnableRecordTypes = true)]
+      public unsafe record class R1(int* X);
+#endif
+
+      [TypeDeclarationTestCase("public record class RWithNoPointerFields", TypeDetectUnsafe = true, TypeEnableRecordTypes = true)]
+      [TypeDeclarationTestCase("public record class RWithNoPointerFields", TypeDetectUnsafe = false, TypeEnableRecordTypes = true)]
+      [TypeDeclarationTestCase("public class RWithNoPointerFields", TypeDetectUnsafe = true, TypeEnableRecordTypes = false)]
+      [TypeDeclarationTestCase("public class RWithNoPointerFields", TypeDetectUnsafe = false, TypeEnableRecordTypes = false)]
+      public unsafe record class RWithNoPointerFields(int X);
+    }
+
+    namespace RecordStructs {
+#if false // CS8908 https://learn.microsoft.com/dotnet/csharp/whats-new/breaking-changes/compiler%20breaking%20changes%20-%20dotnet%2010#record-and-record-struct-types-cannot-define-pointer-type-members-even-when-providing-their-own-equals-implementations
+      [TypeDeclarationTestCase("public unsafe record struct RS", TypeDetectUnsafe = true, TypeEnableRecordTypes = true)]
+      public unsafe record struct RS(int* X);
+#endif
+
+      [TypeDeclarationTestCase("public record struct RSWithNoPointerFields", TypeDetectUnsafe = true, TypeEnableRecordTypes = true)]
+      [TypeDeclarationTestCase("public record struct RSWithNoPointerFields", TypeDetectUnsafe = false, TypeEnableRecordTypes = true)]
+      [TypeDeclarationTestCase("public struct RSWithNoPointerFields", TypeDetectUnsafe = true, TypeEnableRecordTypes = false)]
+      [TypeDeclarationTestCase("public struct RSWithNoPointerFields", TypeDetectUnsafe = false, TypeEnableRecordTypes = false)]
+      public unsafe record struct RSWithNoPointerFields(int X);
+    }
+
+    namespace ReadOnlyRecordStructs {
+#if false // CS8908 https://learn.microsoft.com/dotnet/csharp/whats-new/breaking-changes/compiler%20breaking%20changes%20-%20dotnet%2010#record-and-record-struct-types-cannot-define-pointer-type-members-even-when-providing-their-own-equals-implementations
+      [TypeDeclarationTestCase("public unsafe readonly record struct RRS", TypeDetectUnsafe = true, TypeEnableRecordTypes = true)]
+      public unsafe readonly record struct RRS(int* X);
+#endif
+
+      [TypeDeclarationTestCase("public readonly record struct RRSWithNoPointerFields", TypeDetectUnsafe = true, TypeEnableRecordTypes = true)]
+      [TypeDeclarationTestCase("public readonly record struct RRSWithNoPointerFields", TypeDetectUnsafe = false, TypeEnableRecordTypes = true)]
+      [TypeDeclarationTestCase("public readonly struct RRSWithNoPointerFields", TypeDetectUnsafe = true, TypeEnableRecordTypes = false)]
+      [TypeDeclarationTestCase("public readonly struct RRSWithNoPointerFields", TypeDetectUnsafe = false, TypeEnableRecordTypes = false)]
+      public unsafe readonly record struct RRSWithNoPointerFields(int X);
+    }
+#pragma warning restore CS0649
+  }
 }

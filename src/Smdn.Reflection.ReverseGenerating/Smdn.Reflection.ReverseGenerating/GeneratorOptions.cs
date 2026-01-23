@@ -39,6 +39,7 @@ public class GeneratorOptions : ICloneable {
     public bool OmitEnumUnderlyingTypeIfPossible { get; set; } = false;
     public bool EnableRecordTypes { get; set; } = false;
     public bool OmitRecordImplicitInterface { get; set; } = false;
+    public bool DetectUnsafe { get; set; } = true;
 #if SYSTEM_REFLECTION_NULLABILITYINFOCONTEXT
     public NullabilityInfoContext? NullabilityInfoContext { get; set; } = new();
     public object? NullabilityInfoContextLockObject { get; set; }

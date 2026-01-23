@@ -27,6 +27,7 @@ partial class GeneratorTests {
     typeDeclarationOptions.OmitEnumUnderlyingTypeIfPossible = testCaseAttribute.TypeOmitEnumUnderlyingTypeIfPossible;
     typeDeclarationOptions.EnableRecordTypes = testCaseAttribute.TypeEnableRecordTypes;
     typeDeclarationOptions.OmitRecordImplicitInterface = testCaseAttribute.TypeOmitRecordImplicitInterface;
+    typeDeclarationOptions.DetectUnsafe = testCaseAttribute.TypeDetectUnsafe;
 #if SYSTEM_REFLECTION_NULLABILITYINFOCONTEXT
     typeDeclarationOptions.NullabilityInfoContext = testCaseAttribute.TypeEnableNullabilityAnnotations
       ? typeDeclarationOptions.NullabilityInfoContext ?? new()
@@ -112,6 +113,7 @@ public abstract class GeneratorTestCaseAttribute : Attribute, ITestCaseAttribute
   public bool TypeOmitEnumUnderlyingTypeIfPossible { get; set; } = false;
   public bool TypeEnableRecordTypes { get; set; } = false;
   public bool TypeOmitRecordImplicitInterface { get; set; } = false;
+  public bool TypeDetectUnsafe { get; set; } = false;
   public bool TypeEnableNullabilityAnnotations { get; set; } = true;
   public bool AttributeWithNamespace { get; set; } = true;
   public bool AttributeWithNamedArguments { get; set; } = false;

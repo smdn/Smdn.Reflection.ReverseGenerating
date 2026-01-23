@@ -125,6 +125,11 @@ public static partial class Generator {
       yield break;
     }
 
+    static bool HasPointerFields(Type t)
+      => t
+        .GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static | BindingFlags.DeclaredOnly)
+        .Any(static f => f.FieldType.IsPointer);
+
     string typeDeclaration;
 
     if (t.IsInterface) {
@@ -132,10 +137,11 @@ public static partial class Generator {
     }
     else if (t.IsValueType) {
       var isReadOnly = t.IsReadOnlyValueType() ? "readonly " : string.Empty;
+      var isUnsafe = (options.TypeDeclaration.DetectUnsafe && HasPointerFields(t)) ? "unsafe " : string.Empty;
       var isByRefLike = t.IsByRefLikeValueType() ? "ref " : string.Empty;
       var isRecord = (options.TypeDeclaration.EnableRecordTypes && t.IsRecord()) ? "record " : string.Empty;
 
-      typeDeclaration = $"{modifierNew}{accessibilityList}{isReadOnly}{isByRefLike}{isRecord}struct {typeName}";
+      typeDeclaration = $"{modifierNew}{accessibilityList}{isReadOnly}{isByRefLike}{isUnsafe}{isRecord}struct {typeName}";
     }
     else {
       string? modifier = null;
@@ -147,9 +153,10 @@ public static partial class Generator {
       else if (t.IsSealed)
         modifier = "sealed ";
 
+      var isUnsafe = (options.TypeDeclaration.DetectUnsafe && HasPointerFields(t)) ? "unsafe " : string.Empty;
       var isRecord = (options.TypeDeclaration.EnableRecordTypes && t.IsRecord()) ? "record " : string.Empty;
 
-      typeDeclaration = $"{modifierNew}{accessibilityList}{modifier}{isRecord}class {typeName}";
+      typeDeclaration = $"{modifierNew}{accessibilityList}{modifier}{isUnsafe}{isRecord}class {typeName}";
     }
 
     if (!generateExplicitBaseTypeAndInterfaces) {

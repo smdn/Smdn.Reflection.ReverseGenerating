@@ -19,4 +19,20 @@ namespace Smdn.Reflection.ReverseGenerating.GeneratorTestCases.TypeDeclaration.I
   class ModifierNew : Accessibilities {
     [TypeDeclarationTestCase("new public interface I3")] new public interface I3 { }
   }
+
+  namespace Unsafe {
+    [TypeDeclarationTestCase("public interface InterfaceWithNoPointerFields", TypeDetectUnsafe = true)]
+    [TypeDeclarationTestCase("public interface InterfaceWithNoPointerFields", TypeDetectUnsafe = false)]
+    public /*safe*/ interface InterfaceWithNoPointerFields {
+      unsafe int* P { get; set; }
+      unsafe void M(int* p);
+    }
+
+    [TypeDeclarationTestCase("public interface UnsafeInterfaceWithNoPointerFields", TypeDetectUnsafe = true)]
+    [TypeDeclarationTestCase("public interface UnsafeInterfaceWithNoPointerFields", TypeDetectUnsafe = false)]
+    public unsafe interface UnsafeInterfaceWithNoPointerFields {
+      unsafe int* P { get; set; }
+      unsafe void M(int* p);
+    }
+  }
 }
