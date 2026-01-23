@@ -125,10 +125,10 @@ public static partial class Generator {
       yield break;
     }
 
-    static bool HasPointerFields(Type t)
+    static bool HasUnsafeFields(Type t)
       => t
         .GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static | BindingFlags.DeclaredOnly)
-        .Any(static f => f.FieldType.IsPointer);
+        .Any(static f => f.FieldType.IsPointer || f.IsFixedBuffer());
 
     string typeDeclaration;
 
@@ -137,7 +137,7 @@ public static partial class Generator {
     }
     else if (t.IsValueType) {
       var isReadOnly = t.IsReadOnlyValueType() ? "readonly " : string.Empty;
-      var isUnsafe = (options.TypeDeclaration.DetectUnsafe && HasPointerFields(t)) ? "unsafe " : string.Empty;
+      var isUnsafe = (options.TypeDeclaration.DetectUnsafe && HasUnsafeFields(t)) ? "unsafe " : string.Empty;
       var isByRefLike = t.IsByRefLikeValueType() ? "ref " : string.Empty;
       var isRecord = (options.TypeDeclaration.EnableRecordTypes && t.IsRecord()) ? "record " : string.Empty;
 
@@ -153,7 +153,7 @@ public static partial class Generator {
       else if (t.IsSealed)
         modifier = "sealed ";
 
-      var isUnsafe = (options.TypeDeclaration.DetectUnsafe && HasPointerFields(t)) ? "unsafe " : string.Empty;
+      var isUnsafe = (options.TypeDeclaration.DetectUnsafe && HasUnsafeFields(t)) ? "unsafe " : string.Empty;
       var isRecord = (options.TypeDeclaration.EnableRecordTypes && t.IsRecord()) ? "record " : string.Empty;
 
       typeDeclaration = $"{modifierNew}{accessibilityList}{modifier}{isUnsafe}{isRecord}class {typeName}";
@@ -423,8 +423,10 @@ public static partial class Generator {
         options: options
       );
 
-      sb
-        .Append(
+      var attrFixedBuffer = field.GetCustomAttribute<FixedBufferAttribute>(inherit: false);
+
+      if (attrFixedBuffer is null) {
+        sb.Append(
           field.FormatTypeName(
 #pragma warning disable SA1114
 #if SYSTEM_REFLECTION_NULLABILITYINFOCONTEXT
@@ -434,9 +436,23 @@ public static partial class Generator {
             typeWithNamespace: memberOptions.WithNamespace
 #pragma warning restore SA1114
           )
-        )
+        );
+      }
+      else {
+        sb.Append("fixed ").Append(
+          attrFixedBuffer.ElementType.FormatTypeName(
+            typeWithNamespace: options.MemberDeclaration.WithNamespace,
+            translateLanguagePrimitiveType: options.TranslateLanguagePrimitiveTypeDeclaration
+          )
+        );
+      }
+
+      sb
         .Append(' ')
         .Append(GenerateMemberName(field, options));
+
+      if (attrFixedBuffer is not null)
+        sb.Append('[').Append(attrFixedBuffer.Length).Append(']');
 
       if (field.IsStatic && (field.IsLiteral || field.IsInitOnly) && !field.FieldType.ContainsGenericParameters) {
         if (field.TryGetValue(null, out var val)) {

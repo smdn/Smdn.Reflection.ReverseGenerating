@@ -25,11 +25,26 @@ public unsafe struct PointerTypes {
 }
 
 public unsafe struct FixedSizeBuffers {
-  [SkipTestCase("`fixed` field is not supported currently")]
-  [MemberDeclarationTestCase("public fixed int F0[4];")] public fixed int F0[4];
+  [MemberDeclarationTestCase("public fixed int Fixed4Int[4];", TranslateLanguagePrimitiveTypeDeclaration = true)]
+  [MemberDeclarationTestCase("public fixed Int32 Fixed4Int[4];", TranslateLanguagePrimitiveTypeDeclaration = false, MemberWithNamespace = false)]
+  [MemberDeclarationTestCase("public fixed System.Int32 Fixed4Int[4];", TranslateLanguagePrimitiveTypeDeclaration = false, MemberWithNamespace = true)]
+  public fixed int Fixed4Int[4];
 
-  [MemberDeclarationTestCase("public FixedSizeBuffers.<F1>e__FixedBuffer F1;", MemberWithNamespace = false, MemberWithDeclaringTypeName = false)]
-  public fixed int F1[4];
+  [MemberDeclarationTestCase("public fixed byte Fixed2Byte[2];", TranslateLanguagePrimitiveTypeDeclaration = true)]
+  [MemberDeclarationTestCase("public fixed Byte Fixed2Byte[2];", TranslateLanguagePrimitiveTypeDeclaration = false, MemberWithNamespace = false)]
+  [MemberDeclarationTestCase("public fixed System.Byte Fixed2Byte[2];", TranslateLanguagePrimitiveTypeDeclaration = false, MemberWithNamespace = true)]
+  public fixed byte Fixed2Byte[2];
+
+#if false // CS1663
+  [MemberDeclarationTestCase("public fixed int* Fixed4IntPointer[2];")]
+  public fixed int* Fixed4IntPointer[2];
+#endif
+
+#if false
+  public readonly fixed int FReadOnlyFixed[1]; // CS0106
+  public const fixed int FConstFixed[1]; // CS1031
+  public static fixed int FStaticFixed[1]; // CS0106
+#endif
 }
 
 public class ValueTupleTypes {

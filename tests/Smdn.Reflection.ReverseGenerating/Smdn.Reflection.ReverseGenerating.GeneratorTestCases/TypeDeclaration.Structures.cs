@@ -48,7 +48,6 @@ namespace Smdn.Reflection.ReverseGenerating.GeneratorTestCases.TypeDeclaration.S
 #pragma warning restore CS0169
       }
 
-      [SkipTestCase("`fixed` field is not supported currently")]
       [TypeDeclarationTestCase("public unsafe struct UnsafeStructFixedField", TypeDetectUnsafe = true)]
       [TypeDeclarationTestCase("public struct UnsafeStructFixedField", TypeDetectUnsafe = false)]
       public unsafe struct UnsafeStructFixedField {
