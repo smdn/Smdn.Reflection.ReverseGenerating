@@ -196,6 +196,20 @@ public static partial class Generator {
       options: options
     );
 
+  private static string GenerateGenericParameterConstraintClause(
+    IEnumerable<Type> genericParameters,
+    ISet<string>? referencingNamespaces,
+    GeneratorOptions options
+  )
+    => string.Join(
+      " ",
+      genericParameters
+        .Select(
+          param => GenerateGenericParameterConstraintDeclaration(param, referencingNamespaces, options)
+        )
+        .Where(static d => !string.IsNullOrEmpty(d))
+    );
+
   public static string GenerateGenericParameterConstraintDeclaration(
     Type genericParameter,
     ISet<string>? referencingNamespaces,
@@ -820,20 +834,11 @@ public static partial class Generator {
     }
 
     var methodGenericParameters = m.IsGenericMethod
-      ? string.Concat(
-          "<",
-          string.Join(
-            ", ",
-            m.GetGenericArguments().Select(p => {
-              var name = p.FormatTypeName(typeWithNamespace: formattingOptions.FormatTypeWithNamespace);
-              var attributeList = GenerateAttributeList(p, referencingNamespaces, options);
-
-              return attributeList.Any()
-                ? string.Join(" ", attributeList) + " " + name
-                : name;
-            })
-          ),
-          ">"
+      ? GenerateTypeParameterDeclaration(
+          genericArguments: m.GetGenericArguments(),
+          referencingNamespaces: referencingNamespaces,
+          options: options,
+          formatTypeWithNamespace: formattingOptions.FormatTypeWithNamespace
         )
       : null;
 
@@ -861,13 +866,10 @@ public static partial class Generator {
           : null;
     var methodConstraints = genericParameters is null
       ? null
-      : string.Join(
-          " ",
-          genericParameters
-            .Select(
-              param => GenerateGenericParameterConstraintDeclaration(param, referencingNamespaces, options)
-            )
-            .Where(static d => !string.IsNullOrEmpty(d))
+      : GenerateGenericParameterConstraintClause(
+          genericParameters: genericParameters,
+          referencingNamespaces: referencingNamespaces,
+          options: options
         );
     string? methodName = null;
     var isFinalizer = false;
@@ -1008,6 +1010,28 @@ public static partial class Generator {
     return sb.Append(methodBody).Append(endOfMethodBody).ToString();
   }
 #pragma warning restore CA1502
+
+  private static string GenerateTypeParameterDeclaration(
+    IEnumerable<Type> genericArguments,
+    ISet<string>? referencingNamespaces,
+    GeneratorOptions options,
+    bool formatTypeWithNamespace
+  )
+    => string.Concat(
+      "<",
+      string.Join(
+        ", ",
+        genericArguments.Select(p => {
+          var name = p.FormatTypeName(typeWithNamespace: formatTypeWithNamespace);
+          var attributeList = GenerateAttributeList(p, referencingNamespaces, options);
+
+          return attributeList.Any()
+            ? string.Join(" ", attributeList) + " " + name
+            : name;
+        })
+      ),
+      ">"
+    );
 
   private static string GenerateParameterDeclaration(
     ParameterInfo p,
