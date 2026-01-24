@@ -1422,6 +1422,9 @@ public static partial class Generator {
         if (f.IsLiteral)
           sb.Append("const ");
 
+        if (f.IsRequired())
+          sb.Append("required ");
+
         break;
 
       case PropertyInfo p:
@@ -1446,7 +1449,9 @@ public static partial class Generator {
 
         AppendMethodModifiers(sb, p.GetAccessors(true).FirstOrDefault());
 
-        if (p.IsAccessorReadOnly())
+        if (p.IsRequired())
+          sb.Append("required ");
+        else if (p.IsAccessorReadOnly())
           sb.Append("readonly ");
 
         break;

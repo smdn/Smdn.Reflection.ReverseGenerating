@@ -139,3 +139,21 @@ public readonly ref struct RefReadOnlyFieldsReadOnlyModifier {
 }
 #nullable restore
 #endif
+
+#if SYSTEM_RUNTIME_COMPILERSERVICES_COMPILERFEATUREREQUIREDATTRIBUTE
+public class ClassRequiredFields {
+  [MemberDeclarationTestCase($"public required int {nameof(Required)};")] public required int Required;
+}
+
+public struct StructRequiredFields {
+  [MemberDeclarationTestCase($"public required int {nameof(Required)};")] public required int Required;
+}
+
+public record class RecordClassRequiredFields(int X) {
+  [MemberDeclarationTestCase($"public required int {nameof(Required)};")] public required int Required;
+}
+
+public record struct RecordStructRequiredFields(int X) {
+  [MemberDeclarationTestCase($"public required int {nameof(Required)};")] public required int Required;
+}
+#endif // SYSTEM_RUNTIME_COMPILERSERVICES_COMPILERFEATUREREQUIREDATTRIBUTE

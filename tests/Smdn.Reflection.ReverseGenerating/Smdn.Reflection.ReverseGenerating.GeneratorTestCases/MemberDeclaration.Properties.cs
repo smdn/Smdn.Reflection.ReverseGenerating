@@ -233,3 +233,44 @@ public class AccessibilitiesOfAccessors_FamilyOrAssembly {
   [MemberDeclarationTestCase("internal protected int P7 { get; }", IgnorePrivateOrAssembly = true)] internal protected int P7 { get; private protected set; }
   [MemberDeclarationTestCase("internal protected int P8 { get; }", IgnorePrivateOrAssembly = true)] internal protected int P8 { get; private set; }
 }
+
+#if SYSTEM_RUNTIME_COMPILERSERVICES_COMPILERFEATUREREQUIREDATTRIBUTE
+public class ClassRequiredProperties {
+  [MemberDeclarationTestCase($"public required int {nameof(Required)} {{ get; set; }}")] public required int Required { get; set; }
+  [MemberDeclarationTestCase($"public required int {nameof(RequiredInitOnly)} {{ get; init; }}")] public required int RequiredInitOnly { get; init; }
+
+  public abstract class WithAbstractOrVirtualModifiers {
+    [MemberDeclarationTestCase($"public abstract required int {nameof(AbstractRequired)} {{ get; set; }}")] public abstract required int AbstractRequired { get; set; }
+    [MemberDeclarationTestCase($"public abstract required int {nameof(RequiredAbstract)} {{ get; set; }}")] public required abstract int RequiredAbstract { get; set; }
+
+    [MemberDeclarationTestCase($"public virtual required int {nameof(VirtualRequired)} {{ get; set; }}")] public virtual required int VirtualRequired { get; set; }
+    [MemberDeclarationTestCase($"public virtual required int {nameof(RequiredVirtual)} {{ get; set; }}")] public required virtual int RequiredVirtual { get; set; }
+
+    [MemberDeclarationTestCase($"public virtual int {nameof(NonRequiredVirtual)} {{ get; set; }}")] public virtual int NonRequiredVirtual { get; set; }
+    [MemberDeclarationTestCase($"public virtual int {nameof(NonRequiredVirtualInitOnly)} {{ get; init; }}")] public virtual int NonRequiredVirtualInitOnly { get; init; }
+  }
+
+  public class WithOverrideModifiers : WithAbstractOrVirtualModifiers{
+    [MemberDeclarationTestCase($"public override required int {nameof(AbstractRequired)} {{ get; set; }}")] public override required int AbstractRequired { get; set; }
+    [MemberDeclarationTestCase($"public override required int {nameof(RequiredAbstract)} {{ get; set; }}")] public required override int RequiredAbstract { get; set; }
+
+    [MemberDeclarationTestCase($"public override required int {nameof(NonRequiredVirtual)} {{ get; set; }}")] public override required int NonRequiredVirtual { get; set; }
+    [MemberDeclarationTestCase($"public override required int {nameof(NonRequiredVirtualInitOnly)} {{ get; init; }}")] public required override int NonRequiredVirtualInitOnly { get; init; }
+  }
+}
+
+public struct StructRequiredProperties {
+  [MemberDeclarationTestCase($"public required int {nameof(Required)} {{ get; set; }}")] public required int Required { get; set; }
+  [MemberDeclarationTestCase($"public required int {nameof(RequiredInitOnly)} {{ get; init; }}")] public required int RequiredInitOnly { get; init; }
+}
+
+public record class RecordClassRequiredProperties(int X) {
+  [MemberDeclarationTestCase($"public required int {nameof(Required)} {{ get; set; }}")] public required int Required { get; set; }
+  [MemberDeclarationTestCase($"public required int {nameof(RequiredInitOnly)} {{ get; init; }}")] public required int RequiredInitOnly { get; init; }
+}
+
+public record struct RecordStructRequiredProperties(int X) {
+  [MemberDeclarationTestCase($"public required int {nameof(Required)} {{ get; set; }}")] public required int Required { get; set; }
+  [MemberDeclarationTestCase($"public required int {nameof(RequiredInitOnly)} {{ get; init; }}")] public required int RequiredInitOnly { get; init; }
+}
+#endif // SYSTEM_RUNTIME_COMPILERSERVICES_COMPILERFEATUREREQUIREDATTRIBUTE
