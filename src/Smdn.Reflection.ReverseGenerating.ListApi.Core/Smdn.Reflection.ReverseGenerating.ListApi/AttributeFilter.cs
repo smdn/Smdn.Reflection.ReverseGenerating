@@ -74,10 +74,16 @@ public static class AttributeFilter {
           // TupleElementNamesAttribute from System.Runtime/mscorlib
           // TupleElementNamesAttribute from System.ValueTuple
           return false;
+        if (ROCType.FullNameEquals(typeof(System.Runtime.CompilerServices.FixedBufferAttribute), attrType))
+          return false;
+        if ("System.Runtime.CompilerServices.RequiredMemberAttribute".Equals(attrType.FullName, StringComparison.Ordinal))
+          return false;
         break;
 
       case PropertyInfo:
         if (ROCType.FullNameEquals(typeof(System.Runtime.CompilerServices.TupleElementNamesAttribute), attrType))
+          return false;
+        if ("System.Runtime.CompilerServices.RequiredMemberAttribute".Equals(attrType.FullName, StringComparison.Ordinal))
           return false;
         break;
 
@@ -95,8 +101,16 @@ public static class AttributeFilter {
           return false;
         if (ROCType.FullNameEquals(typeof(System.ParamArrayAttribute), attrType))
           return false;
-        if (ROCType.FullNameEquals(typeof(System.Runtime.CompilerServices.TupleElementNamesAttribute), attrType))
-          return false;
+
+        if ("System.Runtime.CompilerServices".Equals(attrType.Namespace, StringComparison.Ordinal)) {
+          if ("TupleElementNamesAttribute".Equals(attrType.Name, StringComparison.Ordinal))
+            return false;
+          if ("RequiresLocationAttribute".Equals(attrType.Name, StringComparison.Ordinal))
+            return false;
+          if ("ScopedRefAttribute".Equals(attrType.Name, StringComparison.Ordinal))
+            return false;
+        }
+
         break;
     }
 
