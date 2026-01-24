@@ -12,18 +12,22 @@ public class Standard {
   [MemberDeclarationTestCase("public void M(int x, int y) {}")] public void M(int x, int y) { }
 }
 
-public class InOutRef {
-  [MemberDeclarationTestCase("public void M1(in int x) {}")] public void M1(in int x) { }
-  [MemberDeclarationTestCase("public void M2(out int x) {}")] public void M2(out int x) => throw new NotImplementedException();
-  [MemberDeclarationTestCase("public void M3(ref int x) {}")] public void M3(ref int x) => throw new NotImplementedException();
-  [MemberDeclarationTestCase("public void M4(ref readonly System.ReadOnlySpan<int> x) {}")] public void M4(ref readonly ReadOnlySpan<int> x) => throw new NotImplementedException();
+public class Modifiers {
+  [MemberDeclarationTestCase("public void In(in int x) {}")] public void In(in int x) => throw new NotImplementedException();
+  [MemberDeclarationTestCase("public void Out(out int x) {}")] public void Out(out int x) => throw new NotImplementedException();
+  [MemberDeclarationTestCase("public void Ref(ref int x) {}")] public void Ref(ref int x) => throw new NotImplementedException();
+  [MemberDeclarationTestCase("public void RefReadOnly(ref readonly System.ReadOnlySpan<int> x) {}")] public void RefReadOnly(ref readonly ReadOnlySpan<int> x) => throw new NotImplementedException();
+  [MemberDeclarationTestCase("public ref int RefReturn() {}")] public ref int RefReturn() => throw new NotImplementedException();
+  [MemberDeclarationTestCase("public ref readonly int RefReadOnlyReturn() {}")] public ref readonly int RefReadOnlyReturn() => throw new NotImplementedException();
 }
 
-public class InOutRefVirtual {
-  [MemberDeclarationTestCase("public virtual void M1(in int x) {}")] public virtual void M1(in int x) { }
-  [MemberDeclarationTestCase("public virtual void M2(out int x) {}")] public virtual void M2(out int x) => throw new NotImplementedException();
-  [MemberDeclarationTestCase("public virtual void M3(ref int x) {}")] public virtual void M3(ref int x) => throw new NotImplementedException();
-  [MemberDeclarationTestCase("public virtual void M4(ref readonly System.ReadOnlySpan<int> x) {}")] public virtual void M4(ref readonly ReadOnlySpan<int> x) => throw new NotImplementedException();
+public class ModifiersWithVirtual {
+  [MemberDeclarationTestCase("public virtual void In(in int x) {}")] public virtual void In(in int x) { }
+  [MemberDeclarationTestCase("public virtual void Out(out int x) {}")] public virtual void Out(out int x) => throw new NotImplementedException();
+  [MemberDeclarationTestCase("public virtual void Ref(ref int x) {}")] public virtual void Ref(ref int x) => throw new NotImplementedException();
+  [MemberDeclarationTestCase("public virtual void RefReadOnly(ref readonly System.ReadOnlySpan<int> x) {}")] public virtual void RefReadOnly(ref readonly ReadOnlySpan<int> x) => throw new NotImplementedException();
+  [MemberDeclarationTestCase("public virtual ref int RefReturn() {}")] public virtual ref int RefReturn() => throw new NotImplementedException();
+  [MemberDeclarationTestCase("public virtual ref readonly int RefReadOnlyReturn() {}")] public virtual ref readonly int RefReadOnlyReturn() => throw new NotImplementedException();
 }
 
 public class Params {

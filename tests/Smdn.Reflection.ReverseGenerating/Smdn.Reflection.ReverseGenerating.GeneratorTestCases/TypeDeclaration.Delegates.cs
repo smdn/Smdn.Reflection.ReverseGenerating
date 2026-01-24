@@ -40,4 +40,13 @@ namespace Smdn.Reflection.ReverseGenerating.GeneratorTestCases.TypeDeclaration.D
     [TypeDeclarationTestCase("public class CDelegate")] public class CDelegate : Delegate {}
 #endif
   }
+
+  public class ParameterModifiers {
+    [TypeDeclarationTestCase("public delegate void In(in int x);")] public delegate void In(in int x);
+    [TypeDeclarationTestCase("public delegate void Out(out int x);")] public delegate void Out(out int x);
+    [TypeDeclarationTestCase("public delegate void Ref(ref int x);")] public delegate void Ref(ref int x);
+    [TypeDeclarationTestCase("public delegate void RefReadOnly(ref readonly System.ReadOnlySpan<int> x);")] public delegate void RefReadOnly(ref readonly ReadOnlySpan<int> x);
+    [TypeDeclarationTestCase("public delegate ref int RefReturn();")] public delegate ref int RefReturn();
+    [TypeDeclarationTestCase("public delegate ref readonly int RefReadOnlyReturn();")] public delegate ref readonly int RefReadOnlyReturn();
+  }
 }
