@@ -501,7 +501,14 @@ public static partial class CSharpFormatter /* ITypeFormatter */ {
           string.Equals("System.Runtime.CompilerServices.ParamCollectionAttribute", d.AttributeType.FullName, StringComparison.Ordinal)
       )
     ) {
-      ret.Append("params ");
+      ret.Append("params "); // params <ref-type> is `scoped` by default
+    }
+    else if (
+      p.GetCustomAttributesData().Any(
+        static d => "System.Runtime.CompilerServices.ScopedRefAttribute".Equals(d.AttributeType.FullName, StringComparison.Ordinal)
+      )
+    ) {
+      ret.Append("scoped ");
     }
 
     ret.Append(

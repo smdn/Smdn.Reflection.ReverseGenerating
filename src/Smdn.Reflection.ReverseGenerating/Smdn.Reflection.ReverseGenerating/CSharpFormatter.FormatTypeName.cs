@@ -320,7 +320,7 @@ static partial class CSharpFormatter {
     }
   }
 
-  private static string? GetByRefParameterModifier(ParameterInfo parameter)
+  private static string GetByRefParameterModifier(ParameterInfo parameter)
   {
     static bool HasRequiresLocationAttribute(ParameterInfo p)
       => p
@@ -332,28 +332,11 @@ static partial class CSharpFormatter {
         .GetCustomAttributesData()
         .Any(static d => "System.Runtime.CompilerServices.IsReadOnlyAttribute".Equals(d.AttributeType.FullName, StringComparison.Ordinal));
 
-    var isScoped = parameter
-      .GetCustomAttributesData()
-      .Any(static d => "System.Runtime.CompilerServices.ScopedRefAttribute".Equals(d.AttributeType.FullName, StringComparison.Ordinal));
-
-    if (parameter.IsIn) {
-      var isRefReadOnly = HasRequiresLocationAttribute(parameter);
-
-      if (isScoped)
-        return isRefReadOnly ? "scoped ref readonly " : "scoped in ";
-      else
-        return isRefReadOnly ? "ref readonly " : "in ";
-    }
-    else if (parameter.IsOut) {
-      return isScoped ? "scoped out " : "out ";
-    }
-    else {
-      var isRefReadOnly = HasIsReadOnlyAttribute(parameter);
-
-      if (isScoped)
-        return isRefReadOnly ? "scoped ref readonly " : "scoped ref ";
-      else
-        return isRefReadOnly ? "ref readonly " : "ref ";
-    }
+    if (parameter.IsIn)
+      return HasRequiresLocationAttribute(parameter) ? "ref readonly " : "in ";
+    else if (parameter.IsOut)
+      return "out ";
+    else
+      return HasIsReadOnlyAttribute(parameter) ? "ref readonly " : "ref ";
   }
 }
