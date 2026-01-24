@@ -1,6 +1,7 @@
 // SPDX-FileCopyrightText: 2020 smdn <smdn@smdn.jp>
 // SPDX-License-Identifier: MIT
 using System;
+using System.Linq;
 using System.Reflection;
 
 namespace Smdn.Reflection.ReverseGenerating;
@@ -317,5 +318,21 @@ static partial class CSharpFormatter {
         t = t.BaseType;
       }
     }
+  }
+
+  private static string? GetByRefParameterModifier(ParameterInfo parameter)
+  {
+    if (parameter.IsIn) {
+      var isRefReadOnly = parameter
+        .GetCustomAttributesData()
+        .Any(static d => "System.Runtime.CompilerServices.RequiresLocationAttribute".Equals(d.AttributeType.FullName, StringComparison.Ordinal));
+
+      return isRefReadOnly ? "ref readonly " : "in ";
+    }
+
+    if (parameter.IsOut)
+      return "out ";
+
+    return "ref ";
   }
 }

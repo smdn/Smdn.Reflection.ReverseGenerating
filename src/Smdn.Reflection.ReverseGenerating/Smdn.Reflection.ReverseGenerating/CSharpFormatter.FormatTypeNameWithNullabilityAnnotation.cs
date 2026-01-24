@@ -43,20 +43,7 @@ static partial class CSharpFormatter {
     if (target.Type.IsByRef) {
       switch (options.AttributeProvider) {
         case ParameterInfo para:
-          // retval/parameter modifiers
-          if (para.IsIn) {
-            var isRefReadOnly = para
-              .GetCustomAttributesData()
-              .Any(static d => string.Equals(d.AttributeType.FullName, "System.Runtime.CompilerServices.RequiresLocationAttribute", StringComparison.Ordinal));
-
-            builder.Append(isRefReadOnly ? "ref readonly " : "in ");
-          }
-          else if (para.IsOut) {
-            builder.Append("out ");
-          }
-          else { /*if (para.IsRetval)*/
-            builder.Append("ref ");
-          }
+          builder.Append(GetByRefParameterModifier(para));
 
           break;
 
