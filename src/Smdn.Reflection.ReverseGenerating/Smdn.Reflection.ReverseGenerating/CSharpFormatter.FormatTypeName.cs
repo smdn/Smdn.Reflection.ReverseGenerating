@@ -322,17 +322,28 @@ static partial class CSharpFormatter {
 
   private static string? GetByRefParameterModifier(ParameterInfo parameter)
   {
-    if (parameter.IsIn) {
-      var isRefReadOnly = parameter
+    static bool HasRequiresLocationAttribute(ParameterInfo p)
+      => p
         .GetCustomAttributesData()
         .Any(static d => "System.Runtime.CompilerServices.RequiresLocationAttribute".Equals(d.AttributeType.FullName, StringComparison.Ordinal));
 
+    static bool HasIsReadOnlyAttribute(ParameterInfo p)
+      => p
+        .GetCustomAttributesData()
+        .Any(static d => "System.Runtime.CompilerServices.IsReadOnlyAttribute".Equals(d.AttributeType.FullName, StringComparison.Ordinal));
+
+    if (parameter.IsIn) {
+      var isRefReadOnly = HasRequiresLocationAttribute(parameter);
+
       return isRefReadOnly ? "ref readonly " : "in ";
     }
-
-    if (parameter.IsOut)
+    else if (parameter.IsOut) {
       return "out ";
+    }
+    else {
+      var isRefReadOnly = HasIsReadOnlyAttribute(parameter);
 
-    return "ref ";
+      return isRefReadOnly ? "ref readonly " : "ref ";
+    }
   }
 }
