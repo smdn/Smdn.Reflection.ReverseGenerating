@@ -332,18 +332,28 @@ static partial class CSharpFormatter {
         .GetCustomAttributesData()
         .Any(static d => "System.Runtime.CompilerServices.IsReadOnlyAttribute".Equals(d.AttributeType.FullName, StringComparison.Ordinal));
 
+    var isScoped = parameter
+      .GetCustomAttributesData()
+      .Any(static d => "System.Runtime.CompilerServices.ScopedRefAttribute".Equals(d.AttributeType.FullName, StringComparison.Ordinal));
+
     if (parameter.IsIn) {
       var isRefReadOnly = HasRequiresLocationAttribute(parameter);
 
-      return isRefReadOnly ? "ref readonly " : "in ";
+      if (isScoped)
+        return isRefReadOnly ? "scoped ref readonly " : "scoped in ";
+      else
+        return isRefReadOnly ? "ref readonly " : "in ";
     }
     else if (parameter.IsOut) {
-      return "out ";
+      return isScoped ? "scoped out " : "out ";
     }
     else {
       var isRefReadOnly = HasIsReadOnlyAttribute(parameter);
 
-      return isRefReadOnly ? "ref readonly " : "ref ";
+      if (isScoped)
+        return isRefReadOnly ? "scoped ref readonly " : "scoped ref ";
+      else
+        return isRefReadOnly ? "ref readonly " : "ref ";
     }
   }
 }

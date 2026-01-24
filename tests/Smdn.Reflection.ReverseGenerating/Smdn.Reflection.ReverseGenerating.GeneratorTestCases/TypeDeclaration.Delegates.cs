@@ -48,5 +48,11 @@ namespace Smdn.Reflection.ReverseGenerating.GeneratorTestCases.TypeDeclaration.D
     [TypeDeclarationTestCase("public delegate void RefReadOnly(ref readonly System.ReadOnlySpan<int> x);")] public delegate void RefReadOnly(ref readonly ReadOnlySpan<int> x);
     [TypeDeclarationTestCase("public delegate ref int RefReturn();")] public delegate ref int RefReturn();
     [TypeDeclarationTestCase("public delegate ref readonly int RefReadOnlyReturn();")] public delegate ref readonly int RefReadOnlyReturn();
+
+    [TypeDeclarationTestCase("public delegate void Scoped(System.ReadOnlySpan<int> x);")] public delegate void Scoped(scoped ReadOnlySpan<int> x);
+    [TypeDeclarationTestCase("public delegate void ScopedIn(scoped in int x);")] public delegate void ScopedIn(scoped in int x);
+    [TypeDeclarationTestCase("public delegate void ScopedOut(out int x);")] public delegate void ScopedOut(scoped out int x);
+    [TypeDeclarationTestCase("public delegate void ScopedRef(scoped ref int x);")] public delegate void ScopedRef(scoped ref int x);
+    [TypeDeclarationTestCase("public delegate void ScopedRefReadOnly(scoped ref readonly System.ReadOnlySpan<int> x);")] public delegate void ScopedRefReadOnly(scoped ref readonly ReadOnlySpan<int> x);
   }
 }

@@ -19,6 +19,12 @@ public class Modifiers {
   [MemberDeclarationTestCase("public void RefReadOnly(ref readonly System.ReadOnlySpan<int> x) {}")] public void RefReadOnly(ref readonly ReadOnlySpan<int> x) => throw new NotImplementedException();
   [MemberDeclarationTestCase("public ref int RefReturn() {}")] public ref int RefReturn() => throw new NotImplementedException();
   [MemberDeclarationTestCase("public ref readonly int RefReadOnlyReturn() {}")] public ref readonly int RefReadOnlyReturn() => throw new NotImplementedException();
+
+  [MemberDeclarationTestCase("public void Scoped(System.ReadOnlySpan<int> x) {}")] public void Scoped(scoped ReadOnlySpan<int> x) => throw new NotImplementedException();
+  [MemberDeclarationTestCase("public void ScopedIn(scoped in int x) {}")] public void ScopedIn(scoped in int x) => throw new NotImplementedException();
+  [MemberDeclarationTestCase("public void ScopedOut(out int x) {}")] public void ScopedOut(scoped out int x) => throw new NotImplementedException();
+  [MemberDeclarationTestCase("public void ScopedRef(scoped ref int x) {}")] public void ScopedRef(scoped ref int x) => throw new NotImplementedException();
+  [MemberDeclarationTestCase("public void ScopedRefReadOnly(scoped ref readonly System.ReadOnlySpan<int> x) {}")] public void ScopedRefReadOnly(scoped ref readonly ReadOnlySpan<int> x) => throw new NotImplementedException();
 }
 
 public class ModifiersWithVirtual {
@@ -28,6 +34,12 @@ public class ModifiersWithVirtual {
   [MemberDeclarationTestCase("public virtual void RefReadOnly(ref readonly System.ReadOnlySpan<int> x) {}")] public virtual void RefReadOnly(ref readonly ReadOnlySpan<int> x) => throw new NotImplementedException();
   [MemberDeclarationTestCase("public virtual ref int RefReturn() {}")] public virtual ref int RefReturn() => throw new NotImplementedException();
   [MemberDeclarationTestCase("public virtual ref readonly int RefReadOnlyReturn() {}")] public virtual ref readonly int RefReadOnlyReturn() => throw new NotImplementedException();
+
+  [MemberDeclarationTestCase("public virtual void Scoped(System.ReadOnlySpan<int> x) {}")] public virtual void Scoped(scoped ReadOnlySpan<int> x) => throw new NotImplementedException();
+  [MemberDeclarationTestCase("public virtual void ScopedIn(scoped in int x) {}")] public virtual void ScopedIn(scoped in int x) => throw new NotImplementedException();
+  [MemberDeclarationTestCase("public virtual void ScopedOut(out int x) {}")] public virtual void ScopedOut(scoped out int x) => throw new NotImplementedException();
+  [MemberDeclarationTestCase("public virtual void ScopedRef(scoped ref int x) {}")] public virtual void ScopedRef(scoped ref int x) => throw new NotImplementedException();
+  [MemberDeclarationTestCase("public virtual void ScopedRefReadOnly(scoped ref readonly System.ReadOnlySpan<int> x) {}")] public virtual void ScopedRefReadOnly(scoped ref readonly ReadOnlySpan<int> x) => throw new NotImplementedException();
 }
 
 public class Params {
