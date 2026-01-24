@@ -148,16 +148,36 @@ public class FieldAttributes {
   public class TupleElementNamesAttr {
     [MemberAttributeFilterTestCaseAttribute("")]
     [MemberAttributeFilterTestCaseAttribute("", FilterType = typeof(AttributeFilter), FilterMemberName = nameof(AttributeFilter.Default))]
+    public ValueTuple<int> SingleElementTuple => throw null;
+
+    [MemberAttributeFilterTestCaseAttribute("")]
+    [MemberAttributeFilterTestCaseAttribute("", FilterType = typeof(AttributeFilter), FilterMemberName = nameof(AttributeFilter.Default))]
     public (int, int) Unnamed;
 
     [MemberAttributeFilterTestCaseAttribute("[TupleElementNames(new string[] { \"X\", \"Y\" })]")]
     [MemberAttributeFilterTestCaseAttribute("", FilterType = typeof(AttributeFilter), FilterMemberName = nameof(AttributeFilter.Default))]
     public (int X, int Y) Named;
   }
+
+  public unsafe struct FixedBufferAttr {
+    [MemberAttributeFilterTestCaseAttribute("[FixedBuffer(typeof(int), 4)]")]
+    [MemberAttributeFilterTestCaseAttribute("", FilterType = typeof(AttributeFilter), FilterMemberName = nameof(AttributeFilter.Default))]
+    public fixed int FixedBuffer[4];
+  }
+
+  public class RequiredMemberAttr {
+    [MemberAttributeFilterTestCaseAttribute("[RequiredMember]")]
+    [MemberAttributeFilterTestCaseAttribute("", FilterType = typeof(AttributeFilter), FilterMemberName = nameof(AttributeFilter.Default))]
+    public required int F;
+  }
 }
 
 public class PropertyAttributes {
   public class TupleElementNamesAttr {
+    [MemberAttributeFilterTestCaseAttribute("")]
+    [MemberAttributeFilterTestCaseAttribute("", FilterType = typeof(AttributeFilter), FilterMemberName = nameof(AttributeFilter.Default))]
+    public ValueTuple<int> SingleElementTuple => throw null;
+
     [MemberAttributeFilterTestCaseAttribute("")]
     [MemberAttributeFilterTestCaseAttribute("", FilterType = typeof(AttributeFilter), FilterMemberName = nameof(AttributeFilter.Default))]
     public (int, int) Unnamed => throw null;
@@ -208,6 +228,12 @@ public class PropertyAttributes {
       [MemberAttributeFilterTestCaseAttribute("", FilterType = typeof(AttributeFilter), FilterMemberName = nameof(AttributeFilter.Default))]
       set;
     }
+  }
+
+  public class RequiredMemberAttr {
+    [MemberAttributeFilterTestCaseAttribute("[RequiredMember]")]
+    [MemberAttributeFilterTestCaseAttribute("", FilterType = typeof(AttributeFilter), FilterMemberName = nameof(AttributeFilter.Default))]
+    public required int P { get; init; }
   }
 }
 
@@ -287,6 +313,47 @@ public class ParameterAttributes {
     out int paramIn
   ) => throw null;
 
+  public void Ref_NoAttrs(
+    [MemberAttributeFilterTestCaseAttribute("")]
+    [MemberAttributeFilterTestCaseAttribute("", FilterType = typeof(AttributeFilter), FilterMemberName = nameof(AttributeFilter.Default))]
+    ref int paramRef
+  ) => throw null;
+
+  public void RequiresLocationAttr(
+    [MemberAttributeFilterTestCaseAttribute("")]
+    [MemberAttributeFilterTestCaseAttribute("", FilterType = typeof(AttributeFilter), FilterMemberName = nameof(AttributeFilter.Default))]
+    ref int paramRef,
+    [MemberAttributeFilterTestCaseAttribute("[RequiresLocation, In]")]
+    [MemberAttributeFilterTestCaseAttribute("", FilterType = typeof(AttributeFilter), FilterMemberName = nameof(AttributeFilter.Default))]
+    ref readonly ReadOnlySpan<int> paramRefReadOnly
+  ) => throw null;
+
+  [return: MemberAttributeFilterTestCaseAttribute("")]
+  [return: MemberAttributeFilterTestCaseAttribute("", FilterType = typeof(AttributeFilter), FilterMemberName = nameof(AttributeFilter.Default))]
+  public ref int RefReturn_NoAttrs() => throw null;
+
+  [return: MemberAttributeFilterTestCaseAttribute("[return: IsReadOnly]")]
+  [return: MemberAttributeFilterTestCaseAttribute("", FilterType = typeof(AttributeFilter), FilterMemberName = nameof(AttributeFilter.Default))]
+  public ref readonly ReadOnlySpan<int> RequiresLocationAttr_Return() => throw null;
+
+  public void ScopedRefAttr_RequiresLocationAttr(
+    [MemberAttributeFilterTestCaseAttribute("[IsReadOnly, In]")]
+    [MemberAttributeFilterTestCaseAttribute("", FilterType = typeof(AttributeFilter), FilterMemberName = nameof(AttributeFilter.Default))]
+    in int paramIn,
+    [MemberAttributeFilterTestCaseAttribute("[ScopedRef]")]
+    [MemberAttributeFilterTestCaseAttribute("", FilterType = typeof(AttributeFilter), FilterMemberName = nameof(AttributeFilter.Default))]
+    scoped ReadOnlySpan<int> paramScoped,
+    [MemberAttributeFilterTestCaseAttribute("[IsReadOnly, ScopedRef, In]")]
+    [MemberAttributeFilterTestCaseAttribute("", FilterType = typeof(AttributeFilter), FilterMemberName = nameof(AttributeFilter.Default))]
+    scoped in int paramScopedIn,
+    [MemberAttributeFilterTestCaseAttribute("[ScopedRef]")]
+    [MemberAttributeFilterTestCaseAttribute("", FilterType = typeof(AttributeFilter), FilterMemberName = nameof(AttributeFilter.Default))]
+    scoped ref int paramScopedRef,
+    [MemberAttributeFilterTestCaseAttribute("[RequiresLocation, ScopedRef, In]")]
+    [MemberAttributeFilterTestCaseAttribute("", FilterType = typeof(AttributeFilter), FilterMemberName = nameof(AttributeFilter.Default))]
+    scoped ref readonly ReadOnlySpan<int> paramScopedRefReadOnly
+  ) => throw null;
+
   public void ParamArrayAttr(
     [MemberAttributeFilterTestCaseAttribute("")]
     [MemberAttributeFilterTestCaseAttribute("", FilterType = typeof(AttributeFilter), FilterMemberName = nameof(AttributeFilter.Default))]
@@ -302,11 +369,18 @@ public class ParameterAttributes {
     int param,
     [MemberAttributeFilterTestCaseAttribute("")]
     [MemberAttributeFilterTestCaseAttribute("", FilterType = typeof(AttributeFilter), FilterMemberName = nameof(AttributeFilter.Default))]
+    ValueTuple<int> singleElementTuple,
+    [MemberAttributeFilterTestCaseAttribute("")]
+    [MemberAttributeFilterTestCaseAttribute("", FilterType = typeof(AttributeFilter), FilterMemberName = nameof(AttributeFilter.Default))]
     (int, int) unnamedTuple,
     [MemberAttributeFilterTestCaseAttribute("[TupleElementNames(new string[] { \"X\", \"Y\" })]")]
     [MemberAttributeFilterTestCaseAttribute("", FilterType = typeof(AttributeFilter), FilterMemberName = nameof(AttributeFilter.Default))]
     (int X, int Y) namedTuple
   ) => throw null;
+
+  [return: MemberAttributeFilterTestCaseAttribute("")]
+  [return: MemberAttributeFilterTestCaseAttribute("", FilterType = typeof(AttributeFilter), FilterMemberName = nameof(AttributeFilter.Default))]
+  public ValueTuple<int> TupleElementNamesAttr_ReturnParameter_SingleElementTuple() => throw null;
 
   [return: MemberAttributeFilterTestCaseAttribute("")]
   [return: MemberAttributeFilterTestCaseAttribute("", FilterType = typeof(AttributeFilter), FilterMemberName = nameof(AttributeFilter.Default))]
