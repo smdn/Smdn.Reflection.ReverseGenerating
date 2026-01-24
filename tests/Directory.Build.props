@@ -22,7 +22,7 @@ SPDX-License-Identifier: MIT
   <ItemGroup>
     <PackageReference
       Include="Smdn.MSBuild.DefineConstants.NETSdkApi"
-      Version="[1.6.2]"
+      Version="[1.6.3]"
       PrivateAssets="all"
       IncludeAssets="build"
     />
