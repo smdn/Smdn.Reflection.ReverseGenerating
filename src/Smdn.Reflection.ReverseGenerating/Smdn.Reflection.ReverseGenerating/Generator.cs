@@ -443,9 +443,20 @@ public static partial class Generator {
         options: options
       );
 
-      var attrFixedBuffer = field.GetCustomAttribute<FixedBufferAttribute>(inherit: false);
+      var isFixedBuffer = field.TryGetFixedBufferAttributeArgs(
+        out var fixedBufferElementType,
+        out var fixedBufferLength
+      );
 
-      if (attrFixedBuffer is null) {
+      if (isFixedBuffer) {
+        sb.Append("fixed ").Append(
+          fixedBufferElementType!.FormatTypeName(
+            typeWithNamespace: options.MemberDeclaration.WithNamespace,
+            translateLanguagePrimitiveType: options.TranslateLanguagePrimitiveTypeDeclaration
+          )
+        );
+      }
+      else {
         sb.Append(
           field.FormatTypeName(
 #pragma warning disable SA1114
@@ -458,21 +469,13 @@ public static partial class Generator {
           )
         );
       }
-      else {
-        sb.Append("fixed ").Append(
-          attrFixedBuffer.ElementType.FormatTypeName(
-            typeWithNamespace: options.MemberDeclaration.WithNamespace,
-            translateLanguagePrimitiveType: options.TranslateLanguagePrimitiveTypeDeclaration
-          )
-        );
-      }
 
       sb
         .Append(' ')
         .Append(GenerateMemberName(field, options));
 
-      if (attrFixedBuffer is not null)
-        sb.Append('[').Append(attrFixedBuffer.Length).Append(']');
+      if (isFixedBuffer)
+        sb.Append('[').Append(fixedBufferLength).Append(']');
 
       TryAppendFieldStaticValue(
         field,
