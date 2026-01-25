@@ -58,15 +58,25 @@ internal static class FieldInfoFixedBufferExtensions {
         var argElementType = attrFixedBuffer.ConstructorArguments[0];
         var argLength = attrFixedBuffer.ConstructorArguments[1];
 #endif
-        if (argElementType.ArgumentType == typeof(Type) && argElementType.Value is Type argElementTypeValue)
+        if (
+          string.Equals(typeof(Type).FullName, argElementType.ArgumentType.FullName, StringComparison.Ordinal) &&
+          argElementType.Value is Type argElementTypeValue
+        ) {
           elementType = argElementTypeValue;
-        else
+        }
+        else {
           hasFixedBufferAttribute = false; // has an unexpected arg
+        }
 
-        if (argLength.ArgumentType == typeof(int) && argLength.Value is int argLengthValue)
+        if (
+          string.Equals(typeof(int).FullName, argLength.ArgumentType.FullName, StringComparison.Ordinal) &&
+          argLength.Value is int argLengthValue
+        ) {
           length = argLengthValue;
-        else
+        }
+        else {
           hasFixedBufferAttribute = false; // has an unexpected arg
+        }
       }
       else {
         hasFixedBufferAttribute = false; // has unexpected args
