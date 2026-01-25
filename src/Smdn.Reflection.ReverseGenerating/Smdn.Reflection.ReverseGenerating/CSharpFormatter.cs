@@ -278,10 +278,26 @@ public static partial class CSharpFormatter /* ITypeFormatter */ {
       typeFullName.StartsWith("System.ValueTuple`", StringComparison.Ordinal);
 
   public static IEnumerable<string> ToNamespaceList(Type t)
-    => (t ?? throw new ArgumentNullException(nameof(t)))
-      .GetNamespaces(
-        static type => IsLanguagePrimitiveType(type, out _) || IsLanguagePrimitiveValueTupleType(type)
-      );
+    => ToNamespaceList(
+      t ?? throw new ArgumentNullException(nameof(t)),
+      translateLanguagePrimitiveTypes: true
+    );
+
+  public static IEnumerable<string> ToNamespaceList(
+    Type t,
+    bool translateLanguagePrimitiveTypes
+  )
+  {
+    if (t is null)
+      throw new ArgumentNullException(nameof(t));
+
+    return translateLanguagePrimitiveTypes
+      ? t.GetNamespaces(isLanguagePrimitive: static type =>
+          IsLanguagePrimitiveType(type, out _) ||
+          IsLanguagePrimitiveValueTupleType(type)
+        )
+      : t.GetNamespaces(isLanguagePrimitive: static _ => false);
+  }
 
   public static string FormatSpecialNameMethod(
     MethodBase methodOrConstructor,

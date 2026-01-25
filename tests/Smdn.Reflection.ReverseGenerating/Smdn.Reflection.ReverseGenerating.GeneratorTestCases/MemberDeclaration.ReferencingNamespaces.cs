@@ -11,12 +11,27 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace Smdn.Reflection.ReverseGenerating.GeneratorTestCases.MemberDeclaration.ReferencingNamespaces;
 
+public delegate void EventHandlerNotInSystemNamespace<T>(T arg);
+
 class C {
-  [ReferencingNamespacesTestCase("", TranslateLanguagePrimitiveTypeDeclaration = true)] public int F0;
-  [SkipTestCase("TODO: consider TranslateLanguagePrimitive")][ReferencingNamespacesTestCase("System", TranslateLanguagePrimitiveTypeDeclaration = false)] public int F1;
+  [ReferencingNamespacesTestCase("", TranslateLanguagePrimitiveTypeDeclaration = true)]
+  [ReferencingNamespacesTestCase("System", TranslateLanguagePrimitiveTypeDeclaration = false)]
+  public int F0;
+
+  [ReferencingNamespacesTestCase("", TranslateLanguagePrimitiveTypeDeclaration = true)]
+  [ReferencingNamespacesTestCase("System", TranslateLanguagePrimitiveTypeDeclaration = false)]
+  public (int, int) F1;
+
   [ReferencingNamespacesTestCase("")] public int? F2;
-  [ReferencingNamespacesTestCase("System")] public Guid F3;
-  [ReferencingNamespacesTestCase("System.Collections.Generic")] public List<int> F4;
+
+  [ReferencingNamespacesTestCase("System", TranslateLanguagePrimitiveTypeDeclaration = true)]
+  [ReferencingNamespacesTestCase("System", TranslateLanguagePrimitiveTypeDeclaration = false)]
+  public Guid F3;
+
+  [ReferencingNamespacesTestCase("System.Collections.Generic", TranslateLanguagePrimitiveTypeDeclaration = true)]
+  [ReferencingNamespacesTestCase("System, System.Collections.Generic", TranslateLanguagePrimitiveTypeDeclaration = false)]
+  public List<int> F4;
+
   [ReferencingNamespacesTestCase("System, System.Collections.Generic")] public List<Guid> F5;
   [ReferencingNamespacesTestCase("")] public int[] F6;
   [ReferencingNamespacesTestCase("")] public Nullable<int> F7;
@@ -38,9 +53,29 @@ class C {
   [ReferencingNamespacesTestCase("System, System.Collections.Generic")] public event EventHandler<IList<int>> E2 { add => throw null; remove => throw null; }
 
   [ReferencingNamespacesTestCase(
+    "Smdn.Reflection.ReverseGenerating.GeneratorTestCases.MemberDeclaration.ReferencingNamespaces",
+    TranslateLanguagePrimitiveTypeDeclaration = true
+  )]
+  [ReferencingNamespacesTestCase(
+    "System, Smdn.Reflection.ReverseGenerating.GeneratorTestCases.MemberDeclaration.ReferencingNamespaces",
+    TranslateLanguagePrimitiveTypeDeclaration = false
+  )]
+  public event EventHandlerNotInSystemNamespace<int> E3 {
+    add => throw null;
+    remove => throw null;
+  }
+
+  [ReferencingNamespacesTestCase(
     // System.DiagnosticsDebuggerBrowsableAttribute
     // System.Runtime.CompilerServices.CompilerGeneratedAttribute
-    "System.Diagnostics, System.Runtime.CompilerServices"
+    "System.Diagnostics, System.Runtime.CompilerServices",
+    TranslateLanguagePrimitiveTypeDeclaration = true
+  )]
+  [ReferencingNamespacesTestCase(
+    // System.DiagnosticsDebuggerBrowsableAttribute
+    // System.Runtime.CompilerServices.CompilerGeneratedAttribute
+    "System, System.Diagnostics, System.Runtime.CompilerServices",
+    TranslateLanguagePrimitiveTypeDeclaration = false
   )]
   public int P0 { get; set; }
 
@@ -50,8 +85,19 @@ class C {
   [ReferencingNamespacesTestCase("System.Collections.Generic")] public IList<int> P4 { get => throw null; set => throw null; }
   [ReferencingNamespacesTestCase("System, System.Collections.Generic")] public IList<Guid> P5 { get => throw null; set => throw null; }
 
+  [ReferencingNamespacesTestCase("System.IO", TranslateLanguagePrimitiveTypeDeclaration = true)]
+  [ReferencingNamespacesTestCase("System, System.IO", TranslateLanguagePrimitiveTypeDeclaration = false)]
+  public System.IO.Stream this[int x] {
+    get => throw new NotImplementedException();
+    set => throw new NotImplementedException();
+  }
+
   [ReferencingNamespacesTestCase("")] public void M0() {}
-  [ReferencingNamespacesTestCase("")] public void M1(int x) {}
+
+  [ReferencingNamespacesTestCase("", TranslateLanguagePrimitiveTypeDeclaration = true)]
+  [ReferencingNamespacesTestCase("System", TranslateLanguagePrimitiveTypeDeclaration = false)]
+  public void M1(int x) {}
+
   [ReferencingNamespacesTestCase("")] public void M2(int? x) {}
   [ReferencingNamespacesTestCase("System")] public void M3(Guid x) {}
   [ReferencingNamespacesTestCase("System.Collections.Generic")] public void M4(List<int> x) {}
@@ -64,7 +110,10 @@ class C {
   [ReferencingNamespacesTestCase("System.Runtime.CompilerServices")] public void ParameterValueTupleWithElementNames((int X0, int X1) x) {} // includes namespace of TupleElementNamesAttribute
   [ReferencingNamespacesTestCase("System, System.Collections.Generic, System.Runtime.CompilerServices")] public void ParameterValueTupleNestedTypeWithElementNames((Guid X0, List<int> X1) x) {} // includes namespace of TupleElementNamesAttribute
 
-  [ReferencingNamespacesTestCase("")] public int M1() => throw new NotImplementedException();
+  [ReferencingNamespacesTestCase("", TranslateLanguagePrimitiveTypeDeclaration = true)]
+  [ReferencingNamespacesTestCase("System", TranslateLanguagePrimitiveTypeDeclaration = false)]
+  public int M1() => throw new NotImplementedException();
+
   [ReferencingNamespacesTestCase("")] public int? M2() => throw new NotImplementedException();
   [ReferencingNamespacesTestCase("System")] public Guid M3() => throw new NotImplementedException();
   [ReferencingNamespacesTestCase("System.Collections.Generic")] public List<int> M4() => throw new NotImplementedException();

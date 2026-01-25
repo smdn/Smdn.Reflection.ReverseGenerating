@@ -252,7 +252,8 @@ public static partial class Generator {
     static IEnumerable<string> GetGenericParameterConstraintsOf(
       Type genericParameter,
       ISet<string>? referencingNns,
-      bool typeWithNamespace
+      bool typeWithNamespace,
+      bool translateLanguagePrimitiveTypes
     )
     {
       const GenericParameterAttributes AllowByRefLike =
@@ -298,7 +299,14 @@ public static partial class Generator {
       if (genericParameter.GenericParameterAttributes.HasFlag(AllowByRefLike))
         yield return "allows ref struct";
 
-      referencingNns?.UnionWith(constraintTypes.SelectMany(CSharpFormatter.ToNamespaceList));
+      referencingNns?.UnionWith(
+        constraintTypes.SelectMany(
+          t => CSharpFormatter.ToNamespaceList(
+            t,
+            translateLanguagePrimitiveTypes: translateLanguagePrimitiveTypes
+          )
+        )
+      );
     }
 
     var constraints = string.Join(
@@ -308,7 +316,8 @@ public static partial class Generator {
         referencingNamespaces,
         genericParameter.DeclaringMethod == null
           ? options.TypeDeclaration.WithNamespace
-          : options.MemberDeclaration.WithNamespace
+          : options.MemberDeclaration.WithNamespace,
+        translateLanguagePrimitiveTypes: options.TranslateLanguagePrimitiveTypeDeclaration
       )
     );
 
@@ -339,7 +348,13 @@ public static partial class Generator {
       .Where(type => !(options.IgnorePrivateOrAssembly && type.IsPrivateOrAssembly()))
       .Where(type => type != typeOfIEquatableOfRecord)
       .Select(type => {
-        referencingNamespaces?.UnionWith(CSharpFormatter.ToNamespaceList(type));
+        referencingNamespaces?.UnionWith(
+          CSharpFormatter.ToNamespaceList(
+            type,
+            translateLanguagePrimitiveTypes: options.TranslateLanguagePrimitiveTypeDeclaration
+          )
+        );
+
         return new {
           type.IsInterface,
           Name = type.FormatTypeName(
@@ -414,7 +429,12 @@ public static partial class Generator {
       }
     }
     else {
-      referencingNamespaces?.UnionWith(CSharpFormatter.ToNamespaceList(field.FieldType));
+      referencingNamespaces?.UnionWith(
+        CSharpFormatter.ToNamespaceList(
+          field.FieldType,
+          translateLanguagePrimitiveTypes: options.TranslateLanguagePrimitiveTypeDeclaration
+        )
+      );
 
       AppendMemberModifiers(
         sb,
@@ -543,10 +563,18 @@ public static partial class Generator {
     var indexParameters = property.GetIndexParameters();
 
     referencingNamespaces?.UnionWith(
-      CSharpFormatter.ToNamespaceList(property.PropertyType)
+      CSharpFormatter.ToNamespaceList(
+        property.PropertyType,
+        translateLanguagePrimitiveTypes: options.TranslateLanguagePrimitiveTypeDeclaration
+      )
     );
     referencingNamespaces?.UnionWith(
-      indexParameters.SelectMany(static ip => CSharpFormatter.ToNamespaceList(ip.ParameterType))
+      indexParameters.SelectMany(
+        ip => CSharpFormatter.ToNamespaceList(
+          ip.ParameterType,
+          translateLanguagePrimitiveTypes: options.TranslateLanguagePrimitiveTypeDeclaration
+        )
+      )
     );
 
     var sb = new StringBuilder();
@@ -842,7 +870,10 @@ public static partial class Generator {
 
       if (methodReturnParameter is not null) {
         referencingNamespaces?.UnionWith(
-          CSharpFormatter.ToNamespaceList(methodReturnParameter.ParameterType)
+          CSharpFormatter.ToNamespaceList(
+            methodReturnParameter.ParameterType,
+            translateLanguagePrimitiveTypes: options.TranslateLanguagePrimitiveTypeDeclaration
+          )
         );
       }
     }
@@ -1081,7 +1112,10 @@ public static partial class Generator {
     );
 
     referencingNamespaces?.UnionWith(
-      CSharpFormatter.ToNamespaceList(p.ParameterType)
+      CSharpFormatter.ToNamespaceList(
+        p.ParameterType,
+        translateLanguagePrimitiveTypes: options.TranslateLanguagePrimitiveTypeDeclaration
+      )
     );
 
     if (string.IsNullOrEmpty(paramAttributeList))
@@ -1132,7 +1166,12 @@ public static partial class Generator {
       return null;
     }
 
-    referencingNamespaces?.UnionWith(CSharpFormatter.ToNamespaceList(ev.GetEventHandlerTypeOrThrow()));
+    referencingNamespaces?.UnionWith(
+      CSharpFormatter.ToNamespaceList(
+        ev.GetEventHandlerTypeOrThrow(),
+        translateLanguagePrimitiveTypes: options.TranslateLanguagePrimitiveTypeDeclaration
+      )
+    );
 
     var sb = new StringBuilder();
     var memberOptions = options.MemberDeclaration;
