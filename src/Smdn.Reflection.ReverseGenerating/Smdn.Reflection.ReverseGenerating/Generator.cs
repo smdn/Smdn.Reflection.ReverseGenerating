@@ -474,54 +474,70 @@ public static partial class Generator {
       if (attrFixedBuffer is not null)
         sb.Append('[').Append(attrFixedBuffer.Length).Append(']');
 
-      if (field.IsStatic && (field.IsLiteral || field.IsInitOnly) && !field.FieldType.ContainsGenericParameters) {
-        if (field.TryGetValue(null, out var val)) {
-          var valueDeclaration = CSharpFormatter.FormatValueDeclaration(
-            val: val,
-            typeOfValue: field.FieldType,
-            options: CSharpFormatter.ValueFormatOptions.FromGeneratorOptions(
-              options: options,
-              tryFindConstantField: field.FieldType != field.DeclaringType
-            )
-          );
-
-          if (string.IsNullOrEmpty(valueDeclaration)) {
-            var stringifiedValue = val switch {
-              string s => s,
-              DateTime dt => dt.ToString("o"),
-              DateTimeOffset dto => dto.ToString("o"),
-              IFormattable formattable => formattable.ToString(
-                format: null,
-                formatProvider: CultureInfo.InvariantCulture // TODO: specific culture
-              ),
-              null => "null",
-              _ => val.ToString() ?? string.Empty,
-            };
-
-            sb
-              .Append("; // = \"")
-              .Append(CSharpFormatter.EscapeString(stringifiedValue, escapeDoubleQuote: true))
-              .Append('"');
-          }
-          else {
-            sb.Append(" = ").Append(valueDeclaration);
-
-            if (!memberOptions.OmitEndOfStatement)
-              sb.Append(';');
-          }
-        }
-        else {
-          if (!memberOptions.OmitEndOfStatement)
-            sb.Append(';');
-        }
-      }
-      else {
-        if (!memberOptions.OmitEndOfStatement)
-          sb.Append(';');
-      }
+      TryAppendFieldStaticValue(
+        field,
+        asPropertyDeclaration: false,
+        sb,
+        options
+      );
     }
 
     return sb.ToString();
+  }
+
+  private static void TryAppendFieldStaticValue(
+    FieldInfo field,
+    bool asPropertyDeclaration,
+    StringBuilder builder,
+    GeneratorOptions options
+  )
+  {
+    var canGetStaticValue =
+      field.IsStatic && // must be `static` or `const`
+      (field.IsLiteral || field.IsInitOnly) && // must be `const` or `readonly`
+      !field.FieldType.ContainsGenericParameters; // type of field must not be is generic type parameter
+
+    if (!(canGetStaticValue && field.TryGetValue(null, out var val))) {
+      if (!asPropertyDeclaration && !options.MemberDeclaration.OmitEndOfStatement)
+        builder.Append(';');
+
+      return;
+    }
+
+    var valueDeclaration = CSharpFormatter.FormatValueDeclaration(
+      val: val,
+      typeOfValue: field.FieldType,
+      options: CSharpFormatter.ValueFormatOptions.FromGeneratorOptions(
+        options: options,
+        tryFindConstantField: field.FieldType != field.DeclaringType
+      )
+    );
+
+    if (string.IsNullOrEmpty(valueDeclaration)) {
+      var stringifiedValue = val switch {
+        string s => s,
+        DateTime dt => dt.ToString("o"),
+        DateTimeOffset dto => dto.ToString("o"),
+        IFormattable formattable => formattable.ToString(
+          format: null,
+          formatProvider: CultureInfo.InvariantCulture // TODO: specific culture
+        ),
+        null => "null",
+        _ => val.ToString() ?? string.Empty,
+      };
+
+      builder
+        .Append(asPropertyDeclaration ? " // = \"" : "; // = \"")
+        .Append(CSharpFormatter.EscapeString(stringifiedValue, escapeDoubleQuote: true))
+        .Append('"');
+
+      return;
+    }
+
+    builder.Append(" = ").Append(valueDeclaration);
+
+    if (!options.MemberDeclaration.OmitEndOfStatement)
+      builder.Append(';');
   }
 
 #pragma warning disable CA1502 // TODO: reduce code complexity
@@ -704,10 +720,14 @@ public static partial class Generator {
 
     sb.Append('}');
 
-#if false
-      if (p.CanRead)
-        sb.Append(" = ").Append(p.GetConstantValue()).Append(";");
-#endif
+    if (emitGetAccessor && property.GetBackingField() is { } backingField) {
+      TryAppendFieldStaticValue(
+        backingField,
+        asPropertyDeclaration: true,
+        sb,
+        options
+      );
+    }
 
     return sb.ToString();
   }
