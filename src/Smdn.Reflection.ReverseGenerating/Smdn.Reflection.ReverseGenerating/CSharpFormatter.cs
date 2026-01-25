@@ -270,8 +270,18 @@ public static partial class CSharpFormatter /* ITypeFormatter */ {
   )
     => PrimitiveTypes.TryGetValue((t ?? throw new ArgumentNullException(nameof(t))).FullName ?? string.Empty, out primitiveTypeName);
 
+  private static bool IsLanguagePrimitiveValueTupleType(Type t)
+    =>
+      t.IsGenericType &&
+      2 <= t.GetGenericTypeDefinition().GetTypeInfo().GenericTypeParameters.Length &&
+      t.FullName is { } typeFullName &&
+      typeFullName.StartsWith("System.ValueTuple`", StringComparison.Ordinal);
+
   public static IEnumerable<string> ToNamespaceList(Type t)
-    => (t ?? throw new ArgumentNullException(nameof(t))).GetNamespaces(static type => IsLanguagePrimitiveType(type, out _));
+    => (t ?? throw new ArgumentNullException(nameof(t)))
+      .GetNamespaces(
+        static type => IsLanguagePrimitiveType(type, out _) || IsLanguagePrimitiveValueTupleType(type)
+      );
 
   public static string FormatSpecialNameMethod(
     MethodBase methodOrConstructor,
