@@ -12,6 +12,7 @@ public class ApiListWriterOptions : GeneratorOptions {
     public bool OmitCompilerGeneratedRecordEqualityMethods { get; set; } = false;
     public bool ThrowIfForwardedTypesCouldNotLoaded { get; set; } = false;
     public bool WriteNullableAnnotationDirective { get; set; } = true;
+    public bool ExcludeFixedBufferFieldTypes { get; set; } = true;
 
     /* options relevant to header */
     public bool WriteHeader { get; set; } = true;

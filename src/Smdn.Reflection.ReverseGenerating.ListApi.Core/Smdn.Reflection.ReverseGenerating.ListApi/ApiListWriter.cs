@@ -14,6 +14,8 @@ using System.Text;
 
 using Microsoft.Extensions.Logging;
 
+using Smdn.Reflection.Attributes;
+
 namespace Smdn.Reflection.ReverseGenerating.ListApi;
 
 public class ApiListWriter {
@@ -506,6 +508,7 @@ public class ApiListWriter {
   }
 #pragma warning restore CA1032
 
+#pragma warning disable CA1502 // TODO: reduce complexity
   private static string GenerateTypeContentDeclarations(
     int nestLevel,
     Assembly assembly,
@@ -558,7 +561,10 @@ public class ApiListWriter {
         GenerateTypeAndMemberDeclarations(
           nestLevel,
           assembly,
-          nestedTypes.Where(nestedType => !(options.IgnorePrivateOrAssembly && (nestedType.IsNestedPrivate || nestedType.IsNestedAssembly))),
+          nestedTypes.Where(nestedType =>
+            !(options.IgnorePrivateOrAssembly && (nestedType.IsNestedPrivate || nestedType.IsNestedAssembly)) &&
+            !(options.Writer.ExcludeFixedBufferFieldTypes && IsFixedBufferFieldType(nestedType))
+          ),
           referencingNamespaces,
           options,
           logger
@@ -615,5 +621,26 @@ public class ApiListWriter {
     }
 
     return ret.ToString();
+
+    static bool IsFixedBufferFieldType(Type t) // where t.MemberType == MemberTypes.NestedType
+    {
+      if (!t.IsValueType)
+        return false; // fixed buffer type must be struct
+      if (!t.HasCompilerGeneratedAttribute())
+        return false; // fixed buffer type must have CompilerGeneratedAttribute
+      if (!t.GetCustomAttributesData().Any(
+        static d => string.Equals(typeof(UnsafeValueTypeAttribute).FullName, d.AttributeType.FullName, StringComparison.Ordinal)
+      )) {
+        return false; // fixed buffer type must have UnsafeValueTypeAttribute
+      }
+
+      if (t.DeclaringType is not { } declaringType)
+        return false;
+
+      return declaringType
+        .GetFields(BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.DeclaredOnly)
+        .Any(field => string.Equals(field.FieldType.Name, t.Name, StringComparison.Ordinal));
+    }
   }
+#pragma warning restore CA1502 // TODO: reduce complexity
 }

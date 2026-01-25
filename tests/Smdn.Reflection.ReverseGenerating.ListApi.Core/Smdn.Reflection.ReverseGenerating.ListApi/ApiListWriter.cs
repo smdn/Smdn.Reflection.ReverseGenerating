@@ -80,7 +80,8 @@ public partial class ApiListWriterTests {
     var compilationOptions = new CSharpCompilationOptions(
       outputKind: OutputKind.DynamicallyLinkedLibrary,
       platform: Platform.AnyCpu,
-      nullableContextOptions: NullableContextOptions.Disable
+      nullableContextOptions: NullableContextOptions.Disable,
+      allowUnsafe: true
     );
     var compilation = CSharpCompilation.Create(
       assemblyName: assemblyName ?? defaultAssemblyName,
