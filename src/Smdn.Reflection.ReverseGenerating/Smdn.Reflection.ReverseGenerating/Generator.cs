@@ -826,10 +826,11 @@ public static partial class Generator {
     };
 
     var method = m as MethodInfo;
+    var methodReturnParameter = method?.ReturnParameter;
     string? methodReturnType;
 
     try {
-      methodReturnType = method?.ReturnParameter?.FormatTypeName(
+      methodReturnType = methodReturnParameter?.FormatTypeName(
 #pragma warning disable SA1114
 #if SYSTEM_REFLECTION_NULLABILITYINFOCONTEXT
         nullabilityInfoContext: formattingOptions.NullabilityInfoContext,
@@ -838,6 +839,12 @@ public static partial class Generator {
         typeWithNamespace: formattingOptions.FormatTypeWithNamespace
 #pragma warning restore SA1114
       );
+
+      if (methodReturnParameter is not null) {
+        referencingNamespaces?.UnionWith(
+          CSharpFormatter.ToNamespaceList(methodReturnParameter.ParameterType)
+        );
+      }
     }
     catch (TypeLoadException) {
       // FIXME: https://github.com/smdn/Smdn.Reflection.ReverseGenerating/issues/31
@@ -847,9 +854,9 @@ public static partial class Generator {
     string? methodReturnTypeAttributes;
 
     try {
-      methodReturnTypeAttributes = method is null
+      methodReturnTypeAttributes = methodReturnParameter is null
         ? null
-        : GenerateParameterAttributeList(method.ReturnParameter, referencingNamespaces, options);
+        : GenerateParameterAttributeList(methodReturnParameter, referencingNamespaces, options);
     }
     catch (TypeLoadException) {
       // FIXME: https://github.com/smdn/Smdn.Reflection.ReverseGenerating/issues/31
@@ -896,18 +903,6 @@ public static partial class Generator {
         );
     string? methodName = null;
     var isFinalizer = false;
-
-    try {
-      referencingNamespaces?.UnionWith(
-        m
-          .GetSignatureTypes()
-          .Where(static mpt => !mpt.ContainsGenericParameters)
-          .SelectMany(CSharpFormatter.ToNamespaceList)
-      );
-    }
-    catch (TypeLoadException) {
-      // FIXME: https://github.com/smdn/Smdn.Reflection.ReverseGenerating/issues/31
-    }
 
     if (asDelegateDeclaration) {
       methodName = m.GetDeclaringTypeOrThrow().FormatTypeName(
@@ -1083,6 +1078,10 @@ public static partial class Generator {
       p,
       referencingNamespaces,
       options
+    );
+
+    referencingNamespaces?.UnionWith(
+      CSharpFormatter.ToNamespaceList(p.ParameterType)
     );
 
     if (string.IsNullOrEmpty(paramAttributeList))
