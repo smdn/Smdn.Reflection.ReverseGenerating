@@ -223,6 +223,8 @@ namespace Microsoft {
   {
     var options = new ApiListWriterOptions();
 
+    options.TranslateLanguagePrimitiveTypeDeclaration = true;
+
     options.Writer.WriteNullableAnnotationDirective = false;
     options.Writer.WriteHeader = false;
     options.Writer.WriteFooter = false;
@@ -273,6 +275,8 @@ public static class C {
   )
   {
     var options = new ApiListWriterOptions();
+
+    options.TranslateLanguagePrimitiveTypeDeclaration = true;
 
     options.Writer.WriteNullableAnnotationDirective = false;
     options.Writer.WriteHeader = false;
@@ -376,6 +380,8 @@ public static class C {{
   )
   {
     var options = new ApiListWriterOptions();
+
+    options.TranslateLanguagePrimitiveTypeDeclaration = true;
 
     options.Writer.WriteNullableAnnotationDirective = writeNullableAnnotationDirective;
     options.Writer.WriteHeader = false;
