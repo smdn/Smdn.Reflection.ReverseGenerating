@@ -138,20 +138,32 @@ static partial class CSharpFormatter {
 
           sb.Append(GetTypeName(t, options));
 
-          var formattedGenericArgs = string.Join(
-            ", ",
-            genericArgs.Select(arg => {
-              var name = FormatCore(arg, showVariance: true, options);
+          if (options.AsUnboundTypeName) {
+            var genericArgsCount = genericArgs.Count();
 
-              if (t.IsGenericTypeDefinition && options.GenericParameterNameModifier is not null)
-                name = options.GenericParameterNameModifier(arg, name);
+            if (0 < genericArgsCount) {
+              sb
+                .Append('<')
+                .Append(',', repeatCount: genericArgsCount - 1)
+                .Append('>');
+            }
+          }
+          else {
+            var formattedGenericArgs = string.Join(
+              ", ",
+              genericArgs.Select(arg => {
+                var name = FormatCore(arg, showVariance: true, options);
 
-              return name;
-            })
-          );
+                if (t.IsGenericTypeDefinition && options.GenericParameterNameModifier is not null)
+                  name = options.GenericParameterNameModifier(arg, name);
 
-          if (0 < formattedGenericArgs.Length)
-            sb.Append('<').Append(formattedGenericArgs).Append('>');
+                return name;
+              })
+            );
+
+            if (0 < formattedGenericArgs.Length)
+              sb.Append('<').Append(formattedGenericArgs).Append('>');
+          }
         }
 
         return sb.ToString();

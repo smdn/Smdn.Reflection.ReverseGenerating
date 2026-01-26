@@ -147,6 +147,53 @@ public class Types {
     ValueWithDeclaringTypeName = false
   )]
   public static readonly Type TypeOfNestedType = typeof(Environment.SpecialFolder);
+
+  [MemberDeclarationTestCase(
+    "public static readonly Type TypeOfConstructedGenericType = typeof(Converter<int, string>);",
+    MemberWithNamespace = false,
+    ValueWithNamespace = false,
+    ValueWithDeclaringTypeName = false
+  )]
+  public static readonly Type TypeOfConstructedGenericType = typeof(Converter<int, string>);
+
+  [MemberDeclarationTestCase(
+    $"public static readonly Type {nameof(TypeOfGenericTypeDefinition)} = typeof(Converter<,>);",
+    MemberWithNamespace = false,
+    ValueWithNamespace = false,
+    ValueWithDeclaringTypeName = false
+  )]
+  [MemberDeclarationTestCase(
+    $"public static readonly Type {nameof(TypeOfGenericTypeDefinition)} = typeof(System.Converter<,>);",
+    MemberWithNamespace = false,
+    ValueWithNamespace = true,
+    ValueWithDeclaringTypeName = false
+  )]
+  public static readonly Type TypeOfGenericTypeDefinition = typeof(Converter<,>);
+
+  [MemberDeclarationTestCase(
+    $"public static readonly Type {nameof(TypeOfNestedGenericTypeDefinition)} = typeof(Types.C<>.CI.S<,>);",
+    MemberWithNamespace = false,
+    ValueWithNamespace = false,
+    ValueWithDeclaringTypeName = true
+  )]
+  [MemberDeclarationTestCase(
+    $"public static readonly Type {nameof(TypeOfNestedGenericTypeDefinition)} = typeof(S<,>);",
+    MemberWithNamespace = false,
+    ValueWithNamespace = false,
+    ValueWithDeclaringTypeName = false
+  )]
+  public static readonly Type TypeOfNestedGenericTypeDefinition = typeof(C<>.CI.S<,>);
+
+  public class C<T> {
+    public class CI {
+      public struct S<U, V> { }
+    }
+  }
+
+  public struct S<TIn, TOut> {
+    [MemberDeclarationTestCase("public static readonly System.Converter<TIn, TOut> ConverterFromTInToTOut;")]
+    public static readonly Converter<TIn, TOut> ConverterFromTInToTOut = val => throw new NotImplementedException();
+  }
 }
 
 public class Nullables {
@@ -228,5 +275,15 @@ public class DeclaringTypeItself {
     public static readonly S2 Empty = default(S2);
 
     public override string ToString() => "\"\0\"";
+  }
+}
+
+public class GenericTypes {
+  [MemberDeclarationTestCase("public static readonly System.Converter<int, string> ConverterFromIntToString; // = \"System.Converter`2[System.Int32,System.String]\"")]
+  public static readonly Converter<int, string> ConverterFromIntToString = val => throw new NotImplementedException();
+
+  public struct S<TIn, TOut> {
+    [MemberDeclarationTestCase("public static readonly System.Converter<TIn, TOut> ConverterFromTInToTOut;")]
+    public static readonly Converter<TIn, TOut> ConverterFromTInToTOut = val => throw new NotImplementedException();
   }
 }

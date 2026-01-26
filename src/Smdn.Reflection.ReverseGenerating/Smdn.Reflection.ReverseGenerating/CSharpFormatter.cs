@@ -653,7 +653,7 @@ public static partial class CSharpFormatter /* ITypeFormatter */ {
   )
   {
     static string ToString(Type t, ValueFormatOptions opts)
-      => FormatTypeName(
+      => FormatUnboundTypeName(
         t,
         typeWithNamespace: opts.WithNamespace,
         withDeclaringTypeName: opts.WithDeclaringTypeName,

@@ -189,11 +189,16 @@ static partial class CSharpFormatter {
     if (genericTypeArguments.Any()) {
       builder.Append('<');
 
-      foreach (var (arg, i) in genericTypeArguments.Select(static (arg, i) => (arg, i))) {
-        if (0 < i)
-          builder.Append(", ");
+      if (options.AsUnboundTypeName) {
+        builder.Append(',', repeatCount: genericTypeArguments.Count() - 1);
+      }
+      else {
+        foreach (var (arg, i) in genericTypeArguments.Select(static (arg, i) => (arg, i))) {
+          if (0 < i)
+            builder.Append(", ");
 
-        FormatTypeNameWithNullabilityAnnotation(arg, builder, options);
+          FormatTypeNameWithNullabilityAnnotation(arg, builder, options);
+        }
       }
 
       builder.Append('>');
@@ -256,11 +261,17 @@ static partial class CSharpFormatter {
       )
       .Append('<');
 
-    for (var i = 0; i < target.GenericTypeArguments.Length; i++) {
-      if (0 < i)
-        builder.Append(", ");
+    if (options.AsUnboundTypeName) {
+      if (1 < target.GenericTypeArguments.Length)
+        builder.Append(',', repeatCount: target.GenericTypeArguments.Length - 1);
+    }
+    else {
+      for (var i = 0; i < target.GenericTypeArguments.Length; i++) {
+        if (0 < i)
+          builder.Append(", ");
 
-      FormatTypeNameWithNullabilityAnnotation(target.GenericTypeArguments[i], builder, options);
+        FormatTypeNameWithNullabilityAnnotation(target.GenericTypeArguments[i], builder, options);
+      }
     }
 
     return builder.Append('>');

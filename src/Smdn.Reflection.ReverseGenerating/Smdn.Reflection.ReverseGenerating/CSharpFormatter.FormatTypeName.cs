@@ -19,8 +19,9 @@ static partial class CSharpFormatter {
     NullabilityInfoContext? NullabilityInfoContext = null,
 #endif
     Func<Type, string, string>? GenericParameterNameModifier = null,
-    bool OmitAttributeSuffix = false
+    bool OmitAttributeSuffix = false,
 #pragma warning restore SA1313
+    bool AsUnboundTypeName = false
   );
 
   public static string FormatTypeName(
@@ -37,6 +38,23 @@ static partial class CSharpFormatter {
         TypeWithNamespace: typeWithNamespace,
         WithDeclaringTypeName: withDeclaringTypeName,
         TranslateLanguagePrimitiveType: translateLanguagePrimitiveType
+      )
+    );
+
+  public static string FormatUnboundTypeName(
+    this Type t,
+    bool typeWithNamespace = true,
+    bool withDeclaringTypeName = true,
+    bool translateLanguagePrimitiveType = true
+  )
+    => FormatTypeNameCore(
+      t ?? throw new ArgumentNullException(nameof(t)),
+      options: new(
+        AttributeProvider: t,
+        TypeWithNamespace: typeWithNamespace,
+        WithDeclaringTypeName: withDeclaringTypeName,
+        TranslateLanguagePrimitiveType: translateLanguagePrimitiveType,
+        AsUnboundTypeName: t.IsGenericTypeDefinition
       )
     );
 
