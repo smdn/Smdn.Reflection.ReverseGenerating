@@ -593,11 +593,13 @@ public static partial class CSharpFormatter /* ITypeFormatter */ {
 
     for (var i = 0; i < chars.Length; i++) {
       if (char.IsControl(chars[i]))
-        buf.Append("\\u").Append(((int)chars[i]).ToString("X4", provider: null));
+        buf.Append(@"\u").Append(((int)chars[i]).ToString("X4", provider: null));
       else if (escapeSingleQuote && chars[i] == '\'')
-        buf.Append("\\\'");
+        buf.Append(@"\'");
       else if (escapeDoubleQuote && chars[i] == '"')
-        buf.Append("\\\"");
+        buf.Append(@"\""");
+      else if (chars[i] == '\\')
+        buf.Append(@"\\");
       else
         buf.Append(chars[i]);
     }

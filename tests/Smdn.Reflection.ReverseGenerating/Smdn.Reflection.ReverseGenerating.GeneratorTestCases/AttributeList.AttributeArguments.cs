@@ -51,9 +51,53 @@ class ObjectArgument {
   [ObjectValue(null)]
   public int NullValue = 0;
 
-  [AttributeListTestCase("[ObjectValue(\"str\")]", AttributeWithNamespace = false)]
+  [AttributeListTestCase("[ObjectValue('a')]", AttributeWithNamespace = false)]
+  [ObjectValue('a')]
+  public int CharValue = 0;
+
+  [AttributeListTestCase(@"[ObjectValue('\\')]", AttributeWithNamespace = false)]
+  [ObjectValue('\\')]
+  public int CharValueBackslash = 0;
+
+  [AttributeListTestCase(@"[ObjectValue('\'')]", AttributeWithNamespace = false)]
+  [ObjectValue('\'')]
+  public int CharValueSingleQuote = 0;
+
+  [AttributeListTestCase(@"[ObjectValue(""str"")]", AttributeWithNamespace = false)]
   [ObjectValue("str")]
   public int StringValue = 0;
+
+  [AttributeListTestCase(@"[ObjectValue(""\u000A"")]", AttributeWithNamespace = false)]
+  [ObjectValue("\n")]
+  public int StringValueContainsEscapeSequence = 0;
+
+  [AttributeListTestCase(@"[ObjectValue(""abc\u0000"")]", AttributeWithNamespace = false)]
+  [ObjectValue("abc\0")]
+  public int StringValueContainsEscapeSequenceNull = 0;
+
+  [AttributeListTestCase(@"[ObjectValue(""\\"")]", AttributeWithNamespace = false)]
+  [ObjectValue("\\")]
+  public int StringValueContainsEscapeSequenceBackslash = 0;
+
+  [AttributeListTestCase(@"[ObjectValue(""\u000A"")]", AttributeWithNamespace = false)]
+  [ObjectValue("\x0a")]
+  public int StringValueContainsEscapeSequenceAsciiHexadecimalNotationControlChar = 0;
+
+  [AttributeListTestCase(@"[ObjectValue(""a"")]", AttributeWithNamespace = false)]
+  [ObjectValue("\x61")]
+  public int StringValueContainsEscapeSequenceAsciiHexadecimalNotationPrintableChar = 0;
+
+  [AttributeListTestCase(@"[ObjectValue(""あ"")]", AttributeWithNamespace = false)]
+  [ObjectValue("\u3042")]
+  public int StringValueContainsEscapeSequenceUnicodeCharacterHexadecimalNotation = 0;
+
+  [AttributeListTestCase(@"[ObjectValue(""'hello'"")]", AttributeWithNamespace = false)]
+  [ObjectValue(@"'hello'")]
+  public int StringValueContainsSingleQuote = 0;
+
+  [AttributeListTestCase(@"[ObjectValue(""\""hello\"""")]", AttributeWithNamespace = false)]
+  [ObjectValue(@"""hello""")]
+  public int StringValueContainsDoubleQuote = 0;
 
   [AttributeListTestCase("[ObjectValue(0)]", AttributeWithNamespace = false)]
   [ObjectValue((byte)0)]
