@@ -165,7 +165,7 @@ static partial class CSharpFormatter {
     if (options.TypeWithNamespace && !type.IsNested)
       builder.Append(type.Namespace).Append('.');
 
-    IEnumerable<NullabilityInfo> genericTypeArguments = target.GenericTypeArguments;
+    ReadOnlySpan<NullabilityInfo> genericTypeArguments = target.GenericTypeArguments;
 
     if (type.IsNested) {
       var declaringType = type.GetDeclaringTypeOrThrow();
@@ -174,35 +174,23 @@ static partial class CSharpFormatter {
       if (options.WithDeclaringTypeName) {
         if (declaringType.IsGenericTypeDefinition) {
           declaringType = declaringType.MakeGenericType(
-            type.GetGenericArguments().Take(genericArgsOfDeclaringType.Length).ToArray()
+            type.GetGenericArguments()[..genericArgsOfDeclaringType.Length].ToArray() // XXX: allocation
           );
         }
 
         builder.Append(FormatTypeNameCore(declaringType, options)).Append('.');
       }
 
-      genericTypeArguments = genericTypeArguments.Skip(genericArgsOfDeclaringType.Length);
+      genericTypeArguments = genericTypeArguments[genericArgsOfDeclaringType.Length..];
     }
 
     builder.Append(GetTypeName(type, options));
 
-    if (genericTypeArguments.Any()) {
-      builder.Append('<');
-
-      if (options.AsUnboundTypeName) {
-        builder.Append(',', repeatCount: genericTypeArguments.Count() - 1);
-      }
-      else {
-        foreach (var (arg, i) in genericTypeArguments.Select(static (arg, i) => (arg, i))) {
-          if (0 < i)
-            builder.Append(", ");
-
-          FormatTypeNameWithNullabilityAnnotation(arg, builder, options);
-        }
-      }
-
-      builder.Append('>');
-    }
+    AppendGenericTypeArgumentList(
+      builder: builder,
+      typeArguments: genericTypeArguments,
+      options: options
+    );
 
     return builder;
   }
@@ -258,23 +246,42 @@ static partial class CSharpFormatter {
           target.Type.GenericTypeArguments[0], // the type of GenericValueType of Nullable<GenericValueType<>>
           options
         )
-      )
-      .Append('<');
+      );
+
+    AppendGenericTypeArgumentList(
+      builder: builder,
+      typeArguments: target.GenericTypeArguments,
+      options: options
+    );
+
+    return builder;
+  }
+
+  private static void AppendGenericTypeArgumentList(
+    StringBuilder builder,
+    ReadOnlySpan<NullabilityInfo> typeArguments,
+    FormatTypeNameOptions options
+  )
+  {
+    if (typeArguments.IsEmpty)
+      return;
+
+    builder.Append('<');
 
     if (options.AsUnboundTypeName) {
-      if (1 < target.GenericTypeArguments.Length)
-        builder.Append(',', repeatCount: target.GenericTypeArguments.Length - 1);
+      builder.Append(',', repeatCount: typeArguments.Length - 1);
     }
     else {
-      for (var i = 0; i < target.GenericTypeArguments.Length; i++) {
+      // TODO: consider using StringBuilder.AppendJoin() (net9.0 <=)
+      for (var i = 0; i < typeArguments.Length; i++) {
         if (0 < i)
           builder.Append(", ");
 
-        FormatTypeNameWithNullabilityAnnotation(target.GenericTypeArguments[i], builder, options);
+        FormatTypeNameWithNullabilityAnnotation(typeArguments[i], builder, options);
       }
     }
 
-    return builder.Append('>');
+    builder.Append('>');
   }
 }
 #endif // SYSTEM_REFLECTION_NULLABILITYINFO
