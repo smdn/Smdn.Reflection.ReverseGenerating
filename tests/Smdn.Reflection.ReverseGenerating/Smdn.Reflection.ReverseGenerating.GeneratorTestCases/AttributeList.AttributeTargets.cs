@@ -284,6 +284,63 @@ class AttributeTargetsPropertyAccessorMethod {
     [SetMethod]
     set => throw null;
   }
+
+  [MemberDeclarationTestCase(
+    $"public int {nameof(GetMethodAccessibility)} {{ [GetMethod] private protected get; [SetMethod] set; }}",
+    AttributeWithNamespace = false,
+    AttributeWithDeclaringTypeName = false,
+    TypeOfAttributeTypeFilterFunc = typeof(GeneratorTests),
+    NameOfAttributeTypeFilterFunc = nameof(GeneratorTests.ExceptTestCaseAttributeFilter)
+  )]
+  [DebuggerHidden] // must not be shown in the result of MemberDeclarationTestCase
+  [AttributeListTestCase("[System.Diagnostics.DebuggerHidden]")]
+  public int GetMethodAccessibility {
+    [AttributeListTestCase("[GetMethod]", AttributeWithNamespace = false, AttributeWithDeclaringTypeName = false)]
+    [GetMethod]
+    private protected get => throw null;
+
+    [AttributeListTestCase("[SetMethod]", AttributeWithNamespace = false, AttributeWithDeclaringTypeName = false)]
+    [SetMethod]
+    set => throw null;
+  }
+
+  [MemberDeclarationTestCase(
+    $"public int {nameof(SetMethodAccessibility)} {{ [GetMethod] get; [SetMethod] internal protected set; }}",
+    AttributeWithNamespace = false,
+    AttributeWithDeclaringTypeName = false,
+    TypeOfAttributeTypeFilterFunc = typeof(GeneratorTests),
+    NameOfAttributeTypeFilterFunc = nameof(GeneratorTests.ExceptTestCaseAttributeFilter)
+  )]
+  [DebuggerHidden] // must not be shown in the result of MemberDeclarationTestCase
+  [AttributeListTestCase("[System.Diagnostics.DebuggerHidden]")]
+  public int SetMethodAccessibility {
+    [AttributeListTestCase("[GetMethod]", AttributeWithNamespace = false, AttributeWithDeclaringTypeName = false)]
+    [GetMethod]
+    get => throw null;
+
+    [AttributeListTestCase("[SetMethod]", AttributeWithNamespace = false, AttributeWithDeclaringTypeName = false)]
+    [SetMethod]
+    protected internal set => throw null;
+  }
+
+  [MemberDeclarationTestCase(
+    $"public int {nameof(InitSetMethodAccessibility)} {{ [GetMethod] get; [SetMethod] protected init; }}",
+    AttributeWithNamespace = false,
+    AttributeWithDeclaringTypeName = false,
+    TypeOfAttributeTypeFilterFunc = typeof(GeneratorTests),
+    NameOfAttributeTypeFilterFunc = nameof(GeneratorTests.ExceptTestCaseAttributeFilter)
+  )]
+  [DebuggerHidden] // must not be shown in the result of MemberDeclarationTestCase
+  [AttributeListTestCase("[System.Diagnostics.DebuggerHidden]")]
+  public int InitSetMethodAccessibility {
+    [AttributeListTestCase("[GetMethod]", AttributeWithNamespace = false, AttributeWithDeclaringTypeName = false)]
+    [GetMethod]
+    get => throw null;
+
+    [AttributeListTestCase("[SetMethod]", AttributeWithNamespace = false, AttributeWithDeclaringTypeName = false)]
+    [SetMethod]
+    protected init => throw null;
+  }
 }
 
 class AttributeTargetsPropertyBackingField {

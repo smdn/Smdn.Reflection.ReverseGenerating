@@ -611,8 +611,8 @@ public static partial class Generator {
       property,
       asExplicitInterfaceMember: explicitInterfaceMethod is not null,
       options: options,
-      setMethodAccessibility: out string setAccessibility,
-      getMethodAccessibility: out string getAccessibility
+      setMethodAccessibility: out var setAccessibility,
+      getMethodAccessibility: out var getAccessibility
     );
 
     sb.Append(
@@ -696,12 +696,10 @@ public static partial class Generator {
     sb.Append("{ ");
 
     if (emitGetAccessor) {
-      if (explicitInterface == null && 0 < getAccessibility.Length)
-        sb.Append(getAccessibility).Append(' ');
-
       GenerateAccessorDeclaration(
         "get",
         property.GetMethod!,
+        explicitInterface is null ? getAccessibility : null,
         sb,
         referencingNamespaces,
         options
@@ -709,12 +707,10 @@ public static partial class Generator {
     }
 
     if (emitSetAccessor) {
-      if (explicitInterface == null && 0 < setAccessibility.Length)
-        sb.Append(setAccessibility).Append(' ');
-
       GenerateAccessorDeclaration(
         property.IsSetMethodInitOnly() ? "init" : "set",
         property.SetMethod!,
+        explicitInterface is null ? setAccessibility : null,
         sb,
         referencingNamespaces,
         options
@@ -739,6 +735,7 @@ public static partial class Generator {
   private static void GenerateAccessorDeclaration(
     string accessor,
     MethodInfo accessorMethod,
+    string? accessibilityModifier,
     StringBuilder builder,
     ISet<string>? referencingNamespaces,
     GeneratorOptions options
@@ -761,6 +758,9 @@ public static partial class Generator {
       referencingNamespaces,
       options
     );
+
+    if (!string.IsNullOrEmpty(accessibilityModifier))
+      builder.Append(accessibilityModifier).Append(' ');
 
     builder.Append(accessor);
 
@@ -1294,6 +1294,7 @@ public static partial class Generator {
     GenerateAccessorDeclaration(
       "add",
       ev.AddMethod!,
+      accessibilityModifier: null,
       sb,
       referencingNamespaces,
       options
@@ -1302,6 +1303,7 @@ public static partial class Generator {
     GenerateAccessorDeclaration(
       "remove",
       ev.RemoveMethod!,
+      accessibilityModifier: null,
       sb,
       referencingNamespaces,
       options
