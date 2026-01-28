@@ -4,6 +4,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 
 namespace Smdn.Reflection.ReverseGenerating.GeneratorTestCases.MemberDeclaration.InterfaceMembers;
 
@@ -149,5 +150,134 @@ class ExplicitEvent : IEvent {
   event EventHandler IEvent.E {
     add { throw new NotImplementedException(); }
     remove { throw new NotImplementedException(); }
+  }
+}
+
+public delegate R EventHandlerCovariant<out R>();
+public delegate void EventHandlerContravariant<in A>(A a);
+
+class GenericParameterVariance {
+  public interface ICovariant<out R> {
+    [MemberDeclarationTestCase("R M();", MemberWithNamespace = false)]
+    R M();
+
+    [MemberDeclarationTestCase("R P { get; }", MemberWithNamespace = false)]
+    R P { get; }
+
+#if false // CS1961
+    [MemberDeclarationTestCase("event EventHandlerCovariant<R> ECovariant;", MemberWithNamespace = false)]
+    event EventHandlerCovariant<R> ECovariant;
+#endif
+
+    [MemberDeclarationTestCase("event EventHandlerContravariant<R> EContravariant;", MemberWithNamespace = false)]
+    event EventHandlerContravariant<R> EContravariant;
+  }
+
+  public interface IContravariant<in A> {
+    [MemberDeclarationTestCase("void M(A a);", MemberWithNamespace = false)]
+    void M(A a);
+
+    [MemberDeclarationTestCase("A P { set; }", MemberWithNamespace = false)]
+    A P { set; }
+
+    [MemberDeclarationTestCase("event EventHandlerCovariant<A> ECovariant;", MemberWithNamespace = false)]
+    event EventHandlerCovariant<A> ECovariant;
+
+#if false // CS1961
+    [MemberDeclarationTestCase("event EventHandlerContravariant<A> EContravariant;", MemberWithNamespace = false)]
+    event EventHandlerContravariant<A> EContravariant;
+#endif
+  }
+
+  public interface IVariant<out R, in A> {
+    [MemberDeclarationTestCase("R M();", MemberWithNamespace = false)]
+    R M();
+
+    [MemberDeclarationTestCase("void M(A a);", MemberWithNamespace = false)]
+    void M(A a);
+
+    [MemberDeclarationTestCase("R POut { get; }", MemberWithNamespace = false)]
+    R POut { get; }
+
+    [MemberDeclarationTestCase("A PIn { set; }", MemberWithNamespace = false)]
+    A PIn { set; }
+
+    [MemberDeclarationTestCase("event EventHandlerContravariant<R> EContravariant;", MemberWithNamespace = false)]
+    event EventHandlerContravariant<R> EContravariant;
+
+    [MemberDeclarationTestCase("event EventHandlerCovariant<A> ECovariant;", MemberWithNamespace = false)]
+    event EventHandlerCovariant<A> ECovariant;
+  }
+
+  public class CovariantInterfaceMemberImplementationGenericDefinition<R> : ICovariant<R> {
+    [MemberDeclarationTestCase("public R M() {}", MemberWithNamespace = false)]
+    public R M() => throw new NotImplementedException();
+
+    [MemberDeclarationTestCase("public R P { get; }", MemberWithNamespace = false)]
+    public R P { get => throw new NotImplementedException(); }
+
+    [MemberDeclarationTestCase("public event EventHandlerContravariant<R> EContravariant;", MemberWithNamespace = false)]
+    public event EventHandlerContravariant<R> EContravariant;
+  }
+
+  public class ContravariantInterfaceMemberImplementationGenericDefinition<A> : IContravariant<A> {
+    [MemberDeclarationTestCase("public void M(A a) {}", MemberWithNamespace = false)]
+    public void M(A a) => throw new NotImplementedException();
+
+    [MemberDeclarationTestCase("public A P { set; }", MemberWithNamespace = false)]
+    public A P { set => throw new NotImplementedException(); }
+
+    [MemberDeclarationTestCase("public event EventHandlerCovariant<A> ECovariant;", MemberWithNamespace = false)]
+    public event EventHandlerCovariant<A> ECovariant;
+  }
+
+  public class CovariantInterfaceMemberExplicitImplementationGenericDefinition<R> : ICovariant<R> {
+    [MemberDeclarationTestCase("R GenericParameterVariance.ICovariant<R>.M() {}", MemberWithNamespace = false, MemberWithDeclaringTypeName = false)]
+    R ICovariant<R>.M() => throw new NotImplementedException();
+
+    [MemberDeclarationTestCase("R GenericParameterVariance.ICovariant<R>.P { get; }", MemberWithNamespace = false, MemberWithDeclaringTypeName = false)]
+    R ICovariant<R>.P { get => throw new NotImplementedException(); }
+
+    [MemberDeclarationTestCase("event EventHandlerContravariant<R> GenericParameterVariance.ICovariant<R>.EContravariant { add; remove; }", MemberWithNamespace = false, MemberWithDeclaringTypeName = false)]
+    event EventHandlerContravariant<R> ICovariant<R>.EContravariant {
+      add => throw new NotImplementedException();
+      remove => throw new NotImplementedException();
+    }
+  }
+
+  public class ContravariantInterfaceMemberExplicitImplementationGenericDefinition<A> : IContravariant<A> {
+    [MemberDeclarationTestCase("void GenericParameterVariance.IContravariant<A>.M(A a) {}", MemberWithNamespace = false, MemberWithDeclaringTypeName = false)]
+    void IContravariant<A>.M(A a) => throw new NotImplementedException();
+
+    [MemberDeclarationTestCase("A GenericParameterVariance.IContravariant<A>.P { set; }", MemberWithNamespace = false, MemberWithDeclaringTypeName = false)]
+    A IContravariant<A>.P { set => throw new NotImplementedException(); }
+
+    [MemberDeclarationTestCase("event EventHandlerCovariant<A> GenericParameterVariance.IContravariant<A>.ECovariant { add; remove; }", MemberWithNamespace = false, MemberWithDeclaringTypeName = false)]
+    event EventHandlerCovariant<A> IContravariant<A>.ECovariant {
+      add => throw new NotImplementedException();
+      remove => throw new NotImplementedException();
+    }
+  }
+
+  public class CovariantInterfaceMemberImplementation : ICovariant<Stream> {
+    [MemberDeclarationTestCase("public Stream M() {}", MemberWithNamespace = false)]
+    public Stream M() => throw new NotImplementedException();
+
+    [MemberDeclarationTestCase("public Stream P { get; }", MemberWithNamespace = false)]
+    public Stream P { get => throw new NotImplementedException(); }
+
+    [MemberDeclarationTestCase("public event EventHandlerContravariant<Stream> EContravariant;", MemberWithNamespace = false)]
+    public event EventHandlerContravariant<Stream> EContravariant;
+  }
+
+  public class ContravariantInterfaceMemberImplementation : IContravariant<Stream> {
+    [MemberDeclarationTestCase("public void M(System.IO.Stream c) {}", MemberWithNamespace = false)]
+    public void M(Stream c) => throw new NotImplementedException();
+
+    [MemberDeclarationTestCase("public Stream P { set; }", MemberWithNamespace = false)]
+    public Stream P { set => throw new NotImplementedException(); }
+
+    [MemberDeclarationTestCase("public event EventHandlerCovariant<Stream> ECovariant;", MemberWithNamespace = false)]
+    public event EventHandlerCovariant<Stream> ECovariant;
   }
 }

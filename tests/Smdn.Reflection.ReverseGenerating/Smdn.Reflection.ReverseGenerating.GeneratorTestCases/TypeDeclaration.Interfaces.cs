@@ -35,4 +35,28 @@ namespace Smdn.Reflection.ReverseGenerating.GeneratorTestCases.TypeDeclaration.I
       unsafe void M(int* p);
     }
   }
+
+  namespace GenericParameterVariance {
+    [TypeDeclarationTestCase($"public interface ICovariant<out R>")]
+    public interface ICovariant<out R> { }
+
+    [TypeDeclarationTestCase("public interface IContravariant<in A>")]
+    public interface IContravariant<in A> { }
+
+    [TypeDeclarationTestCase("public interface IVariant<out R, in A>")]
+    public interface IVariant<out R, in A> { }
+
+    namespace ExtendingCovariant {
+      [TypeDeclarationTestCase($"public interface IExtendedInvariant<T>")]
+      public interface IExtendedInvariant<T> : ICovariant<T> { }
+
+      [TypeDeclarationTestCase($"public interface IExtendedCovariant<out T>")]
+      public interface IExtendedCovariant<out T> : ICovariant<T> { }
+    }
+
+    namespace ExtendingContravariant {
+      [TypeDeclarationTestCase($"public interface IExtendedInvariant<T>")]
+      public interface IExtendedInvariant<T> : IContravariant<T> { }
+    }
+  }
 }

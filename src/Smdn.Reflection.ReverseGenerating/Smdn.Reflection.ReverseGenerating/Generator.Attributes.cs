@@ -247,11 +247,11 @@ partial class Generator {
 
       var typeOfAttribute = attr.GetAttributeType();
 
-      return CSharpFormatter.FormatTypeNameCore(
+      return CSharpTypeNameFormatter.Format(
         typeOfAttribute,
         options: new(
           AttributeProvider: attributeProvider ?? typeOfAttribute,
-          TypeWithNamespace: options.AttributeDeclaration.WithNamespace,
+          WithNamespace: options.AttributeDeclaration.WithNamespace,
           WithDeclaringTypeName: options.AttributeDeclaration.WithDeclaringTypeName,
           TranslateLanguagePrimitiveType: options.TranslateLanguagePrimitiveTypeDeclaration, // TODO: options.AttributeDeclaration.TranslateLanguagePrimitiveType
           OmitAttributeSuffix: options.AttributeDeclaration.OmitAttributeSuffix

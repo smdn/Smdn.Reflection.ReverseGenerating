@@ -1,7 +1,6 @@
 // SPDX-FileCopyrightText: 2020 smdn <smdn@smdn.jp>
 // SPDX-License-Identifier: MIT
 using System;
-using System.Linq;
 using System.Reflection;
 
 namespace Smdn.Reflection.ReverseGenerating;
@@ -9,21 +8,6 @@ namespace Smdn.Reflection.ReverseGenerating;
 #pragma warning disable IDE0040
 static partial class CSharpFormatter {
 #pragma warning restore IDE0040
-  internal readonly record struct FormatTypeNameOptions(
-#pragma warning disable SA1313
-    ICustomAttributeProvider AttributeProvider,
-    bool TypeWithNamespace,
-    bool WithDeclaringTypeName,
-    bool TranslateLanguagePrimitiveType,
-#if SYSTEM_REFLECTION_NULLABILITYINFOCONTEXT
-    NullabilityInfoContext? NullabilityInfoContext = null,
-#endif
-    Func<Type, string, string>? GenericParameterNameModifier = null,
-    bool OmitAttributeSuffix = false,
-#pragma warning restore SA1313
-    bool AsUnboundTypeName = false
-  );
-
   public static string FormatTypeName(
     this Type t,
     ICustomAttributeProvider? attributeProvider = null,
@@ -31,11 +15,11 @@ static partial class CSharpFormatter {
     bool withDeclaringTypeName = true,
     bool translateLanguagePrimitiveType = true
   )
-    => FormatTypeNameCore(
-      t,
+    => CSharpTypeNameFormatter.Format(
+      type: t,
       options: new(
         AttributeProvider: attributeProvider ?? t,
-        TypeWithNamespace: typeWithNamespace,
+        WithNamespace: typeWithNamespace,
         WithDeclaringTypeName: withDeclaringTypeName,
         TranslateLanguagePrimitiveType: translateLanguagePrimitiveType
       )
@@ -47,11 +31,11 @@ static partial class CSharpFormatter {
     bool withDeclaringTypeName = true,
     bool translateLanguagePrimitiveType = true
   )
-    => FormatTypeNameCore(
-      t ?? throw new ArgumentNullException(nameof(t)),
+    => CSharpTypeNameFormatter.Format(
+      type: t ?? throw new ArgumentNullException(nameof(t)),
       options: new(
         AttributeProvider: t,
-        TypeWithNamespace: typeWithNamespace,
+        WithNamespace: typeWithNamespace,
         WithDeclaringTypeName: withDeclaringTypeName,
         TranslateLanguagePrimitiveType: translateLanguagePrimitiveType,
         AsUnboundTypeName: t.IsGenericTypeDefinition
@@ -90,12 +74,11 @@ static partial class CSharpFormatter {
         withDeclaringTypeName: withDeclaringTypeName,
         translateLanguagePrimitiveType: translateLanguagePrimitiveType
       )
-      : FormatTypeNameWithNullabilityAnnotation(
+      : CSharpTypeNameFormatter.Format(
         target: nullabilityInfoContext.Create(f ?? throw new ArgumentNullException(nameof(f)), nullabilityInfoContextLockObject),
-        builder: new(capacity: 32),
         options: new(
           AttributeProvider: f,
-          TypeWithNamespace: typeWithNamespace,
+          WithNamespace: typeWithNamespace,
           WithDeclaringTypeName: withDeclaringTypeName,
           NullabilityInfoContext: nullabilityInfoContext,
           TranslateLanguagePrimitiveType: translateLanguagePrimitiveType
@@ -109,11 +92,11 @@ static partial class CSharpFormatter {
     bool withDeclaringTypeName = true,
     bool translateLanguagePrimitiveType = true
   )
-    => FormatTypeNameCore(
-      (f ?? throw new ArgumentNullException(nameof(f))).FieldType,
+    => CSharpTypeNameFormatter.Format(
+      type: (f ?? throw new ArgumentNullException(nameof(f))).FieldType,
       options: new(
         AttributeProvider: f,
-        TypeWithNamespace: typeWithNamespace,
+        WithNamespace: typeWithNamespace,
         WithDeclaringTypeName: withDeclaringTypeName,
         TranslateLanguagePrimitiveType: translateLanguagePrimitiveType
       )
@@ -151,12 +134,11 @@ static partial class CSharpFormatter {
         withDeclaringTypeName: withDeclaringTypeName,
         translateLanguagePrimitiveType: translateLanguagePrimitiveType
       )
-      : FormatTypeNameWithNullabilityAnnotation(
+      : CSharpTypeNameFormatter.Format(
         target: nullabilityInfoContext.Create(p ?? throw new ArgumentNullException(nameof(p)), nullabilityInfoContextLockObject),
-        builder: new(capacity: 32),
         options: new(
           AttributeProvider: p,
-          TypeWithNamespace: typeWithNamespace,
+          WithNamespace: typeWithNamespace,
           WithDeclaringTypeName: withDeclaringTypeName,
           NullabilityInfoContext: nullabilityInfoContext,
           TranslateLanguagePrimitiveType: translateLanguagePrimitiveType
@@ -170,11 +152,11 @@ static partial class CSharpFormatter {
     bool withDeclaringTypeName = true,
     bool translateLanguagePrimitiveType = true
   )
-    => FormatTypeNameCore(
-      (p ?? throw new ArgumentNullException(nameof(p))).PropertyType,
+    => CSharpTypeNameFormatter.Format(
+      type: (p ?? throw new ArgumentNullException(nameof(p))).PropertyType,
       options: new(
         AttributeProvider: p,
-        TypeWithNamespace: typeWithNamespace,
+        WithNamespace: typeWithNamespace,
         WithDeclaringTypeName: withDeclaringTypeName,
         TranslateLanguagePrimitiveType: translateLanguagePrimitiveType
       )
@@ -212,12 +194,11 @@ static partial class CSharpFormatter {
         withDeclaringTypeName: withDeclaringTypeName,
         translateLanguagePrimitiveType: translateLanguagePrimitiveType
       )
-      : FormatTypeNameWithNullabilityAnnotation(
+      : CSharpTypeNameFormatter.Format(
         target: nullabilityInfoContext.Create(p ?? throw new ArgumentNullException(nameof(p)), nullabilityInfoContextLockObject),
-        builder: new(capacity: 32),
         options: new(
           AttributeProvider: p,
-          TypeWithNamespace: typeWithNamespace,
+          WithNamespace: typeWithNamespace,
           WithDeclaringTypeName: withDeclaringTypeName,
           NullabilityInfoContext: nullabilityInfoContext,
           TranslateLanguagePrimitiveType: translateLanguagePrimitiveType
@@ -231,11 +212,11 @@ static partial class CSharpFormatter {
     bool withDeclaringTypeName = true,
     bool translateLanguagePrimitiveType = true
   )
-    => FormatTypeNameCore(
-      (p ?? throw new ArgumentNullException(nameof(p))).ParameterType,
+    => CSharpTypeNameFormatter.Format(
+      type: (p ?? throw new ArgumentNullException(nameof(p))).ParameterType,
       options: new(
         AttributeProvider: p,
-        TypeWithNamespace: typeWithNamespace,
+        WithNamespace: typeWithNamespace,
         WithDeclaringTypeName: withDeclaringTypeName,
         TranslateLanguagePrimitiveType: translateLanguagePrimitiveType
       )
@@ -273,12 +254,11 @@ static partial class CSharpFormatter {
         withDeclaringTypeName: withDeclaringTypeName,
         translateLanguagePrimitiveType: translateLanguagePrimitiveType
       )
-      : FormatTypeNameWithNullabilityAnnotation(
+      : CSharpTypeNameFormatter.Format(
         target: nullabilityInfoContext.Create(ev ?? throw new ArgumentNullException(nameof(ev)), nullabilityInfoContextLockObject),
-        builder: new(capacity: 32),
         options: new(
           AttributeProvider: ev,
-          TypeWithNamespace: typeWithNamespace,
+          WithNamespace: typeWithNamespace,
           WithDeclaringTypeName: withDeclaringTypeName,
           NullabilityInfoContext: nullabilityInfoContext,
           TranslateLanguagePrimitiveType: translateLanguagePrimitiveType
@@ -292,69 +272,13 @@ static partial class CSharpFormatter {
     bool withDeclaringTypeName = true,
     bool translateLanguagePrimitiveType = true
   )
-    => FormatTypeNameCore(
-      (ev ?? throw new ArgumentNullException(nameof(ev))).GetEventHandlerTypeOrThrow(),
+    => CSharpTypeNameFormatter.Format(
+      type: (ev ?? throw new ArgumentNullException(nameof(ev))).GetEventHandlerTypeOrThrow(),
       options: new(
         AttributeProvider: ev,
-        TypeWithNamespace: typeWithNamespace,
+        WithNamespace: typeWithNamespace,
         WithDeclaringTypeName: withDeclaringTypeName,
         TranslateLanguagePrimitiveType: translateLanguagePrimitiveType
       )
     );
-
-  private static string GetTypeName(Type t, FormatTypeNameOptions options)
-  {
-    var typeName = t.IsGenericType
-      ? t.GetGenericTypeName()
-      : t.Name;
-
-    if (
-      options.OmitAttributeSuffix &&
-      typeName.EndsWith("Attribute", StringComparison.Ordinal) &&
-      (typeof(Attribute).IsAssignableFrom(t) || IsAttributeType(t)) &&
-      t != typeof(Attribute)
-    ) {
-      const int LengthOfAttributeSuffix = 9; // "Attribute".Length
-
-      typeName = typeName.Substring(0, typeName.Length - LengthOfAttributeSuffix);
-    }
-
-    return typeName;
-
-    // alternative method to Type.IsAssignableTo(typeof(Attribute)) for the
-    // reflection-only context types
-    static bool IsAttributeType(Type maybeReflectionOnlyType)
-    {
-      var t = maybeReflectionOnlyType.BaseType;
-
-      for (; ; ) {
-        if (t is null)
-          return false;
-        if (string.Equals(t.FullName, "System.Attribute", StringComparison.Ordinal))
-          return true;
-
-        t = t.BaseType;
-      }
-    }
-  }
-
-  private static string GetByRefParameterModifier(ParameterInfo parameter)
-  {
-    static bool HasRequiresLocationAttribute(ParameterInfo p)
-      => p
-        .GetCustomAttributesData()
-        .Any(static d => "System.Runtime.CompilerServices.RequiresLocationAttribute".Equals(d.AttributeType.FullName, StringComparison.Ordinal));
-
-    static bool HasIsReadOnlyAttribute(ParameterInfo p)
-      => p
-        .GetCustomAttributesData()
-        .Any(static d => "System.Runtime.CompilerServices.IsReadOnlyAttribute".Equals(d.AttributeType.FullName, StringComparison.Ordinal));
-
-    if (parameter.IsIn)
-      return HasRequiresLocationAttribute(parameter) ? "ref readonly " : "in ";
-    else if (parameter.IsOut)
-      return "out ";
-    else
-      return HasIsReadOnlyAttribute(parameter) ? "ref readonly " : "ref ";
-  }
 }

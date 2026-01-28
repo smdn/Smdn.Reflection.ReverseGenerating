@@ -69,19 +69,17 @@ public static partial class Generator {
     var accessibilityList = options.TypeDeclaration.WithAccessibility
       ? CSharpFormatter.FormatAccessibility(t.GetAccessibility()) + " "
       : string.Empty;
-    var typeName = CSharpFormatter.FormatTypeNameCore(
-      t: t,
+    var typeName = CSharpTypeNameFormatter.Format(
+      type: t,
       options: new(
         AttributeProvider: t,
-        TypeWithNamespace: false,
+        WithNamespace: false,
         WithDeclaringTypeName: options.TypeDeclaration.WithDeclaringTypeName,
         TranslateLanguagePrimitiveType: options.TranslateLanguagePrimitiveTypeDeclaration,
-        GenericParameterNameModifier: (genericParam, name) => {
-          var attributeList = GenerateAttributeList(genericParam, referencingNamespaces, options);
-
-          return attributeList.Any()
-            ? string.Join(" ", attributeList) + " " + name
-            : name;
+        PrependGenericParameterAttributes: (genericParam, builder) => {
+          foreach (var attr in GenerateAttributeList(genericParam, referencingNamespaces, options)) {
+            builder.Append(attr).Append(' ');
+          }
         }
       )
     );

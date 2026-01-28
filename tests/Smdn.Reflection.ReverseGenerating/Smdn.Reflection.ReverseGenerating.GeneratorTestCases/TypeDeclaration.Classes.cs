@@ -138,4 +138,19 @@ namespace Smdn.Reflection.ReverseGenerating.GeneratorTestCases.TypeDeclaration.C
 #pragma warning restore CS0649
     }
   }
+
+  namespace GenericParameterVariance {
+    public interface ICovariant<out R> { }
+    public interface IContravariant<in A> { }
+    public interface IVariant<out R, in A> { }
+
+    [TypeDeclarationTestCase("public class CCovariantGenericTypeDefinition<R>")]
+    public class CCovariantGenericTypeDefinition<R> : ICovariant<R> { }
+
+    [TypeDeclarationTestCase("public class CContravariantGenericTypeDefinition<A>")]
+    public class CContravariantGenericTypeDefinition<A> : IContravariant<A> { }
+
+    [TypeDeclarationTestCase("public class CVariantGenericTypeDefinition<R, A>")]
+    public class CVariantGenericTypeDefinition<R, A> : IVariant<R, A> { }
+  }
 }

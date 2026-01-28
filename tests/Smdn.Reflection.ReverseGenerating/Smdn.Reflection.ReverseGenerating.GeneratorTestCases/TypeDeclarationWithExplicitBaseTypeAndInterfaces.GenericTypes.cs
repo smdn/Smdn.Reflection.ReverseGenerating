@@ -4,6 +4,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 
 namespace Smdn.Reflection.ReverseGenerating.GeneratorTestCases.TypeDeclarationWithExplicitBaseTypeAndInterfaces.GenericTypes;
 
@@ -80,3 +81,25 @@ public record R0<TValue>(TValue Value) where TValue : struct;
   TypeOmitRecordImplicitInterface = true
 )]
 public record struct RS0<TValue>(TValue Value) where TValue : struct;
+
+public interface ICovariant<out R> { }
+public interface IContravariant<in A> { }
+public interface IVariant<out R, in A> { }
+
+[TypeDeclarationWithExplicitBaseTypeAndInterfacesTestCase("public class CCovariantGenericTypeDefinition<R> : ICovariant<R>", TypeWithNamespace = false)]
+public class CCovariantGenericTypeDefinition<R> : ICovariant<R> { }
+
+[TypeDeclarationWithExplicitBaseTypeAndInterfacesTestCase("public class CContravariantGenericTypeDefinition<A> : IContravariant<A>", TypeWithNamespace = false)]
+public class CContravariantGenericTypeDefinition<A> : IContravariant<A> { }
+
+[TypeDeclarationWithExplicitBaseTypeAndInterfacesTestCase("public class CVariantGenericTypeDefinition<R, A> : IVariant<R, A>", TypeWithNamespace = false)]
+public class CVariantGenericTypeDefinition<R, A> : IVariant<R, A> { }
+
+[TypeDeclarationWithExplicitBaseTypeAndInterfacesTestCase("public class CCovariant : ICovariant<Stream>", TypeWithNamespace = false)]
+public class CCovariant : ICovariant<Stream> { }
+
+[TypeDeclarationWithExplicitBaseTypeAndInterfacesTestCase("public class CContravariant : IContravariant<Stream>", TypeWithNamespace = false)]
+public class CContravariant : IContravariant<Stream> { }
+
+[TypeDeclarationWithExplicitBaseTypeAndInterfacesTestCase("public class CVariant : IVariant<Stream, Stream>", TypeWithNamespace = false)]
+public class CVariant : IVariant<Stream, Stream> { }

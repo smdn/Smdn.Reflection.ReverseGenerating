@@ -171,6 +171,34 @@ public class Types {
   public static readonly Type TypeOfGenericTypeDefinition = typeof(Converter<,>);
 
   [MemberDeclarationTestCase(
+    $"public static readonly Type {nameof(TypeOfNullableTypeDefinition)} = typeof(Nullable<>);",
+    MemberWithNamespace = false,
+    ValueWithNamespace = false,
+    ValueWithDeclaringTypeName = false
+  )]
+  [MemberDeclarationTestCase(
+    $"public static readonly Type {nameof(TypeOfNullableTypeDefinition)} = typeof(System.Nullable<>);",
+    MemberWithNamespace = false,
+    ValueWithNamespace = true,
+    ValueWithDeclaringTypeName = false
+  )]
+  public static readonly Type TypeOfNullableTypeDefinition = typeof(Nullable<>);
+
+  [MemberDeclarationTestCase(
+    $"public static readonly Type {nameof(TypeOfNullableGenericValueType)} = typeof(KeyValuePair<string, int>?);",
+    MemberWithNamespace = false,
+    ValueWithNamespace = false,
+    ValueWithDeclaringTypeName = false
+  )]
+  [MemberDeclarationTestCase(
+    $"public static readonly Type {nameof(TypeOfNullableGenericValueType)} = typeof(System.Collections.Generic.KeyValuePair<string, int>?);",
+    MemberWithNamespace = false,
+    ValueWithNamespace = true,
+    ValueWithDeclaringTypeName = false
+  )]
+  public static readonly Type TypeOfNullableGenericValueType = typeof(KeyValuePair<string, int>?);
+
+  [MemberDeclarationTestCase(
     $"public static readonly Type {nameof(TypeOfNestedGenericTypeDefinition)} = typeof(Types.C<>.CI.S<,>);",
     MemberWithNamespace = false,
     ValueWithNamespace = false,

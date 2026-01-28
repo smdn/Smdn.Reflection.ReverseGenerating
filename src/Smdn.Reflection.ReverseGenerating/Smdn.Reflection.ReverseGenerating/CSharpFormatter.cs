@@ -270,12 +270,12 @@ public static partial class CSharpFormatter /* ITypeFormatter */ {
   )
     => PrimitiveTypes.TryGetValue((t ?? throw new ArgumentNullException(nameof(t))).FullName ?? string.Empty, out primitiveTypeName);
 
-  private static bool IsLanguagePrimitiveValueTupleType(Type t)
+  internal static bool IsLanguagePrimitiveValueTupleType(Type t)
     =>
       t.IsGenericType &&
-      2 <= t.GetGenericTypeDefinition().GetTypeInfo().GenericTypeParameters.Length &&
-      t.FullName is { } typeFullName &&
-      typeFullName.StartsWith("System.ValueTuple`", StringComparison.Ordinal);
+      "System".Equals(t.Namespace, StringComparison.Ordinal) &&
+      "ValueTuple".Equals(t.GetGenericTypeName(), StringComparison.Ordinal) &&
+      1 < t.GetGenericArguments().Length; // except single element tuples
 
   public static IEnumerable<string> ToNamespaceList(Type t)
     => ToNamespaceList(
@@ -576,6 +576,48 @@ public static partial class CSharpFormatter /* ITypeFormatter */ {
         sb.Append('@'); // to verbatim
 
       return sb.Append(p.Name);
+    }
+  }
+
+  internal static StringBuilder AppendByRefModifier(
+    ICustomAttributeProvider element,
+    StringBuilder builder
+  )
+  {
+    static bool HasRequiresLocationAttribute(ParameterInfo p)
+      => p
+        .GetCustomAttributesData()
+        .Any(static d => "System.Runtime.CompilerServices.RequiresLocationAttribute".Equals(d.AttributeType.FullName, StringComparison.Ordinal));
+
+    static bool HasIsReadOnlyAttribute(ParameterInfo p)
+      => p
+        .GetCustomAttributesData()
+        .Any(static d => "System.Runtime.CompilerServices.IsReadOnlyAttribute".Equals(d.AttributeType.FullName, StringComparison.Ordinal));
+
+    switch (element) {
+      case ParameterInfo parameter:
+        if (parameter.IsIn)
+          return builder.Append(HasRequiresLocationAttribute(parameter) ? "ref readonly " : "in ");
+        else if (parameter.IsOut)
+          return builder.Append("out ");
+        else
+          return builder.Append(HasIsReadOnlyAttribute(parameter) ? "ref readonly " : "ref ");
+
+      case PropertyInfo:
+        return builder.Append("ref ");
+
+      // C# 11 ref fields
+      // https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/ref-struct#ref-fields
+      case FieldInfo f:
+        builder.Append("ref ");
+
+        if (f.IsReadOnly())
+          builder.Append("readonly ");
+
+        return builder;
+
+      default: // unexpected by-ref type or member
+        return builder;
     }
   }
 

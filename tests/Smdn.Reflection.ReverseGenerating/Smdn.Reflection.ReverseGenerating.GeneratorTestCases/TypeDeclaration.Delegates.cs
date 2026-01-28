@@ -55,4 +55,15 @@ namespace Smdn.Reflection.ReverseGenerating.GeneratorTestCases.TypeDeclaration.D
     [TypeDeclarationTestCase("public delegate void ScopedRef(scoped ref int x);")] public delegate void ScopedRef(scoped ref int x);
     [TypeDeclarationTestCase("public delegate void ScopedRefReadOnly(scoped ref readonly System.ReadOnlySpan<int> x);")] public delegate void ScopedRefReadOnly(scoped ref readonly ReadOnlySpan<int> x);
   }
+
+  namespace GenericParameterVariance {
+    [TypeDeclarationTestCase("public delegate R DCovariant<out R>();")]
+    public delegate R DCovariant<out R>();
+
+    [TypeDeclarationTestCase("public delegate void DContravariant<in A>(A a);")]
+    public delegate void DContravariant<in A>(A a);
+
+    [TypeDeclarationTestCase("public delegate R DVariant<in A, out R>(A a);")]
+    public delegate R DVariant<in A, out R>(A a);
+  }
 }
