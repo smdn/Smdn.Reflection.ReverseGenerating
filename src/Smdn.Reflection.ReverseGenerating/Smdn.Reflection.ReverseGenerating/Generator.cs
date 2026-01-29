@@ -58,7 +58,66 @@ public static partial class Generator {
       options ?? throw new ArgumentNullException(nameof(options))
     );
 
-#pragma warning disable CA1502 // TODO: simplify and refactor
+  /// <returns>
+  /// Returns <see cref="string"/> that represents the <c>enum_base</c> specification, including <c>:</c>.
+  /// </returns>
+  private static string? GenerateEnumBaseSpecification(
+    Type enumType,
+    GeneratorOptions options
+  )
+  {
+    var enumUnderlyingType = enumType.GetEnumUnderlyingType();
+    var omitEnumUnderlyingType =
+      options.TypeDeclaration.OmitEnumUnderlyingTypeIfPossible &&
+      string.Equals(enumUnderlyingType.FullName, typeof(int).FullName, StringComparison.Ordinal);
+
+    if (omitEnumUnderlyingType)
+      return null;
+
+    return string.Concat(
+      " : ",
+      enumUnderlyingType.FormatTypeName(
+        typeWithNamespace: options.TypeDeclaration.WithNamespace,
+        translateLanguagePrimitiveType: options.TranslateLanguagePrimitiveTypeDeclaration
+      )
+    );
+  }
+
+  /// <returns>
+  /// Returns <see cref="string"/> that represents the <c>struct_modifier</c> specifications other than
+  /// the <see langword="new"/> and accessibility modifier.
+  /// </returns>
+  private static string GenerateStructModifierSpecifications(Type structType, GeneratorOptions options)
+  {
+    var isReadOnly = structType.IsReadOnlyValueType() ? "readonly " : null;
+    var isUnsafe = (options.TypeDeclaration.DetectUnsafe && structType.HasUnsafeFields()) ? "unsafe " : null;
+    var isByRefLike = structType.IsByRefLikeValueType() ? "ref " : null;
+    var isRecord = (options.TypeDeclaration.EnableRecordTypes && structType.IsRecord()) ? "record " : null;
+
+    return $"{isReadOnly}{isByRefLike}{isUnsafe}{isRecord}";
+  }
+
+  /// <returns>
+  /// Returns <see cref="string"/> that represents the <c>class_modifier</c> specifications other than
+  /// the <see langword="new"/> and accessibility modifier.
+  /// </returns>
+  private static string GenerateClassModifierSpecifications(Type classType, GeneratorOptions options)
+  {
+    string? modifier = null;
+
+    if (classType.IsAbstract && classType.IsSealed)
+      modifier = "static ";
+    else if (classType.IsAbstract)
+      modifier = "abstract ";
+    else if (classType.IsSealed)
+      modifier = "sealed ";
+
+    var isUnsafe = (options.TypeDeclaration.DetectUnsafe && classType.HasUnsafeFields()) ? "unsafe " : string.Empty;
+    var isRecord = (options.TypeDeclaration.EnableRecordTypes && classType.IsRecord()) ? "record " : string.Empty;
+
+    return $"{modifier}{isUnsafe}{isRecord}";
+  }
+
   private static IEnumerable<string> GenerateTypeDeclaration(
     Type t,
     bool generateExplicitBaseTypeAndInterfaces,
@@ -66,6 +125,12 @@ public static partial class Generator {
     GeneratorOptions options
   )
   {
+    if (t.IsConcreteDelegate()) {
+      yield return GenerateDelegateDeclaration(t, referencingNamespaces, options)!;
+      yield break;
+    }
+
+    var modifierNew = t.IsHidingInheritedType(nonPublic: true) ? "new " : null;
     var accessibilityList = options.TypeDeclaration.WithAccessibility
       ? CSharpFormatter.FormatAccessibility(t.GetAccessibility()) + " "
       : string.Empty;
@@ -84,10 +149,30 @@ public static partial class Generator {
       )
     );
 
-    if (t.IsConcreteDelegate()) {
-      yield return GenerateDelegateDeclaration(t, referencingNamespaces, options)!;
+    if (t.IsEnum) {
+      var enumBase = GenerateEnumBaseSpecification(t, options);
+
+      yield return $"{modifierNew}{accessibilityList}enum {typeName}{enumBase}";
       yield break;
     }
+
+    string typeSpecifier;
+    string? typeModifiers;
+
+    if (t.IsInterface) {
+      typeSpecifier = "interface";
+      typeModifiers = null;
+    }
+    else if (t.IsValueType) {
+      typeSpecifier = "struct";
+      typeModifiers = GenerateStructModifierSpecifications(t, options);
+    }
+    else {
+      typeSpecifier = "class";
+      typeModifiers = GenerateClassModifierSpecifications(t, options);
+    }
+
+    var typeDeclaration = $"{modifierNew}{accessibilityList}{typeModifiers}{typeSpecifier} {typeName}";
 
     var genericParameterConstraints = t
       .GetGenericArguments()
@@ -99,63 +184,6 @@ public static partial class Generator {
 
     string GetSingleLineGenericParameterConstraintsDeclaration()
       => genericParameterConstraints.Count == 0 ? string.Empty : " " + string.Join(" ", genericParameterConstraints);
-
-    var modifierNew = t.IsHidingInheritedType(nonPublic: true) ? "new " : null;
-
-    if (t.IsEnum) {
-      string? underlyingTypeDeclaration = null;
-      var underlyingType = t.GetEnumUnderlyingType();
-      var omitEnumUnderlyingType =
-        options.TypeDeclaration.OmitEnumUnderlyingTypeIfPossible &&
-        string.Equals(underlyingType.FullName, "System.Int32", StringComparison.Ordinal);
-
-      if (!omitEnumUnderlyingType) {
-        underlyingTypeDeclaration = string.Concat(
-          " : ",
-          underlyingType.FormatTypeName(
-            typeWithNamespace: options.TypeDeclaration.WithNamespace,
-            translateLanguagePrimitiveType: options.TranslateLanguagePrimitiveTypeDeclaration
-          )
-        );
-      }
-
-      yield return $"{modifierNew}{accessibilityList}enum {typeName}{underlyingTypeDeclaration}";
-      yield break;
-    }
-
-    static bool HasUnsafeFields(Type t)
-      => t
-        .GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static | BindingFlags.DeclaredOnly)
-        .Any(static f => f.FieldType.IsPointer || f.IsFixedBuffer());
-
-    string typeDeclaration;
-
-    if (t.IsInterface) {
-      typeDeclaration = $"{modifierNew}{accessibilityList}interface {typeName}";
-    }
-    else if (t.IsValueType) {
-      var isReadOnly = t.IsReadOnlyValueType() ? "readonly " : string.Empty;
-      var isUnsafe = (options.TypeDeclaration.DetectUnsafe && HasUnsafeFields(t)) ? "unsafe " : string.Empty;
-      var isByRefLike = t.IsByRefLikeValueType() ? "ref " : string.Empty;
-      var isRecord = (options.TypeDeclaration.EnableRecordTypes && t.IsRecord()) ? "record " : string.Empty;
-
-      typeDeclaration = $"{modifierNew}{accessibilityList}{isReadOnly}{isByRefLike}{isUnsafe}{isRecord}struct {typeName}";
-    }
-    else {
-      string? modifier = null;
-
-      if (t.IsAbstract && t.IsSealed)
-        modifier = "static ";
-      else if (t.IsAbstract)
-        modifier = "abstract ";
-      else if (t.IsSealed)
-        modifier = "sealed ";
-
-      var isUnsafe = (options.TypeDeclaration.DetectUnsafe && HasUnsafeFields(t)) ? "unsafe " : string.Empty;
-      var isRecord = (options.TypeDeclaration.EnableRecordTypes && t.IsRecord()) ? "record " : string.Empty;
-
-      typeDeclaration = $"{modifierNew}{accessibilityList}{modifier}{isUnsafe}{isRecord}class {typeName}";
-    }
 
     if (!generateExplicitBaseTypeAndInterfaces) {
       yield return typeDeclaration + GetSingleLineGenericParameterConstraintsDeclaration();
@@ -187,7 +215,6 @@ public static partial class Generator {
       }
     }
   }
-#pragma warning restore CA1502
 
   [Obsolete($"Use {nameof(GenerateGenericParameterConstraintDeclaration)} instead.")]
   public static string GenerateGenericArgumentConstraintDeclaration(
