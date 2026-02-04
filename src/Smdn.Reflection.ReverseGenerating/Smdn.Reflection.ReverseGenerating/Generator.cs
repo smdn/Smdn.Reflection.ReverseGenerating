@@ -468,7 +468,7 @@ public static partial class Generator {
         options: options
       );
 
-      var isFixedBuffer = field.TryGetFixedBufferAttributeArgs(
+      var isFixedBuffer = field.TryGetFixedBufferElementTypeAndLength(
         out var fixedBufferElementType,
         out var fixedBufferLength
       );
