@@ -328,20 +328,51 @@ public class ApiListWriter {
     var ret = new StringBuilder(10240);
     var isPrevDelegate = false;
 
-    static int OrderOfType(Type t)
+    static int OrderOfType(Type t, bool orderExtensionDeclarationsFirst)
     {
-      if (t.IsDelegate()) return 1;
-      if (t.IsInterface) return 2;
-      if (t.IsEnum) return 3;
-      if (t.IsClass) return 4;
-      if (t.IsValueType) return 5;
+      if (t.IsDelegate())
+        return 1;
+      if (t.IsInterface)
+        return 2;
+      if (t.IsEnum)
+        return 3;
+      if (t.IsClass)
+        return (orderExtensionDeclarationsFirst && t.IsExtensionGroupingType()) ? 4 : 5;
+      if (t.IsValueType)
+        return 6;
 
       return int.MaxValue;
     }
 
+    static string? GetOrderKeyForExtensionGroupingType(Type extensionGroupingType, GeneratorOptions options)
+      => extensionGroupingType
+        .EnumerateExtensionMarkerTypeAndParameterPairs()
+        .Where(
+          static pair
+            // exclude extension grouping type which has no extension members
+            => pair.ExtensionParameter is not null
+        )
+        .Select(
+          pair
+            // select the declaration of first extension parameter as the sort key
+            => Generator.GenerateParameterDeclaration(
+              parameter: pair.ExtensionParameter!,
+              options: options
+            )
+        )
+        .FirstOrDefault();
+
+    var orderExtensionDeclarationsFirst =
+      options.Writer.ReconstructExtensionDeclarations &&
+      options.Writer.OrderExtensionDeclarationsFirst;
     var orderedTypes = types
-      .OrderBy(OrderOfType)
-      .ThenBy(static type => type.FullName, StringComparer.Ordinal);
+      .OrderBy(type => OrderOfType(type, orderExtensionDeclarationsFirst))
+      .ThenBy(
+        type => options.Writer.ReconstructExtensionDeclarations && type.IsExtensionGroupingType()
+          ? GetOrderKeyForExtensionGroupingType(type, options)
+          : type.FullName,
+        StringComparer.Ordinal
+      );
 
     var enableNullableAnnotationsOnlyOnTypes =
 #if SYSTEM_REFLECTION_NULLABILITYINFOCONTEXT
@@ -409,17 +440,30 @@ public class ApiListWriter {
     ILogger? logger
   )
   {
-    if (options == null)
-      throw new ArgumentNullException(nameof(options));
-
     var ret = new StringBuilder(1024);
     var indent = string.Concat(Enumerable.Repeat(options.Indent, nestLevel));
+
+    if (options.Writer.ReconstructExtensionDeclarations && t.IsExtensionGroupingType()) {
+      AppendExtensionDeclarations(
+        builder: ret,
+        indent: indent,
+        nestLevel: nestLevel,
+        assembly: assembly,
+        extensionGroupingType: t,
+        referencingNamespaces: referencingNamespaces,
+        options: options,
+        enableNullableAnnotationsOnlyOnTypes: enableNullableAnnotationsOnlyOnTypes,
+        enableNullableAnnotationsOnlyOnMembers: enableNullableAnnotationsOnlyOnMembers,
+        logger: logger
+      );
+
+      return ret.ToString();
+    }
 
     AppendTypeForwardingInformation(ret, assembly, t, indent);
 
     foreach (var attr in Generator.GenerateAttributeList(t, null, options)) {
-      ret.Append(indent)
-         .AppendLine(attr);
+      ret.Append(indent).AppendLine(attr);
     }
 
     if (enableNullableAnnotationsOnlyOnTypes)
@@ -500,6 +544,82 @@ public class ApiListWriter {
       .AppendLine();
   }
 
+  private static void AppendExtensionDeclarations(
+    StringBuilder builder,
+    string indent,
+    int nestLevel,
+    Assembly assembly,
+    Type extensionGroupingType,
+    ISet<string> referencingNamespaces,
+    ApiListWriterOptions options,
+    bool enableNullableAnnotationsOnlyOnTypes,
+    bool enableNullableAnnotationsOnlyOnMembers,
+    ILogger? logger
+  )
+  {
+    var orderedExtensionDeclarations = extensionGroupingType
+      .EnumerateExtensionMarkerTypeAndParameterPairs()
+      .Where(
+        static pair
+          // exclude extension grouping type which has no extension members
+          => pair.ExtensionParameter is not null
+      )
+      .Select(
+        pair => (
+          ExtensionDeclaration: Generator.GenerateExtensionDeclaration(
+            extensionMarkerType: pair.ExtensionMarkerType,
+            extensionParameter: pair.ExtensionParameter!,
+            referencingNamespaces: referencingNamespaces,
+            options: options
+          ),
+          // select the declaration of extension parameter as the sort key
+          ExtensionParameterDeclaration: Generator.GenerateParameterDeclaration(
+            parameter: pair.ExtensionParameter!,
+            options: options
+          )
+        )
+      )
+      .OrderBy(static pair => pair.ExtensionParameterDeclaration, StringComparer.Ordinal)
+      .Select(static pair => pair.ExtensionDeclaration );
+    var isFirstExtensionGroup = true;
+
+    foreach (var extensionDeclaration in orderedExtensionDeclarations) {
+      if (isFirstExtensionGroup)
+        isFirstExtensionGroup = false;
+      else
+        builder.AppendLine();
+
+      if (enableNullableAnnotationsOnlyOnTypes)
+        builder.Append(indent).AppendLine("#nullable enable annotations");
+
+      builder
+        .Append(indent)
+        .Append(extensionDeclaration)
+        .AppendLine(" {");
+
+      if (enableNullableAnnotationsOnlyOnTypes)
+        builder.Append(indent).AppendLine("#nullable restore annotations");
+      if (enableNullableAnnotationsOnlyOnMembers)
+        builder.Append(indent).AppendLine("#nullable enable annotations");
+
+      builder.Append(
+        GenerateTypeContentDeclarations(
+          nestLevel + 1,
+          assembly,
+          extensionGroupingType,
+          referencingNamespaces,
+          options,
+          logger
+        )
+      );
+
+      if (enableNullableAnnotationsOnlyOnMembers)
+        builder.Append(indent).AppendLine("#nullable restore annotations");
+
+      builder.Append(indent).AppendLine("}");
+    }
+  }
+
 #pragma warning disable CA1032
   private sealed class MemberDeclarationException : Exception {
     public MemberDeclarationException(string? message, Exception? innerException)
@@ -518,38 +638,64 @@ public class ApiListWriter {
     ILogger? logger
   )
   {
-    if (options == null)
-      throw new ArgumentNullException(nameof(options));
-
-    const BindingFlags MembersBindingFlags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static | BindingFlags.DeclaredOnly;
+    const BindingFlags MembersBindingFlags =
+      BindingFlags.Public |
+      BindingFlags.NonPublic |
+      BindingFlags.Instance |
+      BindingFlags.Static |
+      BindingFlags.DeclaredOnly;
 
     var isRecord = options.TypeDeclaration.EnableRecordTypes && t.IsRecord();
-    var members = t.GetMembers(MembersBindingFlags).OrderBy(static f => f.Name, StringComparer.Ordinal).ToList();
-    var exceptingMembers = new List<MemberInfo>();
+    var members = t.GetMembers(MembersBindingFlags).OrderBy(static m => m.Name, StringComparer.Ordinal).ToList();
+    var membersToBeExcluded = new List<MemberInfo>();
     var nestedTypes = new List<Type>();
+    IReadOnlyList<MemberInfo> extensionImplMethods = [];
+
+    if (options.Writer.ReconstructExtensionDeclarations && t.IsExtensionEnclosingClass()) {
+      extensionImplMethods = t
+        .EnumerateExtensionMemberAndImplementationPairs()
+        .Select(static pair => pair.ImplementationMethod)
+        .ToList();
+    }
 
     foreach (var member in members) {
       if (member is PropertyInfo p) {
-        // remove get/set accessor of properties
-        exceptingMembers.AddRange(p.GetAccessors(true));
+        // exclude get/set accessor of properties
+        membersToBeExcluded.AddRange(p.GetAccessors(true));
       }
       else if (member is EventInfo e) {
-        // remove add/remove/raise method of events
-        exceptingMembers.AddRange(e.GetMethods(true));
+        // exclude add/remove/raise method of events
+        membersToBeExcluded.AddRange(e.GetMethods(true));
       }
       else if (member.MemberType == MemberTypes.NestedType && member is Type nestedType) {
-        exceptingMembers.Add(nestedType);
+        // process nested types recursively
+        membersToBeExcluded.Add(nestedType);
+
+        if (options.IgnorePrivateOrAssembly && (nestedType.IsNestedPrivate || nestedType.IsNestedAssembly))
+          continue; // exclude private or assembly nested types
+        if (options.Writer.ExcludeFixedBufferFieldTypes && IsFixedBufferFieldType(nestedType))
+          continue; // exclude nested types of fixed buffer fields
+        if (options.Writer.ReconstructExtensionDeclarations && nestedType.IsExtensionMarkerType())
+          continue; // exclude extension marker types
+
         nestedTypes.Add(nestedType);
       }
-
-      if (
-        options.Writer.OmitCompilerGeneratedRecordEqualityMethods &&
-        isRecord &&
-        member is MethodInfo m &&
-        m.IsCompilerGeneratedRecordEqualityMethod()
-      ) {
-        // remove compiler-generated record equality methods
-        exceptingMembers.Add(m);
+      else if (member is MethodInfo m) {
+        if (
+          options.Writer.OmitCompilerGeneratedRecordEqualityMethods &&
+          isRecord &&
+          m.IsCompilerGeneratedRecordEqualityMethod()
+        ) {
+          // remove compiler-generated record equality methods
+          membersToBeExcluded.Add(m);
+        }
+        else if (
+          options.Writer.ReconstructExtensionDeclarations &&
+          extensionImplMethods.Contains(m)
+        ) {
+          // exclude implementation methods corresponding to the extension members
+          membersToBeExcluded.Add(m);
+        }
       }
     }
 
@@ -561,10 +707,7 @@ public class ApiListWriter {
         GenerateTypeAndMemberDeclarations(
           nestLevel,
           assembly,
-          nestedTypes.Where(nestedType =>
-            !(options.IgnorePrivateOrAssembly && (nestedType.IsNestedPrivate || nestedType.IsNestedAssembly)) &&
-            !(options.Writer.ExcludeFixedBufferFieldTypes && IsFixedBufferFieldType(nestedType))
-          ),
+          nestedTypes,
           referencingNamespaces,
           options,
           logger
@@ -576,9 +719,9 @@ public class ApiListWriter {
     }
 
     var indent = string.Concat(Enumerable.Repeat(options.Indent, nestLevel));
-    var memberAndDeclarations = new List<(MemberInfo Member, string Declaration)>();
+    var memberAndDeclarationPairs = new List<(MemberInfo Member, string Declaration)>();
 
-    foreach (var member in members.Except(exceptingMembers)) {
+    foreach (var member in members.Except(membersToBeExcluded)) {
       string? declaration = null;
 
       try {
@@ -594,13 +737,13 @@ public class ApiListWriter {
       if (declaration == null)
         continue; // is private or assembly
 
-      memberAndDeclarations.Add((member, declaration));
+      memberAndDeclarationPairs.Add((member, declaration));
     }
 
     var memberComparer = options.Writer.OrderStaticMembersFirst
       ? MemberInfoComparer.StaticMembersFirst
       : MemberInfoComparer.Default;
-    var orderedMemberAndDeclarations = memberAndDeclarations
+    var orderedMemberAndDeclarations = memberAndDeclarationPairs
       .Select(t => (t.Member, t.Declaration, Order: memberComparer.GetOrder(t.Member)))
       .OrderBy(static t => t.Order)
       .ThenBy(static t => t.Member.Name, StringComparer.Ordinal)

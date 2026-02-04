@@ -216,6 +216,47 @@ public static partial class Generator {
     }
   }
 
+  public static string GenerateExtensionDeclaration(
+    Type extensionMarkerType,
+    ParameterInfo extensionParameter,
+    ISet<string>? referencingNamespaces,
+    GeneratorOptions options
+  )
+  {
+    if (extensionMarkerType is null)
+      throw new ArgumentNullException(nameof(extensionMarkerType));
+    if (extensionParameter is null)
+      throw new ArgumentNullException(nameof(extensionParameter));
+    if (options is null)
+      throw new ArgumentNullException(nameof(options));
+
+    var typeParameterList = extensionMarkerType.IsGenericType
+      ? GenerateTypeParameterDeclaration(
+          genericArguments: extensionMarkerType.GetGenericArguments(),
+          referencingNamespaces: referencingNamespaces,
+          options: options,
+          formatTypeWithNamespace: options.TypeDeclaration.WithNamespace
+        )
+      : string.Empty;
+    var receiverParameter = GenerateParameterDeclaration(
+      p: extensionParameter!,
+      referencingNamespaces: referencingNamespaces,
+      options: options
+    );
+    var typeParameterConstraintsClause = extensionMarkerType.IsGenericType
+      ? GenerateGenericParameterConstraintClause(
+          genericParameters: extensionMarkerType.GetGenericArguments(),
+          referencingNamespaces: referencingNamespaces,
+          options: options
+        )
+      : string.Empty;
+    var typeParameterConstraintsClauseDelimiter = string.IsNullOrEmpty(typeParameterConstraintsClause)
+      ? string.Empty
+      : " ";
+
+    return $"extension{typeParameterList}({receiverParameter}){typeParameterConstraintsClauseDelimiter}{typeParameterConstraintsClause}";
+  }
+
   [Obsolete($"Use {nameof(GenerateGenericParameterConstraintDeclaration)} instead.")]
   public static string GenerateGenericArgumentConstraintDeclaration(
     Type genericArgument,
@@ -1128,6 +1169,16 @@ public static partial class Generator {
         })
       ),
       ">"
+    );
+
+  public static string GenerateParameterDeclaration(
+    ParameterInfo parameter,
+    GeneratorOptions options
+  )
+    => GenerateParameterDeclaration(
+      p: parameter ?? throw new ArgumentNullException(nameof(parameter)),
+      referencingNamespaces: null,
+      options: options ?? throw new ArgumentNullException(nameof(options))
     );
 
   private static string GenerateParameterDeclaration(

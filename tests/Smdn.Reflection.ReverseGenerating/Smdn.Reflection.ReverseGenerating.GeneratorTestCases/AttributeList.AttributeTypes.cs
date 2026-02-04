@@ -58,6 +58,23 @@ static class Extension {
   public static void M1(this int x) { }
 }
 
+[AttributeListTestCase("[System.Runtime.CompilerServices.Extension]")]
+static class ExtensionMembers {
+  extension(int x) {
+    // emitted attribute data may differ depending on the compiler version (?)
+    // [AttributeListTestCase("[System.Runtime.CompilerServices.ExtensionMarker(...)]")]
+    public void M() => throw new NotImplementedException();
+
+    // emitted attribute data may differ depending on the compiler version (?)
+    // [AttributeListTestCase("[System.Runtime.CompilerServices.ExtensionMarker(...)]")]
+    public bool P => throw new NotImplementedException();
+
+    // emitted attribute data may differ depending on the compiler version (?)
+    // [AttributeListTestCase("[System.Runtime.CompilerServices.ExtensionMarker(...)]")]
+    public static int operator +(int other) => throw new NotImplementedException();
+  }
+}
+
 [AttributeListTestCase("[System.Runtime.InteropServices.StructLayout(System.Runtime.InteropServices.LayoutKind.Explicit, Pack = 1)]", AttributeWithNamespace = true, ValueWithNamespace = true)]
 [AttributeListTestCase("[System.Runtime.InteropServices.StructLayout(LayoutKind.Explicit, Pack = 1)]", AttributeWithNamespace = true, ValueWithNamespace = false)]
 [AttributeListTestCase("[StructLayout(System.Runtime.InteropServices.LayoutKind.Explicit, Pack = 1)]", AttributeWithNamespace = false, ValueWithNamespace = true)]

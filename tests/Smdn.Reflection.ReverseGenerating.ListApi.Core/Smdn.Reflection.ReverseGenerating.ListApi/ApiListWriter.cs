@@ -118,7 +118,8 @@ public partial class ApiListWriterTests {
     ApiListWriterOptions apiListWriterOptions,
     string? assemblyName = null,
     IEnumerable<string>? referenceAssemblyFileNames = null,
-    IEnumerable<ResourceDescription>? manifestResources = null
+    IEnumerable<ResourceDescription>? manifestResources = null,
+    bool loadIntoReflectionOnlyContext = true
   )
   {
     using var assemblyStream = new MemoryStream();
@@ -136,7 +137,7 @@ public partial class ApiListWriterTests {
     var ret = AssemblyLoader.UsingAssembly(
       assemblyStream: assemblyStream,
       componentAssemblyPath: ".",
-      loadIntoReflectionOnlyContext: true,
+      loadIntoReflectionOnlyContext: loadIntoReflectionOnlyContext,
       arg: apiListWriterOptions,
       logger: logger,
       actionWithLoadedAssembly: static (assembly, arg) => {

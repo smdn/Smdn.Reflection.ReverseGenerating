@@ -13,6 +13,8 @@ public class ApiListWriterOptions : GeneratorOptions {
     public bool ThrowIfForwardedTypesCouldNotLoaded { get; set; } = false;
     public bool WriteNullableAnnotationDirective { get; set; } = true;
     public bool ExcludeFixedBufferFieldTypes { get; set; } = true;
+    public bool ReconstructExtensionDeclarations { get; set; } = true;
+    public bool OrderExtensionDeclarationsFirst { get; set; } = true;
 
     /* options relevant to header */
     public bool WriteHeader { get; set; } = true;

@@ -15,7 +15,7 @@ SPDX-License-Identifier: MIT
 
   <ItemGroup>
     <Compile Include="..\Common\**\*.cs" />
-    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.4.0" />
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="5.0.0" />
     <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="6.0.0" />
     <PackageReference Include="Smdn.Fundamental.Stream.TextReader" Version="3.*" />
   </ItemGroup>

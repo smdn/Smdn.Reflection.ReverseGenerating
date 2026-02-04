@@ -38,6 +38,9 @@ public static class AttributeFilter {
         if (ignore)
           return false;
       }
+
+      if ("CompilerFeatureRequiredAttribute".Equals(attrType.Name, StringComparison.Ordinal))
+        return false;
     }
 
     // System.Diagnostics.DebuggerXxxAttribute
@@ -60,12 +63,14 @@ public static class AttributeFilter {
 
         break;
 
-      case MethodBase:
+      case MethodBase m:
         if (ROCType.FullNameEquals(typeof(System.Runtime.CompilerServices.ExtensionAttribute), attrType))
           return false;
         if (ROCType.FullNameEquals(typeof(System.Runtime.CompilerServices.IteratorStateMachineAttribute), attrType))
           return false;
         if (ROCType.FullNameEquals(typeof(System.Runtime.CompilerServices.AsyncStateMachineAttribute), attrType))
+          return false;
+        if (m is MethodInfo && "System.Runtime.CompilerServices.ExtensionMarkerAttribute".Equals(attrType.FullName, StringComparison.Ordinal))
           return false;
         break;
 
@@ -82,6 +87,8 @@ public static class AttributeFilter {
 
       case PropertyInfo:
         if (ROCType.FullNameEquals(typeof(System.Runtime.CompilerServices.TupleElementNamesAttribute), attrType))
+          return false;
+        if ("System.Runtime.CompilerServices.ExtensionMarkerAttribute".Equals(attrType.FullName, StringComparison.Ordinal))
           return false;
         if ("System.Runtime.CompilerServices.RequiredMemberAttribute".Equals(attrType.FullName, StringComparison.Ordinal))
           return false;
