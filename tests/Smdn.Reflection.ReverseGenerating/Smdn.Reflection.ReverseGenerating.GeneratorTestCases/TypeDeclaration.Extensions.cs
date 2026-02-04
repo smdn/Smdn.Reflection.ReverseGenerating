@@ -16,7 +16,11 @@ namespace Smdn.Reflection.ReverseGenerating.GeneratorTestCases.TypeDeclaration.E
     }
 
 #nullable enable
+#if SYSTEM_REFLECTION_NULLABILITYINFOCONTEXT
     [ExtensionGroupingTypeDeclarationTestCase("extension(string? x)")]
+#else
+    [ExtensionGroupingTypeDeclarationTestCase("extension(string x)")]
+#endif
     [ExtensionGroupingTypeReferencingNamespacesTestCase("")]
     public static class NullableReferenceType {
       extension(string? x) {
