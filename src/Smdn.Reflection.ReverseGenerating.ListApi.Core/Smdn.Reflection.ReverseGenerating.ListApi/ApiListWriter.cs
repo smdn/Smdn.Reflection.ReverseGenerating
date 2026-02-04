@@ -14,8 +14,6 @@ using System.Text;
 
 using Microsoft.Extensions.Logging;
 
-using Smdn.Reflection.Attributes;
-
 namespace Smdn.Reflection.ReverseGenerating.ListApi;
 
 public class ApiListWriter {
@@ -673,7 +671,7 @@ public class ApiListWriter {
 
         if (options.IgnorePrivateOrAssembly && (nestedType.IsNestedPrivate || nestedType.IsNestedAssembly))
           continue; // exclude private or assembly nested types
-        if (options.Writer.ExcludeFixedBufferFieldTypes && IsFixedBufferFieldType(nestedType))
+        if (options.Writer.ExcludeFixedBufferFieldTypes && nestedType.IsFixedBufferFieldType())
           continue; // exclude nested types of fixed buffer fields
         if (options.Writer.ReconstructExtensionDeclarations && nestedType.IsExtensionMarkerType())
           continue; // exclude extension marker types
@@ -764,26 +762,6 @@ public class ApiListWriter {
     }
 
     return ret.ToString();
-
-    static bool IsFixedBufferFieldType(Type t) // where t.MemberType == MemberTypes.NestedType
-    {
-      if (!t.IsValueType)
-        return false; // fixed buffer type must be struct
-      if (!t.HasCompilerGeneratedAttribute())
-        return false; // fixed buffer type must have CompilerGeneratedAttribute
-      if (!t.GetCustomAttributesData().Any(
-        static d => string.Equals(typeof(UnsafeValueTypeAttribute).FullName, d.AttributeType.FullName, StringComparison.Ordinal)
-      )) {
-        return false; // fixed buffer type must have UnsafeValueTypeAttribute
-      }
-
-      if (t.DeclaringType is not { } declaringType)
-        return false;
-
-      return declaringType
-        .GetFields(BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.DeclaredOnly)
-        .Any(field => string.Equals(field.FieldType.Name, t.Name, StringComparison.Ordinal));
-    }
   }
 #pragma warning restore CA1502 // TODO: reduce complexity
 }

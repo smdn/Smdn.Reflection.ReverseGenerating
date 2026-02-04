@@ -10,7 +10,6 @@ using System.Diagnostics.CodeAnalysis;
 #endif
 using System.Linq;
 using System.Reflection;
-using System.Runtime.CompilerServices;
 using System.Text;
 
 namespace Smdn.Reflection.ReverseGenerating;
@@ -512,30 +511,12 @@ public static partial class CSharpFormatter /* ITypeFormatter */ {
   {
     var ret = new StringBuilder(capacity: 64);
 
-    if (
-      p.Position == 0 &&
-      p.Member.GetCustomAttributesData().Any(
-        static d => string.Equals(typeof(ExtensionAttribute).FullName, d.AttributeType.FullName, StringComparison.Ordinal)
-      )
-    ) {
+    if (p.IsExtensionMethodFirstParameter())
       ret.Append("this ");
-    }
-    else if (
-      p.GetCustomAttributesData().Any(
-        static d =>
-          string.Equals(typeof(ParamArrayAttribute).FullName, d.AttributeType.FullName, StringComparison.Ordinal) ||
-          string.Equals("System.Runtime.CompilerServices.ParamCollectionAttribute", d.AttributeType.FullName, StringComparison.Ordinal)
-      )
-    ) {
+    else if (p.CanTakeArbitraryLengthOfArgs())
       ret.Append("params "); // params <ref-type> is `scoped` by default
-    }
-    else if (
-      p.GetCustomAttributesData().Any(
-        static d => "System.Runtime.CompilerServices.ScopedRefAttribute".Equals(d.AttributeType.FullName, StringComparison.Ordinal)
-      )
-    ) {
+    else if (p.IsScopedRef())
       ret.Append("scoped ");
-    }
 
     ret.Append(
       p.FormatTypeName(
@@ -584,24 +565,16 @@ public static partial class CSharpFormatter /* ITypeFormatter */ {
     StringBuilder builder
   )
   {
-    static bool HasRequiresLocationAttribute(ParameterInfo p)
-      => p
-        .GetCustomAttributesData()
-        .Any(static d => "System.Runtime.CompilerServices.RequiresLocationAttribute".Equals(d.AttributeType.FullName, StringComparison.Ordinal));
-
-    static bool HasIsReadOnlyAttribute(ParameterInfo p)
-      => p
-        .GetCustomAttributesData()
-        .Any(static d => "System.Runtime.CompilerServices.IsReadOnlyAttribute".Equals(d.AttributeType.FullName, StringComparison.Ordinal));
-
     switch (element) {
       case ParameterInfo parameter:
-        if (parameter.IsIn)
-          return builder.Append(HasRequiresLocationAttribute(parameter) ? "ref readonly " : "in ");
+        if (parameter.IsRefReadOnly())
+          return builder.Append("ref readonly ");
+        else if (parameter.IsIn)
+          return builder.Append("in ");
         else if (parameter.IsOut)
           return builder.Append("out ");
         else
-          return builder.Append(HasIsReadOnlyAttribute(parameter) ? "ref readonly " : "ref ");
+          return builder.Append("ref ");
 
       case PropertyInfo:
         return builder.Append("ref ");

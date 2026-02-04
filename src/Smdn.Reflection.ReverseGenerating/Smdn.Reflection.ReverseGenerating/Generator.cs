@@ -1505,22 +1505,19 @@ public static partial class Generator {
         }
       }
 
-      if (method is not null && !method.IsPropertyAccessorMethod() && method.IsReadOnly())
-        sb.Append("readonly ");
+      if (method is not null) {
+        if (!method.IsPropertyAccessorMethod() && method.IsReadOnly())
+          sb.Append("readonly ");
+        if (method.IsAsyncStateMachine())
+          sb.Append("async ");
 
-      var isAsyncStateMachine = m.GetCustomAttributesData().Any(
-        static d => string.Equals(d.AttributeType.FullName, "System.Runtime.CompilerServices.AsyncStateMachineAttribute", StringComparison.Ordinal)
-      );
-
-      if (isAsyncStateMachine)
-        sb.Append("async ");
-
-      try {
-        if (method is not null && method.GetParameters().Any(IsParameterUnsafe))
-          sb.Append("unsafe ");
-      }
-      catch (TypeLoadException) {
-        // FIXME: https://github.com/smdn/Smdn.Reflection.ReverseGenerating/issues/31
+        try {
+          if (method.GetParameters().Any(IsParameterUnsafe))
+            sb.Append("unsafe ");
+        }
+        catch (TypeLoadException) {
+          // FIXME: https://github.com/smdn/Smdn.Reflection.ReverseGenerating/issues/31
+        }
       }
     }
 
