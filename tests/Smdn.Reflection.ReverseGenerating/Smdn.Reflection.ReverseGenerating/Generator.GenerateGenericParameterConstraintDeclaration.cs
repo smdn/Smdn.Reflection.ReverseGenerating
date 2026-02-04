@@ -84,20 +84,28 @@ partial class GeneratorTests {
     GenericParameterConstraintTestCaseAttribute attrTestCase,
     Type type
   )
-    => Assert.That(
+  {
+    type.GetCustomAttribute<SkipTestCaseAttribute>()?.Throw();
+
+    Assert.That(
       GenerateConstraintDeclaration(type.GetGenericArguments(), GetGeneratorOptions(attrTestCase)),
       Is.EqualTo(attrTestCase.Expected),
       message: $"{attrTestCase.SourceLocation} ({type.FullName})"
     );
+  }
 
   [TestCaseSource(nameof(YieldTestCase_GenerateGenericParameterConstraintDeclaration_OfMethod))]
   public void GenerateGenericParameterConstraintDeclaration_OfMethod(
     GenericParameterConstraintTestCaseAttribute attrTestCase,
     MethodInfo method
   )
-    => Assert.That(
+  {
+    method.GetCustomAttribute<SkipTestCaseAttribute>()?.Throw();
+
+    Assert.That(
       GenerateConstraintDeclaration(method.GetGenericArguments(), GetGeneratorOptions(attrTestCase)),
       Is.EqualTo(attrTestCase.Expected),
       message: $"{attrTestCase.SourceLocation} ({method})"
     );
+  }
 }

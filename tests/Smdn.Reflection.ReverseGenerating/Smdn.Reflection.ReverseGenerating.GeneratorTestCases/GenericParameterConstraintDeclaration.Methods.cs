@@ -144,4 +144,87 @@ namespace Smdn.Reflection.ReverseGenerating.GeneratorTestCases.GenericParameterC
     }
 #nullable restore
   }
+
+  // ref: https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/proposals/csharp-9.0/unconstrained-type-parameter-annotations
+  namespace Overrides {
+#nullable enable annotations
+    // C# 8.0
+    namespace ExplicitClassConstraintsInBaseClass {
+      public class CBase {
+        [GenericParameterConstraintTestCase("where T : struct")]
+        public virtual void M<T>(T? t) where T : struct => throw new NotImplementedException();
+        [GenericParameterConstraintTestCase("where T : class")]
+        public virtual void M<T>(T? t) where T : class => throw new NotImplementedException();
+      }
+
+      public class CImplicitStructConstraints : CBase {
+        [SkipTestCase("implicit generic constraint is not supported")]
+        [GenericParameterConstraintTestCase("")]
+        public override void M<T>(T? t) /* where T : struct */ => throw new NotImplementedException();
+        [GenericParameterConstraintTestCase("where T : class")]
+        public override void M<T>(T? t) where T : class => throw new NotImplementedException();
+      }
+
+#if false // error CS0111
+      public class CImplicitClassConstraints : CBase {
+        [GenericParameterConstraintTestCase("where T : struct")]
+        public override void M<T>(T? t) where T : struct => throw new NotImplementedException();
+        [GenericParameterConstraintTestCase("where T : class")]
+        public override void M<T>(T? t) /* where T : class */ => throw new NotImplementedException(); // CS0111
+      }
+#endif
+
+      public class CExplicitConstraints : CBase {
+        [GenericParameterConstraintTestCase("where T : struct")]
+        public override void M<T>(T? t) where T : struct => throw new NotImplementedException();
+        [GenericParameterConstraintTestCase("where T : class")]
+        public override void M<T>(T? t) where T : class => throw new NotImplementedException();
+      }
+    }
+
+    // C# 9.0
+    namespace ImplicitConstraintsInBaseClass {
+      public class CBase {
+        [GenericParameterConstraintTestCase("where T : struct")]
+        public virtual void M<T>(T? t) where T : struct => throw new NotImplementedException();
+        [GenericParameterConstraintTestCase("")]
+        public virtual void M<T>(T? t) => throw new NotImplementedException();
+      }
+
+      public class CExplicitDefaultConstraintsAndOverrideAsImplicitConstraint : CBase {
+        [GenericParameterConstraintTestCase("where T : struct")]
+        public override void M<T>(T? t) /*where T : struct*/ => throw new NotImplementedException();
+        [SkipTestCase("'default' generic constraint is not supported")]
+        [GenericParameterConstraintTestCase("where T : default")]
+        public override void M<T>(T? t) where T : default => throw new NotImplementedException();
+      }
+
+      public class CExplicitDefaultConstraintsAndOverrideAsExplicitConstraint : CBase {
+        [GenericParameterConstraintTestCase("where T : struct")]
+        public override void M<T>(T? t) where T : struct => throw new NotImplementedException();
+        [SkipTestCase("'default' generic constraint is not supported")]
+        [GenericParameterConstraintTestCase("where T : default")]
+        public override void M<T>(T? t) where T : default => throw new NotImplementedException();
+      }
+
+#if false // error CS8665
+      public class CExplicitClassConstraints : CBase {
+        [GenericParameterConstraintTestCase("where T : struct")]
+        public override void M<T>(T? t) where T : struct => throw new NotImplementedException();
+        [GenericParameterConstraintTestCase("where T : default")]
+        public override void M<T>(T? t) where T : class => throw new NotImplementedException(); // CS8665
+      }
+#endif
+
+#if false // error CS0111
+      public class CKeepImplicitConstraints : CBase {
+        [GenericParameterConstraintTestCase("where T : struct")]
+        public override void M<T>(T? t) where T : struct => throw new NotImplementedException();
+        [GenericParameterConstraintTestCase("where T : default")]
+        public override void M<T>(T? t) => throw new NotImplementedException(); // CS0111
+      }
+#endif
+    }
+#nullable restore
+  }
 }
