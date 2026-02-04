@@ -426,7 +426,6 @@ public class ApiListWriter {
     return ret.ToString();
   }
 
-  // TODO: unsafe types
   private static string GenerateTypeAndMemberDeclarations(
     int nestLevel,
     Assembly assembly,
