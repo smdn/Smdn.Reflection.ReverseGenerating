@@ -63,18 +63,18 @@ dotnet tool install -g Smdn.Reflection.ReverseGenerating.ListApi
 dotnet tool update -g Smdn.Reflection.ReverseGenerating.ListApi
 
 # install and update (specifies the target framework explicitly)
-dotnet tool install --framework net8.0 -g Smdn.Reflection.ReverseGenerating.ListApi
-dotnet tool update --framework net6.0 -g Smdn.Reflection.ReverseGenerating.ListApi
+dotnet tool install --framework net10.0 -g Smdn.Reflection.ReverseGenerating.ListApi
+dotnet tool update --framework net8.0 -g Smdn.Reflection.ReverseGenerating.ListApi
 ```
 
 ## Usage
 ```sh
 # Generates the API list.
-# The file 'Library-net8.0.apilist.cs' will be generated.
-list-api Library/bin/Release/net8.0/Library.dll
+# The file 'Library-net10.0.apilist.cs' will be generated.
+list-api Library/bin/Release/net10.0/Library.dll
 
 # Generates the API list with loading the assembly in the reflection-only context.
-list-api --load-reflection-only Library/bin/Release/net8.0/Library.dll
+list-api --load-reflection-only Library/bin/Release/net10.0/Library.dll
 ```
 
 Type `list-api --help` to show usage about command line arguments and options.
@@ -84,11 +84,11 @@ Type `list-api --help` to show usage about command line arguments and options.
 If you are loading an assembly that targets a newer version than the runtime version that the `list-api` command targets, try running it with the [DOTNET_ROLL_FORWARD](https://learn.microsoft.com/dotnet/core/versions/selection) environment variable.
 
 ```sh
-# Installs list-api targeting .NET 6.0
-dotnet tool install --framework net6.0 -g Smdn.Reflection.ReverseGenerating.ListApi
+# Installs list-api targeting .NET 8.0
+dotnet tool install --framework net8.0 -g Smdn.Reflection.ReverseGenerating.ListApi
 
-# Uses runtime roll forwarding to load the assembly targeting .NET 8.0
-DOTNET_ROLL_FORWARD=LatestMajor list-api Library/bin/Release/net8.0/Library.dll
+# Uses runtime roll forwarding to load the assembly targeting .NET 10.0
+DOTNET_ROLL_FORWARD=LatestMajor list-api Library/bin/Release/net10.0/Library.dll
 ```
 
 ## Limitations
