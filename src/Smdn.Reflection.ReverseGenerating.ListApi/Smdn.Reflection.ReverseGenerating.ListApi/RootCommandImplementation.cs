@@ -69,6 +69,10 @@ public sealed class RootCommandImplementation {
     Description = "Generates extension member declarations and hides compiler-generated types and members.",
     DefaultValueFactory = static _ => true,
   };
+  private static readonly Option<bool> OptionGenerateUnsafeTypes = new("--generate-unsafe-types") {
+    Description = "Enables detecting `unsafe` types and hides compiler-generated types for the `fixed` field.",
+    DefaultValueFactory = static _ => true,
+  };
   private static readonly Option<bool> OptionTranslateLanguagePrimitiveType = new("--use-built-in-type-alias") {
     Description = "Use aliases for C# built-in types rather than .NET type names.",
     DefaultValueFactory = static _ => false,
@@ -95,6 +99,7 @@ public sealed class RootCommandImplementation {
       OptionGenerateNullableAnnotations,
       OptionGenerateRecords,
       OptionGenerateExtensionMembers,
+      OptionGenerateUnsafeTypes,
       OptionTranslateLanguagePrimitiveType,
     };
 
@@ -135,6 +140,9 @@ public sealed class RootCommandImplementation {
 
     options.Writer.ReconstructExtensionDeclarations =
     options.Writer.OrderExtensionDeclarationsFirst = parseResult.GetValue(OptionGenerateExtensionMembers);
+
+    options.TypeDeclaration.DetectUnsafe =
+    options.Writer.ExcludeFixedBufferFieldTypes = parseResult.GetValue(OptionGenerateUnsafeTypes);
 
     options.AttributeDeclaration.TypeFilter     = AttributeFilter.Default;
 

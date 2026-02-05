@@ -108,6 +108,20 @@ public class RootCommandImplementationGetApiListWriterOptionsTests {
   }
 
   // cSpell:disable
+  [TestCase("--generate-unsafe-types", true)]
+  [TestCase("--generate-unsafe-types=true", true)]
+  [TestCase("--generate-unsafe-types=false", false)]
+  [TestCase("", true)]
+  // cSpell:enable
+  public void GetApiListWriterOptions_GenerateUnsafeTypes(string args, bool expected)
+  {
+    var options = GetApiListWriterOptions(args);
+
+    Assert.That(options.TypeDeclaration.DetectUnsafe, Is.EqualTo(expected), $"args='{args}'");
+    Assert.That(options.Writer.ExcludeFixedBufferFieldTypes, Is.EqualTo(expected), $"args='{args}'");
+  }
+
+  // cSpell:disable
   [TestCase("--use-built-in-type-alias", true)]
   [TestCase("--use-built-in-type-alias=true", true)]
   [TestCase("--use-built-in-type-alias=false", false)]
