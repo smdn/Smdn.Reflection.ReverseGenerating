@@ -1457,7 +1457,7 @@ public static partial class Generator {
     );
 
 #pragma warning disable CA1502 // TODO: reduce code complexity
-  // TODO: extern, volatile
+  // TODO: extern
   private static void AppendMemberModifiers(
     StringBuilder sb,
     MemberInfo member,
@@ -1574,11 +1574,15 @@ public static partial class Generator {
         if (f.IsStatic && !f.IsLiteral)
           sb.Append("static ");
 
-        if (f.IsInitOnly)
-          sb.Append("readonly ");
-
-        if (f.IsLiteral)
-          sb.Append("const ");
+        if (f.IsInitOnly || f.IsLiteral) {
+          if (f.IsInitOnly)
+            sb.Append("readonly ");
+          else // f.IsLiteral
+            sb.Append("const ");
+        }
+        else if (f.GetRequiredCustomModifiers().Any(static t => t == typeof(IsVolatile))) {
+          sb.Append("volatile ");
+        }
 
         if (f.IsRequired())
           sb.Append("required ");

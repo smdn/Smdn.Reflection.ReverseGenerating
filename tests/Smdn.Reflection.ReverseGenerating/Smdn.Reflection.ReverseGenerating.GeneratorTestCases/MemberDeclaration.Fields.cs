@@ -81,6 +81,12 @@ public class Modifiers {
   [MemberDeclarationTestCase("public static readonly int F9 = 0;")]  static readonly public int F9;
   [MemberDeclarationTestCase("public static readonly int F10 = 0;")] readonly public static int F10;
 
+  [MemberDeclarationTestCase($"public volatile int {nameof(FVolatile)};")] public volatile int FVolatile;
+  [MemberDeclarationTestCase($"public static volatile int {nameof(FStaticVolatile)};")] public static volatile int FStaticVolatile;
+#if SYSTEM_RUNTIME_COMPILERSERVICES_COMPILERFEATUREREQUIREDATTRIBUTE
+  [MemberDeclarationTestCase($"public volatile required int {nameof(FVolatileRequired)};")] public volatile required int FVolatileRequired;
+#endif
+
   protected int FProtected;
 }
 
