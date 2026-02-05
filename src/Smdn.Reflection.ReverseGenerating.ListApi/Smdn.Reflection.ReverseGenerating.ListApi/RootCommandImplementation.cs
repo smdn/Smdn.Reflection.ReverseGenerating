@@ -19,48 +19,18 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
-#if FEATURE_BUILD_PROJ
-using Smdn.Reflection.ReverseGenerating.ListApi.Build;
-#endif
-
 namespace Smdn.Reflection.ReverseGenerating.ListApi;
 
 public sealed class RootCommandImplementation {
   public static readonly string DefaultBuildConfiguration = "Release";
 
   private static readonly Argument<FileSystemInfo> ArgumentInput = new Argument<FileSystemInfo>("input") {
-#if FEATURE_BUILD_PROJ
-    Description = "Path to project/solution/assembly file to generate the API list. The command will search for an project file from the current directory if not specified, or search from the directory if a directory is specified.",
-#else
     Description = "Path to an assembly file to generate the API list.",
-#endif
     DefaultValueFactory = static _ => new DirectoryInfo(Environment.CurrentDirectory),
     // Arity = ArgumentArity.OneOrMore
     Arity = ArgumentArity.ExactlyOne,
   }
   .AcceptExistingOnly();
-
-#if FEATURE_BUILD_PROJ
-  private static readonly Option<string?> OptionConfiguration = new("--configuration", "-c") {
-    Description = "The 'build configuration' option passed to `Build` target when the project will be built.",
-    DefaultValueFactory = static _ => DefaultBuildConfiguration,
-  };
-  private static readonly Option<string?> OptionTargetFramework = new("--framework", "-f") {
-    Description = "The 'target framework' option passed to `Build` target when the project will be built.",
-    DefaultValueFactory = static _ => null,
-  };
-  private static readonly Option<string?> OptionRuntimeIdentifier = new("--runtime", "-r") {
-    Description = "The 'target runtime' option passed to `Build` target when the project will be built.",
-    DefaultValueFactory = static _ => null,
-  };
-#if false
-  private static readonly Option<string?> OptionOS = new(
-    aliases: new[] { "--os" },
-    description: "The 'target operating system' option passed to `Build` target when the project will be built.",
-    DefaultValueFactory = static _ => null,
-  );
-#endif
-#endif // FEATURE_BUILD_PROJ
   private static readonly Option<DirectoryInfo> OptionOutputDirectory = new("--output-directory", "-o") {
     Description = "Path to output directory.",
     DefaultValueFactory = static _ => new DirectoryInfo(Environment.CurrentDirectory),
@@ -112,12 +82,6 @@ public sealed class RootCommandImplementation {
   {
     var rootCommand = new RootCommand {
       ArgumentInput,
-#if FEATURE_BUILD_PROJ
-      OptionConfiguration,
-      OptionTargetFramework,
-      // OptionOS
-      OptionRuntimeIdentifier,
-#endif
       OptionOutputDirectory,
       VerbosityOption.Option,
       OptionLoadAssemblyIntoReflectionOnlyContext,
@@ -402,36 +366,13 @@ public sealed class RootCommandImplementation {
 
     logger?.LogDebug("input file: '{InputFilePath}'", inputFile.FullName);
 
-    IEnumerable<FileInfo> inputAssemblyFiles = Enumerable.Empty<FileInfo>();
+    IEnumerable<FileInfo> inputAssemblyFiles;
 
     if (
       string.Equals(".dll", inputFile.Extension, StringComparison.OrdinalIgnoreCase) ||
       string.Equals(".exe", inputFile.Extension, StringComparison.OrdinalIgnoreCase)
     ) {
       inputAssemblyFiles = Enumerable.Repeat(inputFile, 1);
-    }
-    else if (string.Equals(".sln", inputFile.Extension, StringComparison.OrdinalIgnoreCase)) {
-      // TODO
-      throw new CommandOperationNotSupportedException("generating from the solution file is not supported currently");
-    }
-    else if (inputFile.Extension.EndsWith("proj", StringComparison.OrdinalIgnoreCase)) {
-#if FEATURE_BUILD_PROJ
-      MSBuildExePath.EnsureSetEnvVar(logger);
-
-      inputAssemblyFiles = ProjectBuilder.Build(
-        inputFile,
-        options: new() {
-          Configuration = parseResult.GetValue(OptionConfiguration),
-          TargetFramework = parseResult.GetValue(OptionTargetFramework),
-          // OS: parseResult.GetValue(OptionOS),
-          RuntimeIdentifier = parseResult.GetValue(OptionRuntimeIdentifier),
-          LoggerVerbosity = VerbosityOption.ParseLoggerVerbosity(parseResult),
-        },
-        logger: logger
-      );
-#else
-      throw new CommandOperationNotSupportedException("generating from the project file is not supported currently");
-#endif
     }
     else {
       logger?.LogWarning("unknown type of file: {InputFilePath}", inputFile);

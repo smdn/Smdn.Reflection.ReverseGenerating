@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: MIT
 using System;
 
-using Microsoft.Build.Framework;
 using Microsoft.Extensions.Logging;
 
 using NUnit.Framework;
@@ -28,26 +27,6 @@ public class VerbosityOptionTests {
     Assert.That(
       expectedLogLevel,
       Is.EqualTo(VerbosityOption.ParseLogLevel(verbosity is null ? Array.Empty<string>() : new[] { "-v", verbosity }))
-    );
-  }
-
-  [TestCase("q", LoggerVerbosity.Quiet)]
-  [TestCase("quiet", LoggerVerbosity.Quiet)]
-  [TestCase("m", LoggerVerbosity.Minimal)]
-  [TestCase("minimal", LoggerVerbosity.Minimal)]
-  [TestCase("n", LoggerVerbosity.Normal)]
-  [TestCase("normal", LoggerVerbosity.Normal)]
-  [TestCase("d", LoggerVerbosity.Detailed)]
-  [TestCase("detailed", LoggerVerbosity.Detailed)]
-  [TestCase("diag", LoggerVerbosity.Diagnostic)]
-  [TestCase("diagnostic", LoggerVerbosity.Diagnostic)]
-  [TestCase(null, LoggerVerbosity.Minimal)]
-  [TestCase("default", LoggerVerbosity.Minimal)]
-  public void ParseLoggerVerbosity(string? verbosity, LoggerVerbosity expectedLoggerVerbosity)
-  {
-    Assert.That(
-      expectedLoggerVerbosity,
-      Is.EqualTo(VerbosityOption.ParseLoggerVerbosity(verbosity is null ? Array.Empty<string>() : new[] { "-v", verbosity }))
     );
   }
 }
