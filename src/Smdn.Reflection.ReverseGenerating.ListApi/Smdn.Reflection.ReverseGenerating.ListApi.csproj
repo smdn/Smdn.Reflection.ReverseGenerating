@@ -32,7 +32,7 @@ SPDX-License-Identifier: MIT
     <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="8.0.0" Condition="$(TargetFramework.StartsWith('net8.'))" />
     <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="10.0.0" Condition="$(TargetFramework.StartsWith('net10.'))" />
 
-    <ProjectOrPackageReference ReferencePackageVersion="[1.4.0,2.0.0)" Include="..\Smdn.Reflection.ReverseGenerating.ListApi.Core\Smdn.Reflection.ReverseGenerating.ListApi.Core.csproj" />
+    <ProjectOrPackageReference ReferencePackageVersion="[1.6.0,2.0.0)" Include="..\Smdn.Reflection.ReverseGenerating.ListApi.Core\Smdn.Reflection.ReverseGenerating.ListApi.Core.csproj" />
   </ItemGroup>
 
   <Target Name="WriteConstantsFile" BeforeTargets="BeforeBuild">
