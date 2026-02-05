@@ -26,11 +26,19 @@ public enum Bytes : byte {
 
 public class Flags {
   [Flags()]
-  public enum Ints : int {
-    [MemberDeclarationTestCase("A = 0x00000000,")] A = 0x00000000,
-    [MemberDeclarationTestCase("B = 0x00000001,")] B = 0x00000001,
-    [MemberDeclarationTestCase("C = 0x00000010,")] C = 0x00000010,
-    [MemberDeclarationTestCase("Z = 0x7fffffff,")] Z = 0x7fffffff,
+  public enum SBytes : sbyte {
+    [MemberDeclarationTestCase("A = 0x00,")] A = 0x00,
+    [MemberDeclarationTestCase("B = 0x01,")] B = 0x01,
+    [MemberDeclarationTestCase("C = 0x10,")] C = 0x10,
+    [MemberDeclarationTestCase("Z = 0x7f,")] Z = 0x7f,
+  }
+
+  [Flags()]
+  public enum Bytes : byte {
+    [MemberDeclarationTestCase("A = 0x00,")] A = 0x00,
+    [MemberDeclarationTestCase("B = 0x01,")] B = 0x01,
+    [MemberDeclarationTestCase("C = 0x10,")] C = 0x10,
+    [MemberDeclarationTestCase("Z = 0xff,")] Z = 0xff,
   }
 
   [Flags()]
@@ -42,10 +50,46 @@ public class Flags {
   }
 
   [Flags()]
-  public enum Bytes : byte {
-    [MemberDeclarationTestCase("A = 0x00,")] A = 0x00,
-    [MemberDeclarationTestCase("B = 0x01,")] B = 0x01,
-    [MemberDeclarationTestCase("C = 0x10,")] C = 0x10,
-    [MemberDeclarationTestCase("Z = 0xff,")] Z = 0xff,
+  public enum UShorts : ushort {
+    [MemberDeclarationTestCase("A = 0x0000,")] A = 0x0000,
+    [MemberDeclarationTestCase("B = 0x0001,")] B = 0x0001,
+    [MemberDeclarationTestCase("C = 0x0010,")] C = 0x0010,
+    [MemberDeclarationTestCase("Z = 0xffff,")] Z = 0xffff,
+  }
+
+  [Flags()]
+  public enum Ints : int {
+    [MemberDeclarationTestCase("A = 0x00000000,", MemberOmitEndOfStatement = false)]
+    [MemberDeclarationTestCase("A = 0x00000000", MemberOmitEndOfStatement = true)]
+    [MemberDeclarationTestCase($"{nameof(Flags)}.{nameof(Ints)}.A = 0x00000000,", MemberOmitEndOfStatement = false, MemberWithEnumTypeName = true, MemberWithNamespace = false)]
+    A = 0x00000000,
+
+    [MemberDeclarationTestCase("B = 0x00000001,")] B = 0x00000001,
+    [MemberDeclarationTestCase("C = 0x00000010,")] C = 0x00000010,
+    [MemberDeclarationTestCase("Z = 0x7fffffff,")] Z = 0x7fffffff,
+  }
+
+  [Flags()]
+  public enum UInts : uint {
+    [MemberDeclarationTestCase("A = 0x00000000,")] A = 0x00000000,
+    [MemberDeclarationTestCase("B = 0x00000001,")] B = 0x00000001,
+    [MemberDeclarationTestCase("C = 0x00000010,")] C = 0x00000010,
+    [MemberDeclarationTestCase("Z = 0xffffffff,")] Z = 0xffffffff,
+  }
+
+  [Flags()]
+  public enum Longs : long {
+    [MemberDeclarationTestCase("A = 0x0000000000000000,")] A = 0x00000000_00000000,
+    [MemberDeclarationTestCase("B = 0x0000000000000001,")] B = 0x00000000_00000001,
+    [MemberDeclarationTestCase("C = 0x0000000000000010,")] C = 0x00000000_00000010,
+    [MemberDeclarationTestCase("Z = 0x7fffffffffffffff,")] Z = 0x7fffffff_ffffffff,
+  }
+
+  [Flags()]
+  public enum ULongs : ulong {
+    [MemberDeclarationTestCase("A = 0x0000000000000000,")] A = 0x00000000_00000000,
+    [MemberDeclarationTestCase("B = 0x0000000000000001,")] B = 0x00000000_00000001,
+    [MemberDeclarationTestCase("C = 0x0000000000000010,")] C = 0x00000000_00000010,
+    [MemberDeclarationTestCase("Z = 0xffffffffffffffff,")] Z = 0xffffffff_ffffffff,
   }
 }

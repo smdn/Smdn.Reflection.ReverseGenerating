@@ -6,7 +6,6 @@ using System.Globalization;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
 using System.Text;
 
 using Smdn.Reflection.Attributes;
@@ -469,89 +468,112 @@ public static partial class Generator {
       return null;
 
     var declaringType = field.GetDeclaringTypeOrThrow();
+
+    if (declaringType.IsEnum) {
+      if (field.IsStatic)
+        return GenerateEnumFieldDeclaration(field, declaringType, options);
+
+      return null; // ignores backing field __value
+    }
+
     var sb = new StringBuilder();
     var memberOptions = options.MemberDeclaration;
 
-    if (declaringType.IsEnum) {
-      if (field.IsStatic) {
-        sb.Append(GenerateMemberName(field, options));
+    referencingNamespaces?.UnionWith(
+      CSharpFormatter.ToNamespaceList(
+        field.FieldType,
+        translateLanguagePrimitiveTypes: options.TranslateLanguagePrimitiveTypeDeclaration
+      )
+    );
 
-        if (field.TryGetValue(null, out var fieldValue)) {
-          sb.Append(" = ");
+    AppendMemberModifiers(
+      sb,
+      field,
+      asExplicitInterfaceMember: false,
+      options: options
+    );
 
-          var val = Convert.ChangeType(fieldValue, declaringType.GetEnumUnderlyingType(), provider: null);
+    var isFixedBuffer = field.TryGetFixedBufferElementTypeAndLength(
+      out var fixedBufferElementType,
+      out var fixedBufferLength
+    );
 
-          if (val is not null && declaringType.IsEnumFlags())
-            sb.Append("0x").AppendFormat(null, "{0:x" + (Marshal.SizeOf(val) * 2).ToString("D", null) + "}", val);
-          else
-            sb.Append(val);
-        }
-
-        if (!memberOptions.OmitEndOfStatement)
-          sb.Append(',');
-      }
-      else {
-        return null; // ignores backing field __value
-      }
-    }
-    else {
-      referencingNamespaces?.UnionWith(
-        CSharpFormatter.ToNamespaceList(
-          field.FieldType,
-          translateLanguagePrimitiveTypes: options.TranslateLanguagePrimitiveTypeDeclaration
+    if (isFixedBuffer) {
+      sb.Append("fixed ").Append(
+        fixedBufferElementType!.FormatTypeName(
+          typeWithNamespace: options.MemberDeclaration.WithNamespace,
+          translateLanguagePrimitiveType: options.TranslateLanguagePrimitiveTypeDeclaration
         )
       );
-
-      AppendMemberModifiers(
-        sb,
-        field,
-        asExplicitInterfaceMember: false,
-        options: options
-      );
-
-      var isFixedBuffer = field.TryGetFixedBufferElementTypeAndLength(
-        out var fixedBufferElementType,
-        out var fixedBufferLength
-      );
-
-      if (isFixedBuffer) {
-        sb.Append("fixed ").Append(
-          fixedBufferElementType!.FormatTypeName(
-            typeWithNamespace: options.MemberDeclaration.WithNamespace,
-            translateLanguagePrimitiveType: options.TranslateLanguagePrimitiveTypeDeclaration
-          )
-        );
-      }
-      else {
-        sb.Append(
-          field.FormatTypeName(
+    }
+    else {
+      sb.Append(
+        field.FormatTypeName(
 #pragma warning disable SA1114
 #if SYSTEM_REFLECTION_NULLABILITYINFOCONTEXT
-            nullabilityInfoContext: memberOptions.NullabilityInfoContext,
-            nullabilityInfoContextLockObject: memberOptions.NullabilityInfoContextLockObject,
+          nullabilityInfoContext: memberOptions.NullabilityInfoContext,
+          nullabilityInfoContextLockObject: memberOptions.NullabilityInfoContextLockObject,
 #endif
-            typeWithNamespace: memberOptions.WithNamespace
+          typeWithNamespace: memberOptions.WithNamespace
 #pragma warning restore SA1114
-          )
-        );
-      }
-
-      sb
-        .Append(' ')
-        .Append(GenerateMemberName(field, options));
-
-      if (isFixedBuffer)
-        sb.Append('[').Append(fixedBufferLength).Append(']');
-
-      TryAppendFieldStaticValue(
-        field,
-        asPropertyDeclaration: false,
-        sb,
-        options
+        )
       );
     }
 
+    sb
+      .Append(' ')
+      .Append(GenerateMemberName(field, options));
+
+    if (isFixedBuffer)
+      sb.Append('[').Append(fixedBufferLength).Append(']');
+
+    TryAppendFieldStaticValue(
+      field,
+      asPropertyDeclaration: false,
+      sb,
+      options
+    );
+
     return sb.ToString();
+  }
+
+  private static string? GenerateEnumFieldDeclaration(
+    FieldInfo enumField,
+    Type declaringEnumType,
+    GeneratorOptions options
+  )
+  {
+    var name = GenerateMemberName(enumField, options);
+    string? valueDeclaration = null;
+
+    if (enumField.TryGetValue(null, out var fieldValue)) {
+      var val = Convert.ChangeType(fieldValue, declaringEnumType.GetEnumUnderlyingType(), provider: null);
+
+      if (val is not null && declaringEnumType.IsEnumFlags()) {
+        var valueDeclarationFormatString = val switch {
+          sbyte or byte => " = 0x{0:x2}",
+          short or ushort =>" = 0x{0:x4}",
+          int or uint => " = 0x{0:x8}",
+          long or ulong => " = 0x{0:x16}",
+          _ => " = {0}",
+        };
+
+        valueDeclaration = string.Format(
+          provider: null,
+          valueDeclarationFormatString,
+          val
+        );
+      }
+      else {
+        valueDeclaration = $" = {val}";
+      }
+    }
+
+    return string.Concat(
+      name,
+      valueDeclaration,
+      options.MemberDeclaration.OmitEndOfStatement ? null : ","
+    );
   }
 
   private static void TryAppendFieldStaticValue(
