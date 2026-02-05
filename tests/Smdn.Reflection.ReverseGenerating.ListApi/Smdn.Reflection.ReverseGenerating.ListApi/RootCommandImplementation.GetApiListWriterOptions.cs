@@ -94,6 +94,20 @@ public class RootCommandImplementationGetApiListWriterOptionsTests {
   }
 
   // cSpell:disable
+  [TestCase("--generate-extension-members", true)]
+  [TestCase("--generate-extension-members=true", true)]
+  [TestCase("--generate-extension-members=false", false)]
+  [TestCase("", true)]
+  // cSpell:enable
+  public void GetApiListWriterOptions_GenerateExtensionMembers(string args, bool expected)
+  {
+    var options = GetApiListWriterOptions(args);
+
+    Assert.That(options.Writer.ReconstructExtensionDeclarations, Is.EqualTo(expected), $"args='{args}'");
+    Assert.That(options.Writer.OrderExtensionDeclarationsFirst, Is.EqualTo(expected), $"args='{args}'");
+  }
+
+  // cSpell:disable
   [TestCase("--use-built-in-type-alias", true)]
   [TestCase("--use-built-in-type-alias=true", true)]
   [TestCase("--use-built-in-type-alias=false", false)]

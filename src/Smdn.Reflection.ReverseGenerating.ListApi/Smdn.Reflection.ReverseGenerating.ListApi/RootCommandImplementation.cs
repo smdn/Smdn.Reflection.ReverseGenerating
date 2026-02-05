@@ -65,6 +65,10 @@ public sealed class RootCommandImplementation {
     Description = "Generates record type declarations and hides compiler-generated members.",
     DefaultValueFactory = static _ => true,
   };
+  private static readonly Option<bool> OptionGenerateExtensionMembers = new("--generate-extension-members") {
+    Description = "Generates extension member declarations and hides compiler-generated types and members.",
+    DefaultValueFactory = static _ => true,
+  };
   private static readonly Option<bool> OptionTranslateLanguagePrimitiveType = new("--use-built-in-type-alias") {
     Description = "Use aliases for C# built-in types rather than .NET type names.",
     DefaultValueFactory = static _ => false,
@@ -90,6 +94,7 @@ public sealed class RootCommandImplementation {
       OptionGenerateStaticMembersFirst,
       OptionGenerateNullableAnnotations,
       OptionGenerateRecords,
+      OptionGenerateExtensionMembers,
       OptionTranslateLanguagePrimitiveType,
     };
 
@@ -127,6 +132,9 @@ public sealed class RootCommandImplementation {
     options.TypeDeclaration.EnableRecordTypes =
     options.TypeDeclaration.OmitRecordImplicitInterface =
     options.Writer.OmitCompilerGeneratedRecordEqualityMethods = parseResult.GetValue(OptionGenerateRecords);
+
+    options.Writer.ReconstructExtensionDeclarations =
+    options.Writer.OrderExtensionDeclarationsFirst = parseResult.GetValue(OptionGenerateExtensionMembers);
 
     options.AttributeDeclaration.TypeFilter     = AttributeFilter.Default;
 
