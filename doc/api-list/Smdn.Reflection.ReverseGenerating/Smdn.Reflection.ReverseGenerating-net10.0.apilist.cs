@@ -2,22 +2,24 @@
 //   Name: Smdn.Reflection.ReverseGenerating
 //   AssemblyVersion: 1.5.0.0
 //   InformationalVersion: 1.5.0+4160e5e53896561df55366887f66b3a4a25e5b6b
-//   TargetFramework: .NETFramework,Version=v4.5
+//   TargetFramework: .NETCoreApp,Version=v10.0
 //   Configuration: Release
 //   Metadata: RepositoryUrl=https://github.com/smdn/Smdn.Reflection.ReverseGenerating
 //   Metadata: RepositoryBranch=main
 //   Metadata: RepositoryCommit=4160e5e53896561df55366887f66b3a4a25e5b6b
 //   Referenced assemblies:
 //     Smdn.Fundamental.Reflection, Version=3.10.0.0, Culture=neutral
-//     System, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
-//     System.Core, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
-//     System.Memory, Version=4.0.1.1, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51
-//     System.ValueTuple, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51
-//     mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+//     System.Collections, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+//     System.Collections.Immutable, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+//     System.Linq, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+//     System.Memory, Version=10.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51
+//     System.Runtime, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+//     System.Threading, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
 #nullable enable annotations
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using Smdn.Reflection;
 using Smdn.Reflection.ReverseGenerating;
@@ -40,18 +42,32 @@ namespace Smdn.Reflection.ReverseGenerating {
   public static class CSharpFormatter {
     public static string EscapeString(string s, bool escapeSingleQuote = false, bool escapeDoubleQuote = false) {}
     public static string FormatAccessibility(Accessibility accessibility) {}
+    public static string FormatParameter(ParameterInfo p, NullabilityInfoContext? nullabilityInfoContext, bool typeWithNamespace = true, bool useDefaultLiteral = false) {}
+    public static string FormatParameter(ParameterInfo p, NullabilityInfoContext? nullabilityInfoContext, object? nullabilityInfoContextLockObject, bool typeWithNamespace = true, bool useDefaultLiteral = false) {}
     public static string FormatParameter(ParameterInfo p, bool typeWithNamespace = true, bool useDefaultLiteral = false) {}
+    public static string FormatParameterList(MethodBase m, NullabilityInfoContext? nullabilityInfoContext, bool typeWithNamespace = true, bool useDefaultLiteral = false) {}
+    public static string FormatParameterList(MethodBase m, NullabilityInfoContext? nullabilityInfoContext, object? nullabilityInfoContextLockObject, bool typeWithNamespace = true, bool useDefaultLiteral = false) {}
     public static string FormatParameterList(MethodBase m, bool typeWithNamespace = true, bool useDefaultLiteral = false) {}
+    public static string FormatParameterList(ParameterInfo[] parameterList, NullabilityInfoContext? nullabilityInfoContext, bool typeWithNamespace = true, bool useDefaultLiteral = false) {}
+    public static string FormatParameterList(ParameterInfo[] parameterList, NullabilityInfoContext? nullabilityInfoContext, object? nullabilityInfoContextLockObject, bool typeWithNamespace = true, bool useDefaultLiteral = false) {}
     public static string FormatParameterList(ParameterInfo[] parameterList, bool typeWithNamespace = true, bool useDefaultLiteral = false) {}
     public static string FormatSpecialNameMethod(MethodBase methodOrConstructor, out MethodSpecialName nameType) {}
+    public static string FormatTypeName(this EventInfo ev, NullabilityInfoContext? nullabilityInfoContext, bool typeWithNamespace = true, bool withDeclaringTypeName = true, bool translateLanguagePrimitiveType = true) {}
+    public static string FormatTypeName(this EventInfo ev, NullabilityInfoContext? nullabilityInfoContext, object? nullabilityInfoContextLockObject, bool typeWithNamespace = true, bool withDeclaringTypeName = true, bool translateLanguagePrimitiveType = true) {}
     public static string FormatTypeName(this EventInfo ev, bool typeWithNamespace = true, bool withDeclaringTypeName = true, bool translateLanguagePrimitiveType = true) {}
+    public static string FormatTypeName(this FieldInfo f, NullabilityInfoContext? nullabilityInfoContext, bool typeWithNamespace = true, bool withDeclaringTypeName = true, bool translateLanguagePrimitiveType = true) {}
+    public static string FormatTypeName(this FieldInfo f, NullabilityInfoContext? nullabilityInfoContext, object? nullabilityInfoContextLockObject, bool typeWithNamespace = true, bool withDeclaringTypeName = true, bool translateLanguagePrimitiveType = true) {}
     public static string FormatTypeName(this FieldInfo f, bool typeWithNamespace = true, bool withDeclaringTypeName = true, bool translateLanguagePrimitiveType = true) {}
+    public static string FormatTypeName(this ParameterInfo p, NullabilityInfoContext? nullabilityInfoContext, bool typeWithNamespace = true, bool withDeclaringTypeName = true, bool translateLanguagePrimitiveType = true) {}
+    public static string FormatTypeName(this ParameterInfo p, NullabilityInfoContext? nullabilityInfoContext, object? nullabilityInfoContextLockObject, bool typeWithNamespace = true, bool withDeclaringTypeName = true, bool translateLanguagePrimitiveType = true) {}
     public static string FormatTypeName(this ParameterInfo p, bool typeWithNamespace = true, bool withDeclaringTypeName = true, bool translateLanguagePrimitiveType = true) {}
+    public static string FormatTypeName(this PropertyInfo p, NullabilityInfoContext? nullabilityInfoContext, bool typeWithNamespace = true, bool withDeclaringTypeName = true, bool translateLanguagePrimitiveType = true) {}
+    public static string FormatTypeName(this PropertyInfo p, NullabilityInfoContext? nullabilityInfoContext, object? nullabilityInfoContextLockObject, bool typeWithNamespace = true, bool withDeclaringTypeName = true, bool translateLanguagePrimitiveType = true) {}
     public static string FormatTypeName(this PropertyInfo p, bool typeWithNamespace = true, bool withDeclaringTypeName = true, bool translateLanguagePrimitiveType = true) {}
     public static string FormatTypeName(this Type t, ICustomAttributeProvider? attributeProvider = null, bool typeWithNamespace = true, bool withDeclaringTypeName = true, bool translateLanguagePrimitiveType = true) {}
     public static string FormatUnboundTypeName(this Type t, bool typeWithNamespace = true, bool withDeclaringTypeName = true, bool translateLanguagePrimitiveType = true) {}
     public static string FormatValueDeclaration(object? val, Type typeOfValue, bool typeWithNamespace = true, bool findConstantField = false, bool useDefaultLiteral = false) {}
-    public static bool IsLanguagePrimitiveType(Type t, out string primitiveTypeName) {}
+    public static bool IsLanguagePrimitiveType(Type t, [MaybeNullWhen(false)] out string? primitiveTypeName) {}
     public static IEnumerable<string> ToNamespaceList(Type t) {}
     public static IEnumerable<string> ToNamespaceList(Type t, bool translateLanguagePrimitiveTypes) {}
   }
@@ -92,6 +108,8 @@ namespace Smdn.Reflection.ReverseGenerating {
 
       public MethodBodyOption AccessorBody { get; set; }
       public MethodBodyOption MethodBody { get; set; }
+      public NullabilityInfoContext? NullabilityInfoContext { get; set; }
+      public object? NullabilityInfoContextLockObject { get; set; }
       public bool OmitEndOfStatement { get; set; }
       public bool WithAccessibility { get; set; }
       public bool WithDeclaringTypeName { get; set; }
@@ -111,6 +129,8 @@ namespace Smdn.Reflection.ReverseGenerating {
 
       public bool DetectUnsafe { get; set; }
       public bool EnableRecordTypes { get; set; }
+      public NullabilityInfoContext? NullabilityInfoContext { get; set; }
+      public object? NullabilityInfoContextLockObject { get; set; }
       public bool OmitEndOfStatement { get; set; }
       public bool OmitEnumUnderlyingTypeIfPossible { get; set; }
       public bool OmitRecordImplicitInterface { get; set; }
