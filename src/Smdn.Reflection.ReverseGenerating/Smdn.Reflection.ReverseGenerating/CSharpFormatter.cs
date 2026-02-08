@@ -451,6 +451,7 @@ public static partial class CSharpFormatter /* ITypeFormatter */ {
 #endif
       typeWithNamespace: typeWithNamespace,
       typeWithDeclaringTypeName: true,
+      formatDefaultValue: true,
       valueFormatOptions: new(
         TranslateLanguagePrimitiveType: true,
         TryFindConstantField: true,
@@ -488,6 +489,7 @@ public static partial class CSharpFormatter /* ITypeFormatter */ {
       nullabilityInfoContextLockObject: nullabilityInfoContextLockObject,
       typeWithNamespace: typeWithNamespace,
       typeWithDeclaringTypeName: true,
+      formatDefaultValue: true,
       valueFormatOptions: new(
         TranslateLanguagePrimitiveType: true,
         TryFindConstantField: true,
@@ -506,6 +508,7 @@ public static partial class CSharpFormatter /* ITypeFormatter */ {
 #endif
     bool typeWithNamespace,
     bool typeWithDeclaringTypeName,
+    bool formatDefaultValue,
     ValueFormatOptions valueFormatOptions
   )
   {
@@ -533,7 +536,7 @@ public static partial class CSharpFormatter /* ITypeFormatter */ {
 
     AppendName(ret, p);
 
-    if (p.HasDefaultValue) {
+    if (formatDefaultValue && p.HasDefaultValue) {
       ret.Append(" = ");
       ret.Append(
         FormatValueDeclaration(

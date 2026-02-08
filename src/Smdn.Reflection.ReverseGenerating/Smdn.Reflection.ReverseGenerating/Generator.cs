@@ -240,6 +240,8 @@ public static partial class Generator {
     var receiverParameter = GenerateParameterDeclaration(
       p: extensionParameter!,
       referencingNamespaces: referencingNamespaces,
+      // default value for extension parameter is not allowed in the declaration of extension marker method
+      formatDefaultValue: false,
       options: options
     );
     var typeParameterConstraintsClause = extensionMarkerType.IsGenericType
@@ -1020,7 +1022,12 @@ public static partial class Generator {
       methodParameterList = string.Join(
         ", ",
         m.GetParameters().Select(
-          p => GenerateParameterDeclaration(p, referencingNamespaces, options)
+          p => GenerateParameterDeclaration(
+            p,
+            referencingNamespaces,
+            formatDefaultValue: true,
+            options
+          )
         )
       );
     }
@@ -1200,12 +1207,14 @@ public static partial class Generator {
     => GenerateParameterDeclaration(
       p: parameter ?? throw new ArgumentNullException(nameof(parameter)),
       referencingNamespaces: null,
+      formatDefaultValue: true,
       options: options ?? throw new ArgumentNullException(nameof(options))
     );
 
   private static string GenerateParameterDeclaration(
     ParameterInfo p,
     ISet<string>? referencingNamespaces,
+    bool formatDefaultValue,
     GeneratorOptions options
   )
   {
@@ -1224,6 +1233,7 @@ public static partial class Generator {
 #endif
       typeWithNamespace: options.ParameterDeclaration.WithNamespace,
       typeWithDeclaringTypeName: options.ParameterDeclaration.WithDeclaringTypeName,
+      formatDefaultValue: formatDefaultValue,
       valueFormatOptions: CSharpFormatter.ValueFormatOptions.FromGeneratorOptions(options, tryFindConstantField: true)
     );
     var paramAttributeList = GenerateParameterAttributeList(
