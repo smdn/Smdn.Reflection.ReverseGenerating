@@ -21,9 +21,19 @@ static partial class CSharpTypeNameFormatter {
 
   private static StringBuilder AppendNullableTypeAnnotation(
     this StringBuilder builder,
-    NullabilityInfo target
+    NullabilityInfo target,
+    bool isConstructedNullableType = false
   )
   {
+    if (isConstructedNullableType) {
+      // In a reflection-only context, NullabilityInfo may provide incorrect information for Nullable<T>.
+      // This occurs because the comparison with typeof(Nullable<>) fails in a reflection-only context,
+      // causing Nullable.GetUnderlyingType to return an unexpected result.
+      // Therefore, as a workaround, append the nullable type annotation for the Nullable<T> without
+      // referencing NullabilityInfo in a reflection-only context.
+      return builder.Append('?');
+    }
+
     if (target.ReadState == NullabilityState.Nullable)
       return builder.Append('?');
     if (target.WriteState == NullabilityState.Nullable)
@@ -64,7 +74,15 @@ static partial class CSharpTypeNameFormatter {
     ThrowIfTypeIsCompoundType(type, nameof(type));
 #endif
 
-    var nullableUnderlyingType = Nullable.GetUnderlyingType(type);
+    if (type.TryGetNullableUnderlyingType(out var nullableUnderlyingType)) {
+      // The TryGetNullableUnderlyingType() and Nullable.GetUnderlyingType() may return different results for Nullable<T>.
+      // This occurs because the comparison with typeof(Nullable<>) fails in a reflection-only context,
+      // causing Nullable.GetUnderlyingType to return an unexpected result.
+      // Consequently, NullabilityInfo also provides incorrect information.
+      // Therefore, as a workaround, format the type without referencing NullabilityInfo in a reflection-only context.
+      if (Nullable.GetUnderlyingType(type) is null)
+        return Format(type, builder, options); // workaround
+    }
 
     if (
       CSharpFormatter.IsLanguagePrimitiveValueTupleType(type) ||
@@ -107,10 +125,12 @@ static partial class CSharpTypeNameFormatter {
       options.TranslateLanguagePrimitiveType &&
       CSharpFormatter.IsLanguagePrimitiveType(type, out var n)
     ) {
+      var isConstructedNullableType = nullableUnderlyingType is not null;
+
       // language primitive types
       return builder
         .Append(n)
-        .AppendNullableTypeAnnotation(target);
+        .AppendNullableTypeAnnotation(target, isConstructedNullableType);
     }
 
     if (type.IsGenericParameter && type.HasGenericParameterNoConstraints())

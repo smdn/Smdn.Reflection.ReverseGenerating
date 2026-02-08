@@ -684,7 +684,7 @@ public static partial class CSharpFormatter /* ITypeFormatter */ {
         : "default(" + ToString(t, opts) + ")";
 
     if (val == null) {
-      return (typeOfValue.IsValueType && Nullable.GetUnderlyingType(typeOfValue) is null)
+      return typeOfValue.IsValueType && !typeOfValue.IsConstructedNullableType()
         ? ToDefaultValue(typeOfValue, options)
         : "null";
     }
@@ -701,7 +701,13 @@ public static partial class CSharpFormatter /* ITypeFormatter */ {
       return "typeof(" + ToString(t, options) + ")";
 #endif
 
-    typeOfValue = Nullable.GetUnderlyingType(typeOfValue) ?? typeOfValue;
+    if (typeOfValue.TryGetNullableUnderlyingType(out var nullableUnderlyingType)) {
+      typeOfValue = nullableUnderlyingType
+#if !NULL_STATE_STATIC_ANALYSIS_ATTRIBUTES
+      !
+#endif
+      ;
+    }
 
     if (string.Equals(typeOfValue.FullName, typeof(bool).FullName, StringComparison.Ordinal)) {
       // System.Boolean

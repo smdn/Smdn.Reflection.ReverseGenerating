@@ -38,8 +38,19 @@ static partial class CSharpTypeNameFormatter {
     if (type.IsPointer)
       return Format(type.GetElementTypeOrThrow(), builder, options).Append('*');
 
-    if (Nullable.GetUnderlyingType(type) is { } nullableUnderlyingType)
-      return Format(nullableUnderlyingType, builder, options).Append('?');
+    if (type.TryGetNullableUnderlyingType(out var nullableUnderlyingType)) {
+#pragma warning disable SA1114
+      return Format(
+#if NULL_STATE_STATIC_ANALYSIS_ATTRIBUTES
+        nullableUnderlyingType,
+#else
+        nullableUnderlyingType!,
+#endif
+        builder,
+        options
+      ).Append('?');
+#pragma warning restore SA1114
+    }
 
     if (type.IsGenericParameter) {
       if (
