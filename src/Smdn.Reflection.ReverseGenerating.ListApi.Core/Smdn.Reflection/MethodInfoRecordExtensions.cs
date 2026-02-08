@@ -37,14 +37,14 @@ internal static class MethodInfoRecordExtensions {
         return true;
 
       // is "[CompilerGenerated] public bool Equals(TRecord? obj)" ?
-      if (firstParameterType == m.DeclaringType)
+      if (ROCType.Equals(firstParameterType, m.DeclaringType, ignoreGenericTypeParameters: true))
         return true;
 
       // is "[CompilerGenerated] public bool Equals(TRecordBase? obj)" ?
       if (
         m.DeclaringType?.BaseType is Type baseType &&
         baseType.IsRecord() &&
-        firstParameterType == baseType
+        ROCType.Equals(firstParameterType, baseType, ignoreGenericTypeParameters: true)
       ) {
         return true;
       }
@@ -66,8 +66,14 @@ internal static class MethodInfoRecordExtensions {
       parameters.Length == 2
     ) {
       // is not "(TRecord left, TRecord right)" ?
-      if (!(parameters[0].ParameterType == m.DeclaringType && parameters[1].ParameterType == m.DeclaringType))
+      if (
+        !(
+          ROCType.Equals(parameters[0].ParameterType, m.DeclaringType, ignoreGenericTypeParameters: true) &&
+          ROCType.Equals(parameters[1].ParameterType, m.DeclaringType, ignoreGenericTypeParameters: true)
+        )
+      ) {
         return false;
+      }
 
       // [CompilerGenerated] public static bool operator ==(TRecord left, TRecord right)
       if (m.Name.Equals("op_Equality", StringComparison.Ordinal))

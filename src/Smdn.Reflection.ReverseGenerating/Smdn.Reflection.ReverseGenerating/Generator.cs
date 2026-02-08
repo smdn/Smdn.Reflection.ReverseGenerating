@@ -405,15 +405,23 @@ public static partial class Generator {
     if (options == null)
       throw new ArgumentNullException(nameof(options));
 
-    var isRecord = options.TypeDeclaration.EnableRecordTypes && options.TypeDeclaration.OmitRecordImplicitInterface && t.IsRecord();
-    var typeOfIEquatableOfRecord = isRecord
-      ? typeof(IEquatable<>).MakeGenericType(t) // IEquatable<TRecord>
-      : null;
-
-    return t
+    var explicitBaseTypeAndInterfaces = t
       .GetExplicitBaseTypeAndInterfaces()
-      .Where(type => !(options.IgnorePrivateOrAssembly && type.IsPrivateOrAssembly()))
-      .Where(type => type != typeOfIEquatableOfRecord)
+      .Where(type => !(options.IgnorePrivateOrAssembly && type.IsPrivateOrAssembly()));
+
+    if (
+      options.TypeDeclaration.EnableRecordTypes &&
+      options.TypeDeclaration.OmitRecordImplicitInterface &&
+      t.IsRecord()
+    ) {
+      var typeOfIEquatableOfRecord = typeof(IEquatable<>).MakeGenericType(t); // IEquatable<TRecord>
+
+      explicitBaseTypeAndInterfaces = explicitBaseTypeAndInterfaces.Where(
+        type => !string.Equals(type.FullName, typeOfIEquatableOfRecord.FullName, StringComparison.Ordinal)
+      );
+    }
+
+    return explicitBaseTypeAndInterfaces
       .Select(type => {
         referencingNamespaces?.UnionWith(
           CSharpFormatter.ToNamespaceList(
