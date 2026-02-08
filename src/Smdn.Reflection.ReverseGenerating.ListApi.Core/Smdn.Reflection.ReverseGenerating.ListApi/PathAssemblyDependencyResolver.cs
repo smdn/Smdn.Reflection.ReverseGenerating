@@ -28,6 +28,8 @@ internal sealed class PathAssemblyDependencyResolver : PathAssemblyResolver {
     this.dependencyResolver = new(componentAssemblyPath);
     this.packageDependencyResolver = new(componentAssemblyPath, logger);
     this.logger = logger;
+
+    logger?.LogDebug("runtime directory: '{RuntimeDirectory}'", RuntimeEnvironment.GetRuntimeDirectory());
   }
 
   public override Assembly? Resolve(MetadataLoadContext context, AssemblyName assemblyName)
