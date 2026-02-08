@@ -62,7 +62,7 @@ partial class AssemblyLoader {
     ILogger? logger = null
   )
   {
-    var resolver = new PathAssemblyDependencyResolver(assemblySource.ComponentAssemblyPath);
+    var resolver = new PathAssemblyDependencyResolver(assemblySource.ComponentAssemblyPath, logger);
     using var mlc = new MetadataLoadContext(resolver);
 
     logger?.LogDebug(
