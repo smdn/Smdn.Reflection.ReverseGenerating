@@ -1,19 +1,20 @@
-// Smdn.Reflection.ReverseGenerating.ListApi.Core.dll (Smdn.Reflection.ReverseGenerating.ListApi.Core-1.6.0)
+// Smdn.Reflection.ReverseGenerating.ListApi.Core.dll (Smdn.Reflection.ReverseGenerating.ListApi.Core-1.6.1)
 //   Name: Smdn.Reflection.ReverseGenerating.ListApi.Core
-//   AssemblyVersion: 1.6.0.0
-//   InformationalVersion: 1.6.0+6287d2840011d0affcb50c6129b0ccffb5f13e1d
+//   AssemblyVersion: 1.6.1.0
+//   InformationalVersion: 1.6.1+8f2fd17773e02aaf2e4ed59e8ca3033eb44646a3
 //   TargetFramework: .NETCoreApp,Version=v8.0
 //   Configuration: Release
 //   Metadata: RepositoryUrl=https://github.com/smdn/Smdn.Reflection.ReverseGenerating
 //   Metadata: RepositoryBranch=main
-//   Metadata: RepositoryCommit=6287d2840011d0affcb50c6129b0ccffb5f13e1d
+//   Metadata: RepositoryCommit=8f2fd17773e02aaf2e4ed59e8ca3033eb44646a3
 //   Referenced assemblies:
 //     Microsoft.Extensions.DependencyModel, Version=8.0.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60
 //     Microsoft.Extensions.Logging.Abstractions, Version=6.0.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60
-//     Smdn.Fundamental.Reflection, Version=3.10.0.0, Culture=neutral
-//     Smdn.Reflection.ReverseGenerating, Version=1.5.0.0, Culture=neutral
+//     Smdn.Fundamental.Reflection, Version=3.10.1.0, Culture=neutral
+//     Smdn.Reflection.ReverseGenerating, Version=1.5.1.0, Culture=neutral
 //     System.Collections, Version=8.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
 //     System.Linq, Version=8.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+//     System.Memory, Version=8.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51
 //     System.Reflection.Metadata, Version=8.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
 //     System.Reflection.MetadataLoadContext, Version=8.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51
 //     System.Runtime, Version=8.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
