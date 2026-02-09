@@ -115,7 +115,11 @@ internal static partial class CSharpTypeNameFormatter {
       if (options.WithDeclaringTypeName) {
         if (declaringType.IsGenericTypeDefinition) {
           declaringType = declaringType.MakeGenericType(
+            [.. type.GetGenericArguments().Take(genericArgsCountOfDeclaringType)]
+#if false
+            // ???: AsSpan() throws ArrayTypeMismatchException in reflection-only context
             [.. type.GetGenericArguments().AsSpan(0, genericArgsCountOfDeclaringType)]
+#endif
           );
         }
 
