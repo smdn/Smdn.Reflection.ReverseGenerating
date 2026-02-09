@@ -5,7 +5,7 @@ SPDX-License-Identifier: MIT
 <Project>
   <PropertyGroup>
     <RootNamespace>Smdn.Reflection.ReverseGenerating.ListApi.Core</RootNamespace>
-    <VersionPrefix>1.6.0</VersionPrefix>
+    <VersionPrefix>1.6.1</VersionPrefix>
     <VersionSuffix></VersionSuffix>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
