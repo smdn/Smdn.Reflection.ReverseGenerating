@@ -674,19 +674,20 @@ public static partial class Generator {
     var explicitInterface = explicitInterfaceMethod?.DeclaringType;
 
     if (
-      explicitInterface == null &&
+      explicitInterface is null &&
       options.IgnorePrivateOrAssembly &&
+      !property.IsLikelyExplicitInterfaceImplementation() &&
       property.GetAccessors(true).All(static a => a.IsPrivateOrAssembly())
     ) {
       return null;
     }
 
     var emitGetAccessor =
-      property.GetMethod != null &&
-      !(explicitInterface == null && options.IgnorePrivateOrAssembly && property.GetMethod.IsPrivateOrAssembly());
+      property.GetMethod is not null &&
+      !(explicitInterface is null && options.IgnorePrivateOrAssembly && property.GetMethod.IsPrivateOrAssembly());
     var emitSetAccessor =
-      property.SetMethod != null &&
-      !(explicitInterface == null && options.IgnorePrivateOrAssembly && property.SetMethod.IsPrivateOrAssembly());
+      property.SetMethod is not null &&
+      !(explicitInterface is null && options.IgnorePrivateOrAssembly && property.SetMethod.IsPrivateOrAssembly());
 
     var indexParameters = property.GetIndexParameters();
 
@@ -757,7 +758,7 @@ public static partial class Generator {
         )
       );
     }
-    else if (explicitInterface == null) {
+    else if (explicitInterface is null) {
       sb.Append(
         GenerateMemberName(
           property,
@@ -960,8 +961,14 @@ public static partial class Generator {
         findOnlyPublicInterfaces: options.IgnorePrivateOrAssembly
       );
 
-      if (!isExplicitInterfaceMethod && options.IgnorePrivateOrAssembly && m.IsPrivateOrAssembly())
+      if (
+        !isExplicitInterfaceMethod &&
+        options.IgnorePrivateOrAssembly &&
+        !m.IsLikelyExplicitInterfaceImplementation() &&
+        m.IsPrivateOrAssembly()
+      ) {
         return null;
+      }
     }
 
     var formattingOptions = new {
@@ -1315,8 +1322,9 @@ public static partial class Generator {
     var explicitInterface = explicitInterfaceMethod?.DeclaringType;
 
     if (
-      explicitInterface == null &&
+      explicitInterface is null &&
       options.IgnorePrivateOrAssembly &&
+      !ev.IsLikelyExplicitInterfaceImplementation() &&
       ev.GetMethods(true).All(static m => m.IsPrivateOrAssembly())
     ) {
       return null;
@@ -1361,7 +1369,7 @@ public static partial class Generator {
       )
       .Append(' ');
 
-    if (explicitInterface == null) {
+    if (explicitInterface is null) {
       sb.Append(
         GenerateMemberName(
           ev,
