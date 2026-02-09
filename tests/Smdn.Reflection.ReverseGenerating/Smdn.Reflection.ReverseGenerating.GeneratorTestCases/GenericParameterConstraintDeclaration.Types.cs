@@ -172,6 +172,30 @@ namespace Smdn.Reflection.ReverseGenerating.GeneratorTestCases.GenericParameterC
 #nullable restore
   }
 
+  namespace VarianceConstraints {
+    namespace Interfaces {
+      [GenericParameterConstraintTestCase("where R : class, IDisposable, new()", TypeWithNamespace = false)]
+      public interface ICovariant<out R> where R : class, IDisposable, new() { }
+
+      [GenericParameterConstraintTestCase("where A : class, IDisposable, new()", TypeWithNamespace = false)]
+      public interface IContravariant<in A> where A : class, IDisposable, new() { }
+
+      [GenericParameterConstraintTestCase("where R : class, IDisposable, new() where A : class, IDisposable, new()", TypeWithNamespace = false)]
+      public interface IVariant<out R, in A> where R : class, IDisposable, new() where A : class, IDisposable, new() { }
+    }
+
+    namespace Delegates {
+      [GenericParameterConstraintTestCase("where R : class, IDisposable, new()", TypeWithNamespace = false)]
+      public delegate R DCovariant<out R>() where R : class, IDisposable, new();
+
+      [GenericParameterConstraintTestCase("where A : class, IDisposable, new()", TypeWithNamespace = false)]
+      public delegate void DContravariant<in A>(A a) where A : class, IDisposable, new();
+
+      [GenericParameterConstraintTestCase("where A : class, IDisposable, new() where R : class, IDisposable, new()", TypeWithNamespace = false)]
+      public delegate R DVariant<in A, out R>(A a) where A : class, IDisposable, new() where R : class, IDisposable, new();
+    }
+  }
+
   namespace TSelfConstraints {
 #nullable enable annotations
     [GenericParameterConstraintTestCase("where TSelf : I<TSelf>", TypeWithNamespace = false)]

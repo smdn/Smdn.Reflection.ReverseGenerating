@@ -54,6 +54,7 @@ static partial class CSharpTypeNameFormatter {
 
     if (type.IsGenericParameter) {
       if (
+        options.WithGenericParameterVariance &&
         type.ContainsGenericParameters
 #if NETFRAMEWORK
         &&

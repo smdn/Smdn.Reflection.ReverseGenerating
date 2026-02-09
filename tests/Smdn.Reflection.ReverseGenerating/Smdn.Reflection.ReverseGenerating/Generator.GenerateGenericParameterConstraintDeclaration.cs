@@ -10,7 +10,7 @@ using NUnit.Framework;
 namespace Smdn.Reflection.ReverseGenerating;
 
 [AttributeUsage(
-  AttributeTargets.Class | AttributeTargets.Interface | AttributeTargets.Method,
+  AttributeTargets.Class | AttributeTargets.Interface | AttributeTargets.Delegate | AttributeTargets.Method,
   AllowMultiple = true,
   Inherited = false
 )]

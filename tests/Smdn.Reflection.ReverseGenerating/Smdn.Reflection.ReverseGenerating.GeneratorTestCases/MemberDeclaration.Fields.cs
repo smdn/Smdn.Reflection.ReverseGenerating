@@ -54,6 +54,28 @@ public class ValueTupleTypes {
   [MemberDeclarationTestCase("public System.ValueTuple<int> F4;")] public ValueTuple<int> F4;
 }
 
+public class ConstructedGenericTypes {
+  [MemberDeclarationTestCase("public Lazy<int> FGenericType;", MemberWithNamespace = false)]
+  public Lazy<int> FGenericType;
+
+  [MemberDeclarationTestCase("public IEnumerable<int> FGenericInterfaceWithVariance;", MemberWithNamespace = false)]
+  public IEnumerable<int> FGenericInterfaceWithVariance;
+
+  [MemberDeclarationTestCase("public Converter<int, string> FGenericDelegateWithVariance;", MemberWithNamespace = false)]
+  public Converter<int, string> FGenericDelegateWithVariance;
+}
+
+public class GenericTypeDefinitions<U, V> {
+  [MemberDeclarationTestCase("public Lazy<U> FGenericType;", MemberWithNamespace = false)]
+  public Lazy<U> FGenericType;
+
+  [MemberDeclarationTestCase("public IEnumerable<U> FGenericInterfaceWithVariance;", MemberWithNamespace = false)]
+  public IEnumerable<U> FGenericInterfaceWithVariance;
+
+  [MemberDeclarationTestCase("public Converter<U, V> FGenericDelegateWithVariance;", MemberWithNamespace = false)]
+  public Converter<U, V> FGenericDelegateWithVariance;
+}
+
 #pragma warning disable CS0649, CS0169
 public class Accessibilities {
   [MemberDeclarationTestCase("public int F1;")] public int F1;

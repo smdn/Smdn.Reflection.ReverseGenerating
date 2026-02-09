@@ -139,6 +139,7 @@ public static partial class Generator {
         AttributeProvider: t,
         WithNamespace: false,
         WithDeclaringTypeName: options.TypeDeclaration.WithDeclaringTypeName,
+        WithGenericParameterVariance: t.IsInterface,
         TranslateLanguagePrimitiveType: options.TranslateLanguagePrimitiveTypeDeclaration,
         PrependGenericParameterAttributes: (genericParam, builder) => {
           foreach (var attr in GenerateAttributeList(genericParam, referencingNamespaces, options)) {
@@ -376,6 +377,16 @@ public static partial class Generator {
       );
     }
 
+    var genericParameterName = CSharpTypeNameFormatter.Format(
+      type: genericParameter,
+      options: new(
+        AttributeProvider: genericParameter,
+        WithNamespace: false,
+        WithDeclaringTypeName: false,
+        WithGenericParameterVariance: false,
+        TranslateLanguagePrimitiveType: false
+      )
+    );
     var constraints = string.Join(
       ", ",
       GetGenericParameterConstraintsOf(
@@ -389,7 +400,7 @@ public static partial class Generator {
     );
 
     if (0 < constraints.Length)
-      return $"where {genericParameter.FormatTypeName(typeWithNamespace: false)} : {constraints}";
+      return $"where {genericParameterName} : {constraints}";
 
     return string.Empty;
   }
@@ -1062,11 +1073,17 @@ public static partial class Generator {
     var isFinalizer = false;
 
     if (asDelegateDeclaration) {
-      methodName = m.GetDeclaringTypeOrThrow().FormatTypeName(
-        attributeProvider: null,
-        typeWithNamespace: false,
-        withDeclaringTypeName: formattingOptions.FormatTypeWithDeclaringTypeName,
-        translateLanguagePrimitiveType: formattingOptions.TranslateLanguagePrimitiveType
+      var typeOfDelegate = m.GetDeclaringTypeOrThrow();
+
+      methodName = CSharpTypeNameFormatter.Format(
+        type: typeOfDelegate,
+        options: new(
+          AttributeProvider: typeOfDelegate,
+          WithNamespace: false,
+          WithDeclaringTypeName: formattingOptions.FormatTypeWithDeclaringTypeName,
+          WithGenericParameterVariance: true,
+          TranslateLanguagePrimitiveType: formattingOptions.TranslateLanguagePrimitiveType
+        )
       );
     }
     else if (m.IsSpecialName) {

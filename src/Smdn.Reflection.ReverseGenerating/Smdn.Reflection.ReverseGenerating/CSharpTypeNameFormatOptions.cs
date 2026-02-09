@@ -16,5 +16,6 @@ internal readonly record struct CSharpTypeNameFormatOptions(
 #endif
   Action<Type, StringBuilder>? PrependGenericParameterAttributes = null,
   bool OmitAttributeSuffix = false,
-  bool AsUnboundTypeName = false
+  bool AsUnboundTypeName = false,
+  bool WithGenericParameterVariance = false
 );

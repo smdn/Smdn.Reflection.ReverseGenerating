@@ -2,7 +2,9 @@
 // SPDX-License-Identifier: MIT
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
+
 using NUnit.Framework;
 
 namespace Smdn.Reflection.ReverseGenerating;
@@ -98,6 +100,10 @@ public partial class CSharpFormatterTests {
   [TestCase(typeof(Tuple<>), "Tuple<T1>", "Tuple<>")]
   [TestCase(typeof(Tuple<,>), "Tuple<T1, T2>", "Tuple<,>")]
   [TestCase(typeof(KeyValuePair<,>), "KeyValuePair<TKey, TValue>", "KeyValuePair<,>")]
+  [TestCase(typeof(IComparable<>), "IComparable<in T>", "IComparable<>")]
+  [TestCase(typeof(IEnumerator<>), "IEnumerator<out T>", "IEnumerator<>")]
+  [TestCase(typeof(IGrouping<,>), "IGrouping<out TKey, out TElement>", "IGrouping<,>")]
+  [TestCase(typeof(Action<>), "Action<in T>", "Action<>")]
   [TestCase(typeof(Converter<,>), "Converter<in TInput, out TOutput>", "Converter<,>")]
   public void TestFormatTypeName_GenericTypeDefinition(Type type, string expectedBound, string expectedUnbound)
   {

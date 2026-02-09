@@ -21,7 +21,8 @@ static partial class CSharpFormatter {
         AttributeProvider: attributeProvider ?? t,
         WithNamespace: typeWithNamespace,
         WithDeclaringTypeName: withDeclaringTypeName,
-        TranslateLanguagePrimitiveType: translateLanguagePrimitiveType
+        TranslateLanguagePrimitiveType: translateLanguagePrimitiveType,
+        WithGenericParameterVariance: true
       )
     );
 
