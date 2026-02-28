@@ -1,12 +1,12 @@
-// Smdn.Reflection.ReverseGenerating.ListApi.Core.dll (Smdn.Reflection.ReverseGenerating.ListApi.Core-1.6.1)
+// Smdn.Reflection.ReverseGenerating.ListApi.Core.dll (Smdn.Reflection.ReverseGenerating.ListApi.Core-1.6.2)
 //   Name: Smdn.Reflection.ReverseGenerating.ListApi.Core
-//   AssemblyVersion: 1.6.1.0
-//   InformationalVersion: 1.6.1+8f2fd17773e02aaf2e4ed59e8ca3033eb44646a3
+//   AssemblyVersion: 1.6.2.0
+//   InformationalVersion: 1.6.2+387751ca3ea56db36a122207609dcb75b152ad1a
 //   TargetFramework: .NETCoreApp,Version=v10.0
 //   Configuration: Release
 //   Metadata: RepositoryUrl=https://github.com/smdn/Smdn.Reflection.ReverseGenerating
 //   Metadata: RepositoryBranch=main
-//   Metadata: RepositoryCommit=8f2fd17773e02aaf2e4ed59e8ca3033eb44646a3
+//   Metadata: RepositoryCommit=387751ca3ea56db36a122207609dcb75b152ad1a
 //   Referenced assemblies:
 //     Microsoft.Extensions.DependencyModel, Version=10.0.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60
 //     Microsoft.Extensions.Logging.Abstractions, Version=6.0.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60
