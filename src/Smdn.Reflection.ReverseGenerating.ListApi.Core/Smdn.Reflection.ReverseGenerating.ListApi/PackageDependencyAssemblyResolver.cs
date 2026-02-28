@@ -65,6 +65,11 @@ internal sealed class PackageDependencyAssemblyResolver {
   {
     (DependencyContext, PossibleAssemblyDepsJsonPath) = LoadDependencyContextIfDepsJsonExist(componentAssemblyPath, logger);
     this.logger = logger;
+
+    logger?.LogTrace(
+      "runtime libraries: {RuntimeLibraries}",
+      string.Join(", ", DependencyContext?.RuntimeLibraries?.Select(static d => d.Name) ?? [])
+    );
   }
 
   // ref: https://github.com/dotnet/runtime/issues/1050
