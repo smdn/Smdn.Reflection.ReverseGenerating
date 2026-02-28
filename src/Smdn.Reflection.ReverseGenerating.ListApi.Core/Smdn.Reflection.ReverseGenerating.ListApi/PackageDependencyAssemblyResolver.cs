@@ -81,7 +81,23 @@ internal sealed class PackageDependencyAssemblyResolver {
     var runtimeLibrary = DependencyContext
       .RuntimeLibraries
       .FirstOrDefault(
-        runtimeLib => runtimeLib.Name.Equals(name.Name, StringComparison.OrdinalIgnoreCase)
+        runtimeLib =>
+          // 1. Simply check whether the library name and assembly name match.
+          runtimeLib.Name.Equals(name.Name, StringComparison.OrdinalIgnoreCase) ||
+          // 2. Check whether the filename obtained from an asset path of
+          //    runtime assembly group like 'lib/net10.0/LibExample.dll' matches
+          //    the inferred filename.
+          //    This assumes a case where the assembly name being referenced
+          //    differs from the actual filename containing that assembly.
+          runtimeLib.RuntimeAssemblyGroups.Any(
+            g => g.AssetPaths.Any(
+              runtimeAssemblyPath => string.Equals(
+                Path.GetFileNameWithoutExtension(runtimeAssemblyPath),
+                name.Name,
+                StringComparison.Ordinal
+              )
+            )
+          )
       );
 
     if (runtimeLibrary is null) {
