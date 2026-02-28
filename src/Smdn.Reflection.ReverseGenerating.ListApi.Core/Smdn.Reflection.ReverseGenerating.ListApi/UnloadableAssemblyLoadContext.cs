@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: 2021 smdn <smdn@smdn.jp>
 // SPDX-License-Identifier: MIT
 // cSpell:ignore unloadable
-#pragma warning disable CA1848
+#pragma warning disable CA1848, CA1873
 
 #if NETCOREAPP3_1_OR_GREATER
 using System.Reflection;
