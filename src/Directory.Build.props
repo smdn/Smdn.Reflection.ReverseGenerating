@@ -1,4 +1,4 @@
-<!--
+﻿<!--
 SPDX-FileCopyrightText: 2021 smdn <smdn@smdn.jp>
 SPDX-License-Identifier: MIT
 -->
@@ -8,7 +8,7 @@ SPDX-License-Identifier: MIT
   <PropertyGroup Label="Configurations for Smdn.MSBuild.ProjectAssets.*">
     <SmdnBuildAssetRootDirectory>$(MSBuildThisFileDirectory)..\</SmdnBuildAssetRootDirectory>
     <APIListOutputBaseDirectory>$(MSBuildThisFileDirectory)..\doc\api-list\</APIListOutputBaseDirectory>
-    <APIListMinPackageVersion>1.8.1</APIListMinPackageVersion>
+    <APIListMinPackageVersion>1.8.2</APIListMinPackageVersion>
   </PropertyGroup>
 
   <PropertyGroup Label="package properties">
@@ -16,7 +16,7 @@ SPDX-License-Identifier: MIT
     <PackageProjectUrl>https://smdn.jp/works/libs/Smdn.Reflection.ReverseGenerating/</PackageProjectUrl>
   </PropertyGroup>
 
-  <PropertyGroup Label="repository properties" Condition="'$(GITHUB_ACTIONS)' != 'true'">
+  <PropertyGroup Label="repository properties">
     <RepositoryUrl>https://github.com/smdn/Smdn.Reflection.ReverseGenerating</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
   </PropertyGroup>
