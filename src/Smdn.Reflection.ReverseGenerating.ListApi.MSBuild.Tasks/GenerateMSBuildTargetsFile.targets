@@ -2,6 +2,7 @@
 SPDX-FileCopyrightText: 2021 smdn <smdn@smdn.jp>
 SPDX-License-Identifier: MIT
 -->
+<!-- cspell:ignore buildMultitargeting -->
 <Project>
   <Target
     Name="GenerateMSBuildTargetsFile"
