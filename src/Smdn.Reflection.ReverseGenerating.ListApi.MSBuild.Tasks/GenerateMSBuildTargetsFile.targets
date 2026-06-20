@@ -1,4 +1,4 @@
-<!--
+﻿<!--
 SPDX-FileCopyrightText: 2021 smdn <smdn@smdn.jp>
 SPDX-License-Identifier: MIT
 -->
@@ -33,6 +33,10 @@ SPDX-License-Identifier: MIT
   </ImportGroup>
   <ImportGroup Condition=" '%24(MSBuildRuntimeType)' == 'Core' and %24([System.Runtime.InteropServices.RuntimeInformation]::FrameworkDescription.StartsWith('.NET 10.')) ">
     <!-- .NET 10.x -->
+    @(TaskFiles->WithMetadataValue('TargetFramework', 'net10.0')->'%(ImportLine)', '%0D%0A    ')
+  </ImportGroup>
+  <ImportGroup Condition=" '%24(MSBuildRuntimeType)' == 'Core' and %24([System.Runtime.InteropServices.RuntimeInformation]::FrameworkDescription.StartsWith('.NET 11.')) ">
+    <!-- .NET 11.x (use files that target .NET 10) -->
     @(TaskFiles->WithMetadataValue('TargetFramework', 'net10.0')->'%(ImportLine)', '%0D%0A    ')
   </ImportGroup>
 </Project>
