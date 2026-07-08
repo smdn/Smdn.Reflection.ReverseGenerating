@@ -11,6 +11,8 @@
 #
 name: "CodeQL"
 
+permissions: {}
+
 # ref: https://docs.microsoft.com/en-us/dotnet/devops/dotnet-secure-github-action
 on:
   # push:
@@ -36,7 +38,7 @@ env:
 # cSpell:ignore autobuild
 jobs:
   analyze:
-    name: Analyze
+    name: Analyze ${{ matrix.language }}
     runs-on: ubuntu-latest
     permissions:
       actions: read
@@ -52,15 +54,19 @@ jobs:
           - language: csharp
             build-mode: manual
             source-root: './src'
+          - language: actions
+            build-mode: none
+            source-root: './.github'
 
     steps:
     - name: Checkout repository
       uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
 
     - name: Initialize CodeQL
-      uses: github/codeql-action/init@8aad20d150bbac5944a9f9d289da16a4b0d87c1e # v4.36.2
+      uses: github/codeql-action/init@99df26d4f13ea111d4ec1a7dddef6063f76b97e9 # v4.37.0
       with:
         languages: ${{ matrix.language }}
+        build-mode: ${{ matrix.build-mode }}
         # If you wish to specify custom queries, you can do so here or in a config file.
         # By default, queries listed here will override any specified in a config file.
         # Prefix the list here with "+" to use these queries and those in the config file.
@@ -69,7 +75,7 @@ jobs:
 
     - name: Autobuild
       if: ${{ (matrix.build-mode == 'autobuild') || (matrix.build-mode == '') }}
-      uses: github/codeql-action/autobuild@8aad20d150bbac5944a9f9d289da16a4b0d87c1e # v4.36.2
+      uses: github/codeql-action/autobuild@99df26d4f13ea111d4ec1a7dddef6063f76b97e9 # v4.37.0
 
     - name: Prepare .NET SDK ${{ env.MINIMAL_DOTNET_SDK_VERSION }}
       uses: smdn/workflows-dotnet/actions/prepare-dotnet-sdk@e294de483afffc1d3a366fbba853efe23c7b7d4c # actions/prepare-dotnet-sdk/v1.2.0
@@ -83,4 +89,6 @@ jobs:
         ./eng/BuildAllProjects.ps1
 
     - name: Perform CodeQL Analysis
-      uses: github/codeql-action/analyze@8aad20d150bbac5944a9f9d289da16a4b0d87c1e # v4.36.2
+      uses: github/codeql-action/analyze@99df26d4f13ea111d4ec1a7dddef6063f76b97e9 # v4.37.0
+      with:
+        category: "/language:${{ matrix.language }}"
