@@ -29,6 +29,14 @@ internal static class TypeNullableUnderlyingTypeExtensions {
 
     nullableUnderlyingType = default;
 
+#if SYSTEM_TYPE_GETNULLABLEUNDERLYINGTYPE
+    if (t.IsGenericTypeDefinition)
+      return false; // not a constructed generic type
+
+    nullableUnderlyingType = t.GetNullableUnderlyingType();
+
+    return nullableUnderlyingType is not null;
+#else
     if (!t.IsValueType)
       return false; // not a struct
     if (!t.IsGenericType)
@@ -49,5 +57,6 @@ internal static class TypeNullableUnderlyingTypeExtensions {
     nullableUnderlyingType = genericArgs[0]; // T of System.Nullable<T>
 
     return true;
+#endif
   }
 }

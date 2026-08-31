@@ -74,6 +74,9 @@ static partial class CSharpTypeNameFormatter {
     ThrowIfTypeIsCompoundType(type, nameof(type));
 #endif
 
+#if SYSTEM_TYPE_GETNULLABLEUNDERLYINGTYPE
+    _ = type.TryGetNullableUnderlyingType(out var nullableUnderlyingType);
+#else
     if (type.TryGetNullableUnderlyingType(out var nullableUnderlyingType)) {
       // The TryGetNullableUnderlyingType() and Nullable.GetUnderlyingType() may return different results for Nullable<T>.
       // This occurs because the comparison with typeof(Nullable<>) fails in a reflection-only context,
@@ -83,6 +86,7 @@ static partial class CSharpTypeNameFormatter {
       if (Nullable.GetUnderlyingType(type) is null)
         return Format(type, builder, options); // workaround
     }
+#endif
 
     if (
       CSharpFormatter.IsLanguagePrimitiveValueTupleType(type) ||
