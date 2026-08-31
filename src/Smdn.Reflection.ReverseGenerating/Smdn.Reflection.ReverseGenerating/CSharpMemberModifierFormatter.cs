@@ -192,8 +192,13 @@ internal static class CSharpMemberModifierFormatter {
   {
     if (p.ParameterType.IsPointer)
       return true;
+
+#if !NET8_0_OR_GREATER
+#pragma warning disable IDE0370
+#endif
     if (p.ParameterType.IsByRef && p.ParameterType.HasElementType && p.ParameterType.GetElementType()!.IsPointer)
       return true;
+#pragma warning restore IDE0370
 
     return false;
   }

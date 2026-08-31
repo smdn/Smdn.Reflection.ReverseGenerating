@@ -46,6 +46,10 @@ public static partial class CSharpFormatter /* ITypeFormatter */ {
 #endif
   PrimitiveTypes = new Dictionary<string, string>(StringComparer.Ordinal) {
 #pragma warning restore IDE0090
+
+#if !NET8_0_OR_GREATER
+#pragma warning disable IDE0370
+#endif
     { typeof(void).FullName!, "void" },
     { typeof(sbyte).FullName!, "sbyte" },
     { typeof(short).FullName!, "short" },
@@ -62,6 +66,8 @@ public static partial class CSharpFormatter /* ITypeFormatter */ {
     { typeof(string).FullName!, "string" },
     { typeof(object).FullName!, "object" },
     { typeof(bool).FullName!, "bool" },
+#pragma warning disable IDE0370
+
   }
 #if SYSTEM_COLLECTIONS_FROZEN_FROZENDICTIONARY
   .ToFrozenDictionary();
