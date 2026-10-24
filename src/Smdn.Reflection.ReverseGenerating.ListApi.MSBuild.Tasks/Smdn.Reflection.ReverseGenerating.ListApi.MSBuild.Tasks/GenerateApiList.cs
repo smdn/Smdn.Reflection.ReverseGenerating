@@ -171,8 +171,8 @@ public class GenerateApiList : Task {
     AssemblyLoader.UsingAssembly(
       new FileInfo(inputAssemblyFilePath ?? throw new ArgumentNullException(nameof(inputAssemblyFilePath))),
       arg: (
-        outputApiListFilePath: outputApiListFilePath ?? throw new ArgumentNullException(nameof(outputApiListFilePath)),
-        options: options ?? throw new ArgumentNullException(nameof(options)),
+        outputApiListFilePath ?? throw new ArgumentNullException(nameof(outputApiListFilePath)),
+        options ?? throw new ArgumentNullException(nameof(options)),
         generateNullableAnnotations,
         logger
       ),
@@ -180,11 +180,13 @@ public class GenerateApiList : Task {
       context: out var context,
       loadIntoReflectionOnlyContext: loadIntoReflectionOnlyContext,
       actionWithLoadedAssembly: static (assembly, arg) => {
+        var (outputApiListFilePath, options, _, logger) = arg;
+
         // ensure the output directory existing
-        Directory.CreateDirectory(Path.GetDirectoryName(arg.outputApiListFilePath)!);
+        Directory.CreateDirectory(Path.GetDirectoryName(outputApiListFilePath)!);
 
         using var outputWriter = new StreamWriter(
-          path: arg.outputApiListFilePath,
+          path: outputApiListFilePath,
           append: false,
           encoding: new UTF8Encoding(false) // TODO: make encoding configurable
         );
@@ -196,27 +198,27 @@ public class GenerateApiList : Task {
             : null;
 
           // assign NullabilityInfoContext to each assembly
-          arg.options.TypeDeclaration.NullabilityInfoContext = nullabilityInfoContext;
-          arg.options.MemberDeclaration.NullabilityInfoContext = nullabilityInfoContext;
+          options.TypeDeclaration.NullabilityInfoContext = nullabilityInfoContext;
+          options.MemberDeclaration.NullabilityInfoContext = nullabilityInfoContext;
 #endif
           var writer = new ApiListWriter(
             outputWriter,
             assembly,
-            arg.options,
-            arg.logger
+            options,
+            logger
           );
 
           writer.WriteHeader();
           writer.WriteExportedTypes();
           writer.WriteFooter();
 
-          return arg.outputApiListFilePath;
+          return outputApiListFilePath;
         }
         finally {
 #if SYSTEM_REFLECTION_NULLABILITYINFOCONTEXT
           // release the references held by the NullabilityInfoContext so that the assembly can be unloaded
-          arg.options.TypeDeclaration.NullabilityInfoContext = null;
-          arg.options.MemberDeclaration.NullabilityInfoContext = null;
+          options.TypeDeclaration.NullabilityInfoContext = null;
+          options.MemberDeclaration.NullabilityInfoContext = null;
 #endif
         }
       }
