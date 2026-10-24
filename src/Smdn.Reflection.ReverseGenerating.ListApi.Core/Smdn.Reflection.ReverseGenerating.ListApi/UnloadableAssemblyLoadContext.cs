@@ -29,21 +29,21 @@ internal sealed class UnloadableAssemblyLoadContext : AssemblyLoadContext {
     this.logger = logger;
   }
 
-  protected override Assembly? Load(AssemblyName name)
+  protected override Assembly? Load(AssemblyName assemblyName)
   {
-    logger?.LogDebug("attempting to load '{AssemblyName}'", name);
+    logger?.LogDebug("attempting to load '{AssemblyName}'", assemblyName);
 
-    var assemblyPath = dependencyResolver.ResolveAssemblyToPath(name);
+    var assemblyPath = dependencyResolver.ResolveAssemblyToPath(assemblyName);
 
     if (assemblyPath is not null) {
       logger?.LogDebug("attempting to load assembly from '{AssemblyFilePath}'", assemblyPath);
       return LoadFromAssemblyPath(assemblyPath);
     }
 
-    var assembly = packageDependencyResolver.Resolve(name, this.LoadFromAssemblyPath);
+    var assembly = packageDependencyResolver.Resolve(assemblyName, this.LoadFromAssemblyPath);
 
     if (assembly is null)
-      RuntimeAssemblyName.WarnNotToBeAbleToResolve(logger, name, packageDependencyResolver.DependencyContext);
+      RuntimeAssemblyName.WarnNotToBeAbleToResolve(logger, assemblyName, packageDependencyResolver.DependencyContext);
 
     return assembly;
   }
