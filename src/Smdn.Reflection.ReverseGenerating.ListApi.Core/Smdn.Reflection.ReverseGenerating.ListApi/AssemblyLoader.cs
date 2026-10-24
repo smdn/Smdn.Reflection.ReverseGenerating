@@ -13,11 +13,9 @@ namespace Smdn.Reflection.ReverseGenerating.ListApi;
 
 public static partial class AssemblyLoader {
   private readonly record struct AssemblySource(
-#pragma warning disable SA1313
     string ComponentAssemblyPath,
     FileInfo? File = null,
     Stream? Stream = null
-#pragma warning restore SA1313
   );
 
 #if NULL_STATE_STATIC_ANALYSIS_ATTRIBUTES

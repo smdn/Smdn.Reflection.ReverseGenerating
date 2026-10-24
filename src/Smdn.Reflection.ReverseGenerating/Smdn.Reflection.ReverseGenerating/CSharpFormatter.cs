@@ -649,13 +649,11 @@ public static partial class CSharpFormatter /* ITypeFormatter */ {
     );
 
   internal readonly record struct ValueFormatOptions(
-#pragma warning disable SA1313
     bool TranslateLanguagePrimitiveType,
     bool TryFindConstantField,
     bool UseDefaultLiteral,
     bool WithNamespace,
     bool WithDeclaringTypeName
-#pragma warning restore SA1313
   ) {
     public static ValueFormatOptions FromGeneratorOptions(GeneratorOptions options, bool tryFindConstantField)
       => new(
