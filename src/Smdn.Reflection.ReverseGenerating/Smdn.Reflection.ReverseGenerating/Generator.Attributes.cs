@@ -12,9 +12,7 @@ using Smdn.Reflection.Attributes;
 
 namespace Smdn.Reflection.ReverseGenerating;
 
-#pragma warning disable IDE0040
 partial class Generator {
-#pragma warning restore IDE0040
   private enum AttributeTarget {
     Default,
     PropertyAccessorMethod,

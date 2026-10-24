@@ -13,9 +13,7 @@ using Smdn.IO;
 
 namespace Smdn.Reflection.ReverseGenerating.ListApi;
 
-#pragma warning disable IDE0040
 partial class ApiListWriterTests {
-#pragma warning restore IDE0040
   private static System.Collections.IEnumerable YieldTestCases_WriteExportedTypes_Extensions_Reconstruct()
   {
     foreach (var loadIntoReflectionOnlyContext in new[] { true, false }) {

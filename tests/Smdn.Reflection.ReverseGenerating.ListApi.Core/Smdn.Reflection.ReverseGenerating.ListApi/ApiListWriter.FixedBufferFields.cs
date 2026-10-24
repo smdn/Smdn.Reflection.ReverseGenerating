@@ -10,9 +10,7 @@ using Smdn.IO;
 
 namespace Smdn.Reflection.ReverseGenerating.ListApi;
 
-#pragma warning disable IDE0040
 partial class ApiListWriterTests {
-#pragma warning restore IDE0040
   private void WriteExportedTypes_FixedBufferFields_ExcludeFixedBufferFieldTypes_Core(
     string sourceCode,
     string[] expectedDeclarationLines,

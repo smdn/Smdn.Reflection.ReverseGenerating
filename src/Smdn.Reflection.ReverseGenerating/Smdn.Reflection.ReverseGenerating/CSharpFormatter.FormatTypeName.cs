@@ -5,9 +5,7 @@ using System.Reflection;
 
 namespace Smdn.Reflection.ReverseGenerating;
 
-#pragma warning disable IDE0040
 static partial class CSharpFormatter {
-#pragma warning restore IDE0040
   public static string FormatTypeName(
     this Type t,
     ICustomAttributeProvider? attributeProvider = null,

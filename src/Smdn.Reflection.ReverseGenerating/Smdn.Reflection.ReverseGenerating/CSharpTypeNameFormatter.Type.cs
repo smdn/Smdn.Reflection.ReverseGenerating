@@ -7,9 +7,7 @@ using System.Text;
 
 namespace Smdn.Reflection.ReverseGenerating;
 
-#pragma warning disable IDE0040
 static partial class CSharpTypeNameFormatter {
-#pragma warning restore IDE0040
   private static StringBuilder Format(
     Type type,
     StringBuilder builder,

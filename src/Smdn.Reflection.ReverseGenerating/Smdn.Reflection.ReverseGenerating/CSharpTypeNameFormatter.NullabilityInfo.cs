@@ -8,9 +8,7 @@ using System.Text;
 
 namespace Smdn.Reflection.ReverseGenerating;
 
-#pragma warning disable IDE0040
 static partial class CSharpTypeNameFormatter {
-#pragma warning restore IDE0040
 #if DEBUG
   private static void ThrowIfTypeIsCompoundType(Type type, string name)
   {

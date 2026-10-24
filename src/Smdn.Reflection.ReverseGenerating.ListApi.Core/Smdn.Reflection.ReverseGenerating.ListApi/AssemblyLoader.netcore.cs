@@ -16,9 +16,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Smdn.Reflection.ReverseGenerating.ListApi;
 
-#pragma warning disable IDE0040
 partial class AssemblyLoader {
-#pragma warning restore IDE0040
 #if NULL_STATE_STATIC_ANALYSIS_ATTRIBUTES
   [return: MaybeNull]
 #endif
