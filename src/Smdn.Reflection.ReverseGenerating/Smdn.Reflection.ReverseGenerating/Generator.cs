@@ -530,13 +530,11 @@ public static partial class Generator {
     else {
       sb.Append(
         field.FormatTypeName(
-#pragma warning disable SA1114
 #if SYSTEM_REFLECTION_NULLABILITYINFOCONTEXT
           nullabilityInfoContext: memberOptions.NullabilityInfoContext,
           nullabilityInfoContextLockObject: memberOptions.NullabilityInfoContextLockObject,
 #endif
           typeWithNamespace: memberOptions.WithNamespace
-#pragma warning restore SA1114
         )
       );
     }
@@ -727,13 +725,11 @@ public static partial class Generator {
 
     sb.Append(
       property.FormatTypeName(
-#pragma warning disable SA1114
 #if SYSTEM_REFLECTION_NULLABILITYINFOCONTEXT
         nullabilityInfoContext: memberOptions.NullabilityInfoContext,
         nullabilityInfoContextLockObject: memberOptions.NullabilityInfoContextLockObject,
 #endif
         typeWithNamespace: memberOptions.WithNamespace
-#pragma warning restore SA1114
       )
     ).Append(' ');
 
@@ -998,13 +994,11 @@ public static partial class Generator {
 
     try {
       methodReturnType = methodReturnParameter?.FormatTypeName(
-#pragma warning disable SA1114
 #if SYSTEM_REFLECTION_NULLABILITYINFOCONTEXT
         nullabilityInfoContext: formattingOptions.NullabilityInfoContext,
         nullabilityInfoContextLockObject: formattingOptions.NullabilityInfoContextLockObject,
 #endif
         typeWithNamespace: formattingOptions.FormatTypeWithNamespace
-#pragma warning restore SA1114
       );
 
       if (methodReturnParameter is not null) {
@@ -1358,13 +1352,11 @@ public static partial class Generator {
       .Append("event ")
       .Append(
         ev.FormatTypeName(
-#pragma warning disable SA1114
 #if SYSTEM_REFLECTION_NULLABILITYINFOCONTEXT
           nullabilityInfoContext: memberOptions.NullabilityInfoContext,
           nullabilityInfoContextLockObject: memberOptions.NullabilityInfoContextLockObject,
 #endif
           typeWithNamespace: memberOptions.WithNamespace
-#pragma warning restore SA1114
         )
       )
       .Append(' ');

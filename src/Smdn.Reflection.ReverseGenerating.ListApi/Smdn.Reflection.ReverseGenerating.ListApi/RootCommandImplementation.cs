@@ -288,13 +288,11 @@ public sealed class RootCommandImplementation {
 
   private static string GetOutputFilePathOf(Assembly assembly, DirectoryInfo outputDirectory)
   {
-#pragma warning restore SA1114
 #if SYSTEM_IO_PATH_JOIN
     return Path.Join(
 #else
     return Path.Combine(
 #endif
-#pragma warning disable SA1114
       outputDirectory.FullName, $"{GetOutputFileName(assembly)}.apilist.cs"
     );
 

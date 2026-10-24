@@ -529,14 +529,12 @@ public static partial class CSharpFormatter /* ITypeFormatter */ {
 
     ret.Append(
       p.FormatTypeName(
-#pragma warning disable SA1114
 #if SYSTEM_REFLECTION_NULLABILITYINFOCONTEXT
         nullabilityInfoContext: nullabilityInfoContext,
         nullabilityInfoContextLockObject: nullabilityInfoContextLockObject,
 #endif
         typeWithNamespace: typeWithNamespace,
         withDeclaringTypeName: typeWithDeclaringTypeName
-#pragma warning restore SA1114
       )
     );
 

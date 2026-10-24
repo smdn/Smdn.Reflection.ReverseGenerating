@@ -23,7 +23,6 @@ internal static class ROCType {
     if (!ignoreGenericTypeParameters)
       return false;
 
-#pragma warning disable SA1114
     // exclude generic type parameter specifications to treat
     // GenericType`1[TValue] and GenericType`1 as equivalent
     return MemoryExtensions.Equals(
@@ -33,7 +32,6 @@ internal static class ROCType {
       RemoveGenericTypeParameter(t.FullName ?? t.ToString()),
       StringComparison.Ordinal
     );
-#pragma warning restore SA1114
   }
 
   private static ReadOnlySpan<char> RemoveGenericTypeParameter(ReadOnlySpan<char> fullName)

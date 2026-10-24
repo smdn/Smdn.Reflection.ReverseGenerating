@@ -39,7 +39,6 @@ static partial class CSharpTypeNameFormatter {
       return Format(type.GetElementTypeOrThrow(), builder, options).Append('*');
 
     if (type.TryGetNullableUnderlyingType(out var nullableUnderlyingType)) {
-#pragma warning disable SA1114
       return Format(
 #if NULL_STATE_STATIC_ANALYSIS_ATTRIBUTES
         nullableUnderlyingType,
@@ -49,7 +48,6 @@ static partial class CSharpTypeNameFormatter {
         builder,
         options
       ).Append('?');
-#pragma warning restore SA1114
     }
 
     if (type.IsGenericParameter) {
