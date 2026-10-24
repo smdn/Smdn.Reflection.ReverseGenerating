@@ -571,7 +571,7 @@ public static partial class Generator {
       if (val is not null && declaringEnumType.IsEnumFlags()) {
         var valueDeclarationFormatString = val switch {
           sbyte or byte => " = 0x{0:x2}",
-          short or ushort =>" = 0x{0:x4}",
+          short or ushort => " = 0x{0:x4}",
           int or uint => " = 0x{0:x8}",
           long or ulong => " = 0x{0:x16}",
           _ => " = {0}",
