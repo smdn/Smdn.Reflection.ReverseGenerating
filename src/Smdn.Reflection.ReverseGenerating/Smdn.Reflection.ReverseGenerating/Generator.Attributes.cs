@@ -167,25 +167,25 @@ partial class Generator {
             : args.Count == 0; // with no args for 'member'/'members'
 
           return (
-            name: isArgsEmpty ? null : ConvertAttributeName(attr),
-            args: isArgsEmpty ? null : string.Join(", ", args)
+            Name: isArgsEmpty ? null : ConvertAttributeName(attr),
+            Args: isArgsEmpty ? null : string.Join(", ", args)
           );
         }
         else {
           return (
-            name: ConvertAttributeName(attr),
-            args: string.Join(", ", ConvertAttributeArguments(attr, omitInaccessibleMembers: false))
+            Name: ConvertAttributeName(attr),
+            Args: string.Join(", ", ConvertAttributeArguments(attr, omitInaccessibleMembers: false))
           );
         }
       })
-      .Where(static a => a.name is not null);
+      .Where(static a => a.Name is not null);
 
     if (!attributes.Any())
       return Enumerable.Empty<string>();
 
     return attributeSectionFormat switch {
       AttributeSectionFormat.Discrete => attributes.Select(
-        a => attributeSectionPrefix + a.name + (string.IsNullOrEmpty(a.args) ? string.Empty : "(" + a.args + ")") + AttributeSectionSuffix
+        a => attributeSectionPrefix + a.Name + (string.IsNullOrEmpty(a.Args) ? string.Empty : "(" + a.Args + ")") + AttributeSectionSuffix
       ),
 
       AttributeSectionFormat.List => Enumerable.Repeat(
@@ -194,7 +194,7 @@ partial class Generator {
           string.Join(
             ", ",
             attributes.Select(
-              static a => string.IsNullOrEmpty(a.args) ? a.name : a.name + "(" + a.args + ")"
+              static a => string.IsNullOrEmpty(a.Args) ? a.Name : a.Name + "(" + a.Args + ")"
             )
           ),
           AttributeSectionSuffix
