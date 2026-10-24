@@ -708,11 +708,12 @@ public static partial class CSharpFormatter /* ITypeFormatter */ {
 #endif
 
     if (typeOfValue.TryGetNullableUnderlyingType(out var nullableUnderlyingType)) {
-      typeOfValue = nullableUnderlyingType
-#if !NULL_STATE_STATIC_ANALYSIS_ATTRIBUTES
-      !
+      typeOfValue =
+#if NULL_STATE_STATIC_ANALYSIS_ATTRIBUTES
+        nullableUnderlyingType;
+#else
+        nullableUnderlyingType!;
 #endif
-      ;
     }
 
     if (string.Equals(typeOfValue.FullName, typeof(bool).FullName, StringComparison.Ordinal)) {
