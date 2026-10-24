@@ -660,10 +660,7 @@ public static partial class Generator {
     var explicitInterfaceMethod = property
       .GetAccessors(true)
       .Select(
-        a => a.TryFindExplicitInterfaceMethod(
-          out var eim,
-          findOnlyPublicInterfaces: options.IgnorePrivateOrAssembly
-        )
+        a => a.TryFindExplicitInterfaceMethod(out var eim, findOnlyPublicInterfaces: options.IgnorePrivateOrAssembly)
           ? eim
           : null // Type.GetInterfaceMap() is not supported in reflection-only context
       )
@@ -1304,10 +1301,7 @@ public static partial class Generator {
     var explicitInterfaceMethod = ev
       .GetMethods(true)
       .Select(
-        evm => evm.TryFindExplicitInterfaceMethod(
-          out var eim,
-          findOnlyPublicInterfaces: options.IgnorePrivateOrAssembly
-        )
+        evm => evm.TryFindExplicitInterfaceMethod(out var eim, findOnlyPublicInterfaces: options.IgnorePrivateOrAssembly)
           ? eim
           : null // Type.GetInterfaceMap() is not supported in reflection-only context
       )
