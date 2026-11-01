@@ -138,7 +138,7 @@ public class Modifiers_Override_WithAccessorAccessibility : Modifiers_Virtual_Wi
 
 public class Modifiers_SealedOverride_WithAccessorAccessibility : Modifiers_Virtual_WithAccessorAccessibility {
   [MemberDeclarationTestCase("public sealed override int PVirtual { get; }")] public sealed override int PVirtual { get => throw null; }
-  [MemberDeclarationTestCase("public sealed override int PVirtualWithProtectedGetter { protected get; set; }")] public sealed override int PVirtualWithProtectedGetter { protected get => throw null; set => throw null;  }
+  [MemberDeclarationTestCase("public sealed override int PVirtualWithProtectedGetter { protected get; set; }")] public sealed override int PVirtualWithProtectedGetter { protected get => throw null; set => throw null; }
   [MemberDeclarationTestCase("public sealed override int PVirtualWithProtectedSetter { get; protected set; }")] public sealed override int PVirtualWithProtectedSetter { get => throw null; protected set => throw null; }
 }
 
@@ -250,7 +250,7 @@ public class ClassRequiredProperties {
     [MemberDeclarationTestCase($"public virtual int {nameof(NonRequiredVirtualInitOnly)} {{ get; init; }}")] public virtual int NonRequiredVirtualInitOnly { get; init; }
   }
 
-  public class WithOverrideModifiers : WithAbstractOrVirtualModifiers{
+  public class WithOverrideModifiers : WithAbstractOrVirtualModifiers {
     [MemberDeclarationTestCase($"public override required int {nameof(AbstractRequired)} {{ get; set; }}")] public override required int AbstractRequired { get; set; }
     [MemberDeclarationTestCase($"public override required int {nameof(RequiredAbstract)} {{ get; set; }}")] public required override int RequiredAbstract { get; set; }
 

@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: MIT
 using System;
 using System.Runtime.Versioning;
+
 using NUnit.Framework;
 
 namespace Smdn.Reflection.ReverseGenerating.ListApi;

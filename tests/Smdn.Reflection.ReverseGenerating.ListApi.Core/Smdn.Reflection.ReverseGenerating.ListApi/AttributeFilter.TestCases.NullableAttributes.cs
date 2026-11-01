@@ -6,6 +6,7 @@
 #nullable enable annotations
 
 using System;
+
 using NUnit.Framework;
 
 using Smdn.Reflection.ReverseGenerating;

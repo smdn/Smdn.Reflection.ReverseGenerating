@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: MIT
 using System;
 using System.Reflection;
+
 using NUnit.Framework;
 
 [assembly: Smdn.Reflection.ReverseGenerating.ListApi.AssemblyStringMetadata("foo")]

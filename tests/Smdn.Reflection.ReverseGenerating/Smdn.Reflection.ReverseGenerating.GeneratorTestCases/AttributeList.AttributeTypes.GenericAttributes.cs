@@ -20,10 +20,10 @@ public class GenericAttribute<T> : Attribute { }
 )]
 [Generic<int>]
 [Generic<string>]
-public class CGenericAttributeOfInt32AndString {}
+public class CGenericAttributeOfInt32AndString { }
 
 [AttributeListTestCase("[Generic<List<int>>]", AttributeWithNamespace = false)]
 [Generic<System.Collections.Generic.List<int>>]
-public class CGenericAttributeOfListOfInt32 {}
+public class CGenericAttributeOfListOfInt32 { }
 
 #endif // NET7_0_OR_GREATER

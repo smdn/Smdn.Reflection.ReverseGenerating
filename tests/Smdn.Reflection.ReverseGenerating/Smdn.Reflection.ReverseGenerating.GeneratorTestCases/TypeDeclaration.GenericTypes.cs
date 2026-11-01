@@ -143,7 +143,7 @@ namespace Smdn.Reflection.ReverseGenerating.GeneratorTestCases.TypeDeclaration.G
 
       [TypeDeclarationTestCase("public class COpenNested<U>", TypeWithDeclaringTypeName = false)]
       [TypeDeclarationTestCase("public class C<T>.COpenNested<U>", TypeWithDeclaringTypeName = true)]
-      public class COpenNested<U> {}
+      public class COpenNested<U> { }
     }
 
     public class C : C<int> {

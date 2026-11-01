@@ -26,4 +26,4 @@ namespace Smdn.Reflection.ReverseGenerating.GeneratorTestCases.TypeDeclaration.G
 [TypeDeclarationTestCase("public struct Guid", typeof(Guid), TranslateLanguagePrimitiveTypeDeclaration = false)]
 #endif
 
-class Placeholder {}
+class Placeholder { }

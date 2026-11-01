@@ -3,6 +3,7 @@
 #nullable enable
 
 using System;
+
 using NUnit.Framework;
 
 namespace Smdn.Reflection.ReverseGenerating;

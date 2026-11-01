@@ -44,18 +44,18 @@ class IntEnumerable : IEnumerable<int> {
 [ReferencingNamespacesTestCase("", WithExplicitBaseTypeAndInterfaces = false)]
 [ReferencingNamespacesTestCase("System.Collections.Generic", WithExplicitBaseTypeAndInterfaces = true, TranslateLanguagePrimitiveTypeDeclaration = true)]
 [ReferencingNamespacesTestCase("System, System.Collections.Generic", WithExplicitBaseTypeAndInterfaces = true, TranslateLanguagePrimitiveTypeDeclaration = false)]
-class ListEx1 : List<int> {}
+class ListEx1 : List<int> { }
 
 [ReferencingNamespacesTestCase("", WithExplicitBaseTypeAndInterfaces = false)]
 [ReferencingNamespacesTestCase("System, System.Collections.Generic", WithExplicitBaseTypeAndInterfaces = true)]
-class ListEx2 : List<Guid> {}
+class ListEx2 : List<Guid> { }
 
 [ReferencingNamespacesTestCase("", WithExplicitBaseTypeAndInterfaces = false)]
 [ReferencingNamespacesTestCase("System.Collections.Generic", WithExplicitBaseTypeAndInterfaces = true)]
-class ListEx3<T> : List<T> {}
+class ListEx3<T> : List<T> { }
 
 [ReferencingNamespacesTestCase("System.Collections.Generic", WithExplicitBaseTypeAndInterfaces = true, TranslateLanguagePrimitiveTypeDeclaration = true)]
 [ReferencingNamespacesTestCase("System.Collections.Generic", WithExplicitBaseTypeAndInterfaces = false, TranslateLanguagePrimitiveTypeDeclaration = true)]
 [ReferencingNamespacesTestCase("System, System.Collections.Generic", WithExplicitBaseTypeAndInterfaces = true, TranslateLanguagePrimitiveTypeDeclaration = false)]
 [ReferencingNamespacesTestCase("System, System.Collections.Generic", WithExplicitBaseTypeAndInterfaces = false, TranslateLanguagePrimitiveTypeDeclaration = false)]
-class ListEx4<T> : List<T> where T : IEnumerable<int> {}
+class ListEx4<T> : List<T> where T : IEnumerable<int> { }
