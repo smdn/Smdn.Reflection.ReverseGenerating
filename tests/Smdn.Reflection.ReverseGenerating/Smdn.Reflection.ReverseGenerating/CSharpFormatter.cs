@@ -42,8 +42,7 @@ public partial class CSharpFormatterTests {
       () => ((Type)null!).FormatUnboundTypeName(),
       Throws
         .ArgumentNullException
-        .With
-        .Property(nameof(ArgumentNullException.ParamName))
+        .ParamName
         .EqualTo("t")
     );
 

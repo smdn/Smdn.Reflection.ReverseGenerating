@@ -76,11 +76,11 @@ public class ReferencingNamespacesTestCaseAttribute : GeneratorTestCaseAttribute
 partial class GeneratorTests {
   [Test]
   public void GenerateTypeDeclaration_ArgumentOptionsNull()
-    => Assert.Throws<ArgumentNullException>(() => Generator.GenerateTypeDeclaration(t: typeof(int), null, options: null!));
+    => Assert.That(() => Generator.GenerateTypeDeclaration(t: typeof(int), null, options: null!), Throws.ArgumentNullException);
 
   [Test]
   public void GenerateTypeDeclaration_ArgumentTypeNull()
-    => Assert.Throws<ArgumentNullException>(() => Generator.GenerateTypeDeclaration(t: null!, null, options: new()));
+    => Assert.That(() => Generator.GenerateTypeDeclaration(t: null!, null, options: new()), Throws.ArgumentNullException);
 
   [TestCase(typeof(List<int>))]
   [TestCase(typeof(IEnumerable<int>))]
@@ -88,7 +88,7 @@ partial class GeneratorTests {
   [TestCase(typeof(int?))]
   [TestCase(typeof((int, int)))]
   public void GenerateTypeDeclaration_ArgumentTypeIsConstructedGenericType(Type type)
-    => Assert.Throws<ArgumentException>(() => Generator.GenerateTypeDeclaration(t: type, null, options: new()));
+    => Assert.That(() => Generator.GenerateTypeDeclaration(t: type, null, options: new()), Throws.ArgumentException);
 
   private static System.Collections.IEnumerable YieldTestCases_GenerateTypeDeclaration()
     => GetTestCaseTypes()

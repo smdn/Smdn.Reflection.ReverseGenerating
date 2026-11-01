@@ -38,19 +38,19 @@ public partial class ApiListWriterTests {
 
   [Test]
   public void Ctor()
-    => Assert.DoesNotThrow(() => new ApiListWriter(TextWriter.Null, Assembly.GetExecutingAssembly(), new()));
+    => Assert.That(() => new ApiListWriter(TextWriter.Null, Assembly.GetExecutingAssembly(), new()), Throws.Nothing);
 
   [Test]
   public void Ctor_OptionsNull()
-    => Assert.DoesNotThrow(() => new ApiListWriter(TextWriter.Null, Assembly.GetExecutingAssembly(), options: null));
+    => Assert.That(() => new ApiListWriter(TextWriter.Null, Assembly.GetExecutingAssembly(), options: null), Throws.Nothing);
 
   [Test]
   public void Ctor_BaseWriterNull()
-    => Assert.Throws<ArgumentNullException>(() => new ApiListWriter(baseWriter: null!, Assembly.GetExecutingAssembly(), new()));
+    => Assert.That(() => new ApiListWriter(baseWriter: null!, Assembly.GetExecutingAssembly(), new()), Throws.ArgumentNullException);
 
   [Test]
   public void Ctor_AssemblyNull()
-    => Assert.Throws<ArgumentNullException>(() => new ApiListWriter(TextWriter.Null, assembly: null!, new()));
+    => Assert.That(() => new ApiListWriter(TextWriter.Null, assembly: null!, new()), Throws.ArgumentNullException);
 
   private static void CreateAssemblyFromSourceCode(
     Stream outputAssemblyStream,

@@ -31,6 +31,6 @@ class FrameworkMonikersTests {
   {
     FrameworkName name = null!;
 
-    Assert.Throws<ArgumentNullException>(() => FrameworkMonikers.TryGetMoniker(name, osSpecifier: null, out _));
+    Assert.That(() => FrameworkMonikers.TryGetMoniker(name, osSpecifier: null, out _), Throws.ArgumentNullException);
   }
 }

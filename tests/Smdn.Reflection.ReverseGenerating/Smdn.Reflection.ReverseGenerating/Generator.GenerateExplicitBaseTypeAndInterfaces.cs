@@ -28,11 +28,11 @@ public class ExplicitBaseTypeAndInterfacesTestCaseAttribute : GeneratorTestCaseA
 partial class GeneratorTests {
   [Test]
   public void GenerateExplicitBaseTypeAndInterfaces_ArgumentOptionsNull()
-    => Assert.Throws<ArgumentNullException>(() => Generator.GenerateExplicitBaseTypeAndInterfaces(t: typeof(int), null, options: null!));
+    => Assert.That(() => Generator.GenerateExplicitBaseTypeAndInterfaces(t: typeof(int), null, options: null!), Throws.ArgumentNullException);
 
   [Test]
   public void GenerateExplicitBaseTypeAndInterfaces_ArgumentTypeNull()
-    => Assert.Throws<ArgumentNullException>(() => Generator.GenerateExplicitBaseTypeAndInterfaces(t: null!, null, options: new()));
+    => Assert.That(() => Generator.GenerateExplicitBaseTypeAndInterfaces(t: null!, null, options: new()), Throws.ArgumentNullException);
 
   private static System.Collections.IEnumerable YieldTestCases_GenerateExplicitBaseTypeAndInterfaces()
     => GetTestCaseTypes()

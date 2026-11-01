@@ -35,24 +35,24 @@ partial class GeneratorTests {
   {
     var genericParameter = typeof(List<>).GetGenericArguments()[0];
 
-    Assert.Throws<ArgumentNullException>(() => Generator.GenerateGenericParameterConstraintDeclaration(genericParameter: genericParameter, null, options: null!));
+    Assert.That(() => Generator.GenerateGenericParameterConstraintDeclaration(genericParameter: genericParameter, null, options: null!), Throws.ArgumentNullException);
   }
 
   [Test]
   public void GenerateGenericParameterConstraintDeclaration_ArgumentGenericParameterNull()
-    => Assert.Throws<ArgumentNullException>(() => Generator.GenerateGenericParameterConstraintDeclaration(genericParameter: null!, null, options: new()));
+    => Assert.That(() => Generator.GenerateGenericParameterConstraintDeclaration(genericParameter: null!, null, options: new()), Throws.ArgumentNullException);
 
   [TestCase(typeof(int))]
   [TestCase(typeof(List<>))]
   public void GenerateGenericParameterConstraintDeclaration_ArgumentGenericParameterIsType(Type type)
-    => Assert.Throws<ArgumentException>(() => Generator.GenerateGenericParameterConstraintDeclaration(genericParameter: type, null, options: new()));
+    => Assert.That(() => Generator.GenerateGenericParameterConstraintDeclaration(genericParameter: type, null, options: new()), Throws.ArgumentException);
 
   [TestCase(typeof(List<int>))]
   [TestCase(typeof(Action<int>))]
   [TestCase(typeof(int?))]
   [TestCase(typeof((int, int)))]
   public void GenerateGenericParameterConstraintDeclaration_ArgumentGenericParameterIsGenericArgument(Type type)
-    => Assert.Throws<ArgumentException>(() => Generator.GenerateGenericParameterConstraintDeclaration(genericParameter: type.GetGenericArguments()[0], null, options: new()));
+    => Assert.That(() => Generator.GenerateGenericParameterConstraintDeclaration(genericParameter: type.GetGenericArguments()[0], null, options: new()), Throws.ArgumentException);
 
   private static System.Collections.IEnumerable YieldTestCase_GenerateGenericParameterConstraintDeclaration_OfType()
     => GetTestCaseTypes()

@@ -39,26 +39,24 @@ class AssemblyLoaderTests {
   public void UsingAssembly_ArgumentNull_AssemblyFile(
     [Values] bool loadIntoReflectionOnlyContext
   )
-  {
-    Assert.Throws<ArgumentNullException>(() => {
-      AssemblyLoader.UsingAssembly(
+    => Assert.That(
+      () => AssemblyLoader.UsingAssembly(
         assemblyFile: null!,
         loadIntoReflectionOnlyContext: loadIntoReflectionOnlyContext,
         arg: 0,
         (assembly, arg) => arg,
         context: out _,
         logger: null
-      );
-    });
-  }
+      ),
+      Throws.ArgumentNullException
+    );
 
   [Test]
   public void UsingAssembly_ArgumentNull_AssemblyStream(
     [Values] bool loadIntoReflectionOnlyContext
   )
-  {
-    Assert.Throws<ArgumentNullException>(() => {
-      AssemblyLoader.UsingAssembly(
+    => Assert.That(
+      () => AssemblyLoader.UsingAssembly(
         assemblyStream: null!,
         componentAssemblyPath: string.Empty,
         loadIntoReflectionOnlyContext: loadIntoReflectionOnlyContext,
@@ -66,17 +64,16 @@ class AssemblyLoaderTests {
         (assembly, arg) => arg,
         context: out _,
         logger: null
-      );
-    });
-  }
+      ),
+      Throws.ArgumentNullException
+    );
 
   [Test]
   public void UsingAssembly_ArgumentNull_ComponentAssemblyPath(
     [Values] bool loadIntoReflectionOnlyContext
   )
-  {
-    Assert.Throws<ArgumentNullException>(() => {
-      AssemblyLoader.UsingAssembly(
+    => Assert.That(
+      () => AssemblyLoader.UsingAssembly(
         assemblyStream: Stream.Null,
         componentAssemblyPath: null!,
         loadIntoReflectionOnlyContext: loadIntoReflectionOnlyContext,
@@ -84,9 +81,9 @@ class AssemblyLoaderTests {
         (assembly, arg) => arg,
         context: out _,
         logger: null
-      );
-    });
-  }
+      ),
+      Throws.ArgumentNullException
+    );
 
 #if NETCOREAPP3_1_OR_GREATER || NET8_0_OR_GREATER
   [TestCase(true, "netstandard2.1")]
@@ -116,7 +113,7 @@ class AssemblyLoaderTests {
         Assert.That(assembly, Is.Not.Null, nameof(assembly));
         Assert.That(assembly.Location, Is.EqualTo(arg.FullName), nameof(assembly.Location));
 
-        Assert.DoesNotThrow(() => assembly.GetExportedTypes(), nameof(assembly.GetExportedTypes));
+        Assert.That(() => assembly.GetExportedTypes(), Throws.Nothing, nameof(assembly.GetExportedTypes));
 
         return assembly.GetType("Lib.LibA.CBase")?.FullName;
       },
@@ -162,16 +159,17 @@ class AssemblyLoaderTests {
     WeakReference? context = null;
     int result = 1;
 
-    Assert.DoesNotThrow(() => {
-      result = AssemblyLoader.UsingAssembly<int, int>(
+    Assert.That(
+      () => result = AssemblyLoader.UsingAssembly<int, int>(
         assemblyFile,
         loadIntoReflectionOnlyContext: loadIntoReflectionOnlyContext,
         arg: int.MaxValue,
         actionWithLoadedAssembly: null,
         context: out context,
         logger: logger
-      );
-    });
+      ),
+      Throws.Nothing
+    );
 
     Assert.That(result, Is.Default, nameof(result));
 
@@ -229,7 +227,7 @@ class AssemblyLoaderTests {
         else
           Assert.That(assembly.Location, Is.Empty, nameof(assembly.Location));
 
-        Assert.DoesNotThrow(() => assembly.GetExportedTypes(), nameof(assembly.GetExportedTypes));
+        Assert.That(() => assembly.GetExportedTypes(), Throws.Nothing, nameof(assembly.GetExportedTypes));
 
         return assembly.GetType("Lib.LibA.CBase")?.FullName;
       },
@@ -290,7 +288,7 @@ class AssemblyLoaderTests {
         Assert.That(assembly, Is.Not.Null, nameof(assembly));
         Assert.That(assembly.Location, Is.EqualTo(arg.FullName), nameof(assembly.Location));
 
-        Assert.DoesNotThrow(() => assembly.GetExportedTypes(), nameof(assembly.GetExportedTypes));
+        Assert.That(() => assembly.GetExportedTypes(), Throws.Nothing, nameof(assembly.GetExportedTypes));
 
         return assembly.GetType("Lib.LibB.CEx")?.FullName;
       },
@@ -355,7 +353,7 @@ class AssemblyLoaderTests {
         else
           Assert.That(assembly.Location, Is.Empty, nameof(assembly.Location));
 
-        Assert.DoesNotThrow(() => assembly.GetExportedTypes(), nameof(assembly.GetExportedTypes));
+        Assert.That(() => assembly.GetExportedTypes(), Throws.Nothing, nameof(assembly.GetExportedTypes));
 
         return assembly.GetType("Lib.LibB.CEx")?.FullName;
       },
@@ -416,7 +414,7 @@ class AssemblyLoaderTests {
         Assert.That(assembly, Is.Not.Null, nameof(assembly));
         Assert.That(assembly.Location, Is.EqualTo(arg.FullName), nameof(assembly.Location));
 
-        Assert.DoesNotThrow(() => assembly.GetExportedTypes(), nameof(assembly.GetExportedTypes));
+        Assert.That(() => assembly.GetExportedTypes(), Throws.Nothing, nameof(assembly.GetExportedTypes));
 
         return assembly
           .GetType("C")

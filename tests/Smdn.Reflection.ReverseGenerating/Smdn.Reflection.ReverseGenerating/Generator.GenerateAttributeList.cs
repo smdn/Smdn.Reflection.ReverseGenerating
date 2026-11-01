@@ -28,11 +28,11 @@ public class AttributeListTestCaseAttribute : GeneratorTestCaseAttribute {
 partial class GeneratorTests {
   [Test]
   public void GenerateAttributeList_ArgumentOptionsNull()
-    => Assert.Throws<ArgumentNullException>(() => Generator.GenerateAttributeList(attributeProvider: typeof(int), null, options: null!));
+    => Assert.That(() => Generator.GenerateAttributeList(attributeProvider: typeof(int), null, options: null!), Throws.ArgumentNullException);
 
   [Test]
   public void GenerateAttributeList_ArgumentAttributeProviderNull()
-    => Assert.Throws<ArgumentNullException>(() => Generator.GenerateAttributeList(attributeProvider: null!, null, options: new()));
+    => Assert.That(() => Generator.GenerateAttributeList(attributeProvider: null!, null, options: new()), Throws.ArgumentNullException);
 
   private static System.Collections.IEnumerable YieldTestCases_GenerateAttributeList()
     => GetTestCaseTypes()

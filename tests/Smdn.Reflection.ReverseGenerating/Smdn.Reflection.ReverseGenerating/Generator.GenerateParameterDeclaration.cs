@@ -19,8 +19,7 @@ partial class GeneratorTests {
       ),
       Throws
         .ArgumentNullException
-        .With
-        .Property(nameof(ArgumentNullException.ParamName))
+        .ParamName
         .EqualTo("parameter")
     );
 
@@ -37,8 +36,7 @@ partial class GeneratorTests {
       ),
       Throws
         .ArgumentNullException
-        .With
-        .Property(nameof(ArgumentNullException.ParamName))
+        .ParamName
         .EqualTo("options")
     );
   }

@@ -32,21 +32,19 @@ public class ProjectFinderTests {
 
   [Test]
   public void FindSingleProjectOrSolution_SearchTopDirectoryOnly()
-  {
-    Assert.Throws<FileNotFoundException>(() => {
-      ProjectFinder.FindSingleProjectOrSolution(
+    => Assert.That(
+      () => ProjectFinder.FindSingleProjectOrSolution(
         new(TestAssemblyInfo.RootDirectory.FullName)
-      );
-    });
-  }
+      ),
+      Throws.TypeOf<FileNotFoundException>()
+    );
 
   [Test]
   public void FindSingleProjectOrSolution_MultipleFileFound()
-  {
-    Assert.Throws<InvalidOperationException>(() => {
-      ProjectFinder.FindSingleProjectOrSolution(
+    => Assert.That(
+      () => ProjectFinder.FindSingleProjectOrSolution(
         new(PathJoiner.Join(TestAssemblyInfo.RootDirectory.FullName, "MultipleProj"))
-      );
-    });
-  }
+      ),
+      Throws.InvalidOperationException
+    );
 }

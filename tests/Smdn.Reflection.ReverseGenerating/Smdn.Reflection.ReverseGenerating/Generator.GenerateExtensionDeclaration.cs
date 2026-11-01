@@ -79,8 +79,7 @@ partial class GeneratorTests {
       ),
       Throws
         .ArgumentNullException
-        .With
-        .Property(nameof(ArgumentNullException.ParamName))
+        .ParamName
         .EqualTo("options")
     );
   }
@@ -103,8 +102,7 @@ partial class GeneratorTests {
       ),
       Throws
         .ArgumentNullException
-        .With
-        .Property(nameof(ArgumentNullException.ParamName))
+        .ParamName
         .EqualTo("extensionMarkerType")
     );
   }
@@ -127,8 +125,7 @@ partial class GeneratorTests {
       ),
       Throws
         .ArgumentNullException
-        .With
-        .Property(nameof(ArgumentNullException.ParamName))
+        .ParamName
         .EqualTo("extensionParameter")
     );
   }

@@ -31,11 +31,11 @@ public class MemberDeclarationTestCaseAttribute : GeneratorTestCaseAttribute {
 partial class GeneratorTests {
   [Test]
   public void GenerateMemberDeclaration_ArgumentOptionsNull()
-    => Assert.Throws<ArgumentNullException>(() => Generator.GenerateMemberDeclaration(member: typeof(int).GetMembers().First(), null, options: null!));
+    => Assert.That(() => Generator.GenerateMemberDeclaration(member: typeof(int).GetMembers().First(), null, options: null!), Throws.ArgumentNullException);
 
   [Test]
   public void GenerateMemberDeclaration_ArgumentTypeNull()
-    => Assert.Throws<ArgumentNullException>(() => Generator.GenerateMemberDeclaration(member: null!, null, options: new()));
+    => Assert.That(() => Generator.GenerateMemberDeclaration(member: null!, null, options: new()), Throws.ArgumentNullException);
 
   private static System.Collections.IEnumerable YieldTestCases_GenerateMemberDeclaration()
     => GetTestCaseTypes()

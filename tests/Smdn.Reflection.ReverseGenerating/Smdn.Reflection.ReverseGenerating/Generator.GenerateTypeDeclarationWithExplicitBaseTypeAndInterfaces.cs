@@ -28,11 +28,11 @@ public class TypeDeclarationWithExplicitBaseTypeAndInterfacesTestCaseAttribute :
 partial class GeneratorTests {
   [Test]
   public void GenerateTypeDeclarationWithExplicitBaseTypeAndInterfaces_ArgumentOptionsNull()
-    => Assert.Throws<ArgumentNullException>(() => Generator.GenerateTypeDeclarationWithExplicitBaseTypeAndInterfaces(t: typeof(int), null, options: null!));
+    => Assert.That(() => Generator.GenerateTypeDeclarationWithExplicitBaseTypeAndInterfaces(t: typeof(int), null, options: null!), Throws.ArgumentNullException);
 
   [Test]
   public void GenerateTypeDeclarationWithExplicitBaseTypeAndInterfaces_ArgumentTypeNull()
-    => Assert.Throws<ArgumentNullException>(() => Generator.GenerateTypeDeclarationWithExplicitBaseTypeAndInterfaces(t: null!, null, options: new()));
+    => Assert.That(() => Generator.GenerateTypeDeclarationWithExplicitBaseTypeAndInterfaces(t: null!, null, options: new()), Throws.ArgumentNullException);
 
   [TestCase(typeof(List<int>))]
   [TestCase(typeof(IEnumerable<int>))]
@@ -40,7 +40,7 @@ partial class GeneratorTests {
   [TestCase(typeof(int?))]
   [TestCase(typeof((int, int)))]
   public void GenerateTypeDeclarationWithExplicitBaseTypeAndInterfaces_ArgumentTypeIsConstructedGenericType(Type type)
-    => Assert.Throws<ArgumentException>(() => Generator.GenerateTypeDeclarationWithExplicitBaseTypeAndInterfaces(t: type, null, options: new()));
+    => Assert.That(() => Generator.GenerateTypeDeclarationWithExplicitBaseTypeAndInterfaces(t: type, null, options: new()), Throws.ArgumentException);
 
   private static System.Collections.IEnumerable YieldTestCases_GenerateTypeDeclarationWithExplicitBaseTypeAndInterfaces()
     => GetTestCaseTypes()
