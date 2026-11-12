@@ -39,4 +39,4 @@ jobs:
     secrets:
       token_repo:                 ${{ secrets.PUBLISH_NEW_RELEASE }}
       token_push_nuget_org:       ${{ secrets.PUBLISH_PACKAGE_NUGETORG }}
-      token_push_github_packages: ${{ secrets.PUBLISH_NEW_RELEASE }}
+      token_push_github_packages: ${{ secrets.GITHUB_TOKEN }}
