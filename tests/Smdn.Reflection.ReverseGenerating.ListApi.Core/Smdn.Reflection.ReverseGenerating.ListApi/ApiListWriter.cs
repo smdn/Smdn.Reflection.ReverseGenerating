@@ -584,21 +584,12 @@ public static class C {{
       string[] ExpectedReferencedAssemblies
     )> YieldTestCases()
     {
-#if NETCOREAPP3_1_OR_GREATER || NET8_0_OR_GREATER
+#if NETCOREAPP3_1_OR_GREATER || NET10_0_OR_GREATER
       yield return (
         "Lib",
         "netstandard2.1",
         new[] {
           "netstandard, Version=2.1.",
-        }
-      );
-#endif
-#if NET8_0_OR_GREATER
-      yield return (
-        "Lib",
-        "net8.0",
-        new[] {
-          "System.Runtime, Version=8.0.",
         }
       );
 #endif
@@ -611,7 +602,16 @@ public static class C {{
         }
       );
 #endif
-#if NETCOREAPP3_1_OR_GREATER || NET8_0_OR_GREATER
+#if NET11_0_OR_GREATER
+      yield return (
+        "Lib",
+        "net11.0",
+        new[] {
+          "System.Runtime, Version=11.0.",
+        }
+      );
+#endif
+#if NETCOREAPP3_1_OR_GREATER || NET10_0_OR_GREATER
       yield return (
         "LibB",
         "netstandard2.1",
@@ -621,23 +621,12 @@ public static class C {{
         }
       );
 #endif
-#if NETCOREAPP3_1_OR_GREATER || NET8_0_OR_GREATER
+#if NETCOREAPP3_1_OR_GREATER || NET10_0_OR_GREATER
       yield return (
         "LibReferencedAssemblies1",
         "netstandard2.1",
         new[] {
           "netstandard, Version=2.1.",
-        }
-      );
-#endif
-#if NET8_0_OR_GREATER
-      yield return (
-        "LibReferencedAssemblies1",
-        "net8.0",
-        new[] {
-          "System.Runtime, Version=8.0.",
-          "System.Threading, Version=8.0.",
-          "System.Xml.ReaderWriter, Version=8.0.",
         }
       );
 #endif
@@ -649,6 +638,17 @@ public static class C {{
           "System.Runtime, Version=10.0.",
           "System.Threading, Version=10.0.",
           "System.Xml.ReaderWriter, Version=10.0.",
+        }
+      );
+#endif
+#if NET11_0_OR_GREATER
+      yield return (
+        "LibReferencedAssemblies1",
+        "net11.0",
+        new[] {
+          "System.Runtime, Version=11.0.",
+          "System.Threading, Version=11.0.",
+          "System.Xml.ReaderWriter, Version=11.0.",
         }
       );
 #endif

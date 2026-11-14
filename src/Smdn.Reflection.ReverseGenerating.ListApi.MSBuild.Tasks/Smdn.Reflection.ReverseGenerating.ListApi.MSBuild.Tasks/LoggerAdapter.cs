@@ -27,7 +27,11 @@ internal sealed class LoggerAdapter : Microsoft.Extensions.Logging.ILogger {
     this.file = file;
   }
 
+#if NET11_0_OR_GREATER
+  public IDisposable? BeginScope<TState>(TState state) where TState : notnull
+#else
   public IDisposable BeginScope<TState>(TState state)
+#endif
     => NullScope.Instance;
 
   public bool IsEnabled(LogLevel logLevel)

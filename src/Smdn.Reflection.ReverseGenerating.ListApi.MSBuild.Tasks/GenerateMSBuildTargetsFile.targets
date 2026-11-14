@@ -24,21 +24,13 @@ SPDX-License-Identifier: MIT
       <!-- TODO: MSBuildRuntimeType == Full, Mono and otherwise -->
       <GenerateMSBuildTargetsFileLines><![CDATA[
 <Project>
-  <ImportGroup Condition=" '%24(MSBuildRuntimeType)' == 'Core' and %24([System.Runtime.InteropServices.RuntimeInformation]::FrameworkDescription.StartsWith('.NET 8.')) ">
-    <!-- .NET 8.x -->
-    @(TaskFiles->WithMetadataValue('TargetFramework', 'net8.0')->'%(ImportLine)', '%0D%0A    ')
-  </ImportGroup>
-  <ImportGroup Condition=" '%24(MSBuildRuntimeType)' == 'Core' and %24([System.Runtime.InteropServices.RuntimeInformation]::FrameworkDescription.StartsWith('.NET 9.')) ">
-    <!-- .NET 9.x (use files that target .NET 8) -->
-    @(TaskFiles->WithMetadataValue('TargetFramework', 'net8.0')->'%(ImportLine)', '%0D%0A    ')
-  </ImportGroup>
   <ImportGroup Condition=" '%24(MSBuildRuntimeType)' == 'Core' and %24([System.Runtime.InteropServices.RuntimeInformation]::FrameworkDescription.StartsWith('.NET 10.')) ">
     <!-- .NET 10.x -->
     @(TaskFiles->WithMetadataValue('TargetFramework', 'net10.0')->'%(ImportLine)', '%0D%0A    ')
   </ImportGroup>
   <ImportGroup Condition=" '%24(MSBuildRuntimeType)' == 'Core' and %24([System.Runtime.InteropServices.RuntimeInformation]::FrameworkDescription.StartsWith('.NET 11.')) ">
-    <!-- .NET 11.x (use files that target .NET 10) -->
-    @(TaskFiles->WithMetadataValue('TargetFramework', 'net10.0')->'%(ImportLine)', '%0D%0A    ')
+    <!-- .NET 11.x -->
+    @(TaskFiles->WithMetadataValue('TargetFramework', 'net11.0')->'%(ImportLine)', '%0D%0A    ')
   </ImportGroup>
 </Project>
       ]]></GenerateMSBuildTargetsFileLines>

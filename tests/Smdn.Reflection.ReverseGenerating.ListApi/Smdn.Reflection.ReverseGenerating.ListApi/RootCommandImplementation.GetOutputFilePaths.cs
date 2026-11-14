@@ -42,10 +42,13 @@ public class RootCommandImplementationGetOutputFilePathsTests {
 
   private static string GetCurrentDirectory() => TestContext.CurrentContext.WorkDirectory;
 
-  [TestCase("Lib.dll", "net8.0", "Lib-net8.0.apilist.cs")]
-  [TestCase("Exe.dll", "net8.0", "Exe-net8.0.apilist.cs")]
+  [TestCase("Lib.dll", "net10.0", "Lib-net10.0.apilist.cs")]
+  [TestCase("Exe.dll", "net10.0", "Exe-net10.0.apilist.cs")]
+  [TestCase("Lib.dll", "net11.0", "Lib-net11.0.apilist.cs")]
+  [TestCase("Exe.dll", "net11.0", "Exe-net11.0.apilist.cs")]
   [TestCase("LibA.dll", "netstandard2.1", "LibA-netstandard2.1.apilist.cs")]
-  [TestCase("LibA.dll", "net8.0", "LibA-net8.0.apilist.cs")]
+  [TestCase("LibA.dll", "net10.0", "LibA-net10.0.apilist.cs")]
+  [TestCase("LibA.dll", "net11.0", "LibA-net11.0.apilist.cs")]
   public void GetOutputFilePaths(string filename, string targetFrameworkMoniker, string expectedOutputFileName)
   {
     var assemblyFile = new FileInfo(
@@ -66,7 +69,7 @@ public class RootCommandImplementationGetOutputFilePathsTests {
   public void GetOutputFilePaths_WithOutputDirectoryOption(string optionName, string outputDirectory)
   {
     var assemblyFile = new FileInfo(
-      TestAssemblyInfo.TestAssemblyPaths.First(f => f.Contains("net8.0") && f.Contains("Lib.dll"))
+      TestAssemblyInfo.TestAssemblyPaths.First(f => f.Contains("net10.0") && f.Contains("Lib.dll"))
     );
 
     var impl = new RootCommandImplementation(serviceProvider);
@@ -75,7 +78,7 @@ public class RootCommandImplementationGetOutputFilePathsTests {
       assemblyFile.FullName
     }).First();
 
-    Assert.That(Path.GetFileName(outputFilePath), Is.EqualTo("Lib-net8.0.apilist.cs"));
+    Assert.That(Path.GetFileName(outputFilePath), Is.EqualTo("Lib-net10.0.apilist.cs"));
     Assert.That(Path.GetDirectoryName(outputFilePath), Is.EqualTo(Path.GetFullPath(outputDirectory)));
   }
 }

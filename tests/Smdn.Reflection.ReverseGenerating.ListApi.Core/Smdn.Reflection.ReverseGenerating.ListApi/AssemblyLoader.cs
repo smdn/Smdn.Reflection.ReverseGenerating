@@ -85,17 +85,17 @@ class AssemblyLoaderTests {
       Throws.ArgumentNullException
     );
 
-#if NETCOREAPP3_1_OR_GREATER || NET8_0_OR_GREATER
+#if NETCOREAPP3_1_OR_GREATER || NET10_0_OR_GREATER
   [TestCase(true, "netstandard2.1")]
   [TestCase(false, "netstandard2.1")]
-#endif
-#if NET8_0_OR_GREATER
-  [TestCase(true, "net8.0")]
-  [TestCase(false, "net8.0")]
 #endif
 #if NET10_0_OR_GREATER
   [TestCase(true, "net10.0")]
   [TestCase(false, "net10.0")]
+#endif
+#if NET11_0_OR_GREATER
+  [TestCase(true, "net11.0")]
+  [TestCase(false, "net11.0")]
 #endif
   public void UsingAssembly(bool loadIntoReflectionOnlyContext, string targetFrameworkMoniker)
   {
@@ -146,7 +146,7 @@ class AssemblyLoaderTests {
     Assert.That(unloaded, Is.True, nameof(unloaded));
   }
 
-#if NETCOREAPP3_1_OR_GREATER || NET8_0_OR_GREATER
+#if NETCOREAPP3_1_OR_GREATER || NET10_0_OR_GREATER
   [TestCase(true, "netstandard2.1")]
   [TestCase(false, "netstandard2.1")]
 #endif
@@ -195,17 +195,17 @@ class AssemblyLoaderTests {
     Assert.That(unloaded, Is.True, nameof(unloaded));
   }
 
-#if NETCOREAPP3_1_OR_GREATER || NET8_0_OR_GREATER
+#if NETCOREAPP3_1_OR_GREATER || NET10_0_OR_GREATER
   [TestCase(true, "netstandard2.1")]
   [TestCase(false, "netstandard2.1")]
-#endif
-#if NET8_0_OR_GREATER
-  [TestCase(true, "net8.0")]
-  [TestCase(false, "net8.0")]
 #endif
 #if NET10_0_OR_GREATER
   [TestCase(true, "net10.0")]
   [TestCase(false, "net10.0")]
+#endif
+#if NET11_0_OR_GREATER
+  [TestCase(true, "net11.0")]
+  [TestCase(false, "net11.0")]
 #endif
   public void UsingAssembly_FromStream(bool loadIntoReflectionOnlyContext, string targetFrameworkMoniker)
   {
@@ -260,17 +260,17 @@ class AssemblyLoaderTests {
     Assert.That(unloaded, Is.True, nameof(unloaded));
   }
 
-#if NETCOREAPP3_1_OR_GREATER || NET8_0_OR_GREATER
+#if NETCOREAPP3_1_OR_GREATER || NET10_0_OR_GREATER
   [TestCase(true, "netstandard2.1")]
   [TestCase(false, "netstandard2.1")]
-#endif
-#if NET8_0_OR_GREATER
-  [TestCase(true, "net8.0")]
-  [TestCase(false, "net8.0")]
 #endif
 #if NET10_0_OR_GREATER
   [TestCase(true, "net10.0")]
   [TestCase(false, "net10.0")]
+#endif
+#if NET11_0_OR_GREATER
+  [TestCase(true, "net11.0")]
+  [TestCase(false, "net11.0")]
 #endif
   public void UsingAssembly_ResolveDependency_ProjectReference(bool loadIntoReflectionOnlyContext, string targetFrameworkMoniker)
   {
@@ -321,17 +321,17 @@ class AssemblyLoaderTests {
     Assert.That(unloaded, Is.True, nameof(unloaded));
   }
 
-#if NETCOREAPP3_1_OR_GREATER || NET8_0_OR_GREATER
+#if NETCOREAPP3_1_OR_GREATER || NET10_0_OR_GREATER
   [TestCase(true, "netstandard2.1")]
   [TestCase(false, "netstandard2.1")]
-#endif
-#if NET8_0_OR_GREATER
-  [TestCase(true, "net8.0")]
-  [TestCase(false, "net8.0")]
 #endif
 #if NET10_0_OR_GREATER
   [TestCase(true, "net10.0")]
   [TestCase(false, "net10.0")]
+#endif
+#if NET11_0_OR_GREATER
+  [TestCase(true, "net11.0")]
+  [TestCase(false, "net11.0")]
 #endif
   public void UsingAssembly_FromStream_ResolveDependency_ProjectReference(bool loadIntoReflectionOnlyContext, string targetFrameworkMoniker)
   {
@@ -386,17 +386,17 @@ class AssemblyLoaderTests {
     Assert.That(unloaded, Is.True, nameof(unloaded));
   }
 
-#if NETCOREAPP3_1_OR_GREATER || NET8_0_OR_GREATER
+#if NETCOREAPP3_1_OR_GREATER || NET10_0_OR_GREATER
   [TestCase(true, "netstandard2.1")]
   [TestCase(false, "netstandard2.1")]
-#endif
-#if NET8_0_OR_GREATER
-  [TestCase(true, "net8.0")]
-  [TestCase(false, "net8.0")]
 #endif
 #if NET10_0_OR_GREATER
   [TestCase(true, "net10.0")]
   [TestCase(false, "net10.0")]
+#endif
+#if NET11_0_OR_GREATER
+  [TestCase(true, "net11.0")]
+  [TestCase(false, "net11.0")]
 #endif
   public void UsingAssembly_ResolveDependency_PackageReference(bool loadIntoReflectionOnlyContext, string targetFrameworkMoniker)
   {

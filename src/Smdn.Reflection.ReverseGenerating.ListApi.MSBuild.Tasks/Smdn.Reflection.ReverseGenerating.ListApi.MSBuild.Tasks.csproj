@@ -4,7 +4,7 @@ SPDX-License-Identifier: MIT
 -->
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks>net10.0;net8.0</TargetFrameworks>
+    <TargetFrameworks>net11.0;net10.0</TargetFrameworks>
     <RootNamespace>Smdn.Reflection.ReverseGenerating.ListApi.MSBuild.Tasks</RootNamespace>
     <VersionPrefix>1.8.3</VersionPrefix>
     <VersionSuffix></VersionSuffix>
@@ -52,8 +52,8 @@ SPDX-License-Identifier: MIT
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.Build.Utilities.Core" Version="17.8.43" PrivateAssets="All" Condition="$(TargetFramework.StartsWith('net8.'))" />
     <PackageReference Include="Microsoft.Build.Utilities.Core" Version="18.0.2" PrivateAssets="All" Condition="$(TargetFramework.StartsWith('net10.'))" />
+    <PackageReference Include="Microsoft.Build.Utilities.Core" Version="18.12.2" PrivateAssets="All" Condition="$(TargetFramework.StartsWith('net11.'))" />
     <ProjectReference Include="private\Smdn.Reflection.ReverseGenerating.ListApi.Core\Smdn.Reflection.ReverseGenerating.ListApi.Core.csproj" PrivateAssets="All" />
   </ItemGroup>
 
