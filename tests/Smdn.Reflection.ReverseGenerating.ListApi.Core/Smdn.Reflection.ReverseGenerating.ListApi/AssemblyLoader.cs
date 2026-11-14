@@ -85,7 +85,7 @@ class AssemblyLoaderTests {
       Throws.ArgumentNullException
     );
 
-#if NETCOREAPP3_1_OR_GREATER || NET10_0_OR_GREATER
+#if NETCOREAPP3_0_OR_GREATER || NET5_0_OR_GREATER
   [TestCase(true, "netstandard2.1")]
   [TestCase(false, "netstandard2.1")]
 #endif
@@ -146,7 +146,7 @@ class AssemblyLoaderTests {
     Assert.That(unloaded, Is.True, nameof(unloaded));
   }
 
-#if NETCOREAPP3_1_OR_GREATER || NET10_0_OR_GREATER
+#if NETCOREAPP3_0_OR_GREATER || NET5_0_OR_GREATER
   [TestCase(true, "netstandard2.1")]
   [TestCase(false, "netstandard2.1")]
 #endif
@@ -195,7 +195,7 @@ class AssemblyLoaderTests {
     Assert.That(unloaded, Is.True, nameof(unloaded));
   }
 
-#if NETCOREAPP3_1_OR_GREATER || NET10_0_OR_GREATER
+#if NETCOREAPP3_0_OR_GREATER || NET5_0_OR_GREATER
   [TestCase(true, "netstandard2.1")]
   [TestCase(false, "netstandard2.1")]
 #endif
@@ -260,7 +260,7 @@ class AssemblyLoaderTests {
     Assert.That(unloaded, Is.True, nameof(unloaded));
   }
 
-#if NETCOREAPP3_1_OR_GREATER || NET10_0_OR_GREATER
+#if NETCOREAPP3_0_OR_GREATER || NET5_0_OR_GREATER
   [TestCase(true, "netstandard2.1")]
   [TestCase(false, "netstandard2.1")]
 #endif
@@ -321,7 +321,7 @@ class AssemblyLoaderTests {
     Assert.That(unloaded, Is.True, nameof(unloaded));
   }
 
-#if NETCOREAPP3_1_OR_GREATER || NET10_0_OR_GREATER
+#if NETCOREAPP3_0_OR_GREATER || NET5_0_OR_GREATER
   [TestCase(true, "netstandard2.1")]
   [TestCase(false, "netstandard2.1")]
 #endif
@@ -386,7 +386,7 @@ class AssemblyLoaderTests {
     Assert.That(unloaded, Is.True, nameof(unloaded));
   }
 
-#if NETCOREAPP3_1_OR_GREATER || NET10_0_OR_GREATER
+#if NETCOREAPP3_0_OR_GREATER || NET5_0_OR_GREATER
   [TestCase(true, "netstandard2.1")]
   [TestCase(false, "netstandard2.1")]
 #endif
