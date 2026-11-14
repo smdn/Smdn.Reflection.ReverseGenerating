@@ -728,7 +728,7 @@ public class ApiListWriter {
         if (logger is not null)
           LoggerMessageGeneratorErrorOnMember(logger, t.FullName, member.Name, ex);
 
-        throw new MemberDeclarationException($"generator error on member '{t.FullName}.{member.Name}'", ex);
+        throw new MemberDeclarationException($"generator error on member (Type: '{t}', Member: '{member}')", ex);
       }
 
       if (declaration == null)
