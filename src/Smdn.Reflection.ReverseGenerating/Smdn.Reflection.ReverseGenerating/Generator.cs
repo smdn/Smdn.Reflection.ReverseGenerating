@@ -660,7 +660,9 @@ public static partial class Generator {
     var explicitInterfaceMethod = property
       .GetAccessors(true)
       .Select(
-        a => a.TryFindExplicitInterfaceMethod(out var eim, findOnlyPublicInterfaces: options.IgnorePrivateOrAssembly)
+        // Set `findOnlyPublicInterfaces` to `false` to check whether the target member is an
+        // explicit implementation, regardless of whether the interface is public or non-public.
+        a => a.TryFindExplicitInterfaceMethod(out var eim, findOnlyPublicInterfaces: false)
           ? eim
           : null // Type.GetInterfaceMap() is not supported in reflection-only context
       )
@@ -668,13 +670,18 @@ public static partial class Generator {
 
     var explicitInterface = explicitInterfaceMethod?.DeclaringType;
 
-    if (
-      explicitInterface is null &&
-      options.IgnorePrivateOrAssembly &&
-      !property.IsLikelyExplicitInterfaceImplementation() &&
-      property.GetAccessors(true).All(static a => a.IsPrivateOrAssembly())
-    ) {
-      return null;
+    if (options.IgnorePrivateOrAssembly) {
+      if (explicitInterface is null) {
+        if (
+          !property.IsLikelyExplicitInterfaceImplementation() &&
+          property.GetAccessors(true).All(static a => a.IsPrivateOrAssembly())
+        ) {
+          return null; // exclude non-public properties
+        }
+      }
+      else if (explicitInterface.IsPrivateOrAssembly()) {
+        return null; // exclude explicit implementations of non-public interface properties
+      }
     }
 
     var emitGetAccessor =
@@ -949,18 +956,28 @@ public static partial class Generator {
       GenerateDeclarationValidateTypeArgument(m.GetDeclaringTypeOrThrow(), nameof(m));
     }
     else {
+      // Set `findOnlyPublicInterfaces` to `false` to check whether the target member is an
+      // explicit implementation, regardless of whether the interface is public or non-public.
       var isExplicitInterfaceMethod = m.TryFindExplicitInterfaceMethod(
         out explicitInterfaceMethod,
-        findOnlyPublicInterfaces: options.IgnorePrivateOrAssembly
+        findOnlyPublicInterfaces: false
       );
 
-      if (
-        !isExplicitInterfaceMethod &&
-        options.IgnorePrivateOrAssembly &&
-        !m.IsLikelyExplicitInterfaceImplementation() &&
-        m.IsPrivateOrAssembly()
-      ) {
-        return null;
+      if (options.IgnorePrivateOrAssembly) {
+        if (
+          explicitInterfaceMethod?.DeclaringType is { } explicitInterfaceType &&
+          explicitInterfaceType.IsPrivateOrAssembly()
+        ) {
+          return null; // exclude explicit implementations of non-public interface members
+        }
+
+        if (
+          !isExplicitInterfaceMethod &&
+          !m.IsLikelyExplicitInterfaceImplementation() &&
+          m.IsPrivateOrAssembly()
+        ) {
+          return null; // exclude non-public methods
+        }
       }
     }
 
@@ -1301,7 +1318,9 @@ public static partial class Generator {
     var explicitInterfaceMethod = ev
       .GetMethods(true)
       .Select(
-        evm => evm.TryFindExplicitInterfaceMethod(out var eim, findOnlyPublicInterfaces: options.IgnorePrivateOrAssembly)
+        // Set `findOnlyPublicInterfaces` to `false` to check whether the target member is an
+        // explicit implementation, regardless of whether the interface is public or non-public.
+        evm => evm.TryFindExplicitInterfaceMethod(out var eim, findOnlyPublicInterfaces: false)
           ? eim
           : null // Type.GetInterfaceMap() is not supported in reflection-only context
       )
@@ -1309,13 +1328,18 @@ public static partial class Generator {
 
     var explicitInterface = explicitInterfaceMethod?.DeclaringType;
 
-    if (
-      explicitInterface is null &&
-      options.IgnorePrivateOrAssembly &&
-      !ev.IsLikelyExplicitInterfaceImplementation() &&
-      ev.GetMethods(true).All(static m => m.IsPrivateOrAssembly())
-    ) {
-      return null;
+    if (options.IgnorePrivateOrAssembly) {
+      if (explicitInterface is null) {
+        if (
+          !ev.IsLikelyExplicitInterfaceImplementation() &&
+          ev.GetMethods(true).All(static m => m.IsPrivateOrAssembly())
+        ) {
+          return null; // exclude non-public events
+        }
+      }
+      else if (explicitInterface.IsPrivateOrAssembly()) {
+        return null; // exclude explicit implementations of non-public interface events
+      }
     }
 
     referencingNamespaces?.UnionWith(

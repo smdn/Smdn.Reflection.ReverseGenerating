@@ -63,6 +63,24 @@ class ExplicitMethod : IDisposable, ICloneable, C.INestedWithMethod {
   void C.INestedWithMethod.M() => throw new NotImplementedException();
 }
 
+internal interface INonPublicWithMethod {
+  void M();
+}
+
+class ExplicitMethodOfNonPublicInterface : INonPublicWithMethod, ExplicitMethodOfNonPublicInterface.INestedNonPublic {
+  internal interface INestedNonPublic {
+    void M();
+  }
+
+  [MemberDeclarationTestCase("void INonPublicWithMethod.M() {}", MemberWithNamespace = false, IgnorePrivateOrAssembly = false)]
+  [MemberDeclarationTestCase(null, MemberWithNamespace = false, IgnorePrivateOrAssembly = true)]
+  void INonPublicWithMethod.M() => throw new NotImplementedException();
+
+  [MemberDeclarationTestCase("void ExplicitMethodOfNonPublicInterface.INestedNonPublic.M() {}", MemberWithNamespace = false, IgnorePrivateOrAssembly = false)]
+  [MemberDeclarationTestCase(null, MemberWithNamespace = false, IgnorePrivateOrAssembly = true)]
+  void INestedNonPublic.M() => throw new NotImplementedException();
+}
+
 class ExplicitMethodGenericInterface : IEnumerable<int> {
   [MemberDeclarationTestCase("System.Collections.Generic.IEnumerator<int> System.Collections.Generic.IEnumerable<int>.GetEnumerator() {}")]
   IEnumerator<int> System.Collections.Generic.IEnumerable<int>.GetEnumerator() => throw new NotImplementedException();
@@ -101,7 +119,15 @@ class ImplicitProperty1 : IProperty, C.INestedWithProperty {
   public int P { get => throw new NotImplementedException(); }
 }
 
-class ExplicitProperty1 : IProperty, C.INestedWithProperty {
+internal interface INonPublicWithProperty {
+  int P { get; set; }
+}
+
+class ExplicitProperty1 : IProperty, C.INestedWithProperty, INonPublicWithProperty, ExplicitProperty1.INestedNonPublic {
+  internal interface INestedNonPublic {
+    int P { get; set; }
+  }
+
   [MemberDeclarationTestCase("int IProperty.P1 { get; set; }", MemberWithNamespace = false)]
   [MemberDeclarationTestCase("int ExplicitProperty1.IProperty.P1 { get; set; }", MemberWithDeclaringTypeName = true, MemberWithNamespace = false, AccessorBody = MethodBodyOption.None)]
   [MemberDeclarationTestCase("int ExplicitProperty1.IProperty.P1 { get => throw null; set => throw null; }", MemberWithDeclaringTypeName = true, MemberWithNamespace = false, AccessorBody = MethodBodyOption.ThrowNull)]
@@ -122,6 +148,14 @@ class ExplicitProperty1 : IProperty, C.INestedWithProperty {
   [MemberDeclarationTestCase("int ExplicitProperty1.C.INestedWithProperty.P { get => throw null; }", MemberWithDeclaringTypeName = true, MemberWithNamespace = false, AccessorBody = MethodBodyOption.ThrowNull)]
   [MemberDeclarationTestCase("int Smdn.Reflection.ReverseGenerating.GeneratorTestCases.MemberDeclaration.InterfaceMembers.ExplicitProperty1.Smdn.Reflection.ReverseGenerating.GeneratorTestCases.MemberDeclaration.InterfaceMembers.C.INestedWithProperty.P { get; }", MemberWithDeclaringTypeName = true, MemberWithNamespace = true, AccessorBody = MethodBodyOption.None)]
   int C.INestedWithProperty.P { get => throw new NotImplementedException(); }
+
+  [MemberDeclarationTestCase("int INonPublicWithProperty.P { get; set; }", MemberWithNamespace = false, IgnorePrivateOrAssembly = false)]
+  [MemberDeclarationTestCase(null, MemberWithNamespace = false, IgnorePrivateOrAssembly = true)]
+  int INonPublicWithProperty.P { get; set; }
+
+  [MemberDeclarationTestCase("int ExplicitProperty1.INestedNonPublic.P { get; set; }", MemberWithNamespace = false, IgnorePrivateOrAssembly = false)]
+  [MemberDeclarationTestCase(null, MemberWithNamespace = false, IgnorePrivateOrAssembly = true)]
+  int INestedNonPublic.P { get; set; }
 }
 
 class ImplicitProperty2 : IAsyncResult {
@@ -201,7 +235,15 @@ class ImplicitEvent : IEvent, C.INestedWithEvent {
   public event EventHandler E;
 }
 
-class ExplicitEvent : IEvent, C.INestedWithEvent {
+internal interface INonPublicWithEvent {
+  event EventHandler E;
+}
+
+class ExplicitEvent : IEvent, C.INestedWithEvent, INonPublicWithEvent, ExplicitEvent.INestedNonPublic {
+  internal interface INestedNonPublic {
+    event EventHandler E;
+  }
+
   [MemberDeclarationTestCase("event EventHandler IEvent.E1 { add; remove; }", MemberWithNamespace = false)]
   [MemberDeclarationTestCase("event EventHandler IEvent.E1 { add; remove; }", MemberWithNamespace = false, MemberOmitEndOfStatement = true)]
   [MemberDeclarationTestCase("event EventHandler ExplicitEvent.IEvent.E1 { add; remove; }", MemberWithDeclaringTypeName = true, MemberWithNamespace = false)]
@@ -226,6 +268,20 @@ class ExplicitEvent : IEvent, C.INestedWithEvent {
   event EventHandler C.INestedWithEvent.E {
     add { throw new NotImplementedException(); }
     remove { throw new NotImplementedException(); }
+  }
+
+  [MemberDeclarationTestCase("event EventHandler INonPublicWithEvent.E { add; remove; }", MemberWithNamespace = false, IgnorePrivateOrAssembly = false)]
+  [MemberDeclarationTestCase(null, MemberWithNamespace = false, IgnorePrivateOrAssembly = true)]
+  event EventHandler INonPublicWithEvent.E {
+    add => throw new NotImplementedException();
+    remove => throw new NotImplementedException();
+  }
+
+  [MemberDeclarationTestCase("event EventHandler ExplicitEvent.INestedNonPublic.E { add; remove; }", MemberWithNamespace = false, IgnorePrivateOrAssembly = false)]
+  [MemberDeclarationTestCase(null, MemberWithNamespace = false, IgnorePrivateOrAssembly = true)]
+  event EventHandler INestedNonPublic.E {
+    add => throw new NotImplementedException();
+    remove => throw new NotImplementedException();
   }
 }
 
