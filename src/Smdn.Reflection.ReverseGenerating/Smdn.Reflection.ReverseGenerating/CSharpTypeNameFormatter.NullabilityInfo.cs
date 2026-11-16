@@ -2,7 +2,9 @@
 // SPDX-License-Identifier: MIT
 // cSpell:ignore retval
 #if SYSTEM_REFLECTION_NULLABILITYINFO
+#if DEBUG || !SYSTEM_TYPE_GETNULLABLEUNDERLYINGTYPE
 using System;
+#endif
 using System.Reflection;
 using System.Text;
 

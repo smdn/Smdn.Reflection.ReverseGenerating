@@ -24,6 +24,10 @@ SPDX-License-Identifier: MIT
       <!-- TODO: MSBuildRuntimeType == Full, Mono and otherwise -->
       <GenerateMSBuildTargetsFileLines><![CDATA[
 <Project>
+  <ImportGroup Condition=" '%24(MSBuildRuntimeType)' == 'Core' and %24([System.Runtime.InteropServices.RuntimeInformation]::FrameworkDescription.StartsWith('.NET 9.')) ">
+    <!-- .NET 9.x -->
+    @(TaskFiles->WithMetadataValue('TargetFramework', 'net9.0')->'%(ImportLine)', '%0D%0A    ')
+  </ImportGroup>
   <ImportGroup Condition=" '%24(MSBuildRuntimeType)' == 'Core' and %24([System.Runtime.InteropServices.RuntimeInformation]::FrameworkDescription.StartsWith('.NET 10.')) ">
     <!-- .NET 10.x -->
     @(TaskFiles->WithMetadataValue('TargetFramework', 'net10.0')->'%(ImportLine)', '%0D%0A    ')
