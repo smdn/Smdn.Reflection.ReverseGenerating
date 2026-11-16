@@ -19,11 +19,13 @@ internal sealed class LoggerAdapter : Microsoft.Extensions.Logging.ILogger {
   }
 
   private readonly TaskLoggingHelper? log;
+  private readonly string? subcategory;
   private readonly string? file;
 
-  public LoggerAdapter(TaskLoggingHelper? log, string? file = null)
+  public LoggerAdapter(TaskLoggingHelper? log, string? subcategory, string? file = null)
   {
     this.log = log;
+    this.subcategory = subcategory;
     this.file = file;
   }
 
@@ -49,7 +51,7 @@ internal sealed class LoggerAdapter : Microsoft.Extensions.Logging.ILogger {
       case LogLevel.Critical:
       case LogLevel.Error:
         log?.LogError(
-          subcategory: null,
+          subcategory: subcategory,
           errorCode: eventId == default ? null : eventId.ToString(),
           helpKeyword: null,
           helpLink: null,
@@ -65,7 +67,7 @@ internal sealed class LoggerAdapter : Microsoft.Extensions.Logging.ILogger {
 
       case LogLevel.Warning:
         log?.LogWarning(
-          subcategory: null,
+          subcategory: subcategory,
           warningCode: eventId == default ? null : eventId.ToString(),
           helpKeyword: null,
           helpLink: null,
@@ -83,7 +85,7 @@ internal sealed class LoggerAdapter : Microsoft.Extensions.Logging.ILogger {
       case LogLevel.Debug:
       case LogLevel.Trace:
         log?.LogMessage(
-          subcategory: null,
+          subcategory: subcategory,
           code: eventId == default ? null : eventId.ToString(),
           helpKeyword: null,
           file: file,

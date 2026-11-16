@@ -81,7 +81,7 @@ public class GenerateApiList : Task {
           options,
           loadIntoReflectionOnlyContext,
           GenerateNullableAnnotations,
-          logger: new LoggerAdapter(Log, inputAssemblyFilePath)
+          logger: new LoggerAdapter(Log, subcategory: nameof(GenerateApiList), inputAssemblyFilePath)
         );
       }
 #pragma warning disable CA1031
