@@ -774,7 +774,13 @@ public static partial class Generator {
             explicitInterface.FormatTypeName(typeWithNamespace: memberOptions.WithNamespace),
             ".",
 #if SYSTEM_STRING_CONCAT_READONLYSPAN_OF_CHAR
-            property.Name.AsSpan(property.Name.LastIndexOf('.') + 1)
+            property.Name.AsSpan(
+#if NET11_0_OR_GREATER
+              property.Name.LastIndexOf('.', StringComparison.Ordinal) + 1
+#else
+              property.Name.LastIndexOf('.') + 1
+#endif
+            )
 #else
             property.Name.Substring(property.Name.LastIndexOf('.') + 1)
 #endif
@@ -1395,7 +1401,13 @@ public static partial class Generator {
             explicitInterface.FormatTypeName(typeWithNamespace: memberOptions.WithNamespace),
             ".",
 #if SYSTEM_STRING_CONCAT_READONLYSPAN_OF_CHAR
-            ev.Name.AsSpan(ev.Name.LastIndexOf('.') + 1)
+            ev.Name.AsSpan(
+#if NET11_0_OR_GREATER
+              ev.Name.LastIndexOf('.', StringComparison.Ordinal) + 1
+#else
+              ev.Name.LastIndexOf('.') + 1
+#endif
+            )
 #else
             ev.Name.Substring(ev.Name.LastIndexOf('.') + 1)
 #endif
