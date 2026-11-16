@@ -50,8 +50,14 @@ internal sealed class PathAssemblyDependencyResolver : PathAssemblyResolver {
 
     assembly = packageDependencyResolver.Resolve(assemblyName, context.LoadFromAssemblyPath);
 
-    if (assembly is null)
-      RuntimeAssemblyName.WarnNotToBeAbleToResolve(logger, assemblyName, packageDependencyResolver.DependencyContext);
+    if (assembly is null) {
+      RuntimeAssemblyName.WarnNotToBeAbleToResolve(
+        logger: logger,
+        name: assemblyName,
+        depContext: packageDependencyResolver.DependencyContext,
+        baseAssemblyPath: assemblyPath
+      );
+    }
 
     return assembly;
   }

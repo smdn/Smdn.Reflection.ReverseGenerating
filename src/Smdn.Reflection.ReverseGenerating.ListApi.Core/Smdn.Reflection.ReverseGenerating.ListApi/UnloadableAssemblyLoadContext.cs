@@ -42,8 +42,14 @@ internal sealed class UnloadableAssemblyLoadContext : AssemblyLoadContext {
 
     var assembly = packageDependencyResolver.Resolve(assemblyName, this.LoadFromAssemblyPath);
 
-    if (assembly is null)
-      RuntimeAssemblyName.WarnNotToBeAbleToResolve(logger, assemblyName, packageDependencyResolver.DependencyContext);
+    if (assembly is null) {
+      RuntimeAssemblyName.WarnNotToBeAbleToResolve(
+        logger: logger,
+        name: assemblyName,
+        depContext: packageDependencyResolver.DependencyContext,
+        baseAssemblyPath: assemblyPath
+      );
+    }
 
     return assembly;
   }
