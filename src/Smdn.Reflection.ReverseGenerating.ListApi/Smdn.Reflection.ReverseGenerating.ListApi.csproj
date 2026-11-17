@@ -28,11 +28,12 @@ SPDX-License-Identifier: MIT
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="System.CommandLine" Version="2.0.0" />
-    <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="10.0.0" Condition="$(TargetFramework.StartsWith('net10.'))" />
+    <PackageReference Include="System.CommandLine" Version="2.0.15" Condition="$(TargetFramework.StartsWith('net10.'))" />
+    <PackageReference Include="System.CommandLine" Version="3.0.0" Condition="$(TargetFramework.StartsWith('net11.'))" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="10.0.15" Condition="$(TargetFramework.StartsWith('net10.'))" />
     <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="11.0.0" Condition="$(TargetFramework.StartsWith('net11.'))" />
 
-    <ProjectOrPackageReference ReferencePackageVersion="[1.6.2,2.0.0)" Include="..\Smdn.Reflection.ReverseGenerating.ListApi.Core\Smdn.Reflection.ReverseGenerating.ListApi.Core.csproj" />
+    <ProjectOrPackageReference ReferencePackageVersion="1.7.0" Include="..\Smdn.Reflection.ReverseGenerating.ListApi.Core\Smdn.Reflection.ReverseGenerating.ListApi.Core.csproj" />
   </ItemGroup>
 
   <Target Name="WriteConstantsFile" BeforeTargets="BeforeBuild">
