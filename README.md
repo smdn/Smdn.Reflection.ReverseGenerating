@@ -102,7 +102,7 @@ This package provides APIs common to reverse generating. See [examples](examples
 # Example of output
 The files in [API list directory](/doc/api-list/) is generated using the artifacts of this repository.
 
-# For contributers
+# For contributors
 Contributions are appreciated!
 
 If there's a feature you would like to add or a bug you would like to fix, please read [Contribution guidelines](./CONTRIBUTING.md) and create an Issue or Pull Request.
