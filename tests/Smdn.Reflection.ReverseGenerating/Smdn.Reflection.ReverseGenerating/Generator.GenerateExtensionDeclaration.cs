@@ -4,55 +4,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Runtime.CompilerServices;
-using System.Threading.Tasks;
 
 using NUnit.Framework;
 
-using Smdn.Reflection;
+using Smdn.Reflection.ReverseGenerating.GeneratorTestCases;
 
 namespace Smdn.Reflection.ReverseGenerating;
-
-[AttributeUsage(AttributeTargets.All, AllowMultiple = true, Inherited = false)]
-public class ExtensionGroupingTypeDeclarationTestCaseAttribute : GeneratorTestCaseAttribute {
-  public ExtensionGroupingTypeDeclarationTestCaseAttribute(
-    string expected,
-    [CallerFilePath] string sourceFilePath = null,
-    [CallerLineNumber] int lineNumber = 0
-  )
-    : base(
-      expected,
-      sourceFilePath,
-      lineNumber
-    )
-  {
-  }
-}
-
-[AttributeUsage(AttributeTargets.All, AllowMultiple = true, Inherited = false)]
-public class ExtensionGroupingTypeReferencingNamespacesTestCaseAttribute : GeneratorTestCaseAttribute {
-  public ExtensionGroupingTypeReferencingNamespacesTestCaseAttribute(
-    string expected,
-    [CallerFilePath] string sourceFilePath = null,
-    [CallerLineNumber] int lineNumber = 0
-  )
-    : base(
-      expected,
-      sourceFilePath,
-      lineNumber
-    )
-  {
-  }
-
-  public IReadOnlyList<string> GetExpectedSet()
-  {
-#if SYSTEM_STRINGSPLITOPTIONS_TRIMENTRIES
-    return Expected.Split(",", StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
-#else
-    return Expected.Split(new[] {','}, StringSplitOptions.RemoveEmptyEntries).Select(s => s.Trim()).ToList();
-#endif
-  }
-}
 
 public static class ExtensionGroupingTypeForGenerateExtensionDeclarationTest {
   extension(int x) {

@@ -1,30 +1,14 @@
 // SPDX-FileCopyrightText: 2020 smdn <smdn@smdn.jp>
 // SPDX-License-Identifier: MIT
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Runtime.CompilerServices;
 
 using NUnit.Framework;
 
-namespace Smdn.Reflection.ReverseGenerating;
+using Smdn.Reflection.ReverseGenerating.GeneratorTestCases;
 
-[AttributeUsage(AttributeTargets.All, AllowMultiple = true, Inherited = false)]
-public class ExplicitBaseTypeAndInterfacesTestCaseAttribute : GeneratorTestCaseAttribute {
-  public ExplicitBaseTypeAndInterfacesTestCaseAttribute(
-    string expected,
-    [CallerFilePath] string sourceFilePath = null,
-    [CallerLineNumber] int lineNumber = 0
-  )
-    : base(
-      expected,
-      sourceFilePath,
-      lineNumber
-    )
-  {
-  }
-}
+namespace Smdn.Reflection.ReverseGenerating;
 
 partial class GeneratorTests {
   [Test]

@@ -4,31 +4,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Runtime.CompilerServices;
 
 using NUnit.Framework;
 
-namespace Smdn.Reflection.ReverseGenerating;
+using Smdn.Reflection.ReverseGenerating.GeneratorTestCases;
 
-[AttributeUsage(
-  AttributeTargets.Class | AttributeTargets.Interface | AttributeTargets.Delegate | AttributeTargets.Method,
-  AllowMultiple = true,
-  Inherited = false
-)]
-public class GenericParameterConstraintTestCaseAttribute : GeneratorTestCaseAttribute {
-  public GenericParameterConstraintTestCaseAttribute(
-    string expected,
-    [CallerFilePath] string sourceFilePath = null,
-    [CallerLineNumber] int lineNumber = 0
-  )
-    : base(
-      expected,
-      sourceFilePath,
-      lineNumber
-    )
-  {
-  }
-}
+namespace Smdn.Reflection.ReverseGenerating;
 
 partial class GeneratorTests {
   [Test]

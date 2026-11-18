@@ -1,0 +1,21 @@
+﻿<!--
+SPDX-FileCopyrightText: 2026 smdn <smdn@smdn.jp>
+SPDX-License-Identifier: MIT
+-->
+<Project>
+  <PropertyGroup>
+    <RootNamespace/>
+    <LangVersion>latest</LangVersion>
+    <AnalysisLevel>latest</AnalysisLevel>
+    <AnalysisMode>Minimum</AnalysisMode>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference
+      Include="Smdn.MSBuild.DefineConstants.NETSdkApi"
+      Version="[1.8.5]"
+      PrivateAssets="all"
+      IncludeAssets="build"
+    />
+  </ItemGroup>
+</Project>

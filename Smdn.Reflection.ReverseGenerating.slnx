@@ -1,4 +1,4 @@
-<!--
+﻿<!--
 SPDX-FileCopyrightText: 2025 smdn <smdn@smdn.jp>
 SPDX-License-Identifier: MIT
 -->
@@ -13,5 +13,8 @@ SPDX-License-Identifier: MIT
     <Project Path="tests/Smdn.Reflection.ReverseGenerating.ListApi.Core/Smdn.Reflection.ReverseGenerating.ListApi.Core.Tests.csproj" />
     <Project Path="tests/Smdn.Reflection.ReverseGenerating.ListApi/Smdn.Reflection.ReverseGenerating.ListApi.Tests.csproj" />
     <Project Path="tests/Smdn.Reflection.ReverseGenerating/Smdn.Reflection.ReverseGenerating.Tests.csproj" />
+  </Folder>
+  <Folder Name="/tests/Smdn.Reflection.ReverseGenerating.TestCases/">
+    <Project Path="tests/Smdn.Reflection.ReverseGenerating.TestCases/Smdn.Reflection.ReverseGenerating.TestCases.Common/Smdn.Reflection.ReverseGenerating.TestCases.Common.csproj" />
   </Folder>
 </Solution>

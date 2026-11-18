@@ -4,75 +4,13 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 
 using NUnit.Framework;
 
+using Smdn.Reflection.ReverseGenerating.GeneratorTestCases;
+
 namespace Smdn.Reflection.ReverseGenerating;
-
-[AttributeUsage(AttributeTargets.All, AllowMultiple = true, Inherited = false)]
-public class TypeDeclarationTestCaseAttribute : GeneratorTestCaseAttribute {
-  public Type TestTargetType { get; }
-
-  public TypeDeclarationTestCaseAttribute(
-    string expected,
-    [CallerFilePath] string sourceFilePath = null,
-    [CallerLineNumber] int lineNumber = 0
-  )
-    : this(
-      expected,
-      testTargetType: null,
-      sourceFilePath,
-      lineNumber
-    )
-  {
-  }
-
-  public TypeDeclarationTestCaseAttribute(
-    string expected,
-    Type testTargetType,
-    [CallerFilePath] string sourceFilePath = null,
-    [CallerLineNumber] int lineNumber = 0
-  )
-    : base(
-      expected,
-      sourceFilePath,
-      lineNumber
-    )
-  {
-    this.TestTargetType = testTargetType;
-  }
-}
-
-[AttributeUsage(AttributeTargets.All, AllowMultiple = true, Inherited = false)]
-public class ReferencingNamespacesTestCaseAttribute : GeneratorTestCaseAttribute {
-  public ReferencingNamespacesTestCaseAttribute(
-    string expected,
-    [CallerFilePath] string sourceFilePath = null,
-    [CallerLineNumber] int lineNumber = 0
-  )
-    : base(
-      expected,
-      sourceFilePath,
-      lineNumber
-    )
-  {
-    base.MemberWithNamespace = true;
-    base.ValueUseDefaultLiteral = false;
-  }
-
-  public bool WithExplicitBaseTypeAndInterfaces { get; set; } = false;
-
-  public IReadOnlyList<string> GetExpectedSet()
-  {
-#if SYSTEM_STRINGSPLITOPTIONS_TRIMENTRIES
-    return Expected.Split(",", StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
-#else
-    return Expected.Split(new[] {','}, StringSplitOptions.RemoveEmptyEntries).Select(s => s.Trim()).ToList();
-#endif
-  }
-}
 
 partial class GeneratorTests {
   [Test]

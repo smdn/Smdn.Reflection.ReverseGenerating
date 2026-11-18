@@ -9,6 +9,8 @@ using System.Reflection;
 
 using NUnit.Framework;
 
+using Smdn.Reflection.ReverseGenerating.GeneratorTestCases;
+
 namespace Smdn.Reflection.ReverseGenerating;
 
 [TestFixture]
