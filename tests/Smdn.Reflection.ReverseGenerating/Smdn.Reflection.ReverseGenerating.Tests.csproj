@@ -14,6 +14,10 @@ SPDX-License-Identifier: MIT
     <ProjectReference
       Include="$(MSBuildThisFileDirectory)..\Smdn.Reflection.ReverseGenerating.TestCases\Smdn.Reflection.ReverseGenerating.TestCases.Common\Smdn.Reflection.ReverseGenerating.TestCases.Common.csproj"
     />
+    <ProjectReference
+      Include="$(MSBuildThisFileDirectory)..\Smdn.Reflection.ReverseGenerating.TestCases\Smdn.Reflection.ReverseGenerating.TestCases.RuntimeAsync\Smdn.Reflection.ReverseGenerating.TestCases.RuntimeAsync.csproj"
+      Condition="$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net11.0'))"
+    />
   </ItemGroup>
 
   <ItemGroup>

@@ -175,8 +175,13 @@ internal static class CSharpMemberModifierFormatter {
     if (method is not null) {
       if (!method.IsPropertyAccessorMethod() && method.IsReadOnly())
         sb.Append("readonly ");
+
       if (method.IsAsyncStateMachine())
         sb.Append("async ");
+#if NET11_0_OR_GREATER
+      else if (method.IsRuntimeAsync)
+        sb.Append("async ");
+#endif
 
       try {
         if (method.GetParameters().Any(IsParameterUnsafe))
