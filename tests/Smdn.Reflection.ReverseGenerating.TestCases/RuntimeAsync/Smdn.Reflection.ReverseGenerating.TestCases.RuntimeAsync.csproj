@@ -9,6 +9,6 @@ SPDX-License-Identifier: MIT
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Smdn.Reflection.ReverseGenerating.TestCases.Common\Smdn.Reflection.ReverseGenerating.TestCases.Common.csproj" />
+    <ProjectReference Include="..\Common\Smdn.Reflection.ReverseGenerating.TestCases.Common.csproj" />
   </ItemGroup>
 </Project>

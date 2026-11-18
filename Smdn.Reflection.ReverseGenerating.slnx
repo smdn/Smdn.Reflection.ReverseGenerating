@@ -15,7 +15,7 @@ SPDX-License-Identifier: MIT
     <Project Path="tests/Smdn.Reflection.ReverseGenerating/Smdn.Reflection.ReverseGenerating.Tests.csproj" />
   </Folder>
   <Folder Name="/tests/Smdn.Reflection.ReverseGenerating.TestCases/">
-    <Project Path="tests/Smdn.Reflection.ReverseGenerating.TestCases/Smdn.Reflection.ReverseGenerating.TestCases.Common/Smdn.Reflection.ReverseGenerating.TestCases.Common.csproj" />
-    <Project Path="tests/Smdn.Reflection.ReverseGenerating.TestCases/Smdn.Reflection.ReverseGenerating.TestCases.RuntimeAsync/Smdn.Reflection.ReverseGenerating.TestCases.RuntimeAsync.csproj" />
+    <Project Path="tests/Smdn.Reflection.ReverseGenerating.TestCases/Common/Smdn.Reflection.ReverseGenerating.TestCases.Common.csproj" />
+    <Project Path="tests/Smdn.Reflection.ReverseGenerating.TestCases/RuntimeAsync/Smdn.Reflection.ReverseGenerating.TestCases.RuntimeAsync.csproj" />
   </Folder>
 </Solution>
